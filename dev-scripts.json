@@ -1,0 +1,52 @@
+{
+    "core": [
+
+        "src/core/BIMSURFER.js",
+
+        "src/core/util/inheritance.js",
+        "src/core/util/utils.js",
+        "src/core/util/map.js",
+
+        "src/core/math/math.js",
+
+        "src/core/constants.js",
+
+        "src/core/component.js",
+
+        "src/core/input/input.js",
+
+        "src/core/viewer.js",
+
+        "src/core/object/object.js",
+        "src/core/object/boxObject.js",
+
+        "src/core/camera/camera.js",
+
+        "src/core/light/light.js",
+        "src/core/light/ambientLight.js",
+        "src/core/light/pointLight.js",
+        "src/core/light/dirLight.js",
+
+        "src/core/geometry/geometry.js",
+
+        "src/core/selection/selection.js",
+
+        "src/core/effect/effect.js",
+        "src/core/effect/highlightEffect.js",
+        "src/core/effect/isolateEffect.js",
+        "src/core/effect/xrayEffect.js",
+
+        "src/core/animate/cameraFlyTo.js",
+        "src/core/animate/cameraPath.js",
+
+        "src/core/control/mouseOrbitCamera.js",
+        "src/core/control/keyboardOrbitCamera.js",
+        "src/core/control/cameraZoomControl.js",
+        "src/core/control/pickSelectionControl.js",
+        "src/core/control/keyboardPanCamera.js"
+    ],
+
+    "extras": [
+
+    ]
+}

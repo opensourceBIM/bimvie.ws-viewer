@@ -1,0 +1,7 @@
+// === BIMVie.ws ===
+// WebGL-based IFC Viewer for BIMSurfer
+// Copyright (c) 2015
+
+
+
+

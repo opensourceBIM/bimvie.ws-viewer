@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+
+    <style>
+        body {
+            margin: 0;
+            -moz-user-select: -moz-none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            background-color: white;
+        }
+
+        #myCanvas {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            position: absolute;
+        }
+    </style>
+
+    <link href="css/styles.css" rel="stylesheet"/>
+
+    <script src="../lib/jquery-2.1.3.min.js"></script>
+    <script src="../lib/scenejs.js"></script>
+    <script src="../build/bimviews.js"></script>
+
+
+</head>
+<body>
+
+<div id="myDiv" style="position: absolute; top: 0; left: 0; height: 100%; width: 100%;">
+</div>
+
+<script>
+
+    // Create a Viewer
+    var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+
+    // -------------- Camera -------------------------
+
+    // Create a Camera
+    var camera = new BIMSURFER.Camera(viewer, {
+        eye: [0, 40, -40]
+    });
+
+    // -------------- Controls -------------------------
+
+    // Create a Camera Orbit control
+    var orbit = new BIMSURFER.KeyboardOrbitCamera(viewer, { camera: camera });
+
+    // -------------- Lights -------------------------
+
+    // Create an AmbientLight
+    var ambientLight = new BIMSURFER.AmbientLight(viewer, {
+        color: [0.7, 0.7, 0.7]
+    });
+
+    // Create a DirLight
+    var dirLight1 = new BIMSURFER.DirLight(viewer, {
+        color: [0.6, 0.9, 0.9],
+        dir: [1.0, 0.0, 0.0],
+        space: "view"
+    });
+
+    // Create a DirLight
+    var dirLight2 = new BIMSURFER.DirLight(viewer, {
+        color: [0.6, 0.9, 0.9],
+        dir: [-0.5, 0.0, -1.0],
+        space: "view"
+    });
+
+    // -------------- Geometries -------------------------
+
+    // Create a box Geometry
+    // Geometry defaults to a 2x2x2 box when no vertex or index arrays are specified
+    var geometry = new BIMSURFER.Geometry(viewer, {
+        id: "myGeometry"
+    });
+
+    // -------------- Objects -------------------------
+
+    // Create some Objects
+    // Share the box Geometry among them
+
+    var object1 = new BIMSURFER.Object(viewer, {
+        ifcType: "IfcRoof",
+        geometries: [ geometry ],
+        matrix: BIMSURFER.math.translationMat4v([-8, 0, -8])
+    });
+
+    var object2 = new BIMSURFER.Object(viewer, {
+        ifcType: "IfcDistributionFlowElement",
+        geometries: [ geometry ],
+        matrix: BIMSURFER.math.translationMat4v([8, 0, -8])
+    });
+
+    var object3 = new BIMSURFER.Object(viewer, {
+        ifcType: "IfcDistributionFlowElement",
+        geometries: [ geometry ],
+        matrix: BIMSURFER.math.translationMat4v([-8, 0, 8])
+    });
+
+    var object4 = new BIMSURFER.Object(viewer, {
+        ifcType: "IfcRoof",
+        geometries: [ geometry ],
+        matrix: BIMSURFER.math.translationMat4v([8, 0, 8])
+    });
+
+    // Create a Selection that initially selects two of our Objects
+
+    var selection = new BIMSURFER.Selection(viewer, {
+        objects: [object1, object2 ]
+    });
+
+    // Apply an Isolate effect to the Selection, which will cause the selected
+    // objects to be visible and all other Objects invisible
+
+    var activate = new BIMSURFER.IsolateEffect(viewer, {
+        selection: selection
+    });
+
+    // Add a third Object to the Selection, causing the Isolate to now render
+    // that Object as opaque also
+
+    selection.addObjects([object3]);
+
+</script>
+
+</body>
+</html>
