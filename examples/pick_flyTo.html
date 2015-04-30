@@ -43,7 +43,7 @@
 
     // Create a Camera
     var camera = new BIMSURFER.Camera(viewer, {
-        eye: [0, 0, -10]
+        eye: [0, 10, -30]
     });
 
     // -------------- Controls -------------------------
@@ -76,7 +76,7 @@
 
     // Create a box Geometry
     // Geometry defaults to a 2x2x2 box when no vertex or index arrays are specified
-    var geometry = new BIMSURFER.Geometry(viewer, {
+    var geometry = new BIMSURFER.TeapotGeometry(viewer, {
         id: "myGeometry"
     });
 

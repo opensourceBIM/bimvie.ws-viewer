@@ -40,17 +40,14 @@
     // Create a Viewer
     var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
 
-    // -------------- Camera -------------------------
-
     // Create a Camera
     var camera = new BIMSURFER.Camera(viewer, {
-        eye: [0, 0, -10]
+        eye: [0, 10, -30]
     });
 
-    // -------------- Controls -------------------------
-
-    // Create a Camera Orbit control
-    var orbit = new BIMSURFER.KeyboardOrbitCamera(viewer, { camera: camera });
+    var cameraControl = new BIMSURFER.CameraControl(viewer, {
+        camera: camera
+    });
 
     // -------------- Lights -------------------------
 
@@ -77,7 +74,7 @@
 
     // Create a box Geometry
     // Geometry defaults to a 2x2x2 box when no vertex or index arrays are specified
-    var geometry = new BIMSURFER.Geometry(viewer, {
+    var geometry = new BIMSURFER.TeapotGeometry(viewer, {
         id: "myGeometry"
     });
 
@@ -90,28 +87,28 @@
         objectId: "object1",
         ifcType: "IfcRoof",
         geometries: [ geometry ],
-        matrix: BIMSURFER.math.translationMat4v([-8, 0, -8])
+        matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])
     });
 
     var object2 = new BIMSURFER.Object(viewer, {
         objectId: "object2",
         ifcType: "IfcDistributionFlowElement",
         geometries: [ geometry ],
-        matrix: BIMSURFER.math.translationMat4v([8, 0, -8])
+        matrix: BIMSURFER.math.translationMat4v([4, 0, -4])
     });
 
     var object3 = new BIMSURFER.Object(viewer, {
         objectId: "object3",
         ifcType: "IfcDistributionFlowElement",
         geometries: [ geometry ],
-        matrix: BIMSURFER.math.translationMat4v([-8, 0, 8])
+        matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])
     });
 
     var object4 = new BIMSURFER.Object(viewer, {
         objectId: "object4",
         ifcType: "IfcRoof",
         geometries: [ geometry ],
-        matrix: BIMSURFER.math.translationMat4v([8, 0, 8])
+        matrix: BIMSURFER.math.translationMat4v([4, 0, 4])
     });
 
     // Create a Selection

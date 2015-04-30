@@ -41,22 +41,17 @@
 
 <script>
 
-    // Create a Viewer
     var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
 
-    // Create a Camera
     var camera = new BIMSURFER.Camera(viewer, {
         eye: [0, 0, -10]
     });
 
-    // Create an object
-    var box = new BIMSURFER.TeapotObject(viewer);
-
-    // Create a camera control
     var cameraControl = new BIMSURFER.CameraControl(viewer, {
-        camera: camera,
-        firstPerson: true
+        camera: camera
     });
+
+    var teapot = new BIMSURFER.TeapotObject(viewer);
 
 </script>
 

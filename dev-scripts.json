@@ -29,6 +29,8 @@
         "src/core/light/dirLight.js",
 
         "src/core/geometry/geometry.js",
+        "src/core/geometry/boxGeometry.js",
+        "src/core/geometry/teapotGeometry.js",
 
         "src/core/selection/selection.js",
 

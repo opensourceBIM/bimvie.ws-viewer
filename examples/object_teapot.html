@@ -29,6 +29,7 @@
     <script src="../build/bimviews.js"></script>
 
 
+
 </head>
 <body>
 
@@ -42,38 +43,28 @@
 
     // Create a Camera
     var camera = new BIMSURFER.Camera(viewer, {
-        eye: [0, 0, -10]
+        eye: [0, 10, -30]
     });
 
-    // Create a Camera Orbit control
-    var orbit = new BIMSURFER.KeyboardOrbitCamera(viewer, { camera: camera });
-
-    // Create a box Geometry
-    // Geometry defaults to a 2x2x2 box when no vertex
-    // or index arrays are specified
-    var geometry = new BIMSURFER.TeapotGeometry(viewer, {
-        id: "myGeometry"
+    var cameraControl = new BIMSURFER.CameraControl(viewer, {
+        camera: camera
     });
 
     // Create first box Object
     // Use the box Geometry
-    var box1 = new BIMSURFER.Object(viewer, {
+    var box1 = new BIMSURFER.TeapotObject(viewer, {
         id: "myObject1",
         ifcType: "IfcCovering",
-        geometries: [ geometry ],
-        matrix: BIMSURFER.math.translationMat4v([-8, 0, 0])
+        matrix: BIMSURFER.math.translationMat4v([-4, 0,0])
     });
 
     // Create second box Object
     // Reuse the box Geometry
-    var box2 = new BIMSURFER.Object(viewer, {
+    var box2 = new BIMSURFER.TeapotObject(viewer, {
         id: "myObject2",
         ifcType: "IfcFlowTerminal",
-        geometries: [ geometry ],
-        matrix: BIMSURFER.math.translationMat4v([8, 0, 0])
+        matrix: BIMSURFER.math.translationMat4v([4, 0,0])
     });
-
-    var inspector = new BIMSURFER.Inspector(viewer);
 
 </script>
 

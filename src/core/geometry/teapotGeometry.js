@@ -22,6 +22,8 @@
 
         _build: function (params) {
 
+            params = params || {};
+
             var coreId = "geometry/teapot_" + (params.wire ? "wire" : "_solid");
 
             // If a node core already exists for a prim with the given properties,

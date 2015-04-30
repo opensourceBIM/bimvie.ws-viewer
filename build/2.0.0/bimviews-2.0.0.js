@@ -4,7 +4,7 @@
  * A WebGL-based IFC Viewer for BIMSurfer
  * http://bimwiews.org/
  *
- * Built on 2015-04-30
+ * Built on 2015-05-01
  *
  * todo
  * Copyright 2015, todo
@@ -4380,7 +4380,7 @@ var viewer = new BIMSURFER.Viewer(...);
                             continue;
                         }
 
-                        if (geometry.className != "BIMSURFER.Geometry") {
+                        if (!geometry.coreId) {
                             this.error("geometry[" + i + "] is not a BIMSURFER.Geometry");
                             continue;
                         }
@@ -4389,7 +4389,7 @@ var viewer = new BIMSURFER.Viewer(...);
 
                         // Geometry is an instance of a BIMSURFER.Geometry within the Viewer
 
-                        if (geometry.className != "BIMSURFER.Geometry") {
+                        if (!geometry.coreId) {
                             this.error("geometry[" + i + "] is not a BIMSURFER.Geometry");
                             continue;
                         }
@@ -4779,10 +4779,7 @@ var viewer = new BIMSURFER.Viewer(...);
 
     "use strict";
 
-    /**
-     * Defines a viewpoint within a {@link BIMSURFER.Viewer}.
-     */
-    BIMSURFER.BoxObject = BIMSURFER.Component.extend({
+    BIMSURFER.BoxObject = BIMSURFER.Object.extend({
 
         /**
          JavaScript class name for this Component.
@@ -4795,129 +4792,26 @@ var viewer = new BIMSURFER.Viewer(...);
 
         _init: function (cfg) {
 
-            /**
-             * True when this camera is active.
-             */
-            this.active = false;
-
-            var scene = this.viewer.scene;
-
-            // The SceneJS content root
-            this._contentNode = scene.getNode('contentRoot');
-
-            this._boxNode = null;
-
-            this._pos = cfg.pos || [0,0,0];
-
-            if (cfg.active !== false) {
-                this.activate();
-            }
-        },
-
-        /**
-         * Activates this camera
-         */
-        activate: function () {
-
-            var self = this;
-
-            if (this.active) {
-                return this;
-            }
-
-            // Geometry node which defines our custom object, a simple cube.
-            this._boxNode = this._contentNode.addNode({
-
-                type: "material",
-                color: {r: 0.4, g: 0.4, b: 0.8 },
-
-                nodes: [
-                    {
-                        type: "translate",
-                        x: this._pos[0],
-                        y: this._pos[1],
-                        z: this._pos[2],
-
-                        nodes: [
-                            {
-
-                                type: "geometry",
-
-                                primitive: "triangles",
-
-                                positions: [
-                                    5, 5, 5, -5, 5, 5, -5, -5, 5, 5, -5, 5, // v0-v1-v2-v3 front
-                                    5, 5, 5, 5, -5, 5, 5, -5, -5, 5, 5, -5, // v0-v3-v4-v5 right
-                                    5, 5, 5, 5, 5, -5, -5, 5, -5, -5, 5, 5, // v0-v5-v6-v1 top
-                                    -5, 5, 5, -5, 5, -5, -5, -5, -5, -5, -5, 5, // v1-v6-v7-v2 left
-                                    -5, -5, -5, 5, -5, -5, 5, -5, 5, -5, -5, 5, // v7-v4-v3-v2 bottom
-                                    5, -5, -5, -5, -5, -5, -5, 5, -5, 5, 5, -5 // v4-v7-v6-v5 back
-                                ],
-
-                                normals: [
-                                    0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, // v0-v1-v2-v3 front
-                                    1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, // v0-v3-v4-v5 right
-                                    0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, // v0-v5-v6-v1 top
-                                    -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, // v1-v6-v7-v2 left
-                                    0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, // v7-v4-v3-v2 bottom
-                                    0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1 // v4-v7-v6-v5 back
-                                ],
-
-                                uv: [
-                                    5, 5, 0, 5, 0, 0, 5, 0, // v0-v1-v2-v3 front
-                                    0, 5, 0, 0, 5, 0, 5, 5, // v0-v3-v4-v5 right
-                                    5, 0, 5, 5, 0, 5, 0, 0, // v0-v5-v6-v1 top
-                                    5, 5, 0, 5, 0, 0, 5, 0, // v1-v6-v7-v2 left
-                                    0, 0, 5, 0, 5, 5, 0, 5, // v7-v4-v3-v2 bottom
-                                    0, 0, 5, 0, 5, 5, 0, 5 // v4-v7-v6-v5 back
-                                ],
-
-                                indices: [
-                                    0, 1, 2, 0, 2, 3, // back
-                                    4, 5, 6, 4, 6, 7,  // front
-                                    8, 9, 10, 8, 10, 11, // right
-                                    12, 13, 14, 12, 14, 15, // top
-                                    16, 17, 18, 16, 18, 19, // left
-                                    20, 21, 22, 20, 22, 23 // bottom
-
-                                ]
-                            }
-                        ]
-                    }
+            this._super(BIMSURFER._apply({
+                geometries: [
+                    this._geometry = new BIMSURFER.BoxGeometry(this.viewer)
                 ]
-            });
-
-            this.fire('active', this.active = true);
-
-            return this;
+            }, cfg));
         },
 
-        deactivate: function () {
-
-            if (!this.active) {
-                return this;
-            }
-
-            this._boxNode.destroy();
-
-            this.fire('active', this.active = false);
-
-            return this;
-        },
 
         _destroy: function () {
 
-            this.deactivate();
+            this._geometry.destroy();
+
+            this._super();
         }
     });
 })();;(function () {
 
     "use strict";
 
-    /**
-     * Defines a viewpoint within a {@link BIMSURFER.Viewer}.
-     */
-    BIMSURFER.TeapotObject = BIMSURFER.Component.extend({
+    BIMSURFER.TeapotObject = BIMSURFER.Object.extend({
 
         /**
          JavaScript class name for this Component.
@@ -4930,72 +4824,1279 @@ var viewer = new BIMSURFER.Viewer(...);
 
         _init: function (cfg) {
 
-            /**
-             * True when this camera is active.
-             */
-            this.active = false;
+            this._super(BIMSURFER._apply({
+                geometries: [
+                    this._geometry = new BIMSURFER.TeapotGeometry(this.viewer)
+                ]
+            }, cfg));
+        },
 
-            var scene = this.viewer.scene;
+        _destroy: function () {
 
-            // The SceneJS content root
-            this._contentNode = scene.getNode('contentRoot');
+            this._geometry.destroy();
 
-            this._boxNode = null;
+            this._super();
+        }
+    });
+})();;(function () {
 
-            this._pos = cfg.pos || [0, 0, 0];
+    "use strict";
 
-            if (cfg.active !== false) {
-                this.activate();
-            }
+    /**
+     * Defines a viewpoint within a {@link BIMSURFER.Viewer}.
+     */
+    BIMSURFER.Camera = BIMSURFER.Component.extend({
+
+        /**
+         JavaScript class name for this Component.
+
+         @property className
+         @type String
+         @final
+         */
+        className: "BIMSURFER.Camera",
+
+        _init: function (cfg) {
+
+            // The SceneJS nodes that this Camera controls
+            this._lookatNode = this.viewer.scene.getNode('theLookat');
+            this._cameraNode = this.viewer.scene.getNode('theCamera');
+
+            // Schedule update of view and projection transforms for next tick
+            this._lookatNodeDirty = true;
+            this._cameraNodeDirty = true;
+
+            // Camera not at rest now
+            this._rested = false;
+
+            this._tickSub = null;
+
+            this.eye = cfg.eye;
+            this.look = cfg.look;
+            this.up = cfg.up;
+            this.aspect = cfg.aspect;
+            this.fovy = cfg.fovy;
+            this.near = cfg.near;
+            this.far = cfg.far;
+            this.screenPan = cfg.screenPan;
+
+            this.active = cfg.active !== false;
         },
 
         /**
-         * Activates this camera
+         * Rotate 'eye' about 'look', around the 'up' vector
+         *
+         * @param {Number} angle Angle of rotation in degrees
          */
-        activate: function () {
+        rotateEyeY: function (angle) {
 
-            var self = this;
+            // Get 'look' -> 'eye' vector
+            var eye2 = BIMSURFER.math.subVec3(this._eye, this._look, []);
 
-            if (this.active) {
-                return this;
-            }
+            // Rotate 'eye' vector about 'up' vector
+            var mat = BIMSURFER.math.rotationMat4v(angle * 0.0174532925, this._up);
+            eye2 = BIMSURFER.math.transformPoint3(mat, eye2, []);
 
-            // Geometry node which defines our custom object, a simple cube.
-            this._boxNode = this._contentNode.addNode({
+            // Set eye position as 'look' plus 'eye' vector
+            this._eye = BIMSURFER.math.addVec3(eye2, this._look, []);
 
-                type: "material",
-                color: {r: 0.4, g: 0.4, b: 0.8 },
-
-                nodes: [
-                    {
-                        type: "translate",
-                        x: this._pos[0],
-                        y: this._pos[1],
-                        z: this._pos[2],
-
-                        nodes: [
-                            this._build()
-                        ]
-                    }
-                ]
-            });
-
-            this.fire('active', this.active = true);
-
-            return this;
+            this._lookatNodeDirty = true;
         },
 
-        deactivate: function () {
+        /**
+         * Rotate 'eye' about 'look' around the X-axis
+         *
+         * @param {Number} angle Angle of rotation in degrees
+         */
+        rotateEyeX: function (angle) {
 
-            if (!this.active) {
-                return this;
+            // Get 'look' -> 'eye' vector
+            var eye2 = BIMSURFER.math.subVec3(this._eye, this._look, []);
+
+            // Get orthogonal vector from 'eye' and 'up'
+            var left = BIMSURFER.math.cross3Vec3(BIMSURFER.math.normalizeVec3(eye2, []), BIMSURFER.math.normalizeVec3(this._up, []));
+
+            // Rotate 'eye' vector about orthogonal vector
+            var mat = BIMSURFER.math.rotationMat4v(angle * 0.0174532925, left);
+            eye2 = BIMSURFER.math.transformPoint3(mat, eye2, []);
+
+            // Set eye position as 'look' plus 'eye' vector
+            this._eye = BIMSURFER.math.addVec3(eye2, this._look, []);
+
+            // Rotate 'up' vector about orthogonal vector
+            this._up = BIMSURFER.math.transformPoint3(mat, this._up, []);
+
+            this._lookatNodeDirty = true;
+        },
+
+        /**
+         * Rotate 'look' about 'eye', around the 'up' vector
+         *
+         * <p>Applies constraints added with {@link #addConstraint}.</p>
+         *
+         * @param {Number} angle Angle of rotation in degrees
+         */
+        rotateLookY: function (angle) {
+
+            // Get 'look' -> 'eye' vector
+            var look2 = BIMSURFER.math.subVec3(this._look, this._eye, []);
+
+            // Rotate 'look' vector about 'up' vector
+            var mat = BIMSURFER.math.rotationMat4v(angle * 0.0174532925, this._up);
+            look2 = BIMSURFER.math.transformPoint3(mat, look2, []);
+
+            // Set look position as 'look' plus 'eye' vector
+            this._look = BIMSURFER.math.addVec3(look2, this._eye, []);
+
+            this._lookatNodeDirty = true;
+        },
+
+        /**
+         * Rotate 'eye' about 'look' around the X-axis
+         *
+         * @param {Number} angle Angle of rotation in degrees
+         */
+        rotateLookX: function (angle) {
+
+            // Get 'look' -> 'eye' vector
+            var look2 = BIMSURFER.math.subVec3(this._look, this._eye, []);
+
+            // Get orthogonal vector from 'eye' and 'up'
+            var left = BIMSURFER.math.cross3Vec3(BIMSURFER.math.normalizeVec3(look2, []), BIMSURFER.math.normalizeVec3(this._up, []));
+
+            // Rotate 'look' vector about orthogonal vector
+            var mat = BIMSURFER.math.rotationMat4v(angle * 0.0174532925, left);
+            look2 = BIMSURFER.math.transformPoint3(mat, look2, []);
+
+            // Set eye position as 'look' plus 'eye' vector
+            this._look = BIMSURFER.math.addVec3(look2, this._eye, []);
+
+            // Rotate 'up' vector about orthogonal vector
+            this._up = BIMSURFER.math.transformPoint3(mat, this._up, []);
+
+            this._lookatNodeDirty = true;
+        },
+
+        /**
+         * Pans the camera along X and Y axis.
+         * @param pan The pan vector
+         */
+        pan: function (pan) {
+
+            // Get 'look' -> 'eye' vector
+            var eye2 = BIMSURFER.math.subVec3(this._eye, this._look, []);
+
+            // Building this pan vector
+            var vec = [0, 0, 0];
+            var v;
+
+            if (pan[0] !== 0) {
+
+                // Pan along orthogonal vector to 'look' and 'up'
+
+                var left = BIMSURFER.math.cross3Vec3(BIMSURFER.math.normalizeVec3(eye2, []), BIMSURFER.math.normalizeVec3(this._up, []));
+
+                v = BIMSURFER.math.mulVec3Scalar(left, pan[0]);
+
+                vec[0] += v[0];
+                vec[1] += v[1];
+                vec[2] += v[2];
             }
 
-            this._boxNode.destroy();
+            if (pan[1] !== 0) {
 
-            this.fire('active', this.active = false);
+                // Pan along 'up' vector
 
-            return this;
+                v = BIMSURFER.math.mulVec3Scalar(BIMSURFER.math.normalizeVec3(this._up, []), pan[1]);
+
+                vec[0] += v[0];
+                vec[1] += v[1];
+                vec[2] += v[2];
+            }
+
+            if (pan[3] !== 0) {
+
+                // Pan along 'eye'- -> 'look' vector
+
+                v = BIMSURFER.math.mulVec3Scalar(BIMSURFER.math.normalizeVec3(eye2, []), pan[2]);
+
+                vec[0] += v[0];
+                vec[1] += v[1];
+                vec[2] += v[2];
+            }
+
+            this._eye = BIMSURFER.math.addVec3(this._eye, vec, []);
+            this._look = BIMSURFER.math.addVec3(this._look, vec, []);
+
+            this._lookatNodeDirty = true;
+        },
+
+        /**
+         * Increments/decrements zoom factor, ie. distance between eye and look.
+         * @param delta
+         */
+        zoom: function (delta) {
+
+            var vec = BIMSURFER.math.subVec3(this._eye, this._look, []); // Get vector from eye to look
+            var lenLook = Math.abs(BIMSURFER.math.lenVec3(vec, []));    // Get len of that vector
+            var newLenLook = Math.abs(lenLook + delta);         // Get new len after zoom
+
+            var dir = BIMSURFER.math.normalizeVec3(vec, []);  // Get normalised vector
+            this._eye = BIMSURFER.math.addVec3(this._look, BIMSURFER.math.mulVec3Scalar(dir, newLenLook), []);
+
+            this._lookatNodeDirty = true;
+        },
+
+        _props: {
+
+            active: {
+
+                set: function (value) {
+
+                    if (this._active === value) {
+                        return;
+                    }
+
+                    if (value) {
+
+                        this._lookatNodeDirty = true;
+                        this._cameraNodeDirty = true;
+
+                        var self = this;
+
+                        this._tickSub = this.viewer.on("tick",
+                            function () {
+
+                                if (self._lookatNodeDirty) {
+
+                                    // View transform update scheduled for scene graph
+
+                                    self._lookatNode.setEye(BIMSURFER.math.vec3ArrayToObj(self._eye));
+                                    self._lookatNode.setLook(BIMSURFER.math.vec3ArrayToObj(self._look));
+                                    self._lookatNode.setUp(BIMSURFER.math.vec3ArrayToObj(self._up));
+
+                                    // Camera not at rest now
+                                    self._rested = false;
+
+                                    // Scene camera position now up to date
+                                    self._lookatNodeDirty = false;
+
+                                } else {
+
+                                    // Else camera position now at rest
+
+                                    if (!self._rested) {
+                                        self._rested = true;
+                                    }
+                                }
+
+                                if (self._cameraNodeDirty) {
+
+                                    // Projection update scheduled for scene graph
+
+                                    // Update the scene graph
+
+                                    self._cameraNode.set({
+                                        optics: {
+                                            type: "perspective",
+                                            fovy: self.fovy,
+                                            near: self.near,
+                                            far: self.far,
+                                            aspect: self.aspect
+                                        }
+                                    });
+
+                                    // Scene projection now up to date
+                                    self._cameraNodeDirty = false;
+                                }
+                            });
+
+                        this.fire('active', this._active = true);
+
+                    } else {
+
+                        this.viewer.off(this._tickSub);
+
+                        this.fire('active', this._active = false);
+                    }
+                },
+
+                get: function () {
+                    return this._active;
+                }
+            },
+
+            aspect: {
+
+                set: function (value) {
+                    this._aspect = value || 1.0;
+                    this._cameraNodeDirty = true;
+                },
+
+                get: function () {
+                    return this._aspect;
+                }
+            },
+
+            eye: {
+
+                set: function (value) {
+                    this._eye = value || [ 0, 0, -10 ];
+                    this._lookatNodeDirty = true;
+                },
+
+                get: function () {
+                    return this._eye;
+                }
+            },
+
+            look: {
+
+                set: function (value) {
+                    this._look = value || [ 0, 0, 0 ];
+                    this._lookatNodeDirty = true;
+                },
+
+                get: function () {
+                    return this._look;
+                }
+            },
+
+            up: {
+
+                set: function (value) {
+                    this._up = value || [0, 1, 0];
+                    this._lookatNodeDirty = true;
+                },
+
+                get: function () {
+                    return this._up;
+                }
+            },
+
+            fovy: {
+
+                set: function (value) {
+                    this._fovy = value || 60;
+                    this._cameraNodeDirty = true;
+                },
+
+                get: function () {
+                    return this._fovy;
+                }
+            },
+
+            near: {
+
+                set: function (value) {
+                    this._near = value || 0.1;
+                    this._cameraNodeDirty = true;
+                },
+
+                get: function () {
+                    return this._near;
+                }
+            },
+
+            far: {
+
+                set: function (value) {
+                    this._far = value || 10000;
+                    this._cameraNodeDirty = true;
+                },
+
+                get: function () {
+                    return this._far;
+                }
+            },
+
+            screenPan: {
+
+                set: function (value) {
+                    this._screenPan= value || [0,0];
+                    this._cameraNodeDirty = true;
+                },
+
+                get: function () {
+                    return this._screenPan;
+                }
+            }
+        },
+
+        _destroy: function () {
+            this.active = false;
+        }
+
+    });
+
+})();;/**
+
+ **Light** is the base class for all light source classes in BIMViewer.
+
+ ## Overview
+
+ ## Example
+
+ TODO
+
+ ````javascript
+ TODO
+ ````
+ @class Light
+ @module BIMSURFER
+ @constructor
+ @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}.
+ @param [cfg] {*} Light configuration
+ @param [cfg.id] {String} Optional ID, unique among all components in the parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}, generated automatically when omitted.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Light.
+ @param [cfg.camera] {Camera} Camera to control
+ @extends Component
+ */
+(function () {
+
+    "use strict";
+
+    BIMSURFER.Light = BIMSURFER.Component.extend({
+
+        /**
+         JavaScript class name for this Component.
+
+         @property className
+         @type String
+         @final
+         */
+        className: "BIMSURFER.Light",
+
+        _init: function (cfg) {
+
+            this._lightsManager = getLightsManager(this.viewer);
+
+            this._lightsManager.createLight(this.id, cfg);
+        },
+
+        _activate: function () {
+            this._lightsManager.activateLight(this.id);
+        },
+
+        _deactivate: function () {
+            this._lightsManager.deactivateLight(this.id);
+        },
+
+        _update: function (params) {
+            this._lightsManager.updateLight(this.id, params);
+        },
+
+        _destroy: function () {
+
+            this._lightsManager.destroyLight(this.id);
+
+            putLightsManager(this._lightsManager);
+        }
+    });
+
+    function LightsManager(id, viewer) {
+
+        this.id = id;
+        this.viewer = viewer;
+        this._lightsNode = null;
+        this.lights = [];
+        this.lightsMap = {};
+        this.activeLights = {};
+        this.useCount = 0;
+
+        this.lightNodeDirty = true;
+        this.lightsUpdate = null;
+
+        var self = this;
+
+        this.tickSub = viewer.on("tick",
+            function () {
+
+                if (self.lightNodeDirty) {
+
+                    // Build list of lights params
+
+                    var lights = [];
+                    var i;
+                    var activeLight;
+
+                    for (var id in self.lightsMap) {
+                        if (self.lightsMap.hasOwnProperty(id)) {
+
+                            if (self.activeLights[id] === true) {
+
+                                // Light is active, add to list
+                                i = self.lightsMap[id];
+                                activeLight = self.lights[i];
+                                lights.push(activeLight);
+                            }
+                        }
+                    }
+
+                    // Update lights node
+
+                    self._createLightsNode(lights);
+                    self.lightNodeDirty = false;
+                }
+
+                if (self.lightsUpdate && self._lightsNode) {
+                    self._lightsNode.setLights(self.lightsUpdate);
+                    self.lightsUpdate = null;
+                }
+            });
+    }
+
+    LightsManager.prototype._createLightsNode = function (lights) {
+
+        this._destroyLightsNode();
+
+        // Insert lights node above scene graph content root
+
+        var contentRootNode = this.viewer.scene.getNode("contentRoot");
+
+        var parent = contentRootNode.parent;
+
+        var children = parent.disconnectNodes();
+
+        this._lightsNode = parent.addNode({
+            type: "lights",
+            lights: lights
+        });
+
+        this._lightsNode.addNodes(children);
+    };
+
+    //
+    LightsManager.prototype._destroyLightsNode = function () {
+
+        if (!this._lightsNode) {
+            return;
+        }
+
+        // Extract lights node from scene graph,
+        // moving its children up to its parent
+
+        this._lightsNode.splice();
+        this._lightsNode.destroy();
+        this._lightsNode = null;
+    };
+
+    LightsManager.prototype.createLight = function (lightId, params) {
+        this.lights.push(params);
+        this.lightsMap[lightId] = this.lights.length - 1;
+        this.activeLights[lightId] = params.active !== false;
+        this.lightNodeDirty = true;
+    };
+
+    LightsManager.prototype.activateLight = function (lightId) {
+        this.activeLights[lightId] = true;
+        this.lightNodeDirty = true;
+    };
+
+    LightsManager.prototype.deactivateLight = function (lightId) {
+        this.activeLights[lightId] = false;
+        this.lightNodeDirty = true;
+    };
+
+    LightsManager.prototype.updateLight = function (lightId, params) {
+        if (!this.lightsUpdate) {
+            this.lightsUpdate = {};
+        }
+        var idx = this.lightsMap[lightId];
+        var light = this.lightsUpdate[idx] || (this.lightsUpdate[idx] = {});
+        BIMSURFER._apply(params, light);
+    };
+
+    LightsManager.prototype.destroyLight = function (lightId) {
+
+        var i = this.lightsMap[lightId];
+
+        // Delete light
+        this.lights.splice(i, 1);
+        delete this.lightsMap[lightId];
+        delete this.activeLights[lightId];
+        delete this.lightsUpdate[lightId];
+
+        // Adjust indices in lights map
+        for (var id in this.lightsMap) {
+            if (this.lightsMap.hasOwnProperty(id)) {
+                if (this.lightsMap[id] >= i) {
+                    this.lightsMap[id]--;
+                }
+            }
+        }
+
+        this.lightNodeDirty = true;
+    };
+
+    LightsManager.prototype.destroy = function () {
+        this.viewer.off(this.tickSub);
+        this._destroyLightsNode();
+    };
+
+
+    // A LightsManager for each Viewer,
+    // created on-demand by BIMSURFER.Lights components
+    var managers = {};
+
+
+    // Gets a LightsManager for the given Viewer
+    // reuses any instance already created for that Viewer
+    function getLightsManager(viewer) {
+        var id = viewer.id;
+        var manager = managers[id];
+        if (!manager) {
+            manager = new LightsManager(id, viewer);
+            managers[id] = manager;
+        }
+        manager.useCount++;
+        return manager;
+    }
+
+    // Releases a LightsManager to the pool, destroying it if
+    // there are no more references to it
+    function putLightsManager(manager) {
+        if (--manager.useCount <= 0) {
+            delete managers[manager.id];
+            manager.destroy();
+        }
+    }
+})();
+;/**
+ A **AmbientLight** defines a directional light source that originates from a single point and spreads outward in all directions.
+
+ ## Overview
+
+ <ul>
+
+ <li>AmbientLights have a position, but no direction.</li>
+
+ <li>AmbientLights may be defined in either **World** or **View** coordinate space. When in World-space, their position
+ is relative to the World coordinate system, and will appear to move as the {{#crossLink "Camera"}}{{/crossLink}} moves.
+ When in View-space, their position is relative to the View coordinate system, and will behave as if fixed to the viewer's
+ head as the {{#crossLink "Camera"}}{{/crossLink}} moves.</li>
+
+ <li>Within bIMSurfer's's Phong lighting calculations, AmbientLight {{#crossLink "AmbientLight/diffuse:property"}}{{/crossLink}} and
+ {{#crossLink "AmbientLight/specular:property"}}{{/crossLink}}.</li>
+
+ <li>AmbientLights have {{#crossLink "AmbientLight/constantAttenuation:property"}}{{/crossLink}}, {{#crossLink "AmbientLight/linearAttenuation:property"}}{{/crossLink}} and
+ {{#crossLink "AmbientLight/quadraticAttenuation:property"}}{{/crossLink}} factors, which indicate how their intensity attenuates over distance.</li>
+
+
+ </ul>
+
+
+ ## Example
+
+
+ ```` javascript
+ TODO
+ ````
+
+ As with all components, we can <a href="BIMSURFER.Component.html#changeEvents" class="crosslink">observe and change properties</a> on AmbientLights like so:
+
+ ````Javascript
+ var handle = ambientLight.on("diffuse", // Attach a change listener to a property
+ function(value) {
+        // Property value has changed
+    });
+
+ ambientLight.diffuse = [0.4, 0.6, 0.4]; // Fires the change listener
+
+ ambientLight.off(handle); // Detach the change listener
+ ````
+
+ @class AmbientLight
+ @module BIMSURFER
+ @constructor
+ @extends Component
+ @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}.
+ @param [cfg] {*} The AmbientLight configuration
+ @param [cfg.id] {String} Optional ID, unique among all components in the parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}, generated automatically when omitted.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this AmbientLight.
+ @param [cfg.color=[0.7, 0.7, 0.8 ]] {Array(Number)} Diffuse color of this AmbientLight.
+ */
+(function () {
+
+    "use strict";
+
+    BIMSURFER.AmbientLight = BIMSURFER.Light.extend({
+
+        className: "BIMSURFER.AmbientLight",
+
+        _init: function (cfg) {
+
+            this._super(BIMSURFER._apply({ mode: "ambient" }, cfg));
+
+            this.color = cfg.color;
+        },
+
+        _props: {
+            
+            /**
+             The color of this AmbientLight.
+
+             @property color
+             @default [0.7, 0.7, 0.8]
+             @type Array(Number)
+             */
+            color: {
+
+                set: function (value) {
+                    this._color = value;
+                    this._update({
+                        color: { r: value[0], g: value[1], b: value[2] }
+                    });
+                },
+
+                get: function () {
+                    return this._color;
+                }
+            },
+        }
+    });
+
+})();
+;/**
+ A **PointLight** defines a positional light source that originates from a single point and spreads outward in all directions.
+
+ ## Overview
+
+ <ul>
+
+ <li>PointLights have a position, but no direction.</li>
+
+ <li>PointLights may be defined in either **World** or **View** coordinate space. When in World-space, their position
+ is relative to the World coordinate system, and will appear to move as the {{#crossLink "Camera"}}{{/crossLink}} moves.
+ When in View-space, their position is relative to the View coordinate system, and will behave as if fixed to the viewer's
+ head as the {{#crossLink "Camera"}}{{/crossLink}} moves.</li>
+
+ <li>Within bIMSurfer's's Phong lighting calculations, PointLight {{#crossLink "PointLight/diffuse:property"}}{{/crossLink}} and
+ {{#crossLink "PointLight/specular:property"}}{{/crossLink}}.</li>
+
+ <li>PointLights have {{#crossLink "PointLight/constantAttenuation:property"}}{{/crossLink}}, {{#crossLink "PointLight/linearAttenuation:property"}}{{/crossLink}} and
+ {{#crossLink "PointLight/quadraticAttenuation:property"}}{{/crossLink}} factors, which indicate how their intensity attenuates over distance.</li>
+
+
+ </ul>
+
+
+ ## Example
+
+
+ ```` javascript
+ TODO
+ ````
+
+ As with all components, we can <a href="BIMSURFER.Component.html#changeEvents" class="crosslink">observe and change properties</a> on PointLights like so:
+
+ ````Javascript
+ var handle = pointLight.on("diffuse", // Attach a change listener to a property
+ function(value) {
+        // Property value has changed
+    });
+
+ pointLight.diffuse = [0.4, 0.6, 0.4]; // Fires the change listener
+
+ pointLight.off(handle); // Detach the change listener
+ ````
+
+ @class PointLight
+ @module BIMSURFER
+ @constructor
+ @extends Component
+ @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}.
+ @param [cfg] {*} The PointLight configuration
+ @param [cfg.id] {String} Optional ID, unique among all components in the parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}, generated automatically when omitted.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this PointLight.
+ @param [cfg.pos=[ 1.0, 1.0, 1.0 ]] {Array(Number)} Position, in either World or View space, depending on the value of the **space** parameter.
+ @param [cfg.color=[0.7, 0.7, 0.8 ]] {Array(Number)} Diffuse color of this PointLight.
+ @param [cfg.constantAttenuation=0] {Number} Constant attenuation factor.
+ @param [cfg.linearAttenuation=0] {Number} Linear attenuation factor.
+ @param [cfg.quadraticAttenuation=0] {Number} Quadratic attenuation factor.
+ @param [cfg.space="view"] {String} The coordinate system this PointLight is defined in - "view" or "space".
+ */
+(function () {
+
+    "use strict";
+
+    BIMSURFER.PointLight = BIMSURFER.Light.extend({
+
+        className: "BIMSURFER.PointLight",
+
+        _init: function (cfg) {
+
+            this._super(BIMSURFER._apply({ mode: "point" }, cfg));
+
+            this.pos = cfg.pos;
+            this.color = cfg.color;
+            this.constantAttenuation = cfg.constantAttenuation;
+            this.linearAttenuation = cfg.linearAttenuation;
+            this.quadraticAttenuation = cfg.quadraticAttenuation;
+            this.space = cfg.space;
+        },
+
+        _props: {
+
+            /**
+             The position of this PointLight.
+
+             This will be either World- or View-space, depending on the value of {{#crossLink "PointLight/space:property"}}{{/crossLink}}.
+
+             @property pos
+             @default [1.0, 1.0, 1.0]
+             @type Array(Number)
+             */
+            pos: {
+
+                set: function (value) {
+                    this._pos = value;
+                    this._update({
+                        pos: { x: value[0], y: value[1], z: value[2] }
+                    });
+                },
+
+                get: function () {
+                    return this._pos;
+                }
+            },
+
+            /**
+             The color of this PointLight.
+
+             @property color
+             @default [0.7, 0.7, 0.8]
+             @type Array(Number)
+             */
+            color: {
+
+                set: function (value) {
+                    this._color = value;
+                    this._update({
+                        color: { r: value[0], g: value[1], b: value[2] }
+                    });
+                },
+
+                get: function () {
+                    return this._color;
+                }
+            },
+
+            /**
+             The constant attenuation factor for this PointLight.
+
+             @property constantAttenuation
+             @default 0
+             @type Number
+             */
+            constantAttenuation: {
+
+                set: function (value) {
+                    this._update({
+                        constantAttenuation: this._constantAttenuation = value
+                    });
+                },
+
+                get: function () {
+                    return this._constantAttenuation;
+                }
+            },
+
+            /**
+             The linear attenuation factor for this PointLight.
+
+             @property linearAttenuation
+             @default 0
+             @type Number
+             */
+            linearAttenuation: {
+
+                set: function (value) {
+                    this._update({
+                        linearAttenuation: this._linearAttenuation = value
+                    });
+                },
+
+                get: function () {
+                    return this._linearAttenuation;
+                }
+            },
+
+            /**
+             The quadratic attenuation factor for this Pointlight.
+
+             @property quadraticAttenuation
+             @default 0
+             @type Number
+             */
+            quadraticAttenuation: {
+
+                set: function (value) {
+                    this._update({
+                        quadraticAttenuation: this._quadraticAttenuation = value
+                    });
+                },
+
+                get: function () {
+                    return this._quadraticAttenuation;
+                }
+            },
+
+            /**
+             Indicates which coordinate space this PointLight is in.
+
+             Supported values are:
+
+             <ul>
+             <li>"view" - View space, aligned within the view volume as if fixed to the viewer's head</li>
+             <li>"world" - World space, fixed within the world, moving within the view volume with respect to camera</li>
+             </ul>
+
+             @property space
+             @default "view"
+             @type String
+             */
+            space: {
+
+                set: function (value) {
+                    this._update({
+                        space: this._space = value
+                    });
+                },
+
+                get: function () {
+                    return this._space;
+                }
+            }
+        }
+    });
+
+})();
+;/**
+ A **DirLight** defines a directional light source that originates from a single point and spreads outward in all directions.
+
+ ## Overview
+
+ <ul>
+
+ <li>DirLights have a position, but no direction.</li>
+
+ <li>DirLights may be defined in either **World** or **View** coordinate space. When in World-space, their position
+ is relative to the World coordinate system, and will appear to move as the {{#crossLink "Camera"}}{{/crossLink}} moves.
+ When in View-space, their position is relative to the View coordinate system, and will behave as if fixed to the viewer's
+ head as the {{#crossLink "Camera"}}{{/crossLink}} moves.</li>
+
+ <li>Within bIMSurfer's's Phong lighting calculations, DirLight {{#crossLink "DirLight/diffuse:property"}}{{/crossLink}} and
+ {{#crossLink "DirLight/specular:property"}}{{/crossLink}}.</li>
+
+ <li>DirLights have {{#crossLink "DirLight/constantAttenuation:property"}}{{/crossLink}}, {{#crossLink "DirLight/linearAttenuation:property"}}{{/crossLink}} and
+ {{#crossLink "DirLight/quadraticAttenuation:property"}}{{/crossLink}} factors, which indicate how their intensity attenuates over distance.</li>
+
+
+ </ul>
+
+
+ ## Example
+
+
+ ```` javascript
+ TODO
+ ````
+
+ As with all components, we can <a href="BIMSURFER.Component.html#changeEvents" class="crosslink">observe and change properties</a> on DirLights like so:
+
+ ````Javascript
+ var handle = dirLight.on("diffuse", // Attach a change listener to a property
+ function(value) {
+        // Property value has changed
+    });
+
+ dirLight.diffuse = [0.4, 0.6, 0.4]; // Fires the change listener
+
+ dirLight.off(handle); // Detach the change listener
+ ````
+
+ @class DirLight
+ @module BIMSURFER
+ @constructor
+ @extends Component
+ @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}.
+ @param [cfg] {*} The DirLight configuration
+ @param [cfg.id] {String} Optional ID, unique among all components in the parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}, generated automatically when omitted.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this DirLight.
+ @param [cfg.dir=[ 1.0, 1.0, 1.0 ]] {Array(Number)} Direction, in either World or View space, depending on the value of the **space** parameter.
+ @param [cfg.color=[0.7, 0.7, 0.8 ]] {Array(Number)} Diffuse color of this DirLight.
+ @param [cfg.space="view"] {String} The coordinate system this DirLight is defined in - "view" or "space".
+ */
+(function () {
+
+    "use strict";
+
+    BIMSURFER.DirLight = BIMSURFER.Light.extend({
+
+        className: "BIMSURFER.DirLight",
+
+        _init: function (cfg) {
+
+            this._super(BIMSURFER._apply({ mode: "dir" }, cfg));
+
+            this.dir = cfg.dir;
+            this.color = cfg.color;
+            this.space = cfg.space;
+        },
+
+        _props: {
+
+            /**
+             The direction of this DirLight.
+
+             This will be either World- or View-space, depending on the value of {{#crossLink "DirLight/space:property"}}{{/crossLink}}.
+
+             @property dir
+             @default [1.0, 1.0, 1.0]
+             @type Array(Number)
+             */
+            dir: {
+
+                set: function (value) {
+                    this._dir = value;
+                    this._update({
+                        dir: { x: value[0], y: value[1], z: value[2] }
+                    });
+                },
+
+                get: function () {
+                    return this._dir;
+                }
+            },
+
+            /**
+             The color of this DirLight.
+
+             @property color
+             @default [0.7, 0.7, 0.8]
+             @type Array(Number)
+             */
+            color: {
+
+                set: function (value) {
+                    this._color = value;
+                    this._update({
+                        color: { r: value[0], g: value[1], b: value[2] }
+                    });
+                },
+
+                get: function () {
+                    return this._color;
+                }
+            },
+
+            /**
+             Indicates which coordinate space this DirLight is in.
+
+             Supported values are:
+
+             <ul>
+             <li>"view" - View space, aligned within the view volume as if fixed to the viewer's head</li>
+             <li>"world" - World space, fixed within the world, moving within the view volume with respect to camera</li>
+             </ul>
+
+             @property space
+             @default "view"
+             @type String
+             */
+            space: {
+
+                set: function (value) {
+                    this._update({
+                        space: this._space = value
+                    });
+                },
+
+                get: function () {
+                    return this._space;
+                }
+            }
+        }
+    });
+
+})();
+;(function () {
+
+    "use strict";
+
+    /**
+     * Defines a geometry within a {@link BIMSURFER.Viewer}.
+     */
+    BIMSURFER.Geometry = BIMSURFER.Component.extend({
+
+        /**
+         JavaScript class name for this Component.
+
+         @property className
+         @type String
+         @final
+         */
+        className: "BIMSURFER.Geometry",
+
+        _init: function (cfg) {
+
+            var libraryNode = this.viewer.scene.getNode("library");
+
+            if (cfg.positions && cfg.indices) {
+
+                this._geometryNode = libraryNode.addNode({
+                    type: "geometry",
+                    primitive: cfg.primitive || "triangles",
+                    positions: cfg.positions,
+                    normals: cfg.normals,
+                    uv: cfg.uv,
+                    indices: cfg.indices
+                });
+            } else {
+
+                // Default box geometry
+
+                this._geometryNode = libraryNode.addNode({
+
+                    type: "geometry",
+
+                    primitive: "triangles",
+
+                    positions: [
+                        5, 5, 5, -5, 5, 5, -5, -5, 5, 5, -5, 5, // v0-v1-v2-v3 front
+                        5, 5, 5, 5, -5, 5, 5, -5, -5, 5, 5, -5, // v0-v3-v4-v5 right
+                        5, 5, 5, 5, 5, -5, -5, 5, -5, -5, 5, 5, // v0-v5-v6-v1 top
+                        -5, 5, 5, -5, 5, -5, -5, -5, -5, -5, -5, 5, // v1-v6-v7-v2 left
+                        -5, -5, -5, 5, -5, -5, 5, -5, 5, -5, -5, 5, // v7-v4-v3-v2 bottom
+                        5, -5, -5, -5, -5, -5, -5, 5, -5, 5, 5, -5 // v4-v7-v6-v5 back
+                    ],
+
+                    normals: [
+                        0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, // v0-v1-v2-v3 front
+                        1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, // v0-v3-v4-v5 right
+                        0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, // v0-v5-v6-v1 top
+                        -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, // v1-v6-v7-v2 left
+                        0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, // v7-v4-v3-v2 bottom
+                        0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1 // v4-v7-v6-v5 back
+                    ],
+
+                    uv: [
+                        5, 5, 0, 5, 0, 0, 5, 0, // v0-v1-v2-v3 front
+                        0, 5, 0, 0, 5, 0, 5, 5, // v0-v3-v4-v5 right
+                        5, 0, 5, 5, 0, 5, 0, 0, // v0-v5-v6-v1 top
+                        5, 5, 0, 5, 0, 0, 5, 0, // v1-v6-v7-v2 left
+                        0, 0, 5, 0, 5, 5, 0, 5, // v7-v4-v3-v2 bottom
+                        0, 0, 5, 0, 5, 5, 0, 5 // v4-v7-v6-v5 back
+                    ],
+
+                    indices: [
+                        0, 1, 2, 0, 2, 3, // back
+                        4, 5, 6, 4, 6, 7,  // front
+                        8, 9, 10, 8, 10, 11, // right
+                        12, 13, 14, 12, 14, 15, // top
+                        16, 17, 18, 16, 18, 19, // left
+                        20, 21, 22, 20, 22, 23 // bottom
+
+                    ]
+                });
+            }
+
+            this.coreId = this._geometryNode.getCoreId();
+
+            this.boundary = this._geometryNode.getBoundary();
+        },
+
+        _destroy: function () {
+            this._geometryNode.destroy();
+        }
+    });
+
+})();;(function () {
+
+    "use strict";
+
+    /**
+     *
+     */
+    BIMSURFER.BoxGeometry = BIMSURFER.Geometry.extend({
+
+        /**
+         JavaScript class name for this Component.
+
+         @property className
+         @type String
+         @final
+         */
+        className: "BIMSURFER.BoxGeometry",
+
+        _init: function (cfg) {
+
+            this._super(BIMSURFER._apply({
+
+                    primitive: "triangles",
+
+                    positions: [
+                        5, 5, 5, -5, 5, 5, -5, -5, 5, 5, -5, 5, // v0-v1-v2-v3 front
+                        5, 5, 5, 5, -5, 5, 5, -5, -5, 5, 5, -5, // v0-v3-v4-v5 right
+                        5, 5, 5, 5, 5, -5, -5, 5, -5, -5, 5, 5, // v0-v5-v6-v1 top
+                        -5, 5, 5, -5, 5, -5, -5, -5, -5, -5, -5, 5, // v1-v6-v7-v2 left
+                        -5, -5, -5, 5, -5, -5, 5, -5, 5, -5, -5, 5, // v7-v4-v3-v2 bottom
+                        5, -5, -5, -5, -5, -5, -5, 5, -5, 5, 5, -5 // v4-v7-v6-v5 back
+                    ],
+
+                    normals: [
+                        0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, // v0-v1-v2-v3 front
+                        1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, // v0-v3-v4-v5 right
+                        0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, // v0-v5-v6-v1 top
+                        -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, // v1-v6-v7-v2 left
+                        0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, // v7-v4-v3-v2 bottom
+                        0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1 // v4-v7-v6-v5 back
+                    ],
+
+                    uv: [
+                        5, 5, 0, 5, 0, 0, 5, 0, // v0-v1-v2-v3 front
+                        0, 5, 0, 0, 5, 0, 5, 5, // v0-v3-v4-v5 right
+                        5, 0, 5, 5, 0, 5, 0, 0, // v0-v5-v6-v1 top
+                        5, 5, 0, 5, 0, 0, 5, 0, // v1-v6-v7-v2 left
+                        0, 0, 5, 0, 5, 5, 0, 5, // v7-v4-v3-v2 bottom
+                        0, 0, 5, 0, 5, 5, 0, 5 // v4-v7-v6-v5 back
+                    ],
+
+                    indices: [
+                        0, 1, 2, 0, 2, 3, // back
+                        4, 5, 6, 4, 6, 7,  // front
+                        8, 9, 10, 8, 10, 11, // right
+                        12, 13, 14, 12, 14, 15, // top
+                        16, 17, 18, 16, 18, 19, // left
+                        20, 21, 22, 20, 22, 23 // bottom
+
+                    ]
+                },
+
+                cfg));
+        }
+    });
+})();;(function () {
+
+    "use strict";
+
+    /**
+     *
+     */
+    BIMSURFER.TeapotGeometry = BIMSURFER.Geometry.extend({
+
+        /**
+         JavaScript class name for this Component.
+
+         @property className
+         @type String
+         @final
+         */
+        className: "BIMSURFER.TeapotGeometry",
+
+        _init: function (cfg) {
+            this._super(BIMSURFER._apply(this._build(cfg), cfg));
         },
 
         _build: function (params) {
@@ -10758,12 +11859,8 @@ var viewer = new BIMSURFER.Viewer(...);
                 indices: new Uint16Array(flatten(reverse(indices))),
                 normals: new Float32Array(flatten(calculateNormals(positions, indices), 3))
             };
-        },
-
-        _destroy: function () {
-
-            this.deactivate();
         }
+
     });
 
     function calculateNormals(positions, indices) {
@@ -10778,10 +11875,10 @@ var viewer = new BIMSURFER.Viewer(...);
             var v2 = positions[j1];
             var v3 = positions[j2];
 
-            v2 = SceneJS_math_subVec4(v2, v1, [0, 0, 0, 0]);
-            v3 = SceneJS_math_subVec4(v3, v1, [0, 0, 0, 0]);
+            v2 = BIMSURFER.math.subVec4(v2, v1, [0, 0, 0, 0]);
+            v3 = BIMSURFER.math.subVec4(v3, v1, [0, 0, 0, 0]);
 
-            var n = SceneJS_math_normalizeVec4(SceneJS_math_cross3Vec4(v2, v3, [0, 0, 0, 0]), [0, 0, 0, 0]);
+            var n = BIMSURFER.math.normalizeVec4(BIMSURFER.math.cross3Vec4(v2, v3, [0, 0, 0, 0]), [0, 0, 0, 0]);
 
             if (!nvecs[j0]) nvecs[j0] = [];
             if (!nvecs[j1]) nvecs[j1] = [];
@@ -10832,1179 +11929,6 @@ var viewer = new BIMSURFER.Viewer(...);
         }
         return result;
     }
-})();;(function () {
-
-    "use strict";
-
-    /**
-     * Defines a viewpoint within a {@link BIMSURFER.Viewer}.
-     */
-    BIMSURFER.Camera = BIMSURFER.Component.extend({
-
-        /**
-         JavaScript class name for this Component.
-
-         @property className
-         @type String
-         @final
-         */
-        className: "BIMSURFER.Camera",
-
-        _init: function (cfg) {
-
-            // The SceneJS nodes that this Camera controls
-            this._lookatNode = this.viewer.scene.getNode('theLookat');
-            this._cameraNode = this.viewer.scene.getNode('theCamera');
-
-            // Schedule update of view and projection transforms for next tick
-            this._lookatNodeDirty = true;
-            this._cameraNodeDirty = true;
-
-            // Camera not at rest now
-            this._rested = false;
-
-            this._tickSub = null;
-
-            this.eye = cfg.eye;
-            this.look = cfg.look;
-            this.up = cfg.up;
-            this.aspect = cfg.aspect;
-            this.fovy = cfg.fovy;
-            this.near = cfg.near;
-            this.far = cfg.far;
-            this.screenPan = cfg.screenPan;
-
-            this.active = cfg.active !== false;
-        },
-
-        /**
-         * Rotate 'eye' about 'look', around the 'up' vector
-         *
-         * @param {Number} angle Angle of rotation in degrees
-         */
-        rotateEyeY: function (angle) {
-
-            // Get 'look' -> 'eye' vector
-            var eye2 = BIMSURFER.math.subVec3(this._eye, this._look, []);
-
-            // Rotate 'eye' vector about 'up' vector
-            var mat = BIMSURFER.math.rotationMat4v(angle * 0.0174532925, this._up);
-            eye2 = BIMSURFER.math.transformPoint3(mat, eye2, []);
-
-            // Set eye position as 'look' plus 'eye' vector
-            this._eye = BIMSURFER.math.addVec3(eye2, this._look, []);
-
-            this._lookatNodeDirty = true;
-        },
-
-        /**
-         * Rotate 'eye' about 'look' around the X-axis
-         *
-         * @param {Number} angle Angle of rotation in degrees
-         */
-        rotateEyeX: function (angle) {
-
-            // Get 'look' -> 'eye' vector
-            var eye2 = BIMSURFER.math.subVec3(this._eye, this._look, []);
-
-            // Get orthogonal vector from 'eye' and 'up'
-            var left = BIMSURFER.math.cross3Vec3(BIMSURFER.math.normalizeVec3(eye2, []), BIMSURFER.math.normalizeVec3(this._up, []));
-
-            // Rotate 'eye' vector about orthogonal vector
-            var mat = BIMSURFER.math.rotationMat4v(angle * 0.0174532925, left);
-            eye2 = BIMSURFER.math.transformPoint3(mat, eye2, []);
-
-            // Set eye position as 'look' plus 'eye' vector
-            this._eye = BIMSURFER.math.addVec3(eye2, this._look, []);
-
-            // Rotate 'up' vector about orthogonal vector
-            this._up = BIMSURFER.math.transformPoint3(mat, this._up, []);
-
-            this._lookatNodeDirty = true;
-        },
-
-        /**
-         * Rotate 'look' about 'eye', around the 'up' vector
-         *
-         * <p>Applies constraints added with {@link #addConstraint}.</p>
-         *
-         * @param {Number} angle Angle of rotation in degrees
-         */
-        rotateLookY: function (angle) {
-
-            // Get 'look' -> 'eye' vector
-            var look2 = BIMSURFER.math.subVec3(this._look, this._eye, []);
-
-            // Rotate 'look' vector about 'up' vector
-            var mat = BIMSURFER.math.rotationMat4v(angle * 0.0174532925, this._up);
-            look2 = BIMSURFER.math.transformPoint3(mat, look2, []);
-
-            // Set look position as 'look' plus 'eye' vector
-            this._look = BIMSURFER.math.addVec3(look2, this._eye, []);
-
-            this._lookatNodeDirty = true;
-        },
-
-        /**
-         * Rotate 'eye' about 'look' around the X-axis
-         *
-         * @param {Number} angle Angle of rotation in degrees
-         */
-        rotateLookX: function (angle) {
-
-            // Get 'look' -> 'eye' vector
-            var look2 = BIMSURFER.math.subVec3(this._look, this._eye, []);
-
-            // Get orthogonal vector from 'eye' and 'up'
-            var left = BIMSURFER.math.cross3Vec3(BIMSURFER.math.normalizeVec3(look2, []), BIMSURFER.math.normalizeVec3(this._up, []));
-
-            // Rotate 'look' vector about orthogonal vector
-            var mat = BIMSURFER.math.rotationMat4v(angle * 0.0174532925, left);
-            look2 = BIMSURFER.math.transformPoint3(mat, look2, []);
-
-            // Set eye position as 'look' plus 'eye' vector
-            this._look = BIMSURFER.math.addVec3(look2, this._eye, []);
-
-            // Rotate 'up' vector about orthogonal vector
-            this._up = BIMSURFER.math.transformPoint3(mat, this._up, []);
-
-            this._lookatNodeDirty = true;
-        },
-
-        /**
-         * Pans the camera along X and Y axis.
-         * @param pan The pan vector
-         */
-        pan: function (pan) {
-
-            // Get 'look' -> 'eye' vector
-            var eye2 = BIMSURFER.math.subVec3(this._eye, this._look, []);
-
-            // Building this pan vector
-            var vec = [0, 0, 0];
-            var v;
-
-            if (pan[0] !== 0) {
-
-                // Pan along orthogonal vector to 'look' and 'up'
-
-                var left = BIMSURFER.math.cross3Vec3(BIMSURFER.math.normalizeVec3(eye2, []), BIMSURFER.math.normalizeVec3(this._up, []));
-
-                v = BIMSURFER.math.mulVec3Scalar(left, pan[0]);
-
-                vec[0] += v[0];
-                vec[1] += v[1];
-                vec[2] += v[2];
-            }
-
-            if (pan[1] !== 0) {
-
-                // Pan along 'up' vector
-
-                v = BIMSURFER.math.mulVec3Scalar(BIMSURFER.math.normalizeVec3(this._up, []), pan[1]);
-
-                vec[0] += v[0];
-                vec[1] += v[1];
-                vec[2] += v[2];
-            }
-
-            if (pan[3] !== 0) {
-
-                // Pan along 'eye'- -> 'look' vector
-
-                v = BIMSURFER.math.mulVec3Scalar(BIMSURFER.math.normalizeVec3(eye2, []), pan[2]);
-
-                vec[0] += v[0];
-                vec[1] += v[1];
-                vec[2] += v[2];
-            }
-
-            this._eye = BIMSURFER.math.addVec3(this._eye, vec, []);
-            this._look = BIMSURFER.math.addVec3(this._look, vec, []);
-
-            this._lookatNodeDirty = true;
-        },
-
-        /**
-         * Increments/decrements zoom factor, ie. distance between eye and look.
-         * @param delta
-         */
-        zoom: function (delta) {
-
-            var vec = BIMSURFER.math.subVec3(this._eye, this._look, []); // Get vector from eye to look
-            var lenLook = Math.abs(BIMSURFER.math.lenVec3(vec, []));    // Get len of that vector
-            var newLenLook = Math.abs(lenLook + delta);         // Get new len after zoom
-
-            var dir = BIMSURFER.math.normalizeVec3(vec, []);  // Get normalised vector
-            this._eye = BIMSURFER.math.addVec3(this._look, BIMSURFER.math.mulVec3Scalar(dir, newLenLook), []);
-
-            this._lookatNodeDirty = true;
-        },
-
-        _props: {
-
-            active: {
-
-                set: function (value) {
-
-                    if (this._active === value) {
-                        return;
-                    }
-
-                    if (value) {
-
-                        this._lookatNodeDirty = true;
-                        this._cameraNodeDirty = true;
-
-                        var self = this;
-
-                        this._tickSub = this.viewer.on("tick",
-                            function () {
-
-                                if (self._lookatNodeDirty) {
-
-                                    // View transform update scheduled for scene graph
-
-                                    self._lookatNode.setEye(BIMSURFER.math.vec3ArrayToObj(self._eye));
-                                    self._lookatNode.setLook(BIMSURFER.math.vec3ArrayToObj(self._look));
-                                    self._lookatNode.setUp(BIMSURFER.math.vec3ArrayToObj(self._up));
-
-                                    // Camera not at rest now
-                                    self._rested = false;
-
-                                    // Scene camera position now up to date
-                                    self._lookatNodeDirty = false;
-
-                                } else {
-
-                                    // Else camera position now at rest
-
-                                    if (!self._rested) {
-                                        self._rested = true;
-                                    }
-                                }
-
-                                if (self._cameraNodeDirty) {
-
-                                    // Projection update scheduled for scene graph
-
-                                    // Update the scene graph
-
-                                    self._cameraNode.set({
-                                        optics: {
-                                            type: "perspective",
-                                            fovy: self.fovy,
-                                            near: self.near,
-                                            far: self.far,
-                                            aspect: self.aspect
-                                        }
-                                    });
-
-                                    // Scene projection now up to date
-                                    self._cameraNodeDirty = false;
-                                }
-                            });
-
-                        this.fire('active', this._active = true);
-
-                    } else {
-
-                        this.viewer.off(this._tickSub);
-
-                        this.fire('active', this._active = false);
-                    }
-                },
-
-                get: function () {
-                    return this._active;
-                }
-            },
-
-            aspect: {
-
-                set: function (value) {
-                    this._aspect = value || 1.0;
-                    this._cameraNodeDirty = true;
-                },
-
-                get: function () {
-                    return this._aspect;
-                }
-            },
-
-            eye: {
-
-                set: function (value) {
-                    this._eye = value || [ 0, 0, -10 ];
-                    this._lookatNodeDirty = true;
-                },
-
-                get: function () {
-                    return this._eye;
-                }
-            },
-
-            look: {
-
-                set: function (value) {
-                    this._look = value || [ 0, 0, 0 ];
-                    this._lookatNodeDirty = true;
-                },
-
-                get: function () {
-                    return this._look;
-                }
-            },
-
-            up: {
-
-                set: function (value) {
-                    this._up = value || [0, 1, 0];
-                    this._lookatNodeDirty = true;
-                },
-
-                get: function () {
-                    return this._up;
-                }
-            },
-
-            fovy: {
-
-                set: function (value) {
-                    this._fovy = value || 60;
-                    this._cameraNodeDirty = true;
-                },
-
-                get: function () {
-                    return this._fovy;
-                }
-            },
-
-            near: {
-
-                set: function (value) {
-                    this._near = value || 0.1;
-                    this._cameraNodeDirty = true;
-                },
-
-                get: function () {
-                    return this._near;
-                }
-            },
-
-            far: {
-
-                set: function (value) {
-                    this._far = value || 10000;
-                    this._cameraNodeDirty = true;
-                },
-
-                get: function () {
-                    return this._far;
-                }
-            },
-
-            screenPan: {
-
-                set: function (value) {
-                    this._screenPan= value || [0,0];
-                    this._cameraNodeDirty = true;
-                },
-
-                get: function () {
-                    return this._screenPan;
-                }
-            }
-        },
-
-        _destroy: function () {
-            this.active = false;
-        }
-
-    });
-
-})();;/**
-
- **Light** is the base class for all light source classes in BIMViewer.
-
- ## Overview
-
- ## Example
-
- TODO
-
- ````javascript
- TODO
- ````
- @class Light
- @module BIMSURFER
- @constructor
- @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}.
- @param [cfg] {*} Light configuration
- @param [cfg.id] {String} Optional ID, unique among all components in the parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}, generated automatically when omitted.
- @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Light.
- @param [cfg.camera] {Camera} Camera to control
- @extends Component
- */
-(function () {
-
-    "use strict";
-
-    BIMSURFER.Light = BIMSURFER.Component.extend({
-
-        /**
-         JavaScript class name for this Component.
-
-         @property className
-         @type String
-         @final
-         */
-        className: "BIMSURFER.Light",
-
-        _init: function (cfg) {
-
-            this._lightsManager = getLightsManager(this.viewer);
-
-            this._lightsManager.createLight(this.id, cfg);
-        },
-
-        _activate: function () {
-            this._lightsManager.activateLight(this.id);
-        },
-
-        _deactivate: function () {
-            this._lightsManager.deactivateLight(this.id);
-        },
-
-        _update: function (params) {
-            this._lightsManager.updateLight(this.id, params);
-        },
-
-        _destroy: function () {
-
-            this._lightsManager.destroyLight(this.id);
-
-            putLightsManager(this._lightsManager);
-        }
-    });
-
-    function LightsManager(id, viewer) {
-
-        this.id = id;
-        this.viewer = viewer;
-        this._lightsNode = null;
-        this.lights = [];
-        this.lightsMap = {};
-        this.activeLights = {};
-        this.useCount = 0;
-
-        this.lightNodeDirty = true;
-        this.lightsUpdate = null;
-
-        var self = this;
-
-        this.tickSub = viewer.on("tick",
-            function () {
-
-                if (self.lightNodeDirty) {
-
-                    // Build list of lights params
-
-                    var lights = [];
-                    var i;
-                    var activeLight;
-
-                    for (var id in self.lightsMap) {
-                        if (self.lightsMap.hasOwnProperty(id)) {
-
-                            if (self.activeLights[id] === true) {
-
-                                // Light is active, add to list
-                                i = self.lightsMap[id];
-                                activeLight = self.lights[i];
-                                lights.push(activeLight);
-                            }
-                        }
-                    }
-
-                    // Update lights node
-
-                    self._createLightsNode(lights);
-                    self.lightNodeDirty = false;
-                }
-
-                if (self.lightsUpdate && self._lightsNode) {
-                    self._lightsNode.setLights(self.lightsUpdate);
-                    self.lightsUpdate = null;
-                }
-            });
-    }
-
-    LightsManager.prototype._createLightsNode = function (lights) {
-
-        this._destroyLightsNode();
-
-        // Insert lights node above scene graph content root
-
-        var contentRootNode = this.viewer.scene.getNode("contentRoot");
-
-        var parent = contentRootNode.parent;
-
-        var children = parent.disconnectNodes();
-
-        this._lightsNode = parent.addNode({
-            type: "lights",
-            lights: lights
-        });
-
-        this._lightsNode.addNodes(children);
-    };
-
-    //
-    LightsManager.prototype._destroyLightsNode = function () {
-
-        if (!this._lightsNode) {
-            return;
-        }
-
-        // Extract lights node from scene graph,
-        // moving its children up to its parent
-
-        this._lightsNode.splice();
-        this._lightsNode.destroy();
-        this._lightsNode = null;
-    };
-
-    LightsManager.prototype.createLight = function (lightId, params) {
-        this.lights.push(params);
-        this.lightsMap[lightId] = this.lights.length - 1;
-        this.activeLights[lightId] = params.active !== false;
-        this.lightNodeDirty = true;
-    };
-
-    LightsManager.prototype.activateLight = function (lightId) {
-        this.activeLights[lightId] = true;
-        this.lightNodeDirty = true;
-    };
-
-    LightsManager.prototype.deactivateLight = function (lightId) {
-        this.activeLights[lightId] = false;
-        this.lightNodeDirty = true;
-    };
-
-    LightsManager.prototype.updateLight = function (lightId, params) {
-        if (!this.lightsUpdate) {
-            this.lightsUpdate = {};
-        }
-        var idx = this.lightsMap[lightId];
-        var light = this.lightsUpdate[idx] || (this.lightsUpdate[idx] = {});
-        BIMSURFER._apply(params, light);
-    };
-
-    LightsManager.prototype.destroyLight = function (lightId) {
-
-        var i = this.lightsMap[lightId];
-
-        // Delete light
-        this.lights.splice(i, 1);
-        delete this.lightsMap[lightId];
-        delete this.activeLights[lightId];
-        delete this.lightsUpdate[lightId];
-
-        // Adjust indices in lights map
-        for (var id in this.lightsMap) {
-            if (this.lightsMap.hasOwnProperty(id)) {
-                if (this.lightsMap[id] >= i) {
-                    this.lightsMap[id]--;
-                }
-            }
-        }
-
-        this.lightNodeDirty = true;
-    };
-
-    LightsManager.prototype.destroy = function () {
-        this.viewer.off(this.tickSub);
-        this._destroyLightsNode();
-    };
-
-
-    // A LightsManager for each Viewer,
-    // created on-demand by BIMSURFER.Lights components
-    var managers = {};
-
-
-    // Gets a LightsManager for the given Viewer
-    // reuses any instance already created for that Viewer
-    function getLightsManager(viewer) {
-        var id = viewer.id;
-        var manager = managers[id];
-        if (!manager) {
-            manager = new LightsManager(id, viewer);
-            managers[id] = manager;
-        }
-        manager.useCount++;
-        return manager;
-    }
-
-    // Releases a LightsManager to the pool, destroying it if
-    // there are no more references to it
-    function putLightsManager(manager) {
-        if (--manager.useCount <= 0) {
-            delete managers[manager.id];
-            manager.destroy();
-        }
-    }
-})();
-;/**
- A **AmbientLight** defines a directional light source that originates from a single point and spreads outward in all directions.
-
- ## Overview
-
- <ul>
-
- <li>AmbientLights have a position, but no direction.</li>
-
- <li>AmbientLights may be defined in either **World** or **View** coordinate space. When in World-space, their position
- is relative to the World coordinate system, and will appear to move as the {{#crossLink "Camera"}}{{/crossLink}} moves.
- When in View-space, their position is relative to the View coordinate system, and will behave as if fixed to the viewer's
- head as the {{#crossLink "Camera"}}{{/crossLink}} moves.</li>
-
- <li>Within bIMSurfer's's Phong lighting calculations, AmbientLight {{#crossLink "AmbientLight/diffuse:property"}}{{/crossLink}} and
- {{#crossLink "AmbientLight/specular:property"}}{{/crossLink}}.</li>
-
- <li>AmbientLights have {{#crossLink "AmbientLight/constantAttenuation:property"}}{{/crossLink}}, {{#crossLink "AmbientLight/linearAttenuation:property"}}{{/crossLink}} and
- {{#crossLink "AmbientLight/quadraticAttenuation:property"}}{{/crossLink}} factors, which indicate how their intensity attenuates over distance.</li>
-
-
- </ul>
-
-
- ## Example
-
-
- ```` javascript
- TODO
- ````
-
- As with all components, we can <a href="BIMSURFER.Component.html#changeEvents" class="crosslink">observe and change properties</a> on AmbientLights like so:
-
- ````Javascript
- var handle = ambientLight.on("diffuse", // Attach a change listener to a property
- function(value) {
-        // Property value has changed
-    });
-
- ambientLight.diffuse = [0.4, 0.6, 0.4]; // Fires the change listener
-
- ambientLight.off(handle); // Detach the change listener
- ````
-
- @class AmbientLight
- @module BIMSURFER
- @constructor
- @extends Component
- @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}.
- @param [cfg] {*} The AmbientLight configuration
- @param [cfg.id] {String} Optional ID, unique among all components in the parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}, generated automatically when omitted.
- @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this AmbientLight.
- @param [cfg.color=[0.7, 0.7, 0.8 ]] {Array(Number)} Diffuse color of this AmbientLight.
- */
-(function () {
-
-    "use strict";
-
-    BIMSURFER.AmbientLight = BIMSURFER.Light.extend({
-
-        className: "BIMSURFER.AmbientLight",
-
-        _init: function (cfg) {
-
-            this._super(BIMSURFER._apply({ mode: "ambient" }, cfg));
-
-            this.color = cfg.color;
-        },
-
-        _props: {
-            
-            /**
-             The color of this AmbientLight.
-
-             @property color
-             @default [0.7, 0.7, 0.8]
-             @type Array(Number)
-             */
-            color: {
-
-                set: function (value) {
-                    this._color = value;
-                    this._update({
-                        color: { r: value[0], g: value[1], b: value[2] }
-                    });
-                },
-
-                get: function () {
-                    return this._color;
-                }
-            },
-        }
-    });
-
-})();
-;/**
- A **PointLight** defines a positional light source that originates from a single point and spreads outward in all directions.
-
- ## Overview
-
- <ul>
-
- <li>PointLights have a position, but no direction.</li>
-
- <li>PointLights may be defined in either **World** or **View** coordinate space. When in World-space, their position
- is relative to the World coordinate system, and will appear to move as the {{#crossLink "Camera"}}{{/crossLink}} moves.
- When in View-space, their position is relative to the View coordinate system, and will behave as if fixed to the viewer's
- head as the {{#crossLink "Camera"}}{{/crossLink}} moves.</li>
-
- <li>Within bIMSurfer's's Phong lighting calculations, PointLight {{#crossLink "PointLight/diffuse:property"}}{{/crossLink}} and
- {{#crossLink "PointLight/specular:property"}}{{/crossLink}}.</li>
-
- <li>PointLights have {{#crossLink "PointLight/constantAttenuation:property"}}{{/crossLink}}, {{#crossLink "PointLight/linearAttenuation:property"}}{{/crossLink}} and
- {{#crossLink "PointLight/quadraticAttenuation:property"}}{{/crossLink}} factors, which indicate how their intensity attenuates over distance.</li>
-
-
- </ul>
-
-
- ## Example
-
-
- ```` javascript
- TODO
- ````
-
- As with all components, we can <a href="BIMSURFER.Component.html#changeEvents" class="crosslink">observe and change properties</a> on PointLights like so:
-
- ````Javascript
- var handle = pointLight.on("diffuse", // Attach a change listener to a property
- function(value) {
-        // Property value has changed
-    });
-
- pointLight.diffuse = [0.4, 0.6, 0.4]; // Fires the change listener
-
- pointLight.off(handle); // Detach the change listener
- ````
-
- @class PointLight
- @module BIMSURFER
- @constructor
- @extends Component
- @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}.
- @param [cfg] {*} The PointLight configuration
- @param [cfg.id] {String} Optional ID, unique among all components in the parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}, generated automatically when omitted.
- @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this PointLight.
- @param [cfg.pos=[ 1.0, 1.0, 1.0 ]] {Array(Number)} Position, in either World or View space, depending on the value of the **space** parameter.
- @param [cfg.color=[0.7, 0.7, 0.8 ]] {Array(Number)} Diffuse color of this PointLight.
- @param [cfg.constantAttenuation=0] {Number} Constant attenuation factor.
- @param [cfg.linearAttenuation=0] {Number} Linear attenuation factor.
- @param [cfg.quadraticAttenuation=0] {Number} Quadratic attenuation factor.
- @param [cfg.space="view"] {String} The coordinate system this PointLight is defined in - "view" or "space".
- */
-(function () {
-
-    "use strict";
-
-    BIMSURFER.PointLight = BIMSURFER.Light.extend({
-
-        className: "BIMSURFER.PointLight",
-
-        _init: function (cfg) {
-
-            this._super(BIMSURFER._apply({ mode: "point" }, cfg));
-
-            this.pos = cfg.pos;
-            this.color = cfg.color;
-            this.constantAttenuation = cfg.constantAttenuation;
-            this.linearAttenuation = cfg.linearAttenuation;
-            this.quadraticAttenuation = cfg.quadraticAttenuation;
-            this.space = cfg.space;
-        },
-
-        _props: {
-
-            /**
-             The position of this PointLight.
-
-             This will be either World- or View-space, depending on the value of {{#crossLink "PointLight/space:property"}}{{/crossLink}}.
-
-             @property pos
-             @default [1.0, 1.0, 1.0]
-             @type Array(Number)
-             */
-            pos: {
-
-                set: function (value) {
-                    this._pos = value;
-                    this._update({
-                        pos: { x: value[0], y: value[1], z: value[2] }
-                    });
-                },
-
-                get: function () {
-                    return this._pos;
-                }
-            },
-
-            /**
-             The color of this PointLight.
-
-             @property color
-             @default [0.7, 0.7, 0.8]
-             @type Array(Number)
-             */
-            color: {
-
-                set: function (value) {
-                    this._color = value;
-                    this._update({
-                        color: { r: value[0], g: value[1], b: value[2] }
-                    });
-                },
-
-                get: function () {
-                    return this._color;
-                }
-            },
-
-            /**
-             The constant attenuation factor for this PointLight.
-
-             @property constantAttenuation
-             @default 0
-             @type Number
-             */
-            constantAttenuation: {
-
-                set: function (value) {
-                    this._update({
-                        constantAttenuation: this._constantAttenuation = value
-                    });
-                },
-
-                get: function () {
-                    return this._constantAttenuation;
-                }
-            },
-
-            /**
-             The linear attenuation factor for this PointLight.
-
-             @property linearAttenuation
-             @default 0
-             @type Number
-             */
-            linearAttenuation: {
-
-                set: function (value) {
-                    this._update({
-                        linearAttenuation: this._linearAttenuation = value
-                    });
-                },
-
-                get: function () {
-                    return this._linearAttenuation;
-                }
-            },
-
-            /**
-             The quadratic attenuation factor for this Pointlight.
-
-             @property quadraticAttenuation
-             @default 0
-             @type Number
-             */
-            quadraticAttenuation: {
-
-                set: function (value) {
-                    this._update({
-                        quadraticAttenuation: this._quadraticAttenuation = value
-                    });
-                },
-
-                get: function () {
-                    return this._quadraticAttenuation;
-                }
-            },
-
-            /**
-             Indicates which coordinate space this PointLight is in.
-
-             Supported values are:
-
-             <ul>
-             <li>"view" - View space, aligned within the view volume as if fixed to the viewer's head</li>
-             <li>"world" - World space, fixed within the world, moving within the view volume with respect to camera</li>
-             </ul>
-
-             @property space
-             @default "view"
-             @type String
-             */
-            space: {
-
-                set: function (value) {
-                    this._update({
-                        space: this._space = value
-                    });
-                },
-
-                get: function () {
-                    return this._space;
-                }
-            }
-        }
-    });
-
-})();
-;/**
- A **DirLight** defines a directional light source that originates from a single point and spreads outward in all directions.
-
- ## Overview
-
- <ul>
-
- <li>DirLights have a position, but no direction.</li>
-
- <li>DirLights may be defined in either **World** or **View** coordinate space. When in World-space, their position
- is relative to the World coordinate system, and will appear to move as the {{#crossLink "Camera"}}{{/crossLink}} moves.
- When in View-space, their position is relative to the View coordinate system, and will behave as if fixed to the viewer's
- head as the {{#crossLink "Camera"}}{{/crossLink}} moves.</li>
-
- <li>Within bIMSurfer's's Phong lighting calculations, DirLight {{#crossLink "DirLight/diffuse:property"}}{{/crossLink}} and
- {{#crossLink "DirLight/specular:property"}}{{/crossLink}}.</li>
-
- <li>DirLights have {{#crossLink "DirLight/constantAttenuation:property"}}{{/crossLink}}, {{#crossLink "DirLight/linearAttenuation:property"}}{{/crossLink}} and
- {{#crossLink "DirLight/quadraticAttenuation:property"}}{{/crossLink}} factors, which indicate how their intensity attenuates over distance.</li>
-
-
- </ul>
-
-
- ## Example
-
-
- ```` javascript
- TODO
- ````
-
- As with all components, we can <a href="BIMSURFER.Component.html#changeEvents" class="crosslink">observe and change properties</a> on DirLights like so:
-
- ````Javascript
- var handle = dirLight.on("diffuse", // Attach a change listener to a property
- function(value) {
-        // Property value has changed
-    });
-
- dirLight.diffuse = [0.4, 0.6, 0.4]; // Fires the change listener
-
- dirLight.off(handle); // Detach the change listener
- ````
-
- @class DirLight
- @module BIMSURFER
- @constructor
- @extends Component
- @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}.
- @param [cfg] {*} The DirLight configuration
- @param [cfg.id] {String} Optional ID, unique among all components in the parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}, generated automatically when omitted.
- @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this DirLight.
- @param [cfg.dir=[ 1.0, 1.0, 1.0 ]] {Array(Number)} Direction, in either World or View space, depending on the value of the **space** parameter.
- @param [cfg.color=[0.7, 0.7, 0.8 ]] {Array(Number)} Diffuse color of this DirLight.
- @param [cfg.space="view"] {String} The coordinate system this DirLight is defined in - "view" or "space".
- */
-(function () {
-
-    "use strict";
-
-    BIMSURFER.DirLight = BIMSURFER.Light.extend({
-
-        className: "BIMSURFER.DirLight",
-
-        _init: function (cfg) {
-
-            this._super(BIMSURFER._apply({ mode: "dir" }, cfg));
-
-            this.dir = cfg.dir;
-            this.color = cfg.color;
-            this.space = cfg.space;
-        },
-
-        _props: {
-
-            /**
-             The direction of this DirLight.
-
-             This will be either World- or View-space, depending on the value of {{#crossLink "DirLight/space:property"}}{{/crossLink}}.
-
-             @property dir
-             @default [1.0, 1.0, 1.0]
-             @type Array(Number)
-             */
-            dir: {
-
-                set: function (value) {
-                    this._dir = value;
-                    this._update({
-                        dir: { x: value[0], y: value[1], z: value[2] }
-                    });
-                },
-
-                get: function () {
-                    return this._dir;
-                }
-            },
-
-            /**
-             The color of this DirLight.
-
-             @property color
-             @default [0.7, 0.7, 0.8]
-             @type Array(Number)
-             */
-            color: {
-
-                set: function (value) {
-                    this._color = value;
-                    this._update({
-                        color: { r: value[0], g: value[1], b: value[2] }
-                    });
-                },
-
-                get: function () {
-                    return this._color;
-                }
-            },
-
-            /**
-             Indicates which coordinate space this DirLight is in.
-
-             Supported values are:
-
-             <ul>
-             <li>"view" - View space, aligned within the view volume as if fixed to the viewer's head</li>
-             <li>"world" - World space, fixed within the world, moving within the view volume with respect to camera</li>
-             </ul>
-
-             @property space
-             @default "view"
-             @type String
-             */
-            space: {
-
-                set: function (value) {
-                    this._update({
-                        space: this._space = value
-                    });
-                },
-
-                get: function () {
-                    return this._space;
-                }
-            }
-        }
-    });
-
-})();
-;(function () {
-
-    "use strict";
-
-    /**
-     * Defines a geometry within a {@link BIMSURFER.Viewer}.
-     */
-    BIMSURFER.Geometry = BIMSURFER.Component.extend({
-
-        /**
-         JavaScript class name for this Component.
-
-         @property className
-         @type String
-         @final
-         */
-        className: "BIMSURFER.Geometry",
-
-        _init: function (cfg) {
-
-            var libraryNode = this.viewer.scene.getNode("library");
-
-            if (cfg.positions && cfg.indices) {
-
-                this._geometryNode = libraryNode.addNode({
-                    type: "geometry",
-                    primitive: cfg.primitive || "triangles",
-                    positions: cfg.positions,
-                    normals: cfg.normals,
-                    uv: cfg.uv,
-                    indices: cfg.indices
-                });
-            } else {
-
-                // Default box geometry
-
-                this._geometryNode = libraryNode.addNode({
-
-                    type: "geometry",
-
-                    primitive: "triangles",
-
-                    positions: [
-                        5, 5, 5, -5, 5, 5, -5, -5, 5, 5, -5, 5, // v0-v1-v2-v3 front
-                        5, 5, 5, 5, -5, 5, 5, -5, -5, 5, 5, -5, // v0-v3-v4-v5 right
-                        5, 5, 5, 5, 5, -5, -5, 5, -5, -5, 5, 5, // v0-v5-v6-v1 top
-                        -5, 5, 5, -5, 5, -5, -5, -5, -5, -5, -5, 5, // v1-v6-v7-v2 left
-                        -5, -5, -5, 5, -5, -5, 5, -5, 5, -5, -5, 5, // v7-v4-v3-v2 bottom
-                        5, -5, -5, -5, -5, -5, -5, 5, -5, 5, 5, -5 // v4-v7-v6-v5 back
-                    ],
-
-                    normals: [
-                        0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, // v0-v1-v2-v3 front
-                        1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, // v0-v3-v4-v5 right
-                        0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, // v0-v5-v6-v1 top
-                        -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, // v1-v6-v7-v2 left
-                        0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, // v7-v4-v3-v2 bottom
-                        0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1 // v4-v7-v6-v5 back
-                    ],
-
-                    uv: [
-                        5, 5, 0, 5, 0, 0, 5, 0, // v0-v1-v2-v3 front
-                        0, 5, 0, 0, 5, 0, 5, 5, // v0-v3-v4-v5 right
-                        5, 0, 5, 5, 0, 5, 0, 0, // v0-v5-v6-v1 top
-                        5, 5, 0, 5, 0, 0, 5, 0, // v1-v6-v7-v2 left
-                        0, 0, 5, 0, 5, 5, 0, 5, // v7-v4-v3-v2 bottom
-                        0, 0, 5, 0, 5, 5, 0, 5 // v4-v7-v6-v5 back
-                    ],
-
-                    indices: [
-                        0, 1, 2, 0, 2, 3, // back
-                        4, 5, 6, 4, 6, 7,  // front
-                        8, 9, 10, 8, 10, 11, // right
-                        12, 13, 14, 12, 14, 15, // top
-                        16, 17, 18, 16, 18, 19, // left
-                        20, 21, 22, 20, 22, 23 // bottom
-
-                    ]
-                });
-            }
-
-            this.coreId = this._geometryNode.getCoreId();
-
-            this.boundary = this._geometryNode.getBoundary();
-        },
-
-        _destroy: function () {
-            this._geometryNode.destroy();
-        }
-    });
 
 })();;(function () {
 

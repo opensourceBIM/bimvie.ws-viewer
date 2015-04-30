@@ -72,7 +72,7 @@
                             continue;
                         }
 
-                        if (geometry.className != "BIMSURFER.Geometry") {
+                        if (!geometry.coreId) {
                             this.error("geometry[" + i + "] is not a BIMSURFER.Geometry");
                             continue;
                         }
@@ -81,7 +81,7 @@
 
                         // Geometry is an instance of a BIMSURFER.Geometry within the Viewer
 
-                        if (geometry.className != "BIMSURFER.Geometry") {
+                        if (!geometry.coreId) {
                             this.error("geometry[" + i + "] is not a BIMSURFER.Geometry");
                             continue;
                         }
