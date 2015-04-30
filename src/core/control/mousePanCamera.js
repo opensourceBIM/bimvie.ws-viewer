@@ -1,6 +1,6 @@
 /**
 
- **KeyboardPanCamera** pans a {{#crossLink "Camera"}}{{/crossLink}} with the keyboard.
+ **Orbit** orbits a {{#crossLink "Camera"}}{{/crossLink}}
 
  ## Overview
 
@@ -18,7 +18,7 @@
  @param [cfg] {*} Orbit configuration
 
  @param [cfg.id] {String} Optional ID, unique among all components in the parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}, generated automatically when omitted.
- @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this KeyboardPanCamera.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Pan.
  @param [cfg.camera] {Camera} Camera to control
  @extends Component
  */
@@ -26,7 +26,7 @@
 
     "use strict";
 
-    BIMSURFER.KeyboardPanCamera = BIMSURFER.Component.extend({
+    BIMSURFER.MousePanCamera = BIMSURFER.Component.extend({
 
         /**
          JavaScript class name for this Component.
@@ -41,11 +41,15 @@
 
             var sensitivity = cfg.sensitivity;
 
-            this.sensitivity = sensitivity ? sensitivity * 10.0 : 10.0;
+            this.sensitivity = sensitivity ? sensitivity * 0.03 : 0.03;
 
             this.camera = cfg.camera;
 
             this._onTick = null;
+
+            this._onMouseDown = null;
+            this._onMouseMove = null;
+            this._onMouseUp = null;
 
             this.active = cfg.active !== false;
         },
@@ -64,57 +68,59 @@
 
                     if (value) {
 
+                        var lastX;
+                        var lastY;
+                        var xDelta = 0;
+                        var yDelta = 0;
+                        var down = false;
+
                         var self = this;
 
                         this._onTick = this.viewer.on("tick",
-                            function (params) {
+                            function () {
 
                                 if (!self._camera) {
                                     return;
                                 }
 
-                                var elapsed = params.elapsed;
+                                if (xDelta != 0 || yDelta != 0) {
 
-                                if (!input.ctrlDown && !input.altDown) {
+                                    self._camera.pan([xDelta, yDelta, 0]);
 
-                                    var wkey = input.keyDown[input.KEY_W];
-                                    var skey = input.keyDown[input.KEY_S];
-                                    var akey = input.keyDown[input.KEY_A];
-                                    var dkey = input.keyDown[input.KEY_D];
-                                    var zkey = input.keyDown[input.KEY_Z];
-                                    var xkey = input.keyDown[input.KEY_X];
+                                    xDelta = 0;
+                                    yDelta = 0;
+                                }
+                            });
 
-                                    if (wkey || skey || akey || dkey || xkey || zkey) {
+                        this._onMouseDown = input.on("mousedown",
+                            function (e) {
 
-                                        var x = 0;
-                                        var y = 0;
-                                        var z = 0;
+                                if ((input.mouseDownLeft && input.mouseDownRight) ||
+                                    (input.mouseDownLeft && input.keyDown[input.KEY_SHIFT]) ||
+                                    input.mouseDownMiddle) {
 
-                                        var sensitivity = self.sensitivity;
+                                    lastX = e[0];
+                                    lastY = e[1];
 
-                                        if (skey) {
-                                            y = elapsed * sensitivity;
+                                    down = true;
 
-                                        } else if (wkey) {
-                                            y = -elapsed * sensitivity;
-                                        }
+                                } else {
+                                    down = false;
+                                }
+                            });
 
-                                        if (dkey) {
-                                            x = elapsed * sensitivity;
+                        this._onMouseUp = input.on("mouseup",
+                            function (e) {
+                                down = false;
+                            });
 
-                                        } else if (akey) {
-                                            x = -elapsed * sensitivity;
-                                        }
-
-                                        if (xkey) {
-                                            z = elapsed * sensitivity;
-
-                                        } else if (zkey) {
-                                            z = -elapsed * sensitivity;
-                                        }
-
-                                        self._camera.pan([x, y, z]);
-                                    }
+                        this._onMouseMove = input.on("mousemove",
+                            function (e) {
+                                if (down) {
+                                    xDelta += (e[0] - lastX) * self.sensitivity;
+                                    yDelta += (e[1] - lastY) * self.sensitivity;
+                                    lastX = e[0];
+                                    lastY = e[1];
                                 }
                             });
 
@@ -122,7 +128,11 @@
 
                     } else {
 
-                        this.viewer.off(this._onTick);
+                        input.off(this._onTick);
+
+                        input.off(this._onMouseDown);
+                        input.off(this._onMouseUp);
+                        input.off(this._onMouseMove);
 
                         this.fire('active', this._active = false);
                     }

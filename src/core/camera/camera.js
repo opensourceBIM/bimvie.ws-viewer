@@ -178,7 +178,7 @@
 
                 // Pan along 'eye'- -> 'look' vector
 
-                v = BIMSURFER.math.mulVec3Scalar(BIMSURFER.math.normalizeVec3(this._eye, []), pan[2]);
+                v = BIMSURFER.math.mulVec3Scalar(BIMSURFER.math.normalizeVec3(eye2, []), pan[2]);
 
                 vec[0] += v[0];
                 vec[1] += v[1];
@@ -197,12 +197,12 @@
          */
         zoom: function (delta) {
 
-            var vec = BIMSURFER.math.subVec3(this._eye, this._look); // Get vector from eye to look
-            var lenLook = Math.abs(BIMSURFER.math.lenVec3(vec));    // Get len of that vector
+            var vec = BIMSURFER.math.subVec3(this._eye, this._look, []); // Get vector from eye to look
+            var lenLook = Math.abs(BIMSURFER.math.lenVec3(vec, []));    // Get len of that vector
             var newLenLook = Math.abs(lenLook + delta);         // Get new len after zoom
 
-            var dir = BIMSURFER.math.normalizeVec3(vec);  // Get normalised vector
-            this._eye = BIMSURFER.math.addVec3(this._look, BIMSURFER.math.mulVec3Scalar(dir, newLenLook));
+            var dir = BIMSURFER.math.normalizeVec3(vec, []);  // Get normalised vector
+            this._eye = BIMSURFER.math.addVec3(this._look, BIMSURFER.math.mulVec3Scalar(dir, newLenLook), []);
 
             this._lookatNodeDirty = true;
         },

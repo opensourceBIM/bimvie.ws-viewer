@@ -90,24 +90,29 @@
                                             yaw = -elapsed * yawRate;
 
                                         } else if (left) {
-                                            yaw = (elapsed * yawRate);
+                                            yaw = elapsed * yawRate;
                                         }
 
                                         if (down) {
-                                            pitch = -(elapsed * pitchRate);
+                                            pitch = elapsed * pitchRate;
 
                                         } else if (up) {
-                                            pitch = (elapsed * pitchRate);
+                                            pitch = -elapsed * pitchRate;
                                         }
 
                                         if (Math.abs(yaw) > Math.abs(pitch)) {
-                                            pitch = null;
+                                            pitch = 0;
                                         } else {
-                                            yaw = null;
+                                            yaw = 0;
                                         }
 
-                                        self._camera.rotateEyeY(yaw);
-                                        self._camera.rotateEyeX(pitch);
+                                        if (yaw != 0) {
+                                            self._camera.rotateEyeY(yaw);
+                                        }
+
+                                        if (pitch != 0) {
+                                            self._camera.rotateEyeX(pitch);
+                                        }
                                     }
                                 }
                             });

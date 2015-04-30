@@ -80,21 +80,33 @@
                                     return;
                                 }
 
-                                if (xDelta != 0 || yDelta != 0) {
-
+                                if (xDelta != 0) {
                                     self._camera.rotateEyeY(-xDelta);
-                                    self._camera.rotateEyeX(yDelta);
-
                                     xDelta = 0;
+                                }
+
+                                if (yDelta != 0) {
+                                    self._camera.rotateEyeX(yDelta);
                                     yDelta = 0;
                                 }
                             });
 
                         this._onMouseDown = input.on("mousedown",
                             function (e) {
-                                down = true;
-                                lastX = e[0];
-                                lastY = e[1];
+
+                                if (input.mouseDownLeft
+                                    && !input.mouseDownRight
+                                    && !input.keyDown[input.KEY_SHIFT]
+                                    && !input.mouseDownMiddle) {
+
+                                    down = true;
+                                    lastX = e[0];
+                                    lastY = e[1];
+
+                                } else {
+                                    down = false;
+                                }
+
                             });
 
                         this._onMouseUp = input.on("mouseup",

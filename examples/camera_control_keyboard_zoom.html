@@ -33,7 +33,7 @@
 <body>
 
 <div id="infoDark">
-    <a href="http://http://bimvie.ws/">bimvie.ws</a> - controlling a <a href="" target="_other">BIMSURFER.Camera</a> with a <a href="" target="_other">BIMSURFER.MousePanCamera</a>
+    <a href="http://http://bimvie.ws/">bimvie.ws</a> - controlling a <a href="" target="_other">BIMSURFER.Camera</a> with a <a href="" target="_other">BIMSURFER.KeyboardZoomCamera</a>
 </div>
 
 <div id="myDiv" style="position: absolute; top: 0; left: 0; height: 100%; width: 100%;">
@@ -52,8 +52,8 @@
     // Create an object
     var box = new BIMSURFER.TeapotObject(viewer);
 
-    // Create a mouse pan control
-    var keyboardPan = new BIMSURFER.MousePanCamera(viewer, { camera: camera });
+    // Create mouse zoom control
+    var mouseZoom = new BIMSURFER.KeyboardZoomCamera(viewer, { camera: camera });
 
 </script>
 

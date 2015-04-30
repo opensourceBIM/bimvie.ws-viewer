@@ -19,6 +19,7 @@
 
         "src/core/object/object.js",
         "src/core/object/boxObject.js",
+        "src/core/object/teapotObject.js",
 
         "src/core/camera/camera.js",
 
@@ -39,11 +40,16 @@
         "src/core/animate/cameraFlyTo.js",
         "src/core/animate/cameraPath.js",
 
+        "src/core/control/cameraControl.js",
         "src/core/control/mouseOrbitCamera.js",
         "src/core/control/keyboardOrbitCamera.js",
-        "src/core/control/cameraZoomControl.js",
-        "src/core/control/pickSelectionControl.js",
-        "src/core/control/keyboardPanCamera.js"
+        "src/core/control/mouseZoomCamera.js",
+        "src/core/control/keyboardZoomCamera.js",
+        "src/core/control/mousePanCamera.js",
+        "src/core/control/keyboardPanCamera.js",
+        "src/core/control/keyboardAxisCamera.js",
+
+        "src/core/control/clickSelectObjects.js"
     ],
 
     "extras": [

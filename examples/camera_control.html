@@ -46,28 +46,17 @@
 
     // Create a Camera
     var camera = new BIMSURFER.Camera(viewer, {
-        eye: [0, 40, -40]
+        eye: [0, 0, -10]
     });
 
-    // Create a box object
-    var box = new BIMSURFER.BoxObject(viewer);
+    // Create an object
+    var box = new BIMSURFER.TeapotObject(viewer);
 
-    // Create keyboard orbit control
-    var keyboardOrbit = new BIMSURFER.KeyboardOrbitCamera(viewer, {
-        camera: camera
-    });
-
-    // Create a keyboard pan control
-    var keyboardPan = new BIMSURFER.KeyboardPanCamera(viewer, {
+    // Create a camera control
+    var cameraControl = new BIMSURFER.CameraControl(viewer, {
         camera: camera,
-        sensitivity: 10
+        firstPerson: true
     });
-
-    // Create mouse orbit control
-    var mouseOrbit = new BIMSURFER.MouseOrbitCamera(viewer, {
-        camera: camera
-    });
-
 
 </script>
 

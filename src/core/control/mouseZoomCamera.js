@@ -1,6 +1,6 @@
 /**
 
- **Pans** orbits a {{#crossLink "Camera"}}{{/crossLink}}
+ **Zooms** orbits a {{#crossLink "Camera"}}{{/crossLink}}
 
  ## Overview
 
@@ -11,13 +11,13 @@
  ````javascript
  TODO
  ````
- @class Pan
+ @class Zoom
  @module BIMSURFER
  @constructor
  @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}.
- @param [cfg] {*} Pan configuration
+ @param [cfg] {*} Zoom configuration
  @param [cfg.id] {String} Optional ID, unique among all components in the parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}, generated automatically when omitted.
- @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Pan.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Zoom.
  @param [cfg.camera] {Camera} Camera to control
  @extends Component
  */
@@ -25,7 +25,7 @@
 
     "use strict";
 
-    BIMSURFER.CameraPanControl = BIMSURFER.Component.extend({
+    BIMSURFER.MouseZoomCamera = BIMSURFER.Component.extend({
 
         /**
          JavaScript class name for this Component.
@@ -34,9 +34,13 @@
          @type String
          @final
          */
-        className: "BIMSURFER.CameraPanControl",
+        className: "BIMSURFER.MouseZoomCamera",
 
         _init: function (cfg) {
+
+            var sensitivity = cfg.sensitivity;
+
+            this.sensitivity = sensitivity ? sensitivity * 1.0 : 1.0;
 
             this.camera = cfg.camera;
 
@@ -62,67 +66,34 @@
 
                     if (value) {
 
-                        var sensitivity = 0.16;
-                        var rate = 1;
-                        var lastX;
-                        var lastY;
-                        var xDelta = 0;
-                        var yDelta = 0;
-                        var down = false;
+                        var delta = 0;
+                        var target = 0;
+                        var newTarget = false;
+                        var targeting = false;
+                        var progress = 0;
+
                         var eyeVec = BIMSURFER.math.vec3();
                         var lookVec = BIMSURFER.math.vec3();
                         var tempVec3 = BIMSURFER.math.vec3();
 
                         var self = this;
 
-                        this._onMouseDown = this.viewer.input.on("mousedown",
-                            function (coords) {
-                                if ((input.mouseDownLeft && input.mouseDownRight) ||
-                                    (input.mouseDownLeft && input.keyDown[input.KEY_SHIFT]) ||
-                                    input.mouseDownMiddle) {
-                                    down = true;
-                                    lastX = coords[0];
-                                    lastY = coords[1];
+                        this._onMouseWheel = this.viewer.input.on("mousewheel",
+                            function (_delta) {
+
+//                                var d = params.d * 0.01;
+//
+//                                delta = -d;
+
+                                delta = _delta;
+
+                                if (delta === 0) {
+                                    targeting = false;
+                                    newTarget = false;
                                 } else {
-                                    down = false;
+                                    newTarget = true;
                                 }
                             });
-
-                        this._onMouseUp = this.viewer.input.on("mouseup",
-                            function () {
-                                down = false;
-                            });
-
-                        this._onMouseMove = this.viewer.input.on("mousemove",
-                            function (coords) {
-
-                                if (down) {
-
-                                    var camera = self._camera;
-                                    var eye = camera.eye;
-                                    var look = camera.look;
-
-                                    eyeVec[0] = eye.x;
-                                    eyeVec[1] = eye.y;
-                                    eyeVec[2] = eye.z;
-
-                                    lookVec[0] = look.x;
-                                    lookVec[1] = look.y;
-                                    lookVec[2] = look.z;
-
-                                    BIMSURFER.math.subVec3(eyeVec, lookVec, tempVec3);
-                                    var lenLook = Math.abs(BIMSURFER.math.lenVec3(tempVec3));
-                                    var lenLimits = 200 - 1;
-                                    var f = sensitivity * (lenLook / lenLimits);
-
-                                    xDelta += (x - lastX) * f;
-                                    yDelta += (y - lastY) * f;
-
-                                    lastX = x;
-                                    lastY = y;
-                                }
-                            });
-
 
                         this._onTick = this.viewer.on("tick",
                             function () {
@@ -148,7 +119,7 @@
 
                                 var lenLook = Math.abs(BIMSURFER.math.lenVec3(tempVec3));
                                 var lenLimits = 1000;
-                                var f = sensitivity * (2.0 + (lenLook / lenLimits));
+                                var f = self.sensitivity * (2.0 + (lenLook / lenLimits));
 
                                 if (newTarget) {
                                     target = delta * f;
@@ -170,7 +141,7 @@
                                         }
                                     }
                                     if (targeting) {
-                                        camera.pan(progress);
+                                        camera.zoom(progress);
                                     }
                                 }
                             });

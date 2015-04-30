@@ -147,6 +147,14 @@ var viewer = new BIMSURFER.Viewer(...);
 
             var canvas = this.viewer.canvas[0];
 
+
+            // Disable context menu events so we can use right-click for things like panning
+
+            document.addEventListener("contextmenu", function(e){
+                e.preventDefault();
+            }, false);
+
+
             // Capture input events and publish them on this component
 
             document.addEventListener("keydown",

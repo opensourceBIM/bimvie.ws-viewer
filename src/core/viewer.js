@@ -189,30 +189,6 @@
                 self.fire('mouseWheel', e);
             }, true);
 
-        this.scene.on('pick',
-            function (hit) {
-
-                var objectId = hit.name;
-                var object = self.components[objectId];
-
-                if (object) {
-
-                    var event = {
-                        object: object,
-                        canvasPos: hit.canvasPos,
-                        worldPos: hit.worldPos
-                    };
-
-                    object.fire("picked", event);
-
-                    self.fire("picked", event);
-                }
-            });
-
-        this.scene.on('nopick',
-            function (e) {
-                self.fire("nothingPicked", e);
-            });
 
         this.scene.on('tick',
             function (params) {
@@ -220,29 +196,6 @@
                     time: params.time * 0.001,
                     elapsed: (params.time - params.prevTime) * 0.001
                 });
-            });
-
-        // Do a ray-pick off each canvas mouse click
-
-        var lastDown = {
-            x: null,
-            y: null
-        };
-
-        this.on('mouseDown',
-            function (e) {
-                lastDown.x = e.offsetX;
-                lastDown.y = e.offsetY;
-            });
-
-        this.on('mouseUp',
-            function (e) {
-
-                if (((e.offsetX > lastDown.x) ? (e.offsetX - lastDown.x < 5) : (lastDown.x - e.offsetX < 5)) &&
-                    ((e.offsetY > lastDown.y) ? (e.offsetY - lastDown.y < 5) : (lastDown.y - e.offsetY < 5))) {
-
-                    self.scene.pick(lastDown.x, lastDown.y, { rayPick: true });
-                }
             });
 
 
@@ -439,8 +392,23 @@
     /**
      *
      */
-    BIMSURFER.Viewer.prototype.pick = function (x, y, rayPick) {
-        self.scene.pick(x, y, { rayPick: rayPick });
+    BIMSURFER.Viewer.prototype.pick = function (x, y, options) {
+
+        var hit = this.scene.pick(x, y, options);
+
+        if (hit) {
+
+            var objectId = hit.name;
+            var object = this.components[objectId];
+
+            if (object) {
+                return {
+                    object: object,
+                    canvasPos: hit.canvasPos,
+                    worldPos: hit.worldPos
+                }
+            }
+        }
     };
 
     /**

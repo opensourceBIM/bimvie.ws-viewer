@@ -33,7 +33,7 @@
 <body>
 
 <div id="infoDark">
-    <a href="http://http://bimvie.ws/">bimvie.ws</a> - controlling a <a href="" target="_other">BIMSURFER.Camera</a> with a <a href="" target="_other">BIMSURFER.CameraZoomControl</a>
+    <a href="http://http://bimvie.ws/">bimvie.ws</a> - controlling a <a href="" target="_other">BIMSURFER.Camera</a> with a <a href="" target="_other">BIMSURFER.MouseZoomCamera</a>
 </div>
 
 <div id="myDiv" style="position: absolute; top: 0; left: 0; height: 100%; width: 100%;">
@@ -46,15 +46,14 @@
 
     // Create a Camera
     var camera = new BIMSURFER.Camera(viewer, {
-        eye: [0, 40, -40]
+        eye: [0, 0, -10]
     });
 
-    // Create a box object
-    var box = new BIMSURFER.BoxObject(viewer);
+    // Create an object
+    var box = new BIMSURFER.TeapotObject(viewer);
 
-    // Create zoom control
-    var orbit = new BIMSURFER.CameraZoomControl(viewer, { camera: camera });
-
+    // Create mouse zoom control
+    var mouseZoom = new BIMSURFER.MouseZoomCamera(viewer, { camera: camera });
 
 </script>
 
