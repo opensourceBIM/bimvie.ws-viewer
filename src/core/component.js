@@ -193,7 +193,7 @@
  @param [cfg] {*} Component configuration
  @param [cfg.id] {String} Optional ID, unique among all components in the parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}, generated automatically when omitted.
  @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Component.
- @extends Object
+
  */
 (function () {
 
