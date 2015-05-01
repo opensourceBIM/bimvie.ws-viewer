@@ -1,10 +1,34 @@
+/**
+ TODO
+
+ ## Overview
+
+ TODO
+
+ ## Example
+
+ TODO
+
+ @class Geometry
+ @module BIMSURFER
+ @constructor
+ @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
+ @param [cfg] {*} Configs
+ @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this BoxGeometry.
+ @param [cfg.primitive="triangles"] {String} The primitive type. Accepted values are 'points', 'lines', 'line-loop', 'line-strip', 'triangles', 'triangle-strip' and 'triangle-fan'.
+ @param [cfg.positions] {Array of Number} Positions array.
+ @param [cfg.normals] {Array of Number} Normals array.
+ @param [cfg.uv] {Array of Number} UVs array.
+ @param [cfg.uv2] {Array of Number} Second UVs array, for a second UV level.
+ @param [cfg.colors] {Array of Number} Vertex colors.
+ @param [cfg.indices] {Array of Number} Indices array.
+ @extends Component
+ */
 (function () {
 
     "use strict";
 
-    /**
-     * Defines a geometry within a {@link BIMSURFER.Viewer}.
-     */
     BIMSURFER.Geometry = BIMSURFER.Component.extend({
 
         /**

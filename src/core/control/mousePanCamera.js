@@ -1,25 +1,22 @@
 /**
-
- **Orbit** orbits a {{#crossLink "Camera"}}{{/crossLink}}
+ TODO
 
  ## Overview
+
+ TODO
 
  ## Example
 
  TODO
 
- ````javascript
- TODO
- ````
- @class Orbit
+ @class MousePanCamera
  @module BIMSURFER
  @constructor
- @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}.
- @param [cfg] {*} Orbit configuration
-
- @param [cfg.id] {String} Optional ID, unique among all components in the parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}, generated automatically when omitted.
- @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Pan.
- @param [cfg.camera] {Camera} Camera to control
+ @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
+ @param [cfg] {*} Configs
+ @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this MousePanCamera.
+ @param [camera] {Camera} The {{#crossLink "Camera"}}{{/crossLink}} to control.
  @extends Component
  */
 (function () {

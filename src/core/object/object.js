@@ -1,10 +1,37 @@
+/**
+ A 3D object within a {{#crossLink "Viewer"}}{{/crossLink}}.
+
+ ## Overview
+
+ TODO
+
+ ## Example
+
+ TODO
+
+ @class Object
+ @module BIMSURFER
+ @constructor
+ @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
+ @param [cfg] {*} Configs
+ @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Object.
+ @param [cfg.ifcType] {String} The IFC type of this Object.
+ @param [cfg.color] {Array of Number} The color of this Object, defaults to the color of the specified IFC type.
+ @param [cfg.geometries] {Array of Geometry} The {{#crossLink "Geometry"}}{{/crossLink}} to render for this Object.
+ @param [cfg.clipping=true] {Boolean} Whether this Object is clipped by {{#crossLink "Clips"}}{{/crossLink}}.
+ @param [cfg.transparent=false] {Boolean} Whether this Object is transparent or not.
+ @param [cfg.opacity=1] {Number} Scalar in range 0-1 that controls opacity, where 0 is completely transparent and 1 is completely opaque.
+ Only applies while this Object's {{#crossLink "Object/transparent:property"}}transparent{{/crossLink}} equals ````true````.
+ @param [cfg.highlight=false] {Boolean} Whether this Object is highlighted or not.
+ @param [cfg.xray=false] {Boolean} Whether this Object is highlighted or not.
+ @param [cfg.matrix=[1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]] {Array of Number} Transform matrix - a one-dimensional, sixteen element array of elements, an identity matrix by default.
+ @extends Component
+ */
 (function () {
 
     "use strict";
 
-    /**
-     * Defines an object within a {@link BIMSURFER.Viewer}.
-     */
     BIMSURFER.Object = BIMSURFER.Component.extend({
 
         /**
@@ -302,6 +329,13 @@
                 }
             },
 
+            /**
+             Whether this Object is transparent.
+
+             @property transparent
+             @default false
+             @type Boolean
+             */
             transparent: {
 
                 set: function (value) {
@@ -324,6 +358,13 @@
                 }
             },
 
+            /**
+             Whether this Object is highlighted.
+
+             @property highlighted
+             @default false
+             @type Boolean
+             */
             highlight: {
 
                 set: function (value) {
@@ -345,6 +386,13 @@
                 }
             },
 
+            /**
+             Whether this Object is X-rayed
+
+             @property xray
+             @default false
+             @type Boolean
+             */
             xray: {
 
                 set: function (value) {
@@ -367,6 +415,13 @@
                 }
             },
 
+            /**
+             The color of this Object.
+
+             @property color
+             @default [1.0, 1.0, 1.0]
+             @type Array(Number)
+             */
             color: {
 
                 set: function (value) {
@@ -393,6 +448,18 @@
                 }
             },
 
+            /**
+             Factor in the range [0..1] indicating how transparent this Object is.
+
+             A value of 0.0 indicates fully transparent, 1.0 is fully opaque.
+
+             This Object will appear transparent only if {{#crossLink "Object/transparent:property"}}{{/crossLink}} is also
+             set to **true**.
+
+             @property opacity
+             @default 1.0
+             @type Number
+             */
             opacity: {
 
                 set: function (value) {
@@ -407,6 +474,13 @@
                 }
             },
 
+            /**
+             * This Object's transformation matrix.
+             *
+             * @property matrix
+             * @default [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
+             * @type {Array of Number}
+             */
             matrix: {
 
                 set: function (value) {
@@ -425,6 +499,12 @@
                 }
             },
 
+            /**
+             * The World-space boundary of this Object.
+             *
+             * @property boundary
+             * @type {*}
+             */
             boundary: {
 
                 get: function () {
@@ -443,6 +523,12 @@
                 }
             },
 
+            /**
+             * The World-space center of this Object.
+             *
+             * @property center
+             * @type {Array of Number}
+             */
             center: {
 
                 get: function () {

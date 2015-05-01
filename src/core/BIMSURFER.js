@@ -1,3 +1,12 @@
+/**
+ The BIMSURFER namespace.
+
+
+ @class BIMSURFER
+ @main SIMSURFER
+ @static
+ @author xeolabs / http://xeolabs.com/
+ */
 var BIMSURFER = {
 
     CLASS: "BIMSURFER",

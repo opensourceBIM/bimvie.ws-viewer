@@ -1,10 +1,28 @@
+/**
+ TODO
+
+ ## Overview
+
+ TODO
+
+ ## Example
+
+ TODO
+
+ @class IsolateEffect
+ @module BIMSURFER
+ @constructor
+ @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
+ @param [cfg] {*} Configs
+ @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this IsolateEffect.
+ @param [selection] {Selection} The {{#crossLink "Selection"}}{{/crossLink}} to update.
+ @extends Component
+ */
 (function () {
 
     "use strict";
 
-    /**
-     * Sets the selected {@link BIMSURFER.Object}s in a  {@link BIMSURFER.Selection} as visible.
-     */
     BIMSURFER.IsolateEffect = BIMSURFER.Effect.extend({
 
         /**

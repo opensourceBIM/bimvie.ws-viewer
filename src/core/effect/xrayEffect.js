@@ -1,10 +1,28 @@
+/**
+ TODO
+
+ ## Overview
+
+ TODO
+
+ ## Example
+
+ TODO
+
+ @class XRayEffect
+ @module BIMSURFER
+ @constructor
+ @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
+ @param [cfg] {*} Configs
+ @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this XRayEffect.
+ @param [selection] {Selection} The {{#crossLink "Selection"}}{{/crossLink}} to update.
+ @extends Component
+ */
 (function () {
 
     "use strict";
 
-    /**
-     * Applies an X-Ray effect to the {@link BIMSURFER.Object}s within a {@link BIMSURFER.Selection}.
-     */
     BIMSURFER.XRayEffect = BIMSURFER.Effect.extend({
 
         /**

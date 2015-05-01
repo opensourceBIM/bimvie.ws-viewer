@@ -1,3 +1,46 @@
+/**
+ A **Camera** defines a viewpoint within a {{#crossLink "Viewer"}}Viewer{{/crossLink}}.
+
+ ## Overview
+
+ <ul>
+ <li>You can have an unlimited number of Cameras in a {{#crossLink "Viewer"}}GameObjects{{/crossLink}}.</li>
+ <li>At any instant, the Camera we're looking through is the one whose {{#crossLink "Camera/active:property"}}active{{/crossLink}} property is true.</li>
+ </ul>
+
+ ## Example
+
+ In this example we have a {{#crossLink "Viewer"}}{{/crossLink}} with a
+ Camera, {{#crossLink "CameraControl"}}{{/crossLink}} and a {{#crossLink "TeapotObject"}}{{/crossLink}}.
+
+ ````Javascript
+
+ var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+
+ var camera = new BIMSURFER.Camera(viewer, {
+        eye: [0, 0, -10]
+    });
+
+ var cameraControl = new BIMSURFER.CameraControl(viewer, {
+        camera: camera
+    });
+
+ var teapot = new BIMSURFER.TeapotObject(viewer);
+
+ ````
+
+ @class Camera
+ @module BIMSURFER
+ @constructor
+ @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
+ @param [cfg] {*} Configs
+ @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Camera.
+ @param [cfg.eye=[0,0,-10]] {Array of Number} Eye position.
+ @param [cfg.look=[0,0,0]] {Array of Number} The position of the point-of-interest we're looking at.
+ @param [cfg.up=[0,1,0]] {Array of Number} The "up" vector.
+ @extends Component
+ */
 (function () {
 
     "use strict";
@@ -18,9 +61,9 @@
 
         _init: function (cfg) {
 
-            // The SceneJS nodes that this Camera controls
-            this._lookatNode = this.viewer.scene.getNode('theLookat');
-            this._cameraNode = this.viewer.scene.getNode('theCamera');
+            // The ViewerJS nodes that this Camera controls
+            this._lookatNode = this.viewer.viewer.getNode('theLookat');
+            this._cameraNode = this.viewer.viewer.getNode('theCamera');
 
             // Schedule update of view and projection transforms for next tick
             this._lookatNodeDirty = true;
@@ -229,7 +272,7 @@
 
                                 if (self._lookatNodeDirty) {
 
-                                    // View transform update scheduled for scene graph
+                                    // View transform update scheduled for viewer graph
 
                                     self._lookatNode.setEye(BIMSURFER.math.vec3ArrayToObj(self._eye));
                                     self._lookatNode.setLook(BIMSURFER.math.vec3ArrayToObj(self._look));
@@ -238,7 +281,7 @@
                                     // Camera not at rest now
                                     self._rested = false;
 
-                                    // Scene camera position now up to date
+                                    // Viewer camera position now up to date
                                     self._lookatNodeDirty = false;
 
                                 } else {
@@ -252,9 +295,9 @@
 
                                 if (self._cameraNodeDirty) {
 
-                                    // Projection update scheduled for scene graph
+                                    // Projection update scheduled for viewer graph
 
-                                    // Update the scene graph
+                                    // Update the viewer graph
 
                                     self._cameraNode.set({
                                         optics: {
@@ -266,7 +309,7 @@
                                         }
                                     });
 
-                                    // Scene projection now up to date
+                                    // Viewer projection now up to date
                                     self._cameraNodeDirty = false;
                                 }
                             });
@@ -298,6 +341,13 @@
                 }
             },
 
+            /**
+             * Position of the eye.
+             * Fires an {{#crossLink "Camera/eye:event"}}{{/crossLink}} event on change.
+             * @property eye
+             * @default [0,0,-10]
+             * @type Array(Number)
+             */
             eye: {
 
                 set: function (value) {
@@ -310,6 +360,13 @@
                 }
             },
 
+            /**
+             * Position of the point-of-interest.
+             * Fires a {{#crossLink "Camera/look:event"}}{{/crossLink}} event on change.
+             * @property look
+             * @default [0,0,0]
+             * @type Array(Number)
+             */
             look: {
 
                 set: function (value) {
@@ -322,6 +379,13 @@
                 }
             },
 
+            /**
+             * Direction of the "up" vector.
+             * Fires an {{#crossLink "Camera/up:event"}}{{/crossLink}} event on change.
+             * @property up
+             * @default [0,1,0]
+             * @type Array(Number)
+             */
             up: {
 
                 set: function (value) {

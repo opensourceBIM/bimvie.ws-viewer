@@ -24,23 +24,7 @@
 
  ## Example
 
-
- ```` javascript
- TODO
- ````
-
- As with all components, we can <a href="BIMSURFER.Component.html#changeEvents" class="crosslink">observe and change properties</a> on DirLights like so:
-
- ````Javascript
- var handle = dirLight.on("diffuse", // Attach a change listener to a property
- function(value) {
-        // Property value has changed
-    });
-
- dirLight.diffuse = [0.4, 0.6, 0.4]; // Fires the change listener
-
- dirLight.off(handle); // Detach the change listener
- ````
+TODO
 
  @class DirLight
  @module BIMSURFER

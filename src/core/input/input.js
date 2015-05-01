@@ -1,13 +1,11 @@
 /**
- Publishes key and mouse events that occur on the parent {{#crossLink "Scene"}}Scene{{/crossLink}}'s {{#crossLink "Canvas"}}Canvas{{/crossLink}}.
+ Publishes key and mouse events that occur on the parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}'s {{#crossLink "Canvas"}}Canvas{{/crossLink}}.
 
  ## Overview
 
  <ul>
- <li>Each {{#crossLink "Scene"}}{{/crossLink}} provides an Input on itself as a read-only property.</li>
+ <li>Each {{#crossLink "Viewer"}}{{/crossLink}} provides an Input on itself as a read-only property.</li>
  </ul>
-
- <img src="http://www.gliffy.com/go/publish/image/7123123/L.png"></img>
 
  ## Example
 

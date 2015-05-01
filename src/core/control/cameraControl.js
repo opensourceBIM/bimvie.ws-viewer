@@ -1,24 +1,42 @@
 /**
-
- **Zooms** orbits a {{#crossLink "Camera"}}{{/crossLink}}
+ A **CameraControl** allows you to control a {{#crossLink "Camera"}}{{/crossLink}} with mouse and keyboard.
 
  ## Overview
 
+ <ul>
+ <li>You can have an unlimited number of Cameras in a {{#crossLink "Viewer"}}GameObjects{{/crossLink}}.</li>
+ <li>At any instant, the Camera we're looking through is the one whose {{#crossLink "Camera/active:property"}}active{{/crossLink}} property is true.</li>
+ </ul>
+
  ## Example
 
- TODO
+ In this example we have a {{#crossLink "Viewer"}}{{/crossLink}} with a
+ {{#crossLink "Camera"}}{{/crossLink}} that's controlled by a CameraControl.
 
- ````javascript
- TODO
+ ````Javascript
+
+ var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+
+ var camera = new BIMSURFER.Camera(viewer, {
+        eye: [0, 0, -10]
+    });
+
+ var cameraControl = new BIMSURFER.CameraControl(viewer, {
+        camera: camera
+    });
+
+ var teapot = new BIMSURFER.TeapotObject(viewer);
+
  ````
- @class Zoom
+
+ @class Camera
  @module BIMSURFER
  @constructor
- @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}.
- @param [cfg] {*} Zoom configuration
- @param [cfg.id] {String} Optional ID, unique among all components in the parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}, generated automatically when omitted.
- @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Zoom.
- @param [cfg.camera] {Camera} Camera to control
+ @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
+ @param [cfg] {*} Configs
+ @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Camera.
+ @param [camera] {Camera} The Camera to control.
  @extends Component
  */
 (function () {
@@ -86,6 +104,12 @@
                 }
             },
 
+            /**
+             * The {{#crossLink "Camera"}}{{/crossLink}} being controlled.
+             *             *
+             * @property project
+             * @type Camera
+             */
             camera: {
 
                 set: function (value) {
@@ -127,6 +151,12 @@
                 }
             },
 
+            /**
+             * Flag which indicates whether this CameraControl is active or not.
+             *
+             * @property active
+             * @type Boolean
+             */
             active: {
 
                 set: function (value) {
@@ -140,6 +170,11 @@
                     this._keyboardPan.active = value;
                     this._mousePan.active = value;
 
+                    /**
+                     * Fired whenever this CameraControl's {{#crossLink "CameraControl/active:property"}}{{/crossLink}} property changes.
+                     * @event active
+                     * @param value The property's new value
+                     */
                     this.fire('active', this._active = value);
                 },
 

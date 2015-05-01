@@ -12,35 +12,15 @@
  When in View-space, their position is relative to the View coordinate system, and will behave as if fixed to the viewer's
  head as the {{#crossLink "Camera"}}{{/crossLink}} moves.</li>
 
- <li>Within bIMSurfer's's Phong lighting calculations, PointLight {{#crossLink "PointLight/diffuse:property"}}{{/crossLink}} and
- {{#crossLink "PointLight/specular:property"}}{{/crossLink}}.</li>
-
  <li>PointLights have {{#crossLink "PointLight/constantAttenuation:property"}}{{/crossLink}}, {{#crossLink "PointLight/linearAttenuation:property"}}{{/crossLink}} and
  {{#crossLink "PointLight/quadraticAttenuation:property"}}{{/crossLink}} factors, which indicate how their intensity attenuates over distance.</li>
-
 
  </ul>
 
 
  ## Example
 
-
- ```` javascript
- TODO
- ````
-
- As with all components, we can <a href="BIMSURFER.Component.html#changeEvents" class="crosslink">observe and change properties</a> on PointLights like so:
-
- ````Javascript
- var handle = pointLight.on("diffuse", // Attach a change listener to a property
- function(value) {
-        // Property value has changed
-    });
-
- pointLight.diffuse = [0.4, 0.6, 0.4]; // Fires the change listener
-
- pointLight.off(handle); // Detach the change listener
- ````
+TODO
 
  @class PointLight
  @module BIMSURFER

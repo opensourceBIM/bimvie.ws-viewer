@@ -1,3 +1,9 @@
+/**
+ * Math functions, used within BIMSURFER, but also available for you to use in your application code.
+ * @module BIMSURFER
+ * @class math
+ * @static
+ */
 (function () {
 
     "use strict";
@@ -30,12 +36,7 @@
      */
 
 
-    /**
-     * Math functions, used within BIMSURFER, but also available for you to use in your application code.
-     * @module BIMSURFER
-     * @class math
-     * @static
-     */
+
     BIMSURFER.math = {
 
         /**
