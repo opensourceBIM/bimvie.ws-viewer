@@ -41,18 +41,53 @@
             this._lightsManager = getLightsManager(this.viewer);
 
             this._lightsManager.createLight(this.id, cfg);
-        },
 
-        _activate: function () {
-            this._lightsManager.activateLight(this.id);
-        },
-
-        _deactivate: function () {
-            this._lightsManager.deactivateLight(this.id);
+            this.active = cfg.active !== false;
         },
 
         _update: function (params) {
             this._lightsManager.updateLight(this.id, params);
+        },
+
+        _props: {
+
+            /**
+             * Flag which indicates whether this Light is active or not.
+             *
+             * Fires an {{#crossLink "Light/active:event"}}{{/crossLink}} event on change.
+             *
+             * @property active
+             * @type Boolean
+             */
+            active: {
+
+                set: function (value) {
+
+                    if (this._active === value) {
+                        return;
+                    }
+
+                    if (value) {
+
+                        this._lightsManager.activateLight(this.id);
+
+                    } else {
+
+                        this._lightsManager.deactivateLight(this.id);
+                    }
+
+                    /**
+                     * Fired whenever this Light's {{#crossLink "Light/active:property"}}{{/crossLink}} property changes.
+                     * @event active
+                     * @param value The property's new value
+                     */
+                    this.fire('active', this._active = value);
+                },
+
+                get: function () {
+                    return this._active;
+                }
+            }
         },
 
         _destroy: function () {

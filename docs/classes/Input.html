@@ -41,10 +41,13 @@
                                 <li><a href="../classes/AmbientLight.html">AmbientLight</a></li>
                                 <li><a href="../classes/BIMSURFER.html">BIMSURFER</a></li>
                                 <li><a href="../classes/BoxGeometry.html">BoxGeometry</a></li>
+                                <li><a href="../classes/BoxObject.html">BoxObject</a></li>
                                 <li><a href="../classes/Camera.html">Camera</a></li>
+                                <li><a href="../classes/CameraControl.html">CameraControl</a></li>
                                 <li><a href="../classes/Canvas.html">Canvas</a></li>
                                 <li><a href="../classes/ClickSelectObjects.html">ClickSelectObjects</a></li>
                                 <li><a href="../classes/Component.html">Component</a></li>
+                                <li><a href="../classes/Configs.html">Configs</a></li>
                                 <li><a href="../classes/DirLight.html">DirLight</a></li>
                                 <li><a href="../classes/Effect.html">Effect</a></li>
                                 <li><a href="../classes/Fly.html">Fly</a></li>
@@ -62,13 +65,21 @@
                                 <li><a href="../classes/MouseZoomCamera.html">MouseZoomCamera</a></li>
                                 <li><a href="../classes/Object.html">Object</a></li>
                                 <li><a href="../classes/PointLight.html">PointLight</a></li>
+                                <li><a href="../classes/Selection.html">Selection</a></li>
                                 <li><a href="../classes/TeapotGeometry.html">TeapotGeometry</a></li>
+                                <li><a href="../classes/TeapotObject.html">TeapotObject</a></li>
                                 <li><a href="../classes/Viewer.html">Viewer</a></li>
                                 <li><a href="../classes/XRayEffect.html">XRayEffect</a></li>
                             </ul>
                 
                             <ul id="api-modules" class="apis modules">
+                                <li><a href="../modules/animate.html">animate</a></li>
                                 <li><a href="../modules/BIMSURFER.html">BIMSURFER</a></li>
+                                <li><a href="../modules/camera.html">camera</a></li>
+                                <li><a href="../modules/control.html">control</a></li>
+                                <li><a href="../modules/effect.html">effect</a></li>
+                                <li><a href="../modules/geometry.html">geometry</a></li>
+                                <li><a href="../modules/input.html">input</a></li>
                             </ul>
                         </div>
                     </div>
@@ -113,7 +124,8 @@
             Defined in: <a href="../files/src_core_input_input.js.html#l1"><code>src&#x2F;core&#x2F;input&#x2F;input.js:1</code></a>
         </div>
 
-            Module: <a href="../modules/BIMSURFER.html">BIMSURFER</a>
+            Module: <a href="../modules/input.html">input</a><br>
+            Parent Module: <a href="../modules/BIMSURFER.html">BIMSURFER</a>
 
 </div>
 
@@ -670,10 +682,6 @@ input.on("keyup", function(keyCode) {
 
                             </li>
                             <li class="index-item property inherited">
-                                <a href="#property_type">type</a>
-
-                            </li>
-                            <li class="index-item property inherited">
                                 <a href="#property_viewer">viewer</a>
 
                             </li>
@@ -743,7 +751,7 @@ input.on("keyup", function(keyCode) {
     <div class="meta">
                 <p>Inherited from
                 <a href="../classes/Component.html#method_destroy">Component</a>:
-        <a href="../files/src_core_component.js.html#l415"><code>src&#x2F;core&#x2F;component.js:415</code></a>
+        <a href="../files/src_core_component.js.html#l377"><code>src&#x2F;core&#x2F;component.js:377</code></a>
         </p>
 
 
@@ -782,7 +790,7 @@ input.on("keyup", function(keyCode) {
     <div class="meta">
                 <p>Inherited from
                 <a href="../classes/Component.html#method_error">Component</a>:
-        <a href="../files/src_core_component.js.html#l391"><code>src&#x2F;core&#x2F;component.js:391</code></a>
+        <a href="../files/src_core_component.js.html#l353"><code>src&#x2F;core&#x2F;component.js:353</code></a>
         </p>
 
 
@@ -843,7 +851,7 @@ input.on("keyup", function(keyCode) {
     <div class="meta">
                 <p>Inherited from
                 <a href="../classes/Component.html#method_fire">Component</a>:
-        <a href="../files/src_core_component.js.html#l285"><code>src&#x2F;core&#x2F;component.js:285</code></a>
+        <a href="../files/src_core_component.js.html#l247"><code>src&#x2F;core&#x2F;component.js:247</code></a>
         </p>
 
 
@@ -922,7 +930,7 @@ any subsequent notifications on that location as they are made.</p>
     <div class="meta">
                 <p>Inherited from
                 <a href="../classes/Component.html#method_log">Component</a>:
-        <a href="../files/src_core_component.js.html#l379"><code>src&#x2F;core&#x2F;component.js:379</code></a>
+        <a href="../files/src_core_component.js.html#l341"><code>src&#x2F;core&#x2F;component.js:341</code></a>
         </p>
 
 
@@ -977,7 +985,7 @@ any subsequent notifications on that location as they are made.</p>
     <div class="meta">
                 <p>Inherited from
                 <a href="../classes/Component.html#method_off">Component</a>:
-        <a href="../files/src_core_component.js.html#l342"><code>src&#x2F;core&#x2F;component.js:342</code></a>
+        <a href="../files/src_core_component.js.html#l304"><code>src&#x2F;core&#x2F;component.js:304</code></a>
         </p>
 
 
@@ -1041,7 +1049,7 @@ any subsequent notifications on that location as they are made.</p>
     <div class="meta">
                 <p>Inherited from
                 <a href="../classes/Component.html#method_on">Component</a>:
-        <a href="../files/src_core_component.js.html#l312"><code>src&#x2F;core&#x2F;component.js:312</code></a>
+        <a href="../files/src_core_component.js.html#l274"><code>src&#x2F;core&#x2F;component.js:274</code></a>
         </p>
 
 
@@ -1134,7 +1142,7 @@ any subsequent notifications on that location as they are made.</p>
     <div class="meta">
                 <p>Inherited from
                 <a href="../classes/Component.html#method_once">Component</a>:
-        <a href="../files/src_core_component.js.html#l361"><code>src&#x2F;core&#x2F;component.js:361</code></a>
+        <a href="../files/src_core_component.js.html#l323"><code>src&#x2F;core&#x2F;component.js:323</code></a>
         </p>
 
 
@@ -1211,7 +1219,7 @@ any subsequent notifications on that location as they are made.</p>
     <div class="meta">
                 <p>Inherited from
                 <a href="../classes/Component.html#method_warn">Component</a>:
-        <a href="../files/src_core_component.js.html#l403"><code>src&#x2F;core&#x2F;component.js:403</code></a>
+        <a href="../files/src_core_component.js.html#l365"><code>src&#x2F;core&#x2F;component.js:365</code></a>
         </p>
 
 
@@ -1262,7 +1270,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>Inherited from
                                     <a href="../classes/Component.html#property_className">Component</a>:
-                            <a href="../files/src_core_component.js.html#l204"><code>src&#x2F;core&#x2F;component.js:204</code></a>
+                            <a href="../files/src_core_component.js.html#l177"><code>src&#x2F;core&#x2F;component.js:177</code></a>
                             </p>
                     
                     
@@ -1287,7 +1295,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>Inherited from
                                     <a href="../classes/Component.html#property_destroyed">Component</a>:
-                            <a href="../files/src_core_component.js.html#l253"><code>src&#x2F;core&#x2F;component.js:253</code></a>
+                            <a href="../files/src_core_component.js.html#l217"><code>src&#x2F;core&#x2F;component.js:217</code></a>
                             </p>
                     
                     
@@ -1313,7 +1321,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>Inherited from
                                     <a href="../classes/Component.html#property_id">Component</a>:
-                            <a href="../files/src_core_component.js.html#l244"><code>src&#x2F;core&#x2F;component.js:244</code></a>
+                            <a href="../files/src_core_component.js.html#l208"><code>src&#x2F;core&#x2F;component.js:208</code></a>
                             </p>
                     
                     
@@ -1339,7 +1347,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l625"><code>src&#x2F;core&#x2F;input&#x2F;input.js:625</code></a>
+                            <a href="../files/src_core_input_input.js.html#l626"><code>src&#x2F;core&#x2F;input&#x2F;input.js:626</code></a>
                             </p>
                     
                     
@@ -1365,7 +1373,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l945"><code>src&#x2F;core&#x2F;input&#x2F;input.js:945</code></a>
+                            <a href="../files/src_core_input_input.js.html#l946"><code>src&#x2F;core&#x2F;input&#x2F;input.js:946</code></a>
                             </p>
                     
                     
@@ -1391,7 +1399,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l433"><code>src&#x2F;core&#x2F;input&#x2F;input.js:433</code></a>
+                            <a href="../files/src_core_input_input.js.html#l434"><code>src&#x2F;core&#x2F;input&#x2F;input.js:434</code></a>
                             </p>
                     
                     
@@ -1417,7 +1425,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l633"><code>src&#x2F;core&#x2F;input&#x2F;input.js:633</code></a>
+                            <a href="../files/src_core_input_input.js.html#l634"><code>src&#x2F;core&#x2F;input&#x2F;input.js:634</code></a>
                             </p>
                     
                     
@@ -1443,7 +1451,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l1153"><code>src&#x2F;core&#x2F;input&#x2F;input.js:1153</code></a>
+                            <a href="../files/src_core_input_input.js.html#l1154"><code>src&#x2F;core&#x2F;input&#x2F;input.js:1154</code></a>
                             </p>
                     
                     
@@ -1469,7 +1477,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l393"><code>src&#x2F;core&#x2F;input&#x2F;input.js:393</code></a>
+                            <a href="../files/src_core_input_input.js.html#l394"><code>src&#x2F;core&#x2F;input&#x2F;input.js:394</code></a>
                             </p>
                     
                     
@@ -1495,7 +1503,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l641"><code>src&#x2F;core&#x2F;input&#x2F;input.js:641</code></a>
+                            <a href="../files/src_core_input_input.js.html#l642"><code>src&#x2F;core&#x2F;input&#x2F;input.js:642</code></a>
                             </p>
                     
                     
@@ -1521,7 +1529,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l449"><code>src&#x2F;core&#x2F;input&#x2F;input.js:449</code></a>
+                            <a href="../files/src_core_input_input.js.html#l450"><code>src&#x2F;core&#x2F;input&#x2F;input.js:450</code></a>
                             </p>
                     
                     
@@ -1547,7 +1555,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l1161"><code>src&#x2F;core&#x2F;input&#x2F;input.js:1161</code></a>
+                            <a href="../files/src_core_input_input.js.html#l1162"><code>src&#x2F;core&#x2F;input&#x2F;input.js:1162</code></a>
                             </p>
                     
                     
@@ -1573,7 +1581,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l1105"><code>src&#x2F;core&#x2F;input&#x2F;input.js:1105</code></a>
+                            <a href="../files/src_core_input_input.js.html#l1106"><code>src&#x2F;core&#x2F;input&#x2F;input.js:1106</code></a>
                             </p>
                     
                     
@@ -1599,7 +1607,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l425"><code>src&#x2F;core&#x2F;input&#x2F;input.js:425</code></a>
+                            <a href="../files/src_core_input_input.js.html#l426"><code>src&#x2F;core&#x2F;input&#x2F;input.js:426</code></a>
                             </p>
                     
                     
@@ -1625,7 +1633,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l649"><code>src&#x2F;core&#x2F;input&#x2F;input.js:649</code></a>
+                            <a href="../files/src_core_input_input.js.html#l650"><code>src&#x2F;core&#x2F;input&#x2F;input.js:650</code></a>
                             </p>
                     
                     
@@ -1651,7 +1659,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l1113"><code>src&#x2F;core&#x2F;input&#x2F;input.js:1113</code></a>
+                            <a href="../files/src_core_input_input.js.html#l1114"><code>src&#x2F;core&#x2F;input&#x2F;input.js:1114</code></a>
                             </p>
                     
                     
@@ -1677,7 +1685,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l961"><code>src&#x2F;core&#x2F;input&#x2F;input.js:961</code></a>
+                            <a href="../files/src_core_input_input.js.html#l962"><code>src&#x2F;core&#x2F;input&#x2F;input.js:962</code></a>
                             </p>
                     
                     
@@ -1703,7 +1711,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l537"><code>src&#x2F;core&#x2F;input&#x2F;input.js:537</code></a>
+                            <a href="../files/src_core_input_input.js.html#l538"><code>src&#x2F;core&#x2F;input&#x2F;input.js:538</code></a>
                             </p>
                     
                     
@@ -1729,7 +1737,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l969"><code>src&#x2F;core&#x2F;input&#x2F;input.js:969</code></a>
+                            <a href="../files/src_core_input_input.js.html#l970"><code>src&#x2F;core&#x2F;input&#x2F;input.js:970</code></a>
                             </p>
                     
                     
@@ -1755,7 +1763,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l521"><code>src&#x2F;core&#x2F;input&#x2F;input.js:521</code></a>
+                            <a href="../files/src_core_input_input.js.html#l522"><code>src&#x2F;core&#x2F;input&#x2F;input.js:522</code></a>
                             </p>
                     
                     
@@ -1781,7 +1789,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l657"><code>src&#x2F;core&#x2F;input&#x2F;input.js:657</code></a>
+                            <a href="../files/src_core_input_input.js.html#l658"><code>src&#x2F;core&#x2F;input&#x2F;input.js:658</code></a>
                             </p>
                     
                     
@@ -1807,7 +1815,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l481"><code>src&#x2F;core&#x2F;input&#x2F;input.js:481</code></a>
+                            <a href="../files/src_core_input_input.js.html#l482"><code>src&#x2F;core&#x2F;input&#x2F;input.js:482</code></a>
                             </p>
                     
                     
@@ -1833,7 +1841,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l409"><code>src&#x2F;core&#x2F;input&#x2F;input.js:409</code></a>
+                            <a href="../files/src_core_input_input.js.html#l410"><code>src&#x2F;core&#x2F;input&#x2F;input.js:410</code></a>
                             </p>
                     
                     
@@ -1859,7 +1867,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l1097"><code>src&#x2F;core&#x2F;input&#x2F;input.js:1097</code></a>
+                            <a href="../files/src_core_input_input.js.html#l1098"><code>src&#x2F;core&#x2F;input&#x2F;input.js:1098</code></a>
                             </p>
                     
                     
@@ -1885,7 +1893,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l457"><code>src&#x2F;core&#x2F;input&#x2F;input.js:457</code></a>
+                            <a href="../files/src_core_input_input.js.html#l458"><code>src&#x2F;core&#x2F;input&#x2F;input.js:458</code></a>
                             </p>
                     
                     
@@ -1911,7 +1919,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l665"><code>src&#x2F;core&#x2F;input&#x2F;input.js:665</code></a>
+                            <a href="../files/src_core_input_input.js.html#l666"><code>src&#x2F;core&#x2F;input&#x2F;input.js:666</code></a>
                             </p>
                     
                     
@@ -1937,7 +1945,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l977"><code>src&#x2F;core&#x2F;input&#x2F;input.js:977</code></a>
+                            <a href="../files/src_core_input_input.js.html#l978"><code>src&#x2F;core&#x2F;input&#x2F;input.js:978</code></a>
                             </p>
                     
                     
@@ -1963,7 +1971,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l1049"><code>src&#x2F;core&#x2F;input&#x2F;input.js:1049</code></a>
+                            <a href="../files/src_core_input_input.js.html#l1050"><code>src&#x2F;core&#x2F;input&#x2F;input.js:1050</code></a>
                             </p>
                     
                     
@@ -1989,7 +1997,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l1057"><code>src&#x2F;core&#x2F;input&#x2F;input.js:1057</code></a>
+                            <a href="../files/src_core_input_input.js.html#l1058"><code>src&#x2F;core&#x2F;input&#x2F;input.js:1058</code></a>
                             </p>
                     
                     
@@ -2015,7 +2023,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l1065"><code>src&#x2F;core&#x2F;input&#x2F;input.js:1065</code></a>
+                            <a href="../files/src_core_input_input.js.html#l1066"><code>src&#x2F;core&#x2F;input&#x2F;input.js:1066</code></a>
                             </p>
                     
                     
@@ -2041,7 +2049,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l985"><code>src&#x2F;core&#x2F;input&#x2F;input.js:985</code></a>
+                            <a href="../files/src_core_input_input.js.html#l986"><code>src&#x2F;core&#x2F;input&#x2F;input.js:986</code></a>
                             </p>
                     
                     
@@ -2067,7 +2075,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l993"><code>src&#x2F;core&#x2F;input&#x2F;input.js:993</code></a>
+                            <a href="../files/src_core_input_input.js.html#l994"><code>src&#x2F;core&#x2F;input&#x2F;input.js:994</code></a>
                             </p>
                     
                     
@@ -2093,7 +2101,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l1001"><code>src&#x2F;core&#x2F;input&#x2F;input.js:1001</code></a>
+                            <a href="../files/src_core_input_input.js.html#l1002"><code>src&#x2F;core&#x2F;input&#x2F;input.js:1002</code></a>
                             </p>
                     
                     
@@ -2119,7 +2127,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l1009"><code>src&#x2F;core&#x2F;input&#x2F;input.js:1009</code></a>
+                            <a href="../files/src_core_input_input.js.html#l1010"><code>src&#x2F;core&#x2F;input&#x2F;input.js:1010</code></a>
                             </p>
                     
                     
@@ -2145,7 +2153,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l1017"><code>src&#x2F;core&#x2F;input&#x2F;input.js:1017</code></a>
+                            <a href="../files/src_core_input_input.js.html#l1018"><code>src&#x2F;core&#x2F;input&#x2F;input.js:1018</code></a>
                             </p>
                     
                     
@@ -2171,7 +2179,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l1025"><code>src&#x2F;core&#x2F;input&#x2F;input.js:1025</code></a>
+                            <a href="../files/src_core_input_input.js.html#l1026"><code>src&#x2F;core&#x2F;input&#x2F;input.js:1026</code></a>
                             </p>
                     
                     
@@ -2197,7 +2205,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l1033"><code>src&#x2F;core&#x2F;input&#x2F;input.js:1033</code></a>
+                            <a href="../files/src_core_input_input.js.html#l1034"><code>src&#x2F;core&#x2F;input&#x2F;input.js:1034</code></a>
                             </p>
                     
                     
@@ -2223,7 +2231,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l1041"><code>src&#x2F;core&#x2F;input&#x2F;input.js:1041</code></a>
+                            <a href="../files/src_core_input_input.js.html#l1042"><code>src&#x2F;core&#x2F;input&#x2F;input.js:1042</code></a>
                             </p>
                     
                     
@@ -2249,7 +2257,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l1129"><code>src&#x2F;core&#x2F;input&#x2F;input.js:1129</code></a>
+                            <a href="../files/src_core_input_input.js.html#l1130"><code>src&#x2F;core&#x2F;input&#x2F;input.js:1130</code></a>
                             </p>
                     
                     
@@ -2275,7 +2283,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l673"><code>src&#x2F;core&#x2F;input&#x2F;input.js:673</code></a>
+                            <a href="../files/src_core_input_input.js.html#l674"><code>src&#x2F;core&#x2F;input&#x2F;input.js:674</code></a>
                             </p>
                     
                     
@@ -2301,7 +2309,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l1137"><code>src&#x2F;core&#x2F;input&#x2F;input.js:1137</code></a>
+                            <a href="../files/src_core_input_input.js.html#l1138"><code>src&#x2F;core&#x2F;input&#x2F;input.js:1138</code></a>
                             </p>
                     
                     
@@ -2327,7 +2335,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l681"><code>src&#x2F;core&#x2F;input&#x2F;input.js:681</code></a>
+                            <a href="../files/src_core_input_input.js.html#l682"><code>src&#x2F;core&#x2F;input&#x2F;input.js:682</code></a>
                             </p>
                     
                     
@@ -2353,7 +2361,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l489"><code>src&#x2F;core&#x2F;input&#x2F;input.js:489</code></a>
+                            <a href="../files/src_core_input_input.js.html#l490"><code>src&#x2F;core&#x2F;input&#x2F;input.js:490</code></a>
                             </p>
                     
                     
@@ -2379,7 +2387,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l689"><code>src&#x2F;core&#x2F;input&#x2F;input.js:689</code></a>
+                            <a href="../files/src_core_input_input.js.html#l690"><code>src&#x2F;core&#x2F;input&#x2F;input.js:690</code></a>
                             </p>
                     
                     
@@ -2405,7 +2413,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l529"><code>src&#x2F;core&#x2F;input&#x2F;input.js:529</code></a>
+                            <a href="../files/src_core_input_input.js.html#l530"><code>src&#x2F;core&#x2F;input&#x2F;input.js:530</code></a>
                             </p>
                     
                     
@@ -2431,7 +2439,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l697"><code>src&#x2F;core&#x2F;input&#x2F;input.js:697</code></a>
+                            <a href="../files/src_core_input_input.js.html#l698"><code>src&#x2F;core&#x2F;input&#x2F;input.js:698</code></a>
                             </p>
                     
                     
@@ -2457,7 +2465,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l705"><code>src&#x2F;core&#x2F;input&#x2F;input.js:705</code></a>
+                            <a href="../files/src_core_input_input.js.html#l706"><code>src&#x2F;core&#x2F;input&#x2F;input.js:706</code></a>
                             </p>
                     
                     
@@ -2483,7 +2491,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l713"><code>src&#x2F;core&#x2F;input&#x2F;input.js:713</code></a>
+                            <a href="../files/src_core_input_input.js.html#l714"><code>src&#x2F;core&#x2F;input&#x2F;input.js:714</code></a>
                             </p>
                     
                     
@@ -2509,7 +2517,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l497"><code>src&#x2F;core&#x2F;input&#x2F;input.js:497</code></a>
+                            <a href="../files/src_core_input_input.js.html#l498"><code>src&#x2F;core&#x2F;input&#x2F;input.js:498</code></a>
                             </p>
                     
                     
@@ -2535,7 +2543,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l833"><code>src&#x2F;core&#x2F;input&#x2F;input.js:833</code></a>
+                            <a href="../files/src_core_input_input.js.html#l834"><code>src&#x2F;core&#x2F;input&#x2F;input.js:834</code></a>
                             </p>
                     
                     
@@ -2561,7 +2569,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l721"><code>src&#x2F;core&#x2F;input&#x2F;input.js:721</code></a>
+                            <a href="../files/src_core_input_input.js.html#l722"><code>src&#x2F;core&#x2F;input&#x2F;input.js:722</code></a>
                             </p>
                     
                     
@@ -2587,7 +2595,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l937"><code>src&#x2F;core&#x2F;input&#x2F;input.js:937</code></a>
+                            <a href="../files/src_core_input_input.js.html#l938"><code>src&#x2F;core&#x2F;input&#x2F;input.js:938</code></a>
                             </p>
                     
                     
@@ -2613,7 +2621,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l729"><code>src&#x2F;core&#x2F;input&#x2F;input.js:729</code></a>
+                            <a href="../files/src_core_input_input.js.html#l730"><code>src&#x2F;core&#x2F;input&#x2F;input.js:730</code></a>
                             </p>
                     
                     
@@ -2639,7 +2647,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l545"><code>src&#x2F;core&#x2F;input&#x2F;input.js:545</code></a>
+                            <a href="../files/src_core_input_input.js.html#l546"><code>src&#x2F;core&#x2F;input&#x2F;input.js:546</code></a>
                             </p>
                     
                     
@@ -2665,7 +2673,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l553"><code>src&#x2F;core&#x2F;input&#x2F;input.js:553</code></a>
+                            <a href="../files/src_core_input_input.js.html#l554"><code>src&#x2F;core&#x2F;input&#x2F;input.js:554</code></a>
                             </p>
                     
                     
@@ -2691,7 +2699,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l561"><code>src&#x2F;core&#x2F;input&#x2F;input.js:561</code></a>
+                            <a href="../files/src_core_input_input.js.html#l562"><code>src&#x2F;core&#x2F;input&#x2F;input.js:562</code></a>
                             </p>
                     
                     
@@ -2717,7 +2725,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l569"><code>src&#x2F;core&#x2F;input&#x2F;input.js:569</code></a>
+                            <a href="../files/src_core_input_input.js.html#l570"><code>src&#x2F;core&#x2F;input&#x2F;input.js:570</code></a>
                             </p>
                     
                     
@@ -2743,7 +2751,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l577"><code>src&#x2F;core&#x2F;input&#x2F;input.js:577</code></a>
+                            <a href="../files/src_core_input_input.js.html#l578"><code>src&#x2F;core&#x2F;input&#x2F;input.js:578</code></a>
                             </p>
                     
                     
@@ -2769,7 +2777,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l585"><code>src&#x2F;core&#x2F;input&#x2F;input.js:585</code></a>
+                            <a href="../files/src_core_input_input.js.html#l586"><code>src&#x2F;core&#x2F;input&#x2F;input.js:586</code></a>
                             </p>
                     
                     
@@ -2795,7 +2803,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l593"><code>src&#x2F;core&#x2F;input&#x2F;input.js:593</code></a>
+                            <a href="../files/src_core_input_input.js.html#l594"><code>src&#x2F;core&#x2F;input&#x2F;input.js:594</code></a>
                             </p>
                     
                     
@@ -2821,7 +2829,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l601"><code>src&#x2F;core&#x2F;input&#x2F;input.js:601</code></a>
+                            <a href="../files/src_core_input_input.js.html#l602"><code>src&#x2F;core&#x2F;input&#x2F;input.js:602</code></a>
                             </p>
                     
                     
@@ -2847,7 +2855,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l609"><code>src&#x2F;core&#x2F;input&#x2F;input.js:609</code></a>
+                            <a href="../files/src_core_input_input.js.html#l610"><code>src&#x2F;core&#x2F;input&#x2F;input.js:610</code></a>
                             </p>
                     
                     
@@ -2873,7 +2881,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l617"><code>src&#x2F;core&#x2F;input&#x2F;input.js:617</code></a>
+                            <a href="../files/src_core_input_input.js.html#l618"><code>src&#x2F;core&#x2F;input&#x2F;input.js:618</code></a>
                             </p>
                     
                     
@@ -2899,7 +2907,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l1073"><code>src&#x2F;core&#x2F;input&#x2F;input.js:1073</code></a>
+                            <a href="../files/src_core_input_input.js.html#l1074"><code>src&#x2F;core&#x2F;input&#x2F;input.js:1074</code></a>
                             </p>
                     
                     
@@ -2925,7 +2933,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l873"><code>src&#x2F;core&#x2F;input&#x2F;input.js:873</code></a>
+                            <a href="../files/src_core_input_input.js.html#l874"><code>src&#x2F;core&#x2F;input&#x2F;input.js:874</code></a>
                             </p>
                     
                     
@@ -2951,7 +2959,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l857"><code>src&#x2F;core&#x2F;input&#x2F;input.js:857</code></a>
+                            <a href="../files/src_core_input_input.js.html#l858"><code>src&#x2F;core&#x2F;input&#x2F;input.js:858</code></a>
                             </p>
                     
                     
@@ -2977,7 +2985,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l865"><code>src&#x2F;core&#x2F;input&#x2F;input.js:865</code></a>
+                            <a href="../files/src_core_input_input.js.html#l866"><code>src&#x2F;core&#x2F;input&#x2F;input.js:866</code></a>
                             </p>
                     
                     
@@ -3003,7 +3011,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l881"><code>src&#x2F;core&#x2F;input&#x2F;input.js:881</code></a>
+                            <a href="../files/src_core_input_input.js.html#l882"><code>src&#x2F;core&#x2F;input&#x2F;input.js:882</code></a>
                             </p>
                     
                     
@@ -3029,7 +3037,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l889"><code>src&#x2F;core&#x2F;input&#x2F;input.js:889</code></a>
+                            <a href="../files/src_core_input_input.js.html#l890"><code>src&#x2F;core&#x2F;input&#x2F;input.js:890</code></a>
                             </p>
                     
                     
@@ -3055,7 +3063,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l897"><code>src&#x2F;core&#x2F;input&#x2F;input.js:897</code></a>
+                            <a href="../files/src_core_input_input.js.html#l898"><code>src&#x2F;core&#x2F;input&#x2F;input.js:898</code></a>
                             </p>
                     
                     
@@ -3081,7 +3089,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l905"><code>src&#x2F;core&#x2F;input&#x2F;input.js:905</code></a>
+                            <a href="../files/src_core_input_input.js.html#l906"><code>src&#x2F;core&#x2F;input&#x2F;input.js:906</code></a>
                             </p>
                     
                     
@@ -3107,7 +3115,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l913"><code>src&#x2F;core&#x2F;input&#x2F;input.js:913</code></a>
+                            <a href="../files/src_core_input_input.js.html#l914"><code>src&#x2F;core&#x2F;input&#x2F;input.js:914</code></a>
                             </p>
                     
                     
@@ -3133,7 +3141,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l921"><code>src&#x2F;core&#x2F;input&#x2F;input.js:921</code></a>
+                            <a href="../files/src_core_input_input.js.html#l922"><code>src&#x2F;core&#x2F;input&#x2F;input.js:922</code></a>
                             </p>
                     
                     
@@ -3159,7 +3167,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l929"><code>src&#x2F;core&#x2F;input&#x2F;input.js:929</code></a>
+                            <a href="../files/src_core_input_input.js.html#l930"><code>src&#x2F;core&#x2F;input&#x2F;input.js:930</code></a>
                             </p>
                     
                     
@@ -3185,7 +3193,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l737"><code>src&#x2F;core&#x2F;input&#x2F;input.js:737</code></a>
+                            <a href="../files/src_core_input_input.js.html#l738"><code>src&#x2F;core&#x2F;input&#x2F;input.js:738</code></a>
                             </p>
                     
                     
@@ -3211,7 +3219,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l1145"><code>src&#x2F;core&#x2F;input&#x2F;input.js:1145</code></a>
+                            <a href="../files/src_core_input_input.js.html#l1146"><code>src&#x2F;core&#x2F;input&#x2F;input.js:1146</code></a>
                             </p>
                     
                     
@@ -3237,7 +3245,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l745"><code>src&#x2F;core&#x2F;input&#x2F;input.js:745</code></a>
+                            <a href="../files/src_core_input_input.js.html#l746"><code>src&#x2F;core&#x2F;input&#x2F;input.js:746</code></a>
                             </p>
                     
                     
@@ -3263,7 +3271,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l473"><code>src&#x2F;core&#x2F;input&#x2F;input.js:473</code></a>
+                            <a href="../files/src_core_input_input.js.html#l474"><code>src&#x2F;core&#x2F;input&#x2F;input.js:474</code></a>
                             </p>
                     
                     
@@ -3289,7 +3297,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l465"><code>src&#x2F;core&#x2F;input&#x2F;input.js:465</code></a>
+                            <a href="../files/src_core_input_input.js.html#l466"><code>src&#x2F;core&#x2F;input&#x2F;input.js:466</code></a>
                             </p>
                     
                     
@@ -3315,7 +3323,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l441"><code>src&#x2F;core&#x2F;input&#x2F;input.js:441</code></a>
+                            <a href="../files/src_core_input_input.js.html#l442"><code>src&#x2F;core&#x2F;input&#x2F;input.js:442</code></a>
                             </p>
                     
                     
@@ -3341,7 +3349,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l1121"><code>src&#x2F;core&#x2F;input&#x2F;input.js:1121</code></a>
+                            <a href="../files/src_core_input_input.js.html#l1122"><code>src&#x2F;core&#x2F;input&#x2F;input.js:1122</code></a>
                             </p>
                     
                     
@@ -3367,7 +3375,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l753"><code>src&#x2F;core&#x2F;input&#x2F;input.js:753</code></a>
+                            <a href="../files/src_core_input_input.js.html#l754"><code>src&#x2F;core&#x2F;input&#x2F;input.js:754</code></a>
                             </p>
                     
                     
@@ -3393,7 +3401,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l761"><code>src&#x2F;core&#x2F;input&#x2F;input.js:761</code></a>
+                            <a href="../files/src_core_input_input.js.html#l762"><code>src&#x2F;core&#x2F;input&#x2F;input.js:762</code></a>
                             </p>
                     
                     
@@ -3419,7 +3427,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l513"><code>src&#x2F;core&#x2F;input&#x2F;input.js:513</code></a>
+                            <a href="../files/src_core_input_input.js.html#l514"><code>src&#x2F;core&#x2F;input&#x2F;input.js:514</code></a>
                             </p>
                     
                     
@@ -3445,7 +3453,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l841"><code>src&#x2F;core&#x2F;input&#x2F;input.js:841</code></a>
+                            <a href="../files/src_core_input_input.js.html#l842"><code>src&#x2F;core&#x2F;input&#x2F;input.js:842</code></a>
                             </p>
                     
                     
@@ -3471,7 +3479,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l769"><code>src&#x2F;core&#x2F;input&#x2F;input.js:769</code></a>
+                            <a href="../files/src_core_input_input.js.html#l770"><code>src&#x2F;core&#x2F;input&#x2F;input.js:770</code></a>
                             </p>
                     
                     
@@ -3497,7 +3505,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l1081"><code>src&#x2F;core&#x2F;input&#x2F;input.js:1081</code></a>
+                            <a href="../files/src_core_input_input.js.html#l1082"><code>src&#x2F;core&#x2F;input&#x2F;input.js:1082</code></a>
                             </p>
                     
                     
@@ -3523,7 +3531,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l849"><code>src&#x2F;core&#x2F;input&#x2F;input.js:849</code></a>
+                            <a href="../files/src_core_input_input.js.html#l850"><code>src&#x2F;core&#x2F;input&#x2F;input.js:850</code></a>
                             </p>
                     
                     
@@ -3549,7 +3557,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l1089"><code>src&#x2F;core&#x2F;input&#x2F;input.js:1089</code></a>
+                            <a href="../files/src_core_input_input.js.html#l1090"><code>src&#x2F;core&#x2F;input&#x2F;input.js:1090</code></a>
                             </p>
                     
                     
@@ -3575,7 +3583,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l417"><code>src&#x2F;core&#x2F;input&#x2F;input.js:417</code></a>
+                            <a href="../files/src_core_input_input.js.html#l418"><code>src&#x2F;core&#x2F;input&#x2F;input.js:418</code></a>
                             </p>
                     
                     
@@ -3601,7 +3609,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l1169"><code>src&#x2F;core&#x2F;input&#x2F;input.js:1169</code></a>
+                            <a href="../files/src_core_input_input.js.html#l1170"><code>src&#x2F;core&#x2F;input&#x2F;input.js:1170</code></a>
                             </p>
                     
                     
@@ -3627,7 +3635,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l1177"><code>src&#x2F;core&#x2F;input&#x2F;input.js:1177</code></a>
+                            <a href="../files/src_core_input_input.js.html#l1178"><code>src&#x2F;core&#x2F;input&#x2F;input.js:1178</code></a>
                             </p>
                     
                     
@@ -3653,7 +3661,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l953"><code>src&#x2F;core&#x2F;input&#x2F;input.js:953</code></a>
+                            <a href="../files/src_core_input_input.js.html#l954"><code>src&#x2F;core&#x2F;input&#x2F;input.js:954</code></a>
                             </p>
                     
                     
@@ -3679,7 +3687,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l777"><code>src&#x2F;core&#x2F;input&#x2F;input.js:777</code></a>
+                            <a href="../files/src_core_input_input.js.html#l778"><code>src&#x2F;core&#x2F;input&#x2F;input.js:778</code></a>
                             </p>
                     
                     
@@ -3705,7 +3713,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l401"><code>src&#x2F;core&#x2F;input&#x2F;input.js:401</code></a>
+                            <a href="../files/src_core_input_input.js.html#l402"><code>src&#x2F;core&#x2F;input&#x2F;input.js:402</code></a>
                             </p>
                     
                     
@@ -3731,7 +3739,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l785"><code>src&#x2F;core&#x2F;input&#x2F;input.js:785</code></a>
+                            <a href="../files/src_core_input_input.js.html#l786"><code>src&#x2F;core&#x2F;input&#x2F;input.js:786</code></a>
                             </p>
                     
                     
@@ -3757,7 +3765,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l505"><code>src&#x2F;core&#x2F;input&#x2F;input.js:505</code></a>
+                            <a href="../files/src_core_input_input.js.html#l506"><code>src&#x2F;core&#x2F;input&#x2F;input.js:506</code></a>
                             </p>
                     
                     
@@ -3783,7 +3791,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l793"><code>src&#x2F;core&#x2F;input&#x2F;input.js:793</code></a>
+                            <a href="../files/src_core_input_input.js.html#l794"><code>src&#x2F;core&#x2F;input&#x2F;input.js:794</code></a>
                             </p>
                     
                     
@@ -3809,7 +3817,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l801"><code>src&#x2F;core&#x2F;input&#x2F;input.js:801</code></a>
+                            <a href="../files/src_core_input_input.js.html#l802"><code>src&#x2F;core&#x2F;input&#x2F;input.js:802</code></a>
                             </p>
                     
                     
@@ -3835,7 +3843,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l809"><code>src&#x2F;core&#x2F;input&#x2F;input.js:809</code></a>
+                            <a href="../files/src_core_input_input.js.html#l810"><code>src&#x2F;core&#x2F;input&#x2F;input.js:810</code></a>
                             </p>
                     
                     
@@ -3861,7 +3869,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l817"><code>src&#x2F;core&#x2F;input&#x2F;input.js:817</code></a>
+                            <a href="../files/src_core_input_input.js.html#l818"><code>src&#x2F;core&#x2F;input&#x2F;input.js:818</code></a>
                             </p>
                     
                     
@@ -3887,7 +3895,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l825"><code>src&#x2F;core&#x2F;input&#x2F;input.js:825</code></a>
+                            <a href="../files/src_core_input_input.js.html#l826"><code>src&#x2F;core&#x2F;input&#x2F;input.js:826</code></a>
                             </p>
                     
                     
@@ -3912,7 +3920,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>Inherited from
                                     <a href="../classes/Component.html#property_metadata">Component</a>:
-                            <a href="../files/src_core_component.js.html#l236"><code>src&#x2F;core&#x2F;component.js:236</code></a>
+                            <a href="../files/src_core_component.js.html#l200"><code>src&#x2F;core&#x2F;component.js:200</code></a>
                             </p>
                     
                     
@@ -3920,32 +3928,6 @@ any subsequent notifications on that location as they are made.</p>
                     
                         <div class="description">
                             <p>Metadata on this component.</p>
-                    
-                        </div>
-                    
-                    
-                    
-                    </div>
-                    <div id="property_type" class="property item inherited">
-                        <h3 class="name"><code>type</code></h3>
-                        <span class="type">String</span>
-                    
-                    
-                    
-                            <span class="flag final">final</span>
-                    
-                    
-                        <div class="meta">
-                                    <p>Inherited from
-                                    <a href="../classes/Component.html#property_type">Component</a>:
-                            <a href="../files/src_core_component.js.html#l227"><code>src&#x2F;core&#x2F;component.js:227</code></a>
-                            </p>
-                    
-                    
-                        </div>
-                    
-                        <div class="description">
-                            <p>The IFC type of this Component.</p>
                     
                         </div>
                     
@@ -3964,7 +3946,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>Inherited from
                                     <a href="../classes/Component.html#property_viewer">Component</a>:
-                            <a href="../files/src_core_component.js.html#l218"><code>src&#x2F;core&#x2F;component.js:218</code></a>
+                            <a href="../files/src_core_component.js.html#l191"><code>src&#x2F;core&#x2F;component.js:191</code></a>
                             </p>
                     
                     
@@ -3995,7 +3977,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l287"><code>src&#x2F;core&#x2F;input&#x2F;input.js:287</code></a>
+                            <a href="../files/src_core_input_input.js.html#l288"><code>src&#x2F;core&#x2F;input&#x2F;input.js:288</code></a>
                             </p>
                     
                     
@@ -4038,7 +4020,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>Inherited from
                                     <a href="../classes/Component.html#event_destroyed">Component</a>:
-                            <a href="../files/src_core_component.js.html#l435"><code>src&#x2F;core&#x2F;component.js:435</code></a>
+                            <a href="../files/src_core_component.js.html#l397"><code>src&#x2F;core&#x2F;component.js:397</code></a>
                             </p>
                     
                     
@@ -4063,7 +4045,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l171"><code>src&#x2F;core&#x2F;input&#x2F;input.js:171</code></a>
+                            <a href="../files/src_core_input_input.js.html#l172"><code>src&#x2F;core&#x2F;input&#x2F;input.js:172</code></a>
                             </p>
                     
                     
@@ -4106,7 +4088,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l196"><code>src&#x2F;core&#x2F;input&#x2F;input.js:196</code></a>
+                            <a href="../files/src_core_input_input.js.html#l197"><code>src&#x2F;core&#x2F;input&#x2F;input.js:197</code></a>
                             </p>
                     
                     
@@ -4149,7 +4131,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l345"><code>src&#x2F;core&#x2F;input&#x2F;input.js:345</code></a>
+                            <a href="../files/src_core_input_input.js.html#l346"><code>src&#x2F;core&#x2F;input&#x2F;input.js:346</code></a>
                             </p>
                     
                     
@@ -4192,7 +4174,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l227"><code>src&#x2F;core&#x2F;input&#x2F;input.js:227</code></a>
+                            <a href="../files/src_core_input_input.js.html#l228"><code>src&#x2F;core&#x2F;input&#x2F;input.js:228</code></a>
                             </p>
                     
                     
@@ -4235,7 +4217,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l303"><code>src&#x2F;core&#x2F;input&#x2F;input.js:303</code></a>
+                            <a href="../files/src_core_input_input.js.html#l304"><code>src&#x2F;core&#x2F;input&#x2F;input.js:304</code></a>
                             </p>
                     
                     
@@ -4278,7 +4260,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l256"><code>src&#x2F;core&#x2F;input&#x2F;input.js:256</code></a>
+                            <a href="../files/src_core_input_input.js.html#l257"><code>src&#x2F;core&#x2F;input&#x2F;input.js:257</code></a>
                             </p>
                     
                     
@@ -4321,7 +4303,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_input_input.js.html#l321"><code>src&#x2F;core&#x2F;input&#x2F;input.js:321</code></a>
+                            <a href="../files/src_core_input_input.js.html#l322"><code>src&#x2F;core&#x2F;input&#x2F;input.js:322</code></a>
                             </p>
                     
                     

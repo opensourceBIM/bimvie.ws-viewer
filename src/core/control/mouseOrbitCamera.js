@@ -11,6 +11,7 @@
 
  @class MouseOrbitCamera
  @module BIMSURFER
+ @submodule control
  @constructor
  @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
  @param [cfg] {*} Configs
@@ -32,7 +33,7 @@
          @type String
          @final
          */
-        className: "BIMSURFER.KeyboardOrbitCamera",
+        className: "BIMSURFER.MouseOrbitCamera",
 
         _init: function (cfg) {
 
@@ -49,6 +50,14 @@
 
         _props: {
 
+            /**
+             * Flag which indicates whether this MouseOrbitCamera is active or not.
+             *
+             * Fires an {{#crossLink "MouseOrbitCamera/active:event"}}{{/crossLink}} event on change.
+             *
+             * @property active
+             * @type Boolean
+             */
             active: {
 
                 set: function (value) {
@@ -121,8 +130,6 @@
                                 }
                             });
 
-                        this.fire('active', this._active = true);
-
                     } else {
 
                         input.off(this._onTick);
@@ -130,9 +137,14 @@
                         input.off(this._onMouseDown);
                         input.off(this._onMouseUp);
                         input.off(this._onMouseMove);
-
-                        this.fire('active', this._active = false);
                     }
+
+                    /**
+                     * Fired whenever this KeyboardOrbitCamera's {{#crossLink "KeyboardOrbitCamera/active:property"}}{{/crossLink}} property changes.
+                     * @event active
+                     * @param value The property's new value
+                     */
+                    this.fire('active', this._active = value);
                 },
 
                 get: function () {

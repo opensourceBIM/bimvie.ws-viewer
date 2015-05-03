@@ -11,6 +11,7 @@
 
  @class Geometry
  @module BIMSURFER
+ @submodule geometry
  @constructor
  @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
  @param [cfg] {*} Configs

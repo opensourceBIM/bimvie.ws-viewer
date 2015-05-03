@@ -41,10 +41,13 @@
                                 <li><a href="../classes/AmbientLight.html">AmbientLight</a></li>
                                 <li><a href="../classes/BIMSURFER.html">BIMSURFER</a></li>
                                 <li><a href="../classes/BoxGeometry.html">BoxGeometry</a></li>
+                                <li><a href="../classes/BoxObject.html">BoxObject</a></li>
                                 <li><a href="../classes/Camera.html">Camera</a></li>
+                                <li><a href="../classes/CameraControl.html">CameraControl</a></li>
                                 <li><a href="../classes/Canvas.html">Canvas</a></li>
                                 <li><a href="../classes/ClickSelectObjects.html">ClickSelectObjects</a></li>
                                 <li><a href="../classes/Component.html">Component</a></li>
+                                <li><a href="../classes/Configs.html">Configs</a></li>
                                 <li><a href="../classes/DirLight.html">DirLight</a></li>
                                 <li><a href="../classes/Effect.html">Effect</a></li>
                                 <li><a href="../classes/Fly.html">Fly</a></li>
@@ -62,13 +65,21 @@
                                 <li><a href="../classes/MouseZoomCamera.html">MouseZoomCamera</a></li>
                                 <li><a href="../classes/Object.html">Object</a></li>
                                 <li><a href="../classes/PointLight.html">PointLight</a></li>
+                                <li><a href="../classes/Selection.html">Selection</a></li>
                                 <li><a href="../classes/TeapotGeometry.html">TeapotGeometry</a></li>
+                                <li><a href="../classes/TeapotObject.html">TeapotObject</a></li>
                                 <li><a href="../classes/Viewer.html">Viewer</a></li>
                                 <li><a href="../classes/XRayEffect.html">XRayEffect</a></li>
                             </ul>
                 
                             <ul id="api-modules" class="apis modules">
+                                <li><a href="../modules/animate.html">animate</a></li>
                                 <li><a href="../modules/BIMSURFER.html">BIMSURFER</a></li>
+                                <li><a href="../modules/camera.html">camera</a></li>
+                                <li><a href="../modules/control.html">control</a></li>
+                                <li><a href="../modules/effect.html">effect</a></li>
+                                <li><a href="../modules/geometry.html">geometry</a></li>
+                                <li><a href="../modules/input.html">input</a></li>
                             </ul>
                         </div>
                     </div>
@@ -119,6 +130,7 @@
 
  @class MouseOrbitCamera
  @module BIMSURFER
+ @submodule control
  @constructor
  @param [viewer] {Viewer} Parent {{#crossLink &quot;Viewer&quot;}}{{/crossLink}}.
  @param [cfg] {*} Configs
@@ -140,7 +152,7 @@
          @type String
          @final
          */
-        className: &quot;BIMSURFER.KeyboardOrbitCamera&quot;,
+        className: &quot;BIMSURFER.MouseOrbitCamera&quot;,
 
         _init: function (cfg) {
 
@@ -157,6 +169,14 @@
 
         _props: {
 
+            /**
+             * Flag which indicates whether this MouseOrbitCamera is active or not.
+             *
+             * Fires an {{#crossLink &quot;MouseOrbitCamera/active:event&quot;}}{{/crossLink}} event on change.
+             *
+             * @property active
+             * @type Boolean
+             */
             active: {
 
                 set: function (value) {
@@ -229,8 +249,6 @@
                                 }
                             });
 
-                        this.fire(&#x27;active&#x27;, this._active = true);
-
                     } else {
 
                         input.off(this._onTick);
@@ -238,9 +256,14 @@
                         input.off(this._onMouseDown);
                         input.off(this._onMouseUp);
                         input.off(this._onMouseMove);
-
-                        this.fire(&#x27;active&#x27;, this._active = false);
                     }
+
+                    /**
+                     * Fired whenever this KeyboardOrbitCamera&#x27;s {{#crossLink &quot;KeyboardOrbitCamera/active:property&quot;}}{{/crossLink}} property changes.
+                     * @event active
+                     * @param value The property&#x27;s new value
+                     */
+                    this.fire(&#x27;active&#x27;, this._active = value);
                 },
 
                 get: function () {

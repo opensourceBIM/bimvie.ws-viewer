@@ -11,12 +11,13 @@
 
  @class TeapotGeometry
  @module BIMSURFER
+ @submodule geometry
  @constructor
  @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
  @param [cfg] {*} Configs
  @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
  @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this BoxGeometry.
- @extends Component
+ @extends Geometry
  */
 (function () {
 

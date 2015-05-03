@@ -11,13 +11,14 @@
 
  @class IsolateEffect
  @module BIMSURFER
+ @submodule effect
  @constructor
  @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
  @param [cfg] {*} Configs
  @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
  @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this IsolateEffect.
  @param [selection] {Selection} The {{#crossLink "Selection"}}{{/crossLink}} to update.
- @extends Component
+ @extends Effect
  */
 (function () {
 

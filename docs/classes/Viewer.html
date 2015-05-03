@@ -41,10 +41,13 @@
                                 <li><a href="../classes/AmbientLight.html">AmbientLight</a></li>
                                 <li><a href="../classes/BIMSURFER.html">BIMSURFER</a></li>
                                 <li><a href="../classes/BoxGeometry.html">BoxGeometry</a></li>
+                                <li><a href="../classes/BoxObject.html">BoxObject</a></li>
                                 <li><a href="../classes/Camera.html">Camera</a></li>
+                                <li><a href="../classes/CameraControl.html">CameraControl</a></li>
                                 <li><a href="../classes/Canvas.html">Canvas</a></li>
                                 <li><a href="../classes/ClickSelectObjects.html">ClickSelectObjects</a></li>
                                 <li><a href="../classes/Component.html">Component</a></li>
+                                <li><a href="../classes/Configs.html">Configs</a></li>
                                 <li><a href="../classes/DirLight.html">DirLight</a></li>
                                 <li><a href="../classes/Effect.html">Effect</a></li>
                                 <li><a href="../classes/Fly.html">Fly</a></li>
@@ -62,13 +65,21 @@
                                 <li><a href="../classes/MouseZoomCamera.html">MouseZoomCamera</a></li>
                                 <li><a href="../classes/Object.html">Object</a></li>
                                 <li><a href="../classes/PointLight.html">PointLight</a></li>
+                                <li><a href="../classes/Selection.html">Selection</a></li>
                                 <li><a href="../classes/TeapotGeometry.html">TeapotGeometry</a></li>
+                                <li><a href="../classes/TeapotObject.html">TeapotObject</a></li>
                                 <li><a href="../classes/Viewer.html">Viewer</a></li>
                                 <li><a href="../classes/XRayEffect.html">XRayEffect</a></li>
                             </ul>
                 
                             <ul id="api-modules" class="apis modules">
+                                <li><a href="../modules/animate.html">animate</a></li>
                                 <li><a href="../modules/BIMSURFER.html">BIMSURFER</a></li>
+                                <li><a href="../modules/camera.html">camera</a></li>
+                                <li><a href="../modules/control.html">control</a></li>
+                                <li><a href="../modules/effect.html">effect</a></li>
+                                <li><a href="../modules/geometry.html">geometry</a></li>
+                                <li><a href="../modules/input.html">input</a></li>
                             </ul>
                         </div>
                     </div>
@@ -247,10 +258,6 @@
 
                             </li>
                             <li class="index-item method">
-                                <a href="#method_fire">fire</a>
-
-                            </li>
-                            <li class="index-item method">
                                 <a href="#method_log">log</a>
 
                             </li>
@@ -259,19 +266,7 @@
 
                             </li>
                             <li class="index-item method">
-                                <a href="#method_off">off</a>
-
-                            </li>
-                            <li class="index-item method">
                                 <a href="#method_on">on</a>
-
-                            </li>
-                            <li class="index-item method">
-                                <a href="#method_on">on</a>
-
-                            </li>
-                            <li class="index-item method">
-                                <a href="#method_once">once</a>
 
                             </li>
                             <li class="index-item method">
@@ -393,76 +388,6 @@
 
                     <div class="param-description">
                         <p>The message to log</p>
-
-                    </div>
-
-                </li>
-            </ul>
-        </div>
-
-
-
-</div>
-<div id="method_fire" class="method item">
-    <h3 class="name"><code>fire</code></h3>
-
-        <div class="args">
-            <span class="paren">(</span><ul class="args-list inline commas">
-                <li class="arg">
-                        <code>event</code>
-                </li>
-                <li class="arg">
-                        <code>value</code>
-                </li>
-            </ul><span class="paren">)</span>
-        </div>
-
-
-
-
-
-
-
-
-    <div class="meta">
-                <p>
-                Defined in
-        <a href="../files/src_core_configs.js.html#l23"><code>src&#x2F;core&#x2F;configs.js:23</code></a>
-        </p>
-
-
-
-    </div>
-
-    <div class="description">
-        <p>Fires an event on this Viewer.</p>
-<p>Notifies existing subscribers to the event, retains the event to give to
-any subsequent notifications on that location as they are made.</p>
-
-    </div>
-
-        <div class="params">
-            <h4>Parameters:</h4>
-
-            <ul class="params-list">
-                <li class="param">
-                        <code class="param-name">event</code>
-                        <span class="type">String</span>
-
-
-                    <div class="param-description">
-                        <p>The event type name</p>
-
-                    </div>
-
-                </li>
-                <li class="param">
-                        <code class="param-name">value</code>
-                        <span class="type">Object</span>
-
-
-                    <div class="param-description">
-                        <p>The event</p>
 
                     </div>
 
@@ -634,61 +559,6 @@ any subsequent notifications on that location as they are made.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_core_configs.js.html#l77"><code>src&#x2F;core&#x2F;configs.js:77</code></a>
-        </p>
-
-
-
-    </div>
-
-    <div class="description">
-        <p>Cancels an event subscription that was previously made with <a href="../classes/Viewer.html#method_on" class="crosslink">on</a> or
-<a href="../classes/Viewer.html#method_once" class="crosslink">once</a>.</p>
-
-    </div>
-
-        <div class="params">
-            <h4>Parameters:</h4>
-
-            <ul class="params-list">
-                <li class="param">
-                        <code class="param-name">handle</code>
-                        <span class="type">String</span>
-
-
-                    <div class="param-description">
-                        <p>Publication handle</p>
-
-                    </div>
-
-                </li>
-            </ul>
-        </div>
-
-
-
-</div>
-<div id="method_off" class="method item">
-    <h3 class="name"><code>off</code></h3>
-
-        <div class="args">
-            <span class="paren">(</span><ul class="args-list inline commas">
-                <li class="arg">
-                        <code>handle</code>
-                </li>
-            </ul><span class="paren">)</span>
-        </div>
-
-
-
-
-
-
-
-
-    <div class="meta">
-                <p>
-                Defined in
         <a href="../files/src_core_viewer.js.html#l651"><code>src&#x2F;core&#x2F;viewer.js:651</code></a>
         </p>
 
@@ -819,102 +689,6 @@ any subsequent notifications on that location as they are made.</p>
 
 
 </div>
-<div id="method_on" class="method item">
-    <h3 class="name"><code>on</code></h3>
-
-        <div class="args">
-            <span class="paren">(</span><ul class="args-list inline commas">
-                <li class="arg">
-                        <code>event</code>
-                </li>
-                <li class="arg">
-                        <code>callback</code>
-                </li>
-                <li class="arg">
-                        <code class="optional">[scope=this]</code>
-                </li>
-            </ul><span class="paren">)</span>
-        </div>
-
-        <span class="returns-inline">
-            <span class="type">String</span>
-        </span>
-
-
-
-
-
-
-
-    <div class="meta">
-                <p>
-                Defined in
-        <a href="../files/src_core_configs.js.html#l47"><code>src&#x2F;core&#x2F;configs.js:47</code></a>
-        </p>
-
-
-
-    </div>
-
-    <div class="description">
-        <p>Subscribes to an event on this Viewer.</p>
-<p>The callback is be called with this Viewer as scope.</p>
-
-    </div>
-
-        <div class="params">
-            <h4>Parameters:</h4>
-
-            <ul class="params-list">
-                <li class="param">
-                        <code class="param-name">event</code>
-                        <span class="type">String</span>
-
-
-                    <div class="param-description">
-                        <p>Publication event</p>
-
-                    </div>
-
-                </li>
-                <li class="param">
-                        <code class="param-name">callback</code>
-                        <span class="type">Function</span>
-
-
-                    <div class="param-description">
-                        <p>Called when fresh data is available at the event</p>
-
-                    </div>
-
-                </li>
-                <li class="param">
-                        <code class="param-name optional">[scope=this]</code>
-                        <span class="type">Object</span>
-                        <span class="flag optional" title="This parameter is optional.">optional</span>
-
-
-                    <div class="param-description">
-                        <p>Scope for the callback</p>
-
-                    </div>
-
-                </li>
-            </ul>
-        </div>
-
-        <div class="returns">
-            <h4>Returns:</h4>
-
-            <div class="returns-description">
-                        <span class="type">String</span>:
-                    <p>Handle to the subscription, which may be used to unsubscribe with {@link #off}.</p>
-
-            </div>
-        </div>
-
-
-</div>
 <div id="method_once" class="method item">
     <h3 class="name"><code>once</code></h3>
 
@@ -943,89 +717,6 @@ any subsequent notifications on that location as they are made.</p>
                 <p>
                 Defined in
         <a href="../files/src_core_viewer.js.html#l670"><code>src&#x2F;core&#x2F;viewer.js:670</code></a>
-        </p>
-
-
-
-    </div>
-
-    <div class="description">
-        <p>Subscribes to the next occurrence of the given event on this Viewer, then un-subscribes as soon as the event is handled.</p>
-
-    </div>
-
-        <div class="params">
-            <h4>Parameters:</h4>
-
-            <ul class="params-list">
-                <li class="param">
-                        <code class="param-name">event</code>
-                        <span class="type">String</span>
-
-
-                    <div class="param-description">
-                        <p>Data event to listen to</p>
-
-                    </div>
-
-                </li>
-                <li class="param">
-                        <code class="param-name">callback</code>
-                        <span class="type">Function(data)</span>
-
-
-                    <div class="param-description">
-                        <p>Called when fresh data is available at the event</p>
-
-                    </div>
-
-                </li>
-                <li class="param">
-                        <code class="param-name optional">[scope=this]</code>
-                        <span class="type">Object</span>
-                        <span class="flag optional" title="This parameter is optional.">optional</span>
-
-
-                    <div class="param-description">
-                        <p>Scope for the callback</p>
-
-                    </div>
-
-                </li>
-            </ul>
-        </div>
-
-
-
-</div>
-<div id="method_once" class="method item">
-    <h3 class="name"><code>once</code></h3>
-
-        <div class="args">
-            <span class="paren">(</span><ul class="args-list inline commas">
-                <li class="arg">
-                        <code>event</code>
-                </li>
-                <li class="arg">
-                        <code>callback</code>
-                </li>
-                <li class="arg">
-                        <code class="optional">[scope=this]</code>
-                </li>
-            </ul><span class="paren">)</span>
-        </div>
-
-
-
-
-
-
-
-
-    <div class="meta">
-                <p>
-                Defined in
-        <a href="../files/src_core_configs.js.html#l96"><code>src&#x2F;core&#x2F;configs.js:96</code></a>
         </p>
 
 

@@ -1,3 +1,24 @@
+/**
+ TODO
+
+ ## Overview
+
+ TODO
+
+ ## Example
+
+ TODO
+
+ @class Selection
+ @module BIMSURFER
+ @constructor
+ @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
+ @param [cfg] {*} Configs
+ @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Selection.
+ @param [cfg.objects] {{Array of String|Object}} Array of {{#crossLink "Object"}}{{/crossLink}} IDs or instances.
+ @extends Object
+ */
 (function () {
 
     "use strict";

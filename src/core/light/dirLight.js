@@ -29,7 +29,7 @@ TODO
  @class DirLight
  @module BIMSURFER
  @constructor
- @extends Component
+ @extends Light
  @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}.
  @param [cfg] {*} The DirLight configuration
  @param [cfg.id] {String} Optional ID, unique among all components in the parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}, generated automatically when omitted.

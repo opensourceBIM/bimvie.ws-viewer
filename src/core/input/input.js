@@ -90,6 +90,7 @@ var viewer = new BIMSURFER.Viewer(...);
 
  @class Input
  @module BIMSURFER
+ @submodule input
  @extends Component
  */
 (function () {

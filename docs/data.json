@@ -26,7 +26,9 @@
         "src/core/camera/camera.js": {
             "name": "src/core/camera/camera.js",
             "modules": {},
-            "classes": {},
+            "classes": {
+                "Camera": 1
+            },
             "fors": {},
             "namespaces": {}
         },
@@ -43,7 +45,7 @@
             "name": "src/core/control/cameraControl.js",
             "modules": {},
             "classes": {
-                "Camera": 1
+                "CameraControl": 1
             },
             "fors": {},
             "namespaces": {}
@@ -238,7 +240,9 @@
         "src/core/object/boxObject.js": {
             "name": "src/core/object/boxObject.js",
             "modules": {},
-            "classes": {},
+            "classes": {
+                "BoxObject": 1
+            },
             "fors": {},
             "namespaces": {}
         },
@@ -254,14 +258,18 @@
         "src/core/object/teapotObject.js": {
             "name": "src/core/object/teapotObject.js",
             "modules": {},
-            "classes": {},
+            "classes": {
+                "TeapotObject": 1
+            },
             "fors": {},
             "namespaces": {}
         },
         "src/core/selection/selection.js": {
             "name": "src/core/selection/selection.js",
             "modules": {},
-            "classes": {},
+            "classes": {
+                "Selection": 1
+            },
             "fors": {},
             "namespaces": {}
         },
@@ -295,7 +303,9 @@
         "src/core/configs.js": {
             "name": "src/core/configs.js",
             "modules": {},
-            "classes": {},
+            "classes": {
+                "Configs": 1
+            },
             "fors": {},
             "namespaces": {}
         },
@@ -319,11 +329,19 @@
     "modules": {
         "BIMSURFER": {
             "name": "BIMSURFER",
-            "submodules": {},
+            "submodules": {
+                "animate": 1,
+                "camera": 1,
+                "control": 1,
+                "effect": 1,
+                "geometry": 1,
+                "input": 1
+            },
             "classes": {
                 "Fly": 1,
                 "Camera": 1,
                 "Canvas": 1,
+                "CameraControl": 1,
                 "ClickSelectObjects": 1,
                 "KeyboardAxisCamera": 1,
                 "KeyboardOrbitCamera": 1,
@@ -344,9 +362,13 @@
                 "Light": 1,
                 "PointLight": 1,
                 "math": 1,
+                "BoxObject": 1,
                 "Object": 1,
+                "TeapotObject": 1,
+                "Selection": 1,
                 "BIMSURFER": 1,
                 "Component": 1,
+                "Configs": 1,
                 "Viewer": 1
             },
             "fors": {},
@@ -354,8 +376,110 @@
             "tag": "module",
             "file": "src/core/viewer.js",
             "line": 1,
-            "description": "**Component** is the base class for all components within a {{#crossLink \"Viewer\"}}{{/crossLink}}.\n<hr>\n*Contents*\n<Ul>\n <li><a href=\"#ids\">Component IDs</a></li>\n <li><a href=\"#componentProps\">Properties</a></li>\n <li><a href=\"#metadata\">Metadata</a></li>\n <li><a href=\"#logging\">Logging</a></li>\n <li><a href=\"#destruction\">Destruction</a></li>\n </ul>\n<hr>\n## <a name=\"ids\">Component IDs</a>\nEvery Component has an ID that's unique within the parent {{#crossLink \"Viewer\"}}{{/crossLink}}. BIMViewer generates\n the IDs automatically by default, however you can also specify them yourself. In the example below, we're creating a\n viewer comprised of {{#crossLink \"Viewer\"}}{{/crossLink}}, {{#crossLink \"Material\"}}{{/crossLink}}, {{#crossLink \"Geometry\"}}{{/crossLink}} and\n {{#crossLink \"GameObject\"}}{{/crossLink}} components, while letting xeoEngine generate its own ID for\n the {{#crossLink \"Geometry\"}}{{/crossLink}}:\n````javascript\n // The Viewer is a Component too\n var viewer = new BIMSURFER.Viewer({\n    id: \"myViewer\"\n});\nvar material = new BIMSURFER.Material(viewer, {\n    id: \"myMaterial\"\n});\nvar geometry = new BIMSURFER.Geometry(viewer, {\n    id: \"myGeometry\"\n});\n// Let xeoEngine automatically generated the ID for our GameObject\n var object = new BIMSURFER.GameObject(viewer, {\n    material: material,\n    geometry: geometry\n});\n ````\nWe can then find those components like this:\n````javascript\n // Find the Viewer\n var theViewer = BIMSURFER.viewers[\"myViewer\"];\n// Find the Material\n var theMaterial = theViewer.components[\"myMaterial\"];\n ````\n## <a name=\"componentProps\">Properties</a>\nAlmost every property on a xeoEngine Component fires a change event when you update it. For example, we can subscribe\n to the {{#crossLink \"Material/diffuse:event\"}}{{/crossLink}} event that a\n {{#crossLink \"Material\"}}{{/crossLink}} fires when its {{#crossLink \"Material/diffuse:property\"}}{{/crossLink}}\n property is updated, like so:\n````javascript\n // Bind a change callback to a property\n var handle = material.on(\"diffuse\", function(diffuse) {\n    console.log(\"Material diffuse color has changed to: [\" + diffuse[0] + \", \" + diffuse[1] + \",\" + diffuse[2] + \"]\");\n});\n// Change the property value, which fires the callback\n material.diffuse = [ 0.0, 0.5, 0.5 ];\n// Unsubscribe from the property change event\n material.off(handle);\n ````\nWe can also subscribe to changes in the way components are attached to each other, since components are properties\n of other components. For example, we can subscribe to the '{{#crossLink \"GameObject/material:event\"}}{{/crossLink}}' event that a\n {{#crossLink \"GameObject\"}}GameObject{{/crossLink}} fires when its {{#crossLink \"GameObject/material:property\"}}{{/crossLink}}\n property is set to a different {{#crossLink \"Material\"}}Material{{/crossLink}}:\n```` javascript\n // Bind a change callback to the GameObject's Material\n object1.on(\"material\", function(material) {\n    console.log(\"GameObject's Material has changed to: \" + material.id);\n});\n// Now replace that Material with another\n object1.material = new BIMSURFER.Material({\n    id: \"myOtherMaterial\",\n    diffuse: [ 0.3, 0.3, 0.6 ]\n    //..\n});\n ````\n## <a name=\"metadata\">Metadata</a>\nYou can set optional **metadata** on your Components, which can be anything you like. These are intended\n to help manage your components within your application code or content pipeline. You could use metadata to attach\n authoring or version information, like this:\n````javascript\n // Viewer with authoring metadata\n var viewer = new BIMSURFER.Viewer({\n    id: \"myViewer\",\n    metadata: {\n        title: \"My awesome 3D viewer\",\n        author: \"@xeolabs\",\n date: \"February 13 2015\"\n }\n });\n// Material with descriptive metadata\n var material = new BIMSURFER.Material(viewer, {\n    id: \"myMaterial\",\n    diffuse: [1, 0, 0],\n    metadata: {\n        description: \"Bright red color with no textures\",\n        version: \"0.1\",\n        foo: \"bar\"\n    }\n});\n ````\nAs with all properties, you can subscribe and change the metadata like this:\n````javascript\n // Subscribe to changes to the Material's metadata\n material.on(\"metadata\", function(value) {\n    console.log(\"Metadata changed: \" + JSON.stringify(value));\n});\n// Change the Material's metadata, firing our change handler\n material.metadata = {\n    description: \"Bright red color with no textures\",\n    version: \"0.2\",\n    foo: \"baz\"\n};\n ````\n## <a name=\"logging\">Logging</a>\nComponents have methods to log ID-prefixed messages to the JavaScript console:\n````javascript\n material.log(\"Everything is fine, situation normal.\");\n material.warn(\"Wait, whats that red light?\");\n material.error(\"Aw, snap!\");\n ````\nThe logged messages will look like this in the console:\n````text\n [LOG]   myMaterial: Everything is fine, situation normal.\n [WARN]  myMaterial: Wait, whats that red light..\n [ERROR] myMaterial: Aw, snap!\n ````\n## <a name=\"destruction\">Destruction</a>\nGet notification of destruction directly on the Components:\n````javascript\n material.on(\"destroyed\", function() {\n    this.log(\"Component was destroyed: \" + this.id);\n});\n ````\nOr get notification of destruction of any Component within its {{#crossLink \"Viewer\"}}{{/crossLink}}, indiscriminately:\n````javascript\n viewer.on(\"componentDestroyed\", function(component) {\n    this.log(\"Component was destroyed: \" + component.id);\n});\n ````\nThen destroy a component like this:\n````javascript\n material.destroy();\n ````\nOther Components that are linked to it will fall back on a default of some sort. For example, any\n {{#crossLink \"GameObject\"}}GameObjects{{/crossLink}} that were linked to our {{#crossLink \"Material\"}}{{/crossLink}}\n will then automatically link to the {{#crossLink \"Viewer\"}}Viewer's{{/crossLink}} default {{#crossLink \"Viewer/material:property\"}}{{/crossLink}}.",
+            "description": "**Component** is the base class for all components within a {{#crossLink \"Viewer\"}}{{/crossLink}}.\n<hr>\n*Contents*\n<Ul>\n <li><a href=\"#ids\">Component IDs</a></li>\n <li><a href=\"#componentProps\">Properties</a></li>\n <li><a href=\"#metadata\">Metadata</a></li>\n <li><a href=\"#logging\">Logging</a></li>\n <li><a href=\"#destruction\">Destruction</a></li>\n </ul>\n<hr>\n## <a name=\"ids\">Component IDs</a>\nEvery Component has an ID that's unique within the parent {{#crossLink \"Viewer\"}}{{/crossLink}}. the {{#crossLink \"Viewer\"}}{{/crossLink}} generates\n the IDs automatically by default, however you can also specify them yourself. In the example below, we're creating a\n viewer comprised of {{#crossLink \"Viewer\"}}{{/crossLink}}, {{#crossLink \"Material\"}}{{/crossLink}}, {{#crossLink \"Geometry\"}}{{/crossLink}} and\n {{#crossLink \"GameObject\"}}{{/crossLink}} components, while letting xeoEngine generate its own ID for\n the {{#crossLink \"Geometry\"}}{{/crossLink}}:\n````javascript\n````\n## <a name=\"componentProps\">Properties</a>\nAlmost every property on a xeoEngine Component fires a change event when you update it. For example, we can subscribe\n to the {{#crossLink \"Material/diffuse:event\"}}{{/crossLink}} event that a\n {{#crossLink \"Material\"}}{{/crossLink}} fires when its {{#crossLink \"Material/diffuse:property\"}}{{/crossLink}}\n property is updated, like so:\n````javascript\n // Bind a change callback to a property\n var handle = material.on(\"diffuse\", function(diffuse) {\n    console.log(\"Material diffuse color has changed to: [\" + diffuse[0] + \", \" + diffuse[1] + \",\" + diffuse[2] + \"]\");\n});\n// Change the property value, which fires the callback\n material.diffuse = [ 0.0, 0.5, 0.5 ];\n// Unsubscribe from the property change event\n material.off(handle);\n ````\nWe can also subscribe to changes in the way components are attached to each other, since components are properties\n of other components. For example, we can subscribe to the '{{#crossLink \"GameObject/material:event\"}}{{/crossLink}}' event that a\n {{#crossLink \"GameObject\"}}GameObject{{/crossLink}} fires when its {{#crossLink \"GameObject/material:property\"}}{{/crossLink}}\n property is set to a different {{#crossLink \"Material\"}}Material{{/crossLink}}:\n```` javascript\n // Bind a change callback to the GameObject's Material\n object1.on(\"material\", function(material) {\n    console.log(\"GameObject's Material has changed to: \" + material.id);\n});\n// Now replace that Material with another\n object1.material = new BIMSURFER.Material({\n    id: \"myOtherMaterial\",\n    diffuse: [ 0.3, 0.3, 0.6 ]\n    //..\n});\n ````\n## <a name=\"metadata\">Metadata</a>\nYou can set optional **metadata** on your Components, which can be anything you like. These are intended\n to help manage your components within your application code or content pipeline. You could use metadata to attach\n authoring or version information, like this:\n````javascript\n // Viewer with authoring metadata\n var viewer = new BIMSURFER.Viewer({\n    id: \"myViewer\",\n    metadata: {\n        title: \"My awesome 3D viewer\",\n        author: \"@xeolabs\",\n date: \"February 13 2015\"\n }\n });\n// Material with descriptive metadata\n var material = new BIMSURFER.Material(viewer, {\n    id: \"myMaterial\",\n    diffuse: [1, 0, 0],\n    metadata: {\n        description: \"Bright red color with no textures\",\n        version: \"0.1\",\n        foo: \"bar\"\n    }\n});\n ````\nAs with all properties, you can subscribe and change the metadata like this:\n````javascript\n // Subscribe to changes to the Material's metadata\n material.on(\"metadata\", function(value) {\n    console.log(\"Metadata changed: \" + JSON.stringify(value));\n});\n// Change the Material's metadata, firing our change handler\n material.metadata = {\n    description: \"Bright red color with no textures\",\n    version: \"0.2\",\n    foo: \"baz\"\n};\n ````\n## <a name=\"logging\">Logging</a>\nComponents have methods to log ID-prefixed messages to the JavaScript console:\n````javascript\n material.log(\"Everything is fine, situation normal.\");\n material.warn(\"Wait, whats that red light?\");\n material.error(\"Aw, snap!\");\n ````\nThe logged messages will look like this in the console:\n````text\n [LOG]   myMaterial: Everything is fine, situation normal.\n [WARN]  myMaterial: Wait, whats that red light..\n [ERROR] myMaterial: Aw, snap!\n ````\n## <a name=\"destruction\">Destruction</a>\nGet notification of destruction directly on the Components:\n````javascript\n material.on(\"destroyed\", function() {\n    this.log(\"Component was destroyed: \" + this.id);\n});\n ````\nOr get notification of destruction of any Component within its {{#crossLink \"Viewer\"}}{{/crossLink}}, indiscriminately:\n````javascript\n viewer.on(\"componentDestroyed\", function(component) {\n    this.log(\"Component was destroyed: \" + component.id);\n});\n ````\nThen destroy a component like this:\n````javascript\n material.destroy();\n ````\nOther Components that are linked to it will fall back on a default of some sort. For example, any\n {{#crossLink \"GameObject\"}}GameObjects{{/crossLink}} that were linked to our {{#crossLink \"Material\"}}{{/crossLink}}\n will then automatically link to the {{#crossLink \"Viewer\"}}Viewer's{{/crossLink}} default {{#crossLink \"Viewer/material:property\"}}{{/crossLink}}.",
             "static": 1
+        },
+        "animate": {
+            "name": "animate",
+            "submodules": {},
+            "classes": {
+                "Fly": 1
+            },
+            "fors": {},
+            "is_submodule": 1,
+            "namespaces": {},
+            "module": "BIMSURFER",
+            "namespace": "",
+            "description": "**Fly** flys a {{#crossLink \"Camera\"}}{{/crossLink}}\n## Overview\n## Example\nTODO\n````javascript\n TODO\n ````",
+            "file": "src/core/animate/cameraFlyAnimation.js",
+            "line": 1
+        },
+        "camera": {
+            "name": "camera",
+            "submodules": {},
+            "classes": {
+                "Camera": 1
+            },
+            "fors": {},
+            "is_submodule": 1,
+            "namespaces": {},
+            "module": "BIMSURFER",
+            "namespace": "",
+            "description": "A **Camera** defines a viewpoint within a {{#crossLink \"Viewer\"}}Viewer{{/crossLink}}.\n\n## Overview\n\n<ul>\n<li>You can have an unlimited number of Cameras in a {{#crossLink \"Viewer\"}}GameObjects{{/crossLink}}.</li>\n<li>At any instant, the Camera we're looking through is the one whose {{#crossLink \"Camera/active:property\"}}active{{/crossLink}} property is true.</li>\n</ul>\n\n## Example\n\nIn this example we have a {{#crossLink \"Viewer\"}}{{/crossLink}} with a\nCamera, {{#crossLink \"CameraControl\"}}{{/crossLink}} and a {{#crossLink \"TeapotObject\"}}{{/crossLink}}.\n\n````Javascript\n\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\nvar camera = new BIMSURFER.Camera(viewer, {\n       eye: [0, 0, -10]\n   });\n\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n       camera: camera\n   });\n\nvar teapot = new BIMSURFER.TeapotObject(viewer);\n\n````",
+            "file": "src/core/camera/camera.js",
+            "line": 1
+        },
+        "control": {
+            "name": "control",
+            "submodules": {},
+            "classes": {
+                "CameraControl": 1,
+                "ClickSelectObjects": 1,
+                "KeyboardAxisCamera": 1,
+                "KeyboardOrbitCamera": 1,
+                "KeyboardZoomCamera": 1,
+                "MouseOrbitCamera": 1,
+                "MousePanCamera": 1,
+                "MouseZoomCamera": 1
+            },
+            "fors": {},
+            "is_submodule": 1,
+            "namespaces": {},
+            "module": "BIMSURFER",
+            "namespace": "",
+            "description": "A **CameraControl** allows you to control a {{#crossLink \"Camera\"}}{{/crossLink}} with mouse and keyboard.\n\n## Overview\n\n<ul>\n<li>You can have an unlimited number of Cameras in a {{#crossLink \"Viewer\"}}GameObjects{{/crossLink}}.</li>\n<li>At any instant, the Camera we're looking through is the one whose {{#crossLink \"Camera/active:property\"}}active{{/crossLink}} property is true.</li>\n</ul>\n\n## Example\n\nIn this example we have a {{#crossLink \"Viewer\"}}{{/crossLink}} with a\n{{#crossLink \"Camera\"}}{{/crossLink}} that's controlled by a CameraControl.\n\n````Javascript\n\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\nvar camera = new BIMSURFER.Camera(viewer, {\n       eye: [0, 0, -10]\n   });\n\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n       camera: camera\n   });\n\nvar teapot = new BIMSURFER.TeapotObject(viewer);\n\n````",
+            "file": "src/core/control/mouseZoomCamera.js",
+            "line": 1
+        },
+        "effect": {
+            "name": "effect",
+            "submodules": {},
+            "classes": {
+                "Effect": 1,
+                "HighlightEffect": 1,
+                "IsolateEffect": 1,
+                "XRayEffect": 1
+            },
+            "fors": {},
+            "is_submodule": 1,
+            "namespaces": {},
+            "module": "BIMSURFER",
+            "namespace": "",
+            "description": "TODO\n\n## Overview\n\nTODO\n\n## Example\n\nTODO",
+            "file": "src/core/effect/xrayEffect.js",
+            "line": 1
+        },
+        "geometry": {
+            "name": "geometry",
+            "submodules": {},
+            "classes": {
+                "BoxGeometry": 1,
+                "Geometry": 1,
+                "TeapotGeometry": 1
+            },
+            "fors": {},
+            "is_submodule": 1,
+            "namespaces": {},
+            "module": "BIMSURFER",
+            "namespace": "",
+            "description": "TODO\n\n## Overview\n\nTODO\n\n## Example\n\nTODO",
+            "file": "src/core/geometry/teapotGeometry.js",
+            "line": 1
+        },
+        "input": {
+            "name": "input",
+            "submodules": {},
+            "classes": {
+                "Input": 1
+            },
+            "fors": {},
+            "is_submodule": 1,
+            "namespaces": {},
+            "module": "BIMSURFER",
+            "namespace": "",
+            "description": "Publishes key and mouse events that occur on the parent {{#crossLink \"Viewer\"}}Viewer{{/crossLink}}'s {{#crossLink \"Canvas\"}}Canvas{{/crossLink}}.\n\n## Overview\n\n<ul>\n<li>Each {{#crossLink \"Viewer\"}}{{/crossLink}} provides an Input on itself as a read-only property.</li>\n</ul>\n\n## Example\n\nIn this example, we're subscribing to some mouse and key events that will occur on\na {{#crossLink \"Viewer\"}}Viewer's{{/crossLink}} {{#crossLink \"Canvas\"}}Canvas{{/crossLink}}.\n\n````javascript\nvar viewer = new BIMSURFER.Viewer(...);\n\nvar input = viewer.input;\n\n// We'll save a handle to this subscription\n// to show how to unsubscribe, further down\nvar handle = input.on(\"mousedown\", function(coords) {\n      console.log(\"Mouse down at: x=\" + coords[0] + \", y=\" + coords[1]);\n});\n\ninput.on(\"mouseup\", function(coords) {\n      console.log(\"Mouse up at: x=\" + coords[0] + \", y=\" + coords[1]);\n});\n\ninput.on(\"mouseclicked\", function(coords) {\n     console.log(\"Mouse clicked at: x=\" + coords[0] + \", y=\" + coords[1]);\n});\n\ninput.on(\"dblclick\", function(coords) {\n      console.log(\"Double-click at: x=\" + coords[0] + \", y=\" + coords[1]);\n});\n\ninput.on(\"keydown\", function(keyCode) {\n       switch (keyCode) {\n\n           case this.KEY_A:\n              console.log(\"The 'A' key is down\");\n              break;\n\n           case this.KEY_B:\n              console.log(\"The 'B' key is down\");\n              break;\n\n           case this.KEY_C:\n              console.log(\"The 'C' key is down\");\n              break;\n\n           default:\n              console.log(\"Some other key is down\");\n      }\n    });\n\ninput.on(\"keyup\", function(keyCode) {\n       switch (keyCode) {\n\n           case this.KEY_A:\n              console.log(\"The 'A' key is up\");\n              break;\n\n           case this.KEY_B:\n              console.log(\"The 'B' key is up\");\n              break;\n\n           case this.KEY_C:\n              console.log(\"The 'C' key is up\");\n              break;\n\n           default:\n              console.log(\"Some other key is up\");\n       }\n    });\n\n// TODO: ALT and CTRL keys etc\n````\n\n### Unsubscribing from Events\n\nIn the snippet above, we saved a handle to one of our event subscriptions.\n\nWe can then use that handle to unsubscribe again, like this:\n\n````javascript\ninput.off(handle);\n````",
+            "file": "src/core/input/input.js",
+            "line": 1
         }
     },
     "classes": {
@@ -371,6 +495,7 @@
             "file": "src/core/animate/cameraFlyAnimation.js",
             "line": 1,
             "description": "**Fly** flys a {{#crossLink \"Camera\"}}{{/crossLink}}\n## Overview\n## Example\nTODO\n````javascript\n TODO\n ````",
+            "submodule": "animate",
             "is_constructor": 1,
             "params": [
                 {
@@ -418,9 +543,10 @@
             "extension_for": [],
             "module": "BIMSURFER",
             "namespace": "",
-            "file": "src/core/control/cameraControl.js",
+            "file": "src/core/camera/camera.js",
             "line": 1,
-            "description": "A **CameraControl** allows you to control a {{#crossLink \"Camera\"}}{{/crossLink}} with mouse and keyboard.\n\n## Overview\n\n<ul>\n<li>You can have an unlimited number of Cameras in a {{#crossLink \"Viewer\"}}GameObjects{{/crossLink}}.</li>\n<li>At any instant, the Camera we're looking through is the one whose {{#crossLink \"Camera/active:property\"}}active{{/crossLink}} property is true.</li>\n</ul>\n\n## Example\n\nIn this example we have a {{#crossLink \"Viewer\"}}{{/crossLink}} with a\n{{#crossLink \"Camera\"}}{{/crossLink}} that's controlled by a CameraControl.\n\n````Javascript\n\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\nvar camera = new BIMSURFER.Camera(viewer, {\n       eye: [0, 0, -10]\n   });\n\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n       camera: camera\n   });\n\nvar teapot = new BIMSURFER.TeapotObject(viewer);\n\n````",
+            "description": "A **Camera** defines a viewpoint within a {{#crossLink \"Viewer\"}}Viewer{{/crossLink}}.\n\n## Overview\n\n<ul>\n<li>You can have an unlimited number of Cameras in a {{#crossLink \"Viewer\"}}GameObjects{{/crossLink}}.</li>\n<li>At any instant, the Camera we're looking through is the one whose {{#crossLink \"Camera/active:property\"}}active{{/crossLink}} property is true.</li>\n</ul>\n\n## Example\n\nIn this example we have a {{#crossLink \"Viewer\"}}{{/crossLink}} with a\nCamera, {{#crossLink \"CameraControl\"}}{{/crossLink}} and a {{#crossLink \"TeapotObject\"}}{{/crossLink}}.\n\n````Javascript\n\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\nvar camera = new BIMSURFER.Camera(viewer, {\n       eye: [0, 0, -10]\n   });\n\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n       camera: camera\n   });\n\nvar teapot = new BIMSURFER.TeapotObject(viewer);\n\n````",
+            "submodule": "camera",
             "is_constructor": 1,
             "params": [
                 {
@@ -496,6 +622,57 @@
             ],
             "extends": "Component"
         },
+        "CameraControl": {
+            "name": "CameraControl",
+            "shortname": "CameraControl",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "BIMSURFER",
+            "namespace": "",
+            "file": "src/core/control/cameraControl.js",
+            "line": 1,
+            "description": "A **CameraControl** allows you to control a {{#crossLink \"Camera\"}}{{/crossLink}} with mouse and keyboard.\n\n## Overview\n\n<ul>\n<li>You can have an unlimited number of Cameras in a {{#crossLink \"Viewer\"}}GameObjects{{/crossLink}}.</li>\n<li>At any instant, the Camera we're looking through is the one whose {{#crossLink \"Camera/active:property\"}}active{{/crossLink}} property is true.</li>\n</ul>\n\n## Example\n\nIn this example we have a {{#crossLink \"Viewer\"}}{{/crossLink}} with a\n{{#crossLink \"Camera\"}}{{/crossLink}} that's controlled by a CameraControl.\n\n````Javascript\n\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\nvar camera = new BIMSURFER.Camera(viewer, {\n       eye: [0, 0, -10]\n   });\n\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n       camera: camera\n   });\n\nvar teapot = new BIMSURFER.TeapotObject(viewer);\n\n````",
+            "submodule": "control",
+            "is_constructor": 1,
+            "params": [
+                {
+                    "name": "viewer",
+                    "description": "Parent {{#crossLink \"Viewer\"}}{{/crossLink}}.",
+                    "type": "Viewer",
+                    "optional": true
+                },
+                {
+                    "name": "cfg",
+                    "description": "Configs",
+                    "type": "*",
+                    "optional": true,
+                    "props": [
+                        {
+                            "name": "id",
+                            "description": "Optional ID, unique among all components in the parent viewer, generated automatically when omitted.",
+                            "type": "String",
+                            "optional": true
+                        },
+                        {
+                            "name": "meta",
+                            "description": "Optional map of user-defined metadata to attach to this Camera.",
+                            "type": "String:Object",
+                            "optional": true
+                        }
+                    ]
+                },
+                {
+                    "name": "camera",
+                    "description": "The Camera to control.",
+                    "type": "Camera",
+                    "optional": true
+                }
+            ],
+            "extends": "Component"
+        },
         "ClickSelectObjects": {
             "name": "ClickSelectObjects",
             "shortname": "ClickSelectObjects",
@@ -509,6 +686,7 @@
             "file": "src/core/control/clickSelectObjects.js",
             "line": 1,
             "description": "TODO\n\n## Overview\n\nTODO\n\n## Example\n\nTODO",
+            "submodule": "control",
             "is_constructor": 1,
             "params": [
                 {
@@ -559,6 +737,7 @@
             "file": "src/core/control/keyboardAxisCamera.js",
             "line": 1,
             "description": "TODO\n\n## Overview\n\nTODO\n\n## Example\n\nTODO",
+            "submodule": "control",
             "is_constructor": 1,
             "params": [
                 {
@@ -609,6 +788,7 @@
             "file": "src/core/control/keyboardPanCamera.js",
             "line": 1,
             "description": "TODO\n\n## Overview\n\nTODO\n\n## Example\n\nTODO",
+            "submodule": "control",
             "is_constructor": 1,
             "params": [
                 {
@@ -659,6 +839,7 @@
             "file": "src/core/control/keyboardZoomCamera.js",
             "line": 1,
             "description": "TODO\n\n## Overview\n\nTODO\n\n## Example\n\nTODO",
+            "submodule": "control",
             "is_constructor": 1,
             "params": [
                 {
@@ -709,6 +890,7 @@
             "file": "src/core/control/mouseOrbitCamera.js",
             "line": 1,
             "description": "TODO\n\n## Overview\n\nTODO\n\n## Example\n\nTODO",
+            "submodule": "control",
             "is_constructor": 1,
             "params": [
                 {
@@ -759,6 +941,7 @@
             "file": "src/core/control/mousePanCamera.js",
             "line": 1,
             "description": "TODO\n\n## Overview\n\nTODO\n\n## Example\n\nTODO",
+            "submodule": "control",
             "is_constructor": 1,
             "params": [
                 {
@@ -809,6 +992,7 @@
             "file": "src/core/control/mouseZoomCamera.js",
             "line": 1,
             "description": "TODO\n\n## Overview\n\nTODO\n\n## Example\n\nTODO",
+            "submodule": "control",
             "is_constructor": 1,
             "params": [
                 {
@@ -859,6 +1043,7 @@
             "file": "src/core/effect/effect.js",
             "line": 1,
             "description": "TODO\n\n## Overview\n\nTODO\n\n## Example\n\nTODO",
+            "submodule": "effect",
             "is_constructor": 1,
             "params": [
                 {
@@ -909,6 +1094,7 @@
             "file": "src/core/effect/highlightEffect.js",
             "line": 1,
             "description": "TODO\n\n## Overview\n\nTODO\n\n## Example\n\nTODO",
+            "submodule": "effect",
             "is_constructor": 1,
             "params": [
                 {
@@ -944,7 +1130,7 @@
                     "optional": true
                 }
             ],
-            "extends": "Component"
+            "extends": "Effect"
         },
         "IsolateEffect": {
             "name": "IsolateEffect",
@@ -959,6 +1145,7 @@
             "file": "src/core/effect/isolateEffect.js",
             "line": 1,
             "description": "TODO\n\n## Overview\n\nTODO\n\n## Example\n\nTODO",
+            "submodule": "effect",
             "is_constructor": 1,
             "params": [
                 {
@@ -994,7 +1181,7 @@
                     "optional": true
                 }
             ],
-            "extends": "Component"
+            "extends": "Effect"
         },
         "XRayEffect": {
             "name": "XRayEffect",
@@ -1009,6 +1196,7 @@
             "file": "src/core/effect/xrayEffect.js",
             "line": 1,
             "description": "TODO\n\n## Overview\n\nTODO\n\n## Example\n\nTODO",
+            "submodule": "effect",
             "is_constructor": 1,
             "params": [
                 {
@@ -1044,7 +1232,7 @@
                     "optional": true
                 }
             ],
-            "extends": "Component"
+            "extends": "Effect"
         },
         "BoxGeometry": {
             "name": "BoxGeometry",
@@ -1059,6 +1247,7 @@
             "file": "src/core/geometry/boxGeometry.js",
             "line": 1,
             "description": "TODO\n\n## Overview\n\nTODO\n\n## Example\n\nTODO",
+            "submodule": "geometry",
             "is_constructor": 1,
             "params": [
                 {
@@ -1088,7 +1277,7 @@
                     ]
                 }
             ],
-            "extends": "Component"
+            "extends": "Geometry"
         },
         "Geometry": {
             "name": "Geometry",
@@ -1103,6 +1292,7 @@
             "file": "src/core/geometry/geometry.js",
             "line": 1,
             "description": "TODO\n\n## Overview\n\nTODO\n\n## Example\n\nTODO",
+            "submodule": "geometry",
             "is_constructor": 1,
             "params": [
                 {
@@ -1190,6 +1380,7 @@
             "file": "src/core/geometry/teapotGeometry.js",
             "line": 1,
             "description": "TODO\n\n## Overview\n\nTODO\n\n## Example\n\nTODO",
+            "submodule": "geometry",
             "is_constructor": 1,
             "params": [
                 {
@@ -1219,7 +1410,7 @@
                     ]
                 }
             ],
-            "extends": "Component"
+            "extends": "Geometry"
         },
         "Input": {
             "name": "Input",
@@ -1234,6 +1425,7 @@
             "file": "src/core/input/input.js",
             "line": 1,
             "description": "Publishes key and mouse events that occur on the parent {{#crossLink \"Viewer\"}}Viewer{{/crossLink}}'s {{#crossLink \"Canvas\"}}Canvas{{/crossLink}}.\n\n## Overview\n\n<ul>\n<li>Each {{#crossLink \"Viewer\"}}{{/crossLink}} provides an Input on itself as a read-only property.</li>\n</ul>\n\n## Example\n\nIn this example, we're subscribing to some mouse and key events that will occur on\na {{#crossLink \"Viewer\"}}Viewer's{{/crossLink}} {{#crossLink \"Canvas\"}}Canvas{{/crossLink}}.\n\n````javascript\nvar viewer = new BIMSURFER.Viewer(...);\n\nvar input = viewer.input;\n\n// We'll save a handle to this subscription\n// to show how to unsubscribe, further down\nvar handle = input.on(\"mousedown\", function(coords) {\n      console.log(\"Mouse down at: x=\" + coords[0] + \", y=\" + coords[1]);\n});\n\ninput.on(\"mouseup\", function(coords) {\n      console.log(\"Mouse up at: x=\" + coords[0] + \", y=\" + coords[1]);\n});\n\ninput.on(\"mouseclicked\", function(coords) {\n     console.log(\"Mouse clicked at: x=\" + coords[0] + \", y=\" + coords[1]);\n});\n\ninput.on(\"dblclick\", function(coords) {\n      console.log(\"Double-click at: x=\" + coords[0] + \", y=\" + coords[1]);\n});\n\ninput.on(\"keydown\", function(keyCode) {\n       switch (keyCode) {\n\n           case this.KEY_A:\n              console.log(\"The 'A' key is down\");\n              break;\n\n           case this.KEY_B:\n              console.log(\"The 'B' key is down\");\n              break;\n\n           case this.KEY_C:\n              console.log(\"The 'C' key is down\");\n              break;\n\n           default:\n              console.log(\"Some other key is down\");\n      }\n    });\n\ninput.on(\"keyup\", function(keyCode) {\n       switch (keyCode) {\n\n           case this.KEY_A:\n              console.log(\"The 'A' key is up\");\n              break;\n\n           case this.KEY_B:\n              console.log(\"The 'B' key is up\");\n              break;\n\n           case this.KEY_C:\n              console.log(\"The 'C' key is up\");\n              break;\n\n           default:\n              console.log(\"Some other key is up\");\n       }\n    });\n\n// TODO: ALT and CTRL keys etc\n````\n\n### Unsubscribing from Events\n\nIn the snippet above, we saved a handle to one of our event subscriptions.\n\nWe can then use that handle to unsubscribe again, like this:\n\n````javascript\ninput.off(handle);\n````",
+            "submodule": "input",
             "extends": "Component"
         },
         "AmbientLight": {
@@ -1285,7 +1477,7 @@
                     ]
                 }
             ],
-            "extends": "Component"
+            "extends": "Light"
         },
         "DirLight": {
             "name": "DirLight",
@@ -1301,7 +1493,7 @@
             "line": 1,
             "description": "A **DirLight** defines a directional light source that originates from a single point and spreads outward in all directions.\n\n## Overview\n\n<ul>\n\n<li>DirLights have a position, but no direction.</li>\n\n<li>DirLights may be defined in either **World** or **View** coordinate space. When in World-space, their position\nis relative to the World coordinate system, and will appear to move as the {{#crossLink \"Camera\"}}{{/crossLink}} moves.\nWhen in View-space, their position is relative to the View coordinate system, and will behave as if fixed to the viewer's\nhead as the {{#crossLink \"Camera\"}}{{/crossLink}} moves.</li>\n\n<li>Within bIMSurfer's's Phong lighting calculations, DirLight {{#crossLink \"DirLight/diffuse:property\"}}{{/crossLink}} and\n{{#crossLink \"DirLight/specular:property\"}}{{/crossLink}}.</li>\n\n<li>DirLights have {{#crossLink \"DirLight/constantAttenuation:property\"}}{{/crossLink}}, {{#crossLink \"DirLight/linearAttenuation:property\"}}{{/crossLink}} and\n{{#crossLink \"DirLight/quadraticAttenuation:property\"}}{{/crossLink}} factors, which indicate how their intensity attenuates over distance.</li>\n\n\n</ul>\n\n\n## Example\n\nTODO",
             "is_constructor": 1,
-            "extends": "Component",
+            "extends": "Light",
             "params": [
                 {
                     "name": "viewer",
@@ -1416,7 +1608,7 @@
             "line": 1,
             "description": "A **PointLight** defines a positional light source that originates from a single point and spreads outward in all directions.\n\n## Overview\n\n<ul>\n\n<li>PointLights have a position, but no direction.</li>\n\n<li>PointLights may be defined in either **World** or **View** coordinate space. When in World-space, their position\nis relative to the World coordinate system, and will appear to move as the {{#crossLink \"Camera\"}}{{/crossLink}} moves.\nWhen in View-space, their position is relative to the View coordinate system, and will behave as if fixed to the viewer's\nhead as the {{#crossLink \"Camera\"}}{{/crossLink}} moves.</li>\n\n<li>PointLights have {{#crossLink \"PointLight/constantAttenuation:property\"}}{{/crossLink}}, {{#crossLink \"PointLight/linearAttenuation:property\"}}{{/crossLink}} and\n{{#crossLink \"PointLight/quadraticAttenuation:property\"}}{{/crossLink}} factors, which indicate how their intensity attenuates over distance.</li>\n\n</ul>\n\n\n## Example\n\nTODO",
             "is_constructor": 1,
-            "extends": "Component",
+            "extends": "Light",
             "params": [
                 {
                     "name": "viewer",
@@ -1501,6 +1693,50 @@
             "file": "src/core/math/math.js",
             "line": 1,
             "description": "Math functions, used within BIMSURFER, but also available for you to use in your application code."
+        },
+        "BoxObject": {
+            "name": "BoxObject",
+            "shortname": "BoxObject",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "BIMSURFER",
+            "namespace": "",
+            "file": "src/core/object/boxObject.js",
+            "line": 1,
+            "description": "TODO\n\n## Overview\n\nTODO\n\n## Example\n\nTODO",
+            "is_constructor": 1,
+            "params": [
+                {
+                    "name": "viewer",
+                    "description": "Parent {{#crossLink \"Viewer\"}}{{/crossLink}}.",
+                    "type": "Viewer",
+                    "optional": true
+                },
+                {
+                    "name": "cfg",
+                    "description": "Configs",
+                    "type": "*",
+                    "optional": true,
+                    "props": [
+                        {
+                            "name": "id",
+                            "description": "Optional ID, unique among all components in the parent viewer, generated automatically when omitted.",
+                            "type": "String",
+                            "optional": true
+                        },
+                        {
+                            "name": "meta",
+                            "description": "Optional map of user-defined metadata to attach to this BoxObject.",
+                            "type": "String:Object",
+                            "optional": true
+                        }
+                    ]
+                }
+            ],
+            "extends": "Object"
         },
         "Object": {
             "name": "Object",
@@ -1606,6 +1842,100 @@
             ],
             "extends": "Component"
         },
+        "TeapotObject": {
+            "name": "TeapotObject",
+            "shortname": "TeapotObject",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "BIMSURFER",
+            "namespace": "",
+            "file": "src/core/object/teapotObject.js",
+            "line": 1,
+            "description": "TODO\n\n## Overview\n\nTODO\n\n## Example\n\nTODO",
+            "is_constructor": 1,
+            "params": [
+                {
+                    "name": "viewer",
+                    "description": "Parent {{#crossLink \"Viewer\"}}{{/crossLink}}.",
+                    "type": "Viewer",
+                    "optional": true
+                },
+                {
+                    "name": "cfg",
+                    "description": "Configs",
+                    "type": "*",
+                    "optional": true,
+                    "props": [
+                        {
+                            "name": "id",
+                            "description": "Optional ID, unique among all components in the parent viewer, generated automatically when omitted.",
+                            "type": "String",
+                            "optional": true
+                        },
+                        {
+                            "name": "meta",
+                            "description": "Optional map of user-defined metadata to attach to this BoxObject.",
+                            "type": "String:Object",
+                            "optional": true
+                        }
+                    ]
+                }
+            ],
+            "extends": "Object"
+        },
+        "Selection": {
+            "name": "Selection",
+            "shortname": "Selection",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "BIMSURFER",
+            "namespace": "",
+            "file": "src/core/selection/selection.js",
+            "line": 1,
+            "description": "TODO\n\n## Overview\n\nTODO\n\n## Example\n\nTODO",
+            "is_constructor": 1,
+            "params": [
+                {
+                    "name": "viewer",
+                    "description": "Parent {{#crossLink \"Viewer\"}}{{/crossLink}}.",
+                    "type": "Viewer",
+                    "optional": true
+                },
+                {
+                    "name": "cfg",
+                    "description": "Configs",
+                    "type": "*",
+                    "optional": true,
+                    "props": [
+                        {
+                            "name": "id",
+                            "description": "Optional ID, unique among all components in the parent viewer, generated automatically when omitted.",
+                            "type": "String",
+                            "optional": true
+                        },
+                        {
+                            "name": "meta",
+                            "description": "Optional map of user-defined metadata to attach to this Selection.",
+                            "type": "String:Object",
+                            "optional": true
+                        },
+                        {
+                            "name": "objects",
+                            "description": "} Array of {{#crossLink \"Object\"}}{{/crossLink}} IDs or instances.",
+                            "type": "Array of String|Object",
+                            "optional": true
+                        }
+                    ]
+                }
+            ],
+            "extends": "Object"
+        },
         "BIMSURFER": {
             "name": "BIMSURFER",
             "shortname": "BIMSURFER",
@@ -1638,7 +1968,7 @@
             "namespace": "",
             "file": "src/core/component.js",
             "line": 1,
-            "description": "**Component** is the base class for all components within a {{#crossLink \"Viewer\"}}{{/crossLink}}.\n<hr>\n*Contents*\n<Ul>\n <li><a href=\"#ids\">Component IDs</a></li>\n <li><a href=\"#componentProps\">Properties</a></li>\n <li><a href=\"#metadata\">Metadata</a></li>\n <li><a href=\"#logging\">Logging</a></li>\n <li><a href=\"#destruction\">Destruction</a></li>\n </ul>\n<hr>\n## <a name=\"ids\">Component IDs</a>\nEvery Component has an ID that's unique within the parent {{#crossLink \"Viewer\"}}{{/crossLink}}. BIMViewer generates\n the IDs automatically by default, however you can also specify them yourself. In the example below, we're creating a\n viewer comprised of {{#crossLink \"Viewer\"}}{{/crossLink}}, {{#crossLink \"Material\"}}{{/crossLink}}, {{#crossLink \"Geometry\"}}{{/crossLink}} and\n {{#crossLink \"GameObject\"}}{{/crossLink}} components, while letting xeoEngine generate its own ID for\n the {{#crossLink \"Geometry\"}}{{/crossLink}}:\n````javascript\n // The Viewer is a Component too\n var viewer = new BIMSURFER.Viewer({\n    id: \"myViewer\"\n});\nvar material = new BIMSURFER.Material(viewer, {\n    id: \"myMaterial\"\n});\nvar geometry = new BIMSURFER.Geometry(viewer, {\n    id: \"myGeometry\"\n});\n// Let xeoEngine automatically generated the ID for our GameObject\n var object = new BIMSURFER.GameObject(viewer, {\n    material: material,\n    geometry: geometry\n});\n ````\nWe can then find those components like this:\n````javascript\n // Find the Viewer\n var theViewer = BIMSURFER.viewers[\"myViewer\"];\n// Find the Material\n var theMaterial = theViewer.components[\"myMaterial\"];\n ````\n## <a name=\"componentProps\">Properties</a>\nAlmost every property on a xeoEngine Component fires a change event when you update it. For example, we can subscribe\n to the {{#crossLink \"Material/diffuse:event\"}}{{/crossLink}} event that a\n {{#crossLink \"Material\"}}{{/crossLink}} fires when its {{#crossLink \"Material/diffuse:property\"}}{{/crossLink}}\n property is updated, like so:\n````javascript\n // Bind a change callback to a property\n var handle = material.on(\"diffuse\", function(diffuse) {\n    console.log(\"Material diffuse color has changed to: [\" + diffuse[0] + \", \" + diffuse[1] + \",\" + diffuse[2] + \"]\");\n});\n// Change the property value, which fires the callback\n material.diffuse = [ 0.0, 0.5, 0.5 ];\n// Unsubscribe from the property change event\n material.off(handle);\n ````\nWe can also subscribe to changes in the way components are attached to each other, since components are properties\n of other components. For example, we can subscribe to the '{{#crossLink \"GameObject/material:event\"}}{{/crossLink}}' event that a\n {{#crossLink \"GameObject\"}}GameObject{{/crossLink}} fires when its {{#crossLink \"GameObject/material:property\"}}{{/crossLink}}\n property is set to a different {{#crossLink \"Material\"}}Material{{/crossLink}}:\n```` javascript\n // Bind a change callback to the GameObject's Material\n object1.on(\"material\", function(material) {\n    console.log(\"GameObject's Material has changed to: \" + material.id);\n});\n// Now replace that Material with another\n object1.material = new BIMSURFER.Material({\n    id: \"myOtherMaterial\",\n    diffuse: [ 0.3, 0.3, 0.6 ]\n    //..\n});\n ````\n## <a name=\"metadata\">Metadata</a>\nYou can set optional **metadata** on your Components, which can be anything you like. These are intended\n to help manage your components within your application code or content pipeline. You could use metadata to attach\n authoring or version information, like this:\n````javascript\n // Viewer with authoring metadata\n var viewer = new BIMSURFER.Viewer({\n    id: \"myViewer\",\n    metadata: {\n        title: \"My awesome 3D viewer\",\n        author: \"@xeolabs\",\n date: \"February 13 2015\"\n }\n });\n// Material with descriptive metadata\n var material = new BIMSURFER.Material(viewer, {\n    id: \"myMaterial\",\n    diffuse: [1, 0, 0],\n    metadata: {\n        description: \"Bright red color with no textures\",\n        version: \"0.1\",\n        foo: \"bar\"\n    }\n});\n ````\nAs with all properties, you can subscribe and change the metadata like this:\n````javascript\n // Subscribe to changes to the Material's metadata\n material.on(\"metadata\", function(value) {\n    console.log(\"Metadata changed: \" + JSON.stringify(value));\n});\n// Change the Material's metadata, firing our change handler\n material.metadata = {\n    description: \"Bright red color with no textures\",\n    version: \"0.2\",\n    foo: \"baz\"\n};\n ````\n## <a name=\"logging\">Logging</a>\nComponents have methods to log ID-prefixed messages to the JavaScript console:\n````javascript\n material.log(\"Everything is fine, situation normal.\");\n material.warn(\"Wait, whats that red light?\");\n material.error(\"Aw, snap!\");\n ````\nThe logged messages will look like this in the console:\n````text\n [LOG]   myMaterial: Everything is fine, situation normal.\n [WARN]  myMaterial: Wait, whats that red light..\n [ERROR] myMaterial: Aw, snap!\n ````\n## <a name=\"destruction\">Destruction</a>\nGet notification of destruction directly on the Components:\n````javascript\n material.on(\"destroyed\", function() {\n    this.log(\"Component was destroyed: \" + this.id);\n});\n ````\nOr get notification of destruction of any Component within its {{#crossLink \"Viewer\"}}{{/crossLink}}, indiscriminately:\n````javascript\n viewer.on(\"componentDestroyed\", function(component) {\n    this.log(\"Component was destroyed: \" + component.id);\n});\n ````\nThen destroy a component like this:\n````javascript\n material.destroy();\n ````\nOther Components that are linked to it will fall back on a default of some sort. For example, any\n {{#crossLink \"GameObject\"}}GameObjects{{/crossLink}} that were linked to our {{#crossLink \"Material\"}}{{/crossLink}}\n will then automatically link to the {{#crossLink \"Viewer\"}}Viewer's{{/crossLink}} default {{#crossLink \"Viewer/material:property\"}}{{/crossLink}}.",
+            "description": "**Component** is the base class for all components within a {{#crossLink \"Viewer\"}}{{/crossLink}}.\n<hr>\n*Contents*\n<Ul>\n <li><a href=\"#ids\">Component IDs</a></li>\n <li><a href=\"#componentProps\">Properties</a></li>\n <li><a href=\"#metadata\">Metadata</a></li>\n <li><a href=\"#logging\">Logging</a></li>\n <li><a href=\"#destruction\">Destruction</a></li>\n </ul>\n<hr>\n## <a name=\"ids\">Component IDs</a>\nEvery Component has an ID that's unique within the parent {{#crossLink \"Viewer\"}}{{/crossLink}}. the {{#crossLink \"Viewer\"}}{{/crossLink}} generates\n the IDs automatically by default, however you can also specify them yourself. In the example below, we're creating a\n viewer comprised of {{#crossLink \"Viewer\"}}{{/crossLink}}, {{#crossLink \"Material\"}}{{/crossLink}}, {{#crossLink \"Geometry\"}}{{/crossLink}} and\n {{#crossLink \"GameObject\"}}{{/crossLink}} components, while letting xeoEngine generate its own ID for\n the {{#crossLink \"Geometry\"}}{{/crossLink}}:\n````javascript\n````\n## <a name=\"componentProps\">Properties</a>\nAlmost every property on a xeoEngine Component fires a change event when you update it. For example, we can subscribe\n to the {{#crossLink \"Material/diffuse:event\"}}{{/crossLink}} event that a\n {{#crossLink \"Material\"}}{{/crossLink}} fires when its {{#crossLink \"Material/diffuse:property\"}}{{/crossLink}}\n property is updated, like so:\n````javascript\n // Bind a change callback to a property\n var handle = material.on(\"diffuse\", function(diffuse) {\n    console.log(\"Material diffuse color has changed to: [\" + diffuse[0] + \", \" + diffuse[1] + \",\" + diffuse[2] + \"]\");\n});\n// Change the property value, which fires the callback\n material.diffuse = [ 0.0, 0.5, 0.5 ];\n// Unsubscribe from the property change event\n material.off(handle);\n ````\nWe can also subscribe to changes in the way components are attached to each other, since components are properties\n of other components. For example, we can subscribe to the '{{#crossLink \"GameObject/material:event\"}}{{/crossLink}}' event that a\n {{#crossLink \"GameObject\"}}GameObject{{/crossLink}} fires when its {{#crossLink \"GameObject/material:property\"}}{{/crossLink}}\n property is set to a different {{#crossLink \"Material\"}}Material{{/crossLink}}:\n```` javascript\n // Bind a change callback to the GameObject's Material\n object1.on(\"material\", function(material) {\n    console.log(\"GameObject's Material has changed to: \" + material.id);\n});\n// Now replace that Material with another\n object1.material = new BIMSURFER.Material({\n    id: \"myOtherMaterial\",\n    diffuse: [ 0.3, 0.3, 0.6 ]\n    //..\n});\n ````\n## <a name=\"metadata\">Metadata</a>\nYou can set optional **metadata** on your Components, which can be anything you like. These are intended\n to help manage your components within your application code or content pipeline. You could use metadata to attach\n authoring or version information, like this:\n````javascript\n // Viewer with authoring metadata\n var viewer = new BIMSURFER.Viewer({\n    id: \"myViewer\",\n    metadata: {\n        title: \"My awesome 3D viewer\",\n        author: \"@xeolabs\",\n date: \"February 13 2015\"\n }\n });\n// Material with descriptive metadata\n var material = new BIMSURFER.Material(viewer, {\n    id: \"myMaterial\",\n    diffuse: [1, 0, 0],\n    metadata: {\n        description: \"Bright red color with no textures\",\n        version: \"0.1\",\n        foo: \"bar\"\n    }\n});\n ````\nAs with all properties, you can subscribe and change the metadata like this:\n````javascript\n // Subscribe to changes to the Material's metadata\n material.on(\"metadata\", function(value) {\n    console.log(\"Metadata changed: \" + JSON.stringify(value));\n});\n// Change the Material's metadata, firing our change handler\n material.metadata = {\n    description: \"Bright red color with no textures\",\n    version: \"0.2\",\n    foo: \"baz\"\n};\n ````\n## <a name=\"logging\">Logging</a>\nComponents have methods to log ID-prefixed messages to the JavaScript console:\n````javascript\n material.log(\"Everything is fine, situation normal.\");\n material.warn(\"Wait, whats that red light?\");\n material.error(\"Aw, snap!\");\n ````\nThe logged messages will look like this in the console:\n````text\n [LOG]   myMaterial: Everything is fine, situation normal.\n [WARN]  myMaterial: Wait, whats that red light..\n [ERROR] myMaterial: Aw, snap!\n ````\n## <a name=\"destruction\">Destruction</a>\nGet notification of destruction directly on the Components:\n````javascript\n material.on(\"destroyed\", function() {\n    this.log(\"Component was destroyed: \" + this.id);\n});\n ````\nOr get notification of destruction of any Component within its {{#crossLink \"Viewer\"}}{{/crossLink}}, indiscriminately:\n````javascript\n viewer.on(\"componentDestroyed\", function(component) {\n    this.log(\"Component was destroyed: \" + component.id);\n});\n ````\nThen destroy a component like this:\n````javascript\n material.destroy();\n ````\nOther Components that are linked to it will fall back on a default of some sort. For example, any\n {{#crossLink \"GameObject\"}}GameObjects{{/crossLink}} that were linked to our {{#crossLink \"Material\"}}{{/crossLink}}\n will then automatically link to the {{#crossLink \"Viewer\"}}Viewer's{{/crossLink}} default {{#crossLink \"Viewer/material:property\"}}{{/crossLink}}.",
             "is_constructor": 1,
             "params": [
                 {
@@ -1668,6 +1998,50 @@
                     ]
                 }
             ]
+        },
+        "Configs": {
+            "name": "Configs",
+            "shortname": "Configs",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "BIMSURFER",
+            "namespace": "",
+            "file": "src/core/configs.js",
+            "line": 1,
+            "description": "## Overview\n\n TODO\n\n ## Example\n\n TODO\n\n ```` javascript\n\n ````",
+            "is_constructor": 1,
+            "params": [
+                {
+                    "name": "viewer",
+                    "description": "Parent {{#crossLink \"Viewer\"}}Viewer{{/crossLink}}, creates this Configs within the\n default {{#crossLink \"Viewer\"}}Viewer{{/crossLink}} when omitted",
+                    "type": "Viewer",
+                    "optional": true
+                },
+                {
+                    "name": "cfg",
+                    "description": "Configs configuration",
+                    "type": "*",
+                    "optional": true,
+                    "props": [
+                        {
+                            "name": "id",
+                            "description": "Optional ID, unique among all components in the parent {{#crossLink \"Viewer\"}}Viewer{{/crossLink}}, generated automatically when omitted.",
+                            "type": "String",
+                            "optional": true
+                        },
+                        {
+                            "name": "meta",
+                            "description": "Optional map of user-defined metadata to attach to this Configs.",
+                            "type": "String:Object",
+                            "optional": true
+                        }
+                    ]
+                }
+            ],
+            "extends": "Component"
         },
         "Viewer": {
             "name": "Viewer",
@@ -1716,14 +2090,15 @@
     "classitems": [
         {
             "file": "src/core/animate/cameraFlyAnimation.js",
-            "line": 31,
+            "line": 32,
             "description": "JavaScript class name for this Component.",
             "itemtype": "property",
             "name": "className",
             "type": "String",
             "final": 1,
             "class": "Fly",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "animate"
         },
         {
             "file": "src/core/animate/cameraPathAnimation.js",
@@ -1759,25 +2134,27 @@
         },
         {
             "file": "src/core/camera/camera.js",
-            "line": 48,
+            "line": 49,
             "description": "Defines a viewpoint within a {@link BIMSURFER.Viewer}.",
             "class": "Camera",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "camera"
         },
         {
             "file": "src/core/camera/camera.js",
-            "line": 53,
+            "line": 54,
             "description": "JavaScript class name for this Component.",
             "itemtype": "property",
             "name": "className",
             "type": "String",
             "final": 1,
             "class": "Camera",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "camera"
         },
         {
             "file": "src/core/camera/camera.js",
-            "line": 89,
+            "line": 90,
             "description": "Rotate 'eye' about 'look', around the 'up' vector",
             "params": [
                 {
@@ -1787,11 +2164,12 @@
                 }
             ],
             "class": "Camera",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "camera"
         },
         {
             "file": "src/core/camera/camera.js",
-            "line": 109,
+            "line": 110,
             "description": "Rotate 'eye' about 'look' around the X-axis",
             "params": [
                 {
@@ -1801,11 +2179,12 @@
                 }
             ],
             "class": "Camera",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "camera"
         },
         {
             "file": "src/core/camera/camera.js",
-            "line": 135,
+            "line": 136,
             "description": "Rotate 'look' about 'eye', around the 'up' vector\n\n<p>Applies constraints added with {@link #addConstraint}.</p>",
             "params": [
                 {
@@ -1815,11 +2194,12 @@
                 }
             ],
             "class": "Camera",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "camera"
         },
         {
             "file": "src/core/camera/camera.js",
-            "line": 157,
+            "line": 158,
             "description": "Rotate 'eye' about 'look' around the X-axis",
             "params": [
                 {
@@ -1829,11 +2209,12 @@
                 }
             ],
             "class": "Camera",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "camera"
         },
         {
             "file": "src/core/camera/camera.js",
-            "line": 183,
+            "line": 184,
             "description": "Pans the camera along X and Y axis.",
             "params": [
                 {
@@ -1842,11 +2223,12 @@
                 }
             ],
             "class": "Camera",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "camera"
         },
         {
             "file": "src/core/camera/camera.js",
-            "line": 237,
+            "line": 238,
             "description": "Increments/decrements zoom factor, ie. distance between eye and look.",
             "params": [
                 {
@@ -1855,40 +2237,71 @@
                 }
             ],
             "class": "Camera",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "camera"
         },
         {
             "file": "src/core/camera/camera.js",
-            "line": 344,
+            "line": 256,
+            "description": "Flag which indicates whether this Camera is active or not.\n\nFires an {{#crossLink \"Camera/active:event\"}}{{/crossLink}} event on change.",
+            "itemtype": "property",
+            "name": "active",
+            "type": "Boolean",
+            "class": "Camera",
+            "module": "BIMSURFER",
+            "submodule": "camera"
+        },
+        {
+            "file": "src/core/camera/camera.js",
+            "line": 331,
+            "description": "Fired whenever this Camera's {{#crossLink \"Camera/active:property\"}}{{/crossLink}} property changes.",
+            "itemtype": "event",
+            "name": "active",
+            "params": [
+                {
+                    "name": "value",
+                    "description": "The property's new value"
+                }
+            ],
+            "class": "Camera",
+            "module": "BIMSURFER",
+            "submodule": "camera"
+        },
+        {
+            "file": "src/core/camera/camera.js",
+            "line": 356,
             "description": "Position of the eye.\nFires an {{#crossLink \"Camera/eye:event\"}}{{/crossLink}} event on change.",
             "itemtype": "property",
             "name": "eye",
             "default": "[0,0,-10]",
             "type": "Array(Number)",
             "class": "Camera",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "camera"
         },
         {
             "file": "src/core/camera/camera.js",
-            "line": 363,
+            "line": 375,
             "description": "Position of the point-of-interest.\nFires a {{#crossLink \"Camera/look:event\"}}{{/crossLink}} event on change.",
             "itemtype": "property",
             "name": "look",
             "default": "[0,0,0]",
             "type": "Array(Number)",
             "class": "Camera",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "camera"
         },
         {
             "file": "src/core/camera/camera.js",
-            "line": 382,
+            "line": 394,
             "description": "Direction of the \"up\" vector.\nFires an {{#crossLink \"Camera/up:event\"}}{{/crossLink}} event on change.",
             "itemtype": "property",
             "name": "up",
             "default": "[0,1,0]",
             "type": "Array(Number)",
             "class": "Camera",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "camera"
         },
         {
             "file": "src/core/canvas/canvas.js",
@@ -2040,38 +2453,41 @@
         },
         {
             "file": "src/core/control/cameraControl.js",
-            "line": 48,
+            "line": 49,
             "description": "JavaScript class name for this Component.",
             "itemtype": "property",
             "name": "className",
             "type": "String",
             "final": 1,
-            "class": "Camera",
-            "module": "BIMSURFER"
+            "class": "CameraControl",
+            "module": "BIMSURFER",
+            "submodule": "control"
         },
         {
             "file": "src/core/control/cameraControl.js",
-            "line": 107,
-            "description": "The {{#crossLink \"Camera\"}}{{/crossLink}} being controlled.\n            *",
+            "line": 108,
+            "description": "The {{#crossLink \"Camera\"}}{{/crossLink}} being controlled.",
             "itemtype": "property",
-            "name": "project",
+            "name": "camera",
             "type": "Camera",
-            "class": "Camera",
-            "module": "BIMSURFER"
+            "class": "CameraControl",
+            "module": "BIMSURFER",
+            "submodule": "control"
         },
         {
             "file": "src/core/control/cameraControl.js",
-            "line": 154,
-            "description": "Flag which indicates whether this CameraControl is active or not.",
+            "line": 155,
+            "description": "Flag which indicates whether this CameraControl is active or not.\n\nFires an {{#crossLink \"CameraControl/active:event\"}}{{/crossLink}} event on change.",
             "itemtype": "property",
             "name": "active",
             "type": "Boolean",
-            "class": "Camera",
-            "module": "BIMSURFER"
+            "class": "CameraControl",
+            "module": "BIMSURFER",
+            "submodule": "control"
         },
         {
             "file": "src/core/control/cameraControl.js",
-            "line": 173,
+            "line": 176,
             "description": "Fired whenever this CameraControl's {{#crossLink \"CameraControl/active:property\"}}{{/crossLink}} property changes.",
             "itemtype": "event",
             "name": "active",
@@ -2081,219 +2497,484 @@
                     "description": "The property's new value"
                 }
             ],
-            "class": "Camera",
-            "module": "BIMSURFER"
+            "class": "CameraControl",
+            "module": "BIMSURFER",
+            "submodule": "control"
         },
         {
             "file": "src/core/control/clickSelectObjects.js",
-            "line": 28,
+            "line": 29,
             "description": "JavaScript class name for this Component.",
             "itemtype": "property",
             "name": "className",
             "type": "String",
             "final": 1,
             "class": "ClickSelectObjects",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "control"
+        },
+        {
+            "file": "src/core/control/clickSelectObjects.js",
+            "line": 49,
+            "description": "Flag which indicates whether this ClickSelectObjects is active or not.\n\nFires a {{#crossLink \"ClickSelectObjects/active:event\"}}{{/crossLink}} event on change.",
+            "itemtype": "property",
+            "name": "active",
+            "type": "Boolean",
+            "class": "ClickSelectObjects",
+            "module": "BIMSURFER",
+            "submodule": "control"
+        },
+        {
+            "file": "src/core/control/clickSelectObjects.js",
+            "line": 126,
+            "description": "Fired whenever this ClickSelectObjects's {{#crossLink \"ClickSelectObjects/active:property\"}}{{/crossLink}} property changes.",
+            "itemtype": "event",
+            "name": "active",
+            "params": [
+                {
+                    "name": "value",
+                    "description": "The property's new value"
+                }
+            ],
+            "class": "ClickSelectObjects",
+            "module": "BIMSURFER",
+            "submodule": "control"
         },
         {
             "file": "src/core/control/keyboardAxisCamera.js",
-            "line": 28,
+            "line": 29,
             "description": "JavaScript class name for this Component.",
             "itemtype": "property",
             "name": "className",
             "type": "String",
             "final": 1,
             "class": "KeyboardAxisCamera",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "control"
+        },
+        {
+            "file": "src/core/control/keyboardAxisCamera.js",
+            "line": 49,
+            "description": "Flag which indicates whether this KeyboardAxisCamera is active or not.\n\nFires an {{#crossLink \"KeyboardAxisCamera/active:event\"}}{{/crossLink}} event on change.",
+            "itemtype": "property",
+            "name": "active",
+            "type": "Boolean",
+            "class": "KeyboardAxisCamera",
+            "module": "BIMSURFER",
+            "submodule": "control"
+        },
+        {
+            "file": "src/core/control/keyboardAxisCamera.js",
+            "line": 169,
+            "description": "Fired whenever this KeyboardAxisCamera's {{#crossLink \"KeyboardAxisCamera/active:property\"}}{{/crossLink}} property changes.",
+            "itemtype": "event",
+            "name": "active",
+            "params": [
+                {
+                    "name": "value",
+                    "description": "The property's new value"
+                }
+            ],
+            "class": "KeyboardAxisCamera",
+            "module": "BIMSURFER",
+            "submodule": "control"
         },
         {
             "file": "src/core/control/keyboardOrbitCamera.js",
-            "line": 28,
+            "line": 29,
             "description": "JavaScript class name for this Component.",
             "itemtype": "property",
             "name": "className",
             "type": "String",
             "final": 1,
             "class": "KeyboardOrbitCamera",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "control"
+        },
+        {
+            "file": "src/core/control/keyboardOrbitCamera.js",
+            "line": 49,
+            "description": "Flag which indicates whether this KeyboardOrbitCamera is active or not.\n\nFires an {{#crossLink \"KeyboardOrbitCamera/active:event\"}}{{/crossLink}} event on change.",
+            "itemtype": "property",
+            "name": "active",
+            "type": "Boolean",
+            "class": "KeyboardOrbitCamera",
+            "module": "BIMSURFER",
+            "submodule": "control"
+        },
+        {
+            "file": "src/core/control/keyboardOrbitCamera.js",
+            "line": 131,
+            "description": "Fired whenever this KeyboardOrbitCamera's {{#crossLink \"KeyboardOrbitCamera/active:property\"}}{{/crossLink}} property changes.",
+            "itemtype": "event",
+            "name": "active",
+            "params": [
+                {
+                    "name": "value",
+                    "description": "The property's new value"
+                }
+            ],
+            "class": "KeyboardOrbitCamera",
+            "module": "BIMSURFER",
+            "submodule": "control"
         },
         {
             "file": "src/core/control/keyboardPanCamera.js",
-            "line": 28,
+            "line": 29,
             "description": "JavaScript class name for this Component.",
             "itemtype": "property",
             "name": "className",
             "type": "String",
             "final": 1,
             "class": "KeyboardOrbitCamera",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "control"
+        },
+        {
+            "file": "src/core/control/keyboardPanCamera.js",
+            "line": 53,
+            "description": "Flag which indicates whether this KeyboardPanCamera is active or not.\n\nFires an {{#crossLink \"KeyboardPanCamera/active:event\"}}{{/crossLink}} event on change.",
+            "itemtype": "property",
+            "name": "active",
+            "type": "Boolean",
+            "class": "KeyboardOrbitCamera",
+            "module": "BIMSURFER",
+            "submodule": "control"
+        },
+        {
+            "file": "src/core/control/keyboardPanCamera.js",
+            "line": 132,
+            "description": "Fired whenever this KeyboardPanCamera's {{#crossLink \"KeyboardPanCamera/active:property\"}}{{/crossLink}} property changes.",
+            "itemtype": "event",
+            "name": "active",
+            "params": [
+                {
+                    "name": "value",
+                    "description": "The property's new value"
+                }
+            ],
+            "class": "KeyboardOrbitCamera",
+            "module": "BIMSURFER",
+            "submodule": "control"
         },
         {
             "file": "src/core/control/keyboardZoomCamera.js",
-            "line": 28,
+            "line": 29,
             "description": "JavaScript class name for this Component.",
             "itemtype": "property",
             "name": "className",
             "type": "String",
             "final": 1,
             "class": "KeyboardZoomCamera",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "control"
+        },
+        {
+            "file": "src/core/control/keyboardZoomCamera.js",
+            "line": 53,
+            "description": "Flag which indicates whether this KeyboardZoomCamera is active or not.\n\nFires an {{#crossLink \"KeyboardZoomCamera/active:event\"}}{{/crossLink}} event on change.",
+            "itemtype": "property",
+            "name": "active",
+            "type": "Boolean",
+            "class": "KeyboardZoomCamera",
+            "module": "BIMSURFER",
+            "submodule": "control"
+        },
+        {
+            "file": "src/core/control/keyboardZoomCamera.js",
+            "line": 112,
+            "description": "Fired whenever this KeyboardZoomCamera's {{#crossLink \"KeyboardZoomCamera/active:property\"}}{{/crossLink}} property changes.",
+            "itemtype": "event",
+            "name": "active",
+            "params": [
+                {
+                    "name": "value",
+                    "description": "The property's new value"
+                }
+            ],
+            "class": "KeyboardZoomCamera",
+            "module": "BIMSURFER",
+            "submodule": "control"
         },
         {
             "file": "src/core/control/mouseOrbitCamera.js",
-            "line": 28,
+            "line": 29,
             "description": "JavaScript class name for this Component.",
             "itemtype": "property",
             "name": "className",
             "type": "String",
             "final": 1,
             "class": "MouseOrbitCamera",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "control"
+        },
+        {
+            "file": "src/core/control/mouseOrbitCamera.js",
+            "line": 53,
+            "description": "Flag which indicates whether this MouseOrbitCamera is active or not.\n\nFires an {{#crossLink \"MouseOrbitCamera/active:event\"}}{{/crossLink}} event on change.",
+            "itemtype": "property",
+            "name": "active",
+            "type": "Boolean",
+            "class": "MouseOrbitCamera",
+            "module": "BIMSURFER",
+            "submodule": "control"
+        },
+        {
+            "file": "src/core/control/mouseOrbitCamera.js",
+            "line": 142,
+            "description": "Fired whenever this KeyboardOrbitCamera's {{#crossLink \"KeyboardOrbitCamera/active:property\"}}{{/crossLink}} property changes.",
+            "itemtype": "event",
+            "name": "active",
+            "params": [
+                {
+                    "name": "value",
+                    "description": "The property's new value"
+                }
+            ],
+            "class": "MouseOrbitCamera",
+            "module": "BIMSURFER",
+            "submodule": "control"
         },
         {
             "file": "src/core/control/mousePanCamera.js",
-            "line": 28,
+            "line": 29,
             "description": "JavaScript class name for this Component.",
             "itemtype": "property",
             "name": "className",
             "type": "String",
             "final": 1,
             "class": "MousePanCamera",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "control"
+        },
+        {
+            "file": "src/core/control/mousePanCamera.js",
+            "line": 58,
+            "description": "Flag which indicates whether this MousePanCamera is active or not.\n\nFires an {{#crossLink \"MousePanCamera/active:event\"}}{{/crossLink}} event on change.",
+            "itemtype": "property",
+            "name": "active",
+            "type": "Boolean",
+            "class": "MousePanCamera",
+            "module": "BIMSURFER",
+            "submodule": "control"
+        },
+        {
+            "file": "src/core/control/mousePanCamera.js",
+            "line": 143,
+            "description": "Fired whenever this MousePanCamera's {{#crossLink \"MousePanCamera/active:property\"}}{{/crossLink}} property changes.",
+            "itemtype": "event",
+            "name": "active",
+            "params": [
+                {
+                    "name": "value",
+                    "description": "The property's new value"
+                }
+            ],
+            "class": "MousePanCamera",
+            "module": "BIMSURFER",
+            "submodule": "control"
         },
         {
             "file": "src/core/control/mouseZoomCamera.js",
-            "line": 28,
+            "line": 29,
             "description": "JavaScript class name for this Component.",
             "itemtype": "property",
             "name": "className",
             "type": "String",
             "final": 1,
             "class": "MouseZoomCamera",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "control"
+        },
+        {
+            "file": "src/core/control/mouseZoomCamera.js",
+            "line": 56,
+            "description": "Flag which indicates whether this MouseZoomCamera is active or not.\n\nFires an {{#crossLink \"MouseZoomCamera/active:event\"}}{{/crossLink}} event on change.",
+            "itemtype": "property",
+            "name": "active",
+            "type": "Boolean",
+            "class": "MouseZoomCamera",
+            "module": "BIMSURFER",
+            "submodule": "control"
+        },
+        {
+            "file": "src/core/control/mouseZoomCamera.js",
+            "line": 162,
+            "description": "Fired whenever this MouseZoomCamera's {{#crossLink \"MouseZoomCamera/active:property\"}}{{/crossLink}} property changes.",
+            "itemtype": "event",
+            "name": "active",
+            "params": [
+                {
+                    "name": "value",
+                    "description": "The property's new value"
+                }
+            ],
+            "class": "MouseZoomCamera",
+            "module": "BIMSURFER",
+            "submodule": "control"
         },
         {
             "file": "src/core/effect/effect.js",
-            "line": 28,
+            "line": 29,
             "description": "JavaScript class name for this Component.",
             "itemtype": "property",
             "name": "className",
             "type": "String",
             "final": 1,
             "class": "Effect",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "effect"
+        },
+        {
+            "file": "src/core/effect/effect.js",
+            "line": 56,
+            "description": "Flag which indicates whether this Effect is active or not.\n\nFires an {{#crossLink \"Effect/active:event\"}}{{/crossLink}} event on change.",
+            "itemtype": "property",
+            "name": "active",
+            "type": "Boolean",
+            "class": "Effect",
+            "module": "BIMSURFER",
+            "submodule": "effect"
+        },
+        {
+            "file": "src/core/effect/effect.js",
+            "line": 99,
+            "description": "Fired whenever this Effect's {{#crossLink \"Effect/active:property\"}}{{/crossLink}} property changes.",
+            "itemtype": "event",
+            "name": "active",
+            "params": [
+                {
+                    "name": "value",
+                    "description": "The property's new value"
+                }
+            ],
+            "class": "Effect",
+            "module": "BIMSURFER",
+            "submodule": "effect"
         },
         {
             "file": "src/core/effect/highlightEffect.js",
-            "line": 28,
+            "line": 29,
             "description": "JavaScript class name for this Component.",
             "itemtype": "property",
             "name": "className",
             "type": "String",
             "final": 1,
             "class": "HighlightEffect",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "effect"
         },
         {
             "file": "src/core/effect/isolateEffect.js",
-            "line": 28,
+            "line": 29,
             "description": "JavaScript class name for this Component.",
             "itemtype": "property",
             "name": "className",
             "type": "String",
             "final": 1,
             "class": "IsolateEffect",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "effect"
         },
         {
             "file": "src/core/effect/xrayEffect.js",
-            "line": 28,
+            "line": 29,
             "description": "JavaScript class name for this Component.",
             "itemtype": "property",
             "name": "className",
             "type": "String",
             "final": 1,
             "class": "XRayEffect",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "effect"
         },
         {
             "file": "src/core/geometry/boxGeometry.js",
-            "line": 27,
+            "line": 28,
             "description": "JavaScript class name for this Component.",
             "itemtype": "property",
             "name": "className",
             "type": "String",
             "final": 1,
             "class": "BoxGeometry",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "geometry"
         },
         {
             "file": "src/core/geometry/geometry.js",
-            "line": 34,
+            "line": 35,
             "description": "JavaScript class name for this Component.",
             "itemtype": "property",
             "name": "className",
             "type": "String",
             "final": 1,
             "class": "Geometry",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "geometry"
         },
         {
             "file": "src/core/geometry/teapotGeometry.js",
-            "line": 27,
+            "line": 28,
             "description": "JavaScript class name for this Component.",
             "itemtype": "property",
             "name": "className",
             "type": "String",
             "final": 1,
             "class": "TeapotGeometry",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "geometry"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 110,
+            "line": 111,
             "type": "{boolean}",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 116,
+            "line": 117,
             "type": "{boolean}",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 122,
+            "line": 123,
             "type": "{boolean}",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 128,
+            "line": 129,
             "type": "{boolean}",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 134,
+            "line": 135,
             "type": "{boolean}",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 140,
+            "line": 141,
             "type": "{boolean}",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 171,
+            "line": 172,
             "description": "Fired whenever a key is pressed while the parent\n{{#crossLink \"Viewer\"}}Viewer{{/crossLink}}'s {{#crossLink \"Canvas\"}}Canvas{{/crossLink}} has input focus.",
             "itemtype": "event",
             "name": "keydown",
@@ -2305,11 +2986,12 @@
                 }
             ],
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 196,
+            "line": 197,
             "description": "Fired whenever a key is released while the parent\n{{#crossLink \"Viewer\"}}Viewer{{/crossLink}}'s {{#crossLink \"Canvas\"}}Canvas{{/crossLink}} has input focus.",
             "itemtype": "event",
             "name": "keyup",
@@ -2321,11 +3003,12 @@
                 }
             ],
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 227,
+            "line": 228,
             "description": "Fired whenever the mouse is pressed over the parent\n{{#crossLink \"Viewer\"}}Viewer{{/crossLink}}'s {{#crossLink \"Canvas\"}}Canvas{{/crossLink}}.",
             "itemtype": "event",
             "name": "mousedown",
@@ -2337,11 +3020,12 @@
                 }
             ],
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 256,
+            "line": 257,
             "description": "Fired whenever the mouse is released over the parent\n{{#crossLink \"Viewer\"}}Viewer{{/crossLink}}'s {{#crossLink \"Canvas\"}}Canvas{{/crossLink}}.",
             "itemtype": "event",
             "name": "mouseup",
@@ -2353,11 +3037,12 @@
                 }
             ],
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 287,
+            "line": 288,
             "description": "Fired whenever the mouse is double-clicked over the parent\n{{#crossLink \"Viewer\"}}Viewer{{/crossLink}}'s {{#crossLink \"Canvas\"}}Canvas{{/crossLink}}.",
             "itemtype": "event",
             "name": "dblclick",
@@ -2369,11 +3054,12 @@
                 }
             ],
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 303,
+            "line": 304,
             "description": "Fired whenever the mouse is moved over the parent\n{{#crossLink \"Viewer\"}}Viewer{{/crossLink}}'s {{#crossLink \"Canvas\"}}Canvas{{/crossLink}}.",
             "itemtype": "event",
             "name": "mousedown",
@@ -2385,11 +3071,12 @@
                 }
             ],
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 321,
+            "line": 322,
             "description": "Fired whenever the mouse wheel is moved over the parent\n{{#crossLink \"Viewer\"}}Viewer{{/crossLink}}'s {{#crossLink \"Canvas\"}}Canvas{{/crossLink}}.",
             "itemtype": "event",
             "name": "mousewheel",
@@ -2401,11 +3088,12 @@
                 }
             ],
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 345,
+            "line": 346,
             "description": "Fired whenever the mouse is clicked over the parent\n{{#crossLink \"Viewer\"}}Viewer{{/crossLink}}'s {{#crossLink \"Canvas\"}}Canvas{{/crossLink}}.",
             "itemtype": "event",
             "name": "mouseclicked",
@@ -2417,11 +3105,12 @@
                 }
             ],
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 380,
+            "line": 381,
             "description": "Enable or disable all input handlers",
             "params": [
                 {
@@ -2430,1096 +3119,1196 @@
                 }
             ],
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 393,
+            "line": 394,
             "description": "Code for the BACKSPACE key.",
             "itemtype": "property",
             "name": "KEY_BACKSPACE",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 401,
+            "line": 402,
             "description": "Code for the TAB key.",
             "itemtype": "property",
             "name": "KEY_TAB",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 409,
+            "line": 410,
             "description": "Code for the ENTER key.",
             "itemtype": "property",
             "name": "KEY_ENTER",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 417,
+            "line": 418,
             "description": "Code for the SHIFT key.",
             "itemtype": "property",
             "name": "KEY_SHIFT",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 425,
+            "line": 426,
             "description": "Code for the CTRL key.",
             "itemtype": "property",
             "name": "KEY_CTRL",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 433,
+            "line": 434,
             "description": "Code for the ALT key.",
             "itemtype": "property",
             "name": "KEY_ALT",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 441,
+            "line": 442,
             "description": "Code for the PAUSE_BREAK key.",
             "itemtype": "property",
             "name": "KEY_PAUSE_BREAK",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 449,
+            "line": 450,
             "description": "Code for the CAPS_LOCK key.",
             "itemtype": "property",
             "name": "KEY_CAPS_LOCK",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 457,
+            "line": 458,
             "description": "Code for the ESCAPE key.",
             "itemtype": "property",
             "name": "KEY_ESCAPE",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 465,
+            "line": 466,
             "description": "Code for the PAGE_UP key.",
             "itemtype": "property",
             "name": "KEY_PAGE_UP",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 473,
+            "line": 474,
             "description": "Code for the PAGE_DOWN key.",
             "itemtype": "property",
             "name": "KEY_PAGE_DOWN",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 481,
+            "line": 482,
             "description": "Code for the END key.",
             "itemtype": "property",
             "name": "KEY_END",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 489,
+            "line": 490,
             "description": "Code for the HOME key.",
             "itemtype": "property",
             "name": "KEY_HOME",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 497,
+            "line": 498,
             "description": "Code for the LEFT_ARROW key.",
             "itemtype": "property",
             "name": "KEY_LEFT_ARROW",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 505,
+            "line": 506,
             "description": "Code for the UP_ARROW key.",
             "itemtype": "property",
             "name": "KEY_UP_ARROW",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 513,
+            "line": 514,
             "description": "Code for the RIGHT_ARROW key.",
             "itemtype": "property",
             "name": "KEY_RIGHT_ARROW",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 521,
+            "line": 522,
             "description": "Code for the DOWN_ARROW key.",
             "itemtype": "property",
             "name": "KEY_DOWN_ARROW",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 529,
+            "line": 530,
             "description": "Code for the INSERT key.",
             "itemtype": "property",
             "name": "KEY_INSERT",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 537,
+            "line": 538,
             "description": "Code for the DELETE key.",
             "itemtype": "property",
             "name": "KEY_DELETE",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 545,
+            "line": 546,
             "description": "Code for the 0 key.",
             "itemtype": "property",
             "name": "KEY_NUM_0",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 553,
+            "line": 554,
             "description": "Code for the 1 key.",
             "itemtype": "property",
             "name": "KEY_NUM_1",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 561,
+            "line": 562,
             "description": "Code for the 2 key.",
             "itemtype": "property",
             "name": "KEY_NUM_2",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 569,
+            "line": 570,
             "description": "Code for the 3 key.",
             "itemtype": "property",
             "name": "KEY_NUM_3",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 577,
+            "line": 578,
             "description": "Code for the 4 key.",
             "itemtype": "property",
             "name": "KEY_NUM_4",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 585,
+            "line": 586,
             "description": "Code for the 5 key.",
             "itemtype": "property",
             "name": "KEY_NUM_5",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 593,
+            "line": 594,
             "description": "Code for the 6 key.",
             "itemtype": "property",
             "name": "KEY_NUM_6",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 601,
+            "line": 602,
             "description": "Code for the 7 key.",
             "itemtype": "property",
             "name": "KEY_NUM_7",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 609,
+            "line": 610,
             "description": "Code for the 8 key.",
             "itemtype": "property",
             "name": "KEY_NUM_8",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 617,
+            "line": 618,
             "description": "Code for the 9 key.",
             "itemtype": "property",
             "name": "KEY_NUM_9",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 625,
+            "line": 626,
             "description": "Code for the A key.",
             "itemtype": "property",
             "name": "KEY_A",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 633,
+            "line": 634,
             "description": "Code for the B key.",
             "itemtype": "property",
             "name": "KEY_B",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 641,
+            "line": 642,
             "description": "Code for the C key.",
             "itemtype": "property",
             "name": "KEY_C",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 649,
+            "line": 650,
             "description": "Code for the D key.",
             "itemtype": "property",
             "name": "KEY_D",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 657,
+            "line": 658,
             "description": "Code for the E key.",
             "itemtype": "property",
             "name": "KEY_E",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 665,
+            "line": 666,
             "description": "Code for the F key.",
             "itemtype": "property",
             "name": "KEY_F",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 673,
+            "line": 674,
             "description": "Code for the G key.",
             "itemtype": "property",
             "name": "KEY_G",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 681,
+            "line": 682,
             "description": "Code for the H key.",
             "itemtype": "property",
             "name": "KEY_H",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 689,
+            "line": 690,
             "description": "Code for the I key.",
             "itemtype": "property",
             "name": "KEY_I",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 697,
+            "line": 698,
             "description": "Code for the J key.",
             "itemtype": "property",
             "name": "KEY_J",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 705,
+            "line": 706,
             "description": "Code for the K key.",
             "itemtype": "property",
             "name": "KEY_K",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 713,
+            "line": 714,
             "description": "Code for the L key.",
             "itemtype": "property",
             "name": "KEY_L",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 721,
+            "line": 722,
             "description": "Code for the M key.",
             "itemtype": "property",
             "name": "KEY_M",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 729,
+            "line": 730,
             "description": "Code for the N key.",
             "itemtype": "property",
             "name": "KEY_N",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 737,
+            "line": 738,
             "description": "Code for the O key.",
             "itemtype": "property",
             "name": "KEY_O",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 745,
+            "line": 746,
             "description": "Code for the P key.",
             "itemtype": "property",
             "name": "KEY_P",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 753,
+            "line": 754,
             "description": "Code for the Q key.",
             "itemtype": "property",
             "name": "KEY_Q",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 761,
+            "line": 762,
             "description": "Code for the R key.",
             "itemtype": "property",
             "name": "KEY_R",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 769,
+            "line": 770,
             "description": "Code for the S key.",
             "itemtype": "property",
             "name": "KEY_S",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 777,
+            "line": 778,
             "description": "Code for the T key.",
             "itemtype": "property",
             "name": "KEY_T",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 785,
+            "line": 786,
             "description": "Code for the U key.",
             "itemtype": "property",
             "name": "KEY_U",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 793,
+            "line": 794,
             "description": "Code for the V key.",
             "itemtype": "property",
             "name": "KEY_V",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 801,
+            "line": 802,
             "description": "Code for the W key.",
             "itemtype": "property",
             "name": "KEY_W",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 809,
+            "line": 810,
             "description": "Code for the X key.",
             "itemtype": "property",
             "name": "KEY_X",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 817,
+            "line": 818,
             "description": "Code for the Y key.",
             "itemtype": "property",
             "name": "KEY_Y",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 825,
+            "line": 826,
             "description": "Code for the Z key.",
             "itemtype": "property",
             "name": "KEY_Z",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 833,
+            "line": 834,
             "description": "Code for the LEFT_WINDOW key.",
             "itemtype": "property",
             "name": "KEY_LEFT_WINDOW",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 841,
+            "line": 842,
             "description": "Code for the RIGHT_WINDOW key.",
             "itemtype": "property",
             "name": "KEY_RIGHT_WINDOW",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 849,
+            "line": 850,
             "description": "Code for the SELECT key.",
             "itemtype": "property",
             "name": "KEY_SELECT",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 857,
+            "line": 858,
             "description": "Code for the number pad 0 key.",
             "itemtype": "property",
             "name": "KEY_NUMPAD_0",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 865,
+            "line": 866,
             "description": "Code for the number pad 1 key.",
             "itemtype": "property",
             "name": "KEY_NUMPAD_1",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 873,
+            "line": 874,
             "description": "Code for the number pad 2 key.",
             "itemtype": "property",
             "name": "KEY_NUMPAD 2",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 881,
+            "line": 882,
             "description": "Code for the number pad 3 key.",
             "itemtype": "property",
             "name": "KEY_NUMPAD_3",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 889,
+            "line": 890,
             "description": "Code for the number pad 4 key.",
             "itemtype": "property",
             "name": "KEY_NUMPAD_4",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 897,
+            "line": 898,
             "description": "Code for the number pad 5 key.",
             "itemtype": "property",
             "name": "KEY_NUMPAD_5",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 905,
+            "line": 906,
             "description": "Code for the number pad 6 key.",
             "itemtype": "property",
             "name": "KEY_NUMPAD_6",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 913,
+            "line": 914,
             "description": "Code for the number pad 7 key.",
             "itemtype": "property",
             "name": "KEY_NUMPAD_7",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 921,
+            "line": 922,
             "description": "Code for the number pad 8 key.",
             "itemtype": "property",
             "name": "KEY_NUMPAD_8",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 929,
+            "line": 930,
             "description": "Code for the number pad 9 key.",
             "itemtype": "property",
             "name": "KEY_NUMPAD_9",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 937,
+            "line": 938,
             "description": "Code for the MULTIPLY key.",
             "itemtype": "property",
             "name": "KEY_MULTIPLY",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 945,
+            "line": 946,
             "description": "Code for the ADD key.",
             "itemtype": "property",
             "name": "KEY_ADD",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 953,
+            "line": 954,
             "description": "Code for the SUBTRACT key.",
             "itemtype": "property",
             "name": "KEY_SUBTRACT",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 961,
+            "line": 962,
             "description": "Code for the DECIMAL POINT key.",
             "itemtype": "property",
             "name": "KEY_DECIMAL_POINT",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 969,
+            "line": 970,
             "description": "Code for the DIVIDE key.",
             "itemtype": "property",
             "name": "KEY_DIVIDE",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 977,
+            "line": 978,
             "description": "Code for the F1 key.",
             "itemtype": "property",
             "name": "KEY_F1",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 985,
+            "line": 986,
             "description": "Code for the F2 key.",
             "itemtype": "property",
             "name": "KEY_F2",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 993,
+            "line": 994,
             "description": "Code for the F3 key.",
             "itemtype": "property",
             "name": "KEY_F3",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 1001,
+            "line": 1002,
             "description": "Code for the F4 key.",
             "itemtype": "property",
             "name": "KEY_F4",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 1009,
+            "line": 1010,
             "description": "Code for the F5 key.",
             "itemtype": "property",
             "name": "KEY_F5",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 1017,
+            "line": 1018,
             "description": "Code for the F6 key.",
             "itemtype": "property",
             "name": "KEY_F6",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 1025,
+            "line": 1026,
             "description": "Code for the F7 key.",
             "itemtype": "property",
             "name": "KEY_F7",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 1033,
+            "line": 1034,
             "description": "Code for the F8 key.",
             "itemtype": "property",
             "name": "KEY_F8",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 1041,
+            "line": 1042,
             "description": "Code for the F9 key.",
             "itemtype": "property",
             "name": "KEY_F9",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 1049,
+            "line": 1050,
             "description": "Code for the F10 key.",
             "itemtype": "property",
             "name": "KEY_F10",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 1057,
+            "line": 1058,
             "description": "Code for the F11 key.",
             "itemtype": "property",
             "name": "KEY_F11",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 1065,
+            "line": 1066,
             "description": "Code for the F12 key.",
             "itemtype": "property",
             "name": "KEY_F12",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 1073,
+            "line": 1074,
             "description": "Code for the NUM_LOCK key.",
             "itemtype": "property",
             "name": "KEY_NUM_LOCK",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 1081,
+            "line": 1082,
             "description": "Code for the SCROLL_LOCK key.",
             "itemtype": "property",
             "name": "KEY_SCROLL_LOCK",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 1089,
+            "line": 1090,
             "description": "Code for the SEMI_COLON key.",
             "itemtype": "property",
             "name": "KEY_SEMI_COLON",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 1097,
+            "line": 1098,
             "description": "Code for the EQUAL_SIGN key.",
             "itemtype": "property",
             "name": "KEY_EQUAL_SIGN",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 1105,
+            "line": 1106,
             "description": "Code for the COMMA key.",
             "itemtype": "property",
             "name": "KEY_COMMA",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 1113,
+            "line": 1114,
             "description": "Code for the DASH key.",
             "itemtype": "property",
             "name": "KEY_DASH",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 1121,
+            "line": 1122,
             "description": "Code for the PERIOD key.",
             "itemtype": "property",
             "name": "KEY_PERIOD",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 1129,
+            "line": 1130,
             "description": "Code for the FORWARD_SLASH key.",
             "itemtype": "property",
             "name": "KEY_FORWARD_SLASH",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 1137,
+            "line": 1138,
             "description": "Code for the GRAVE_ACCENT key.",
             "itemtype": "property",
             "name": "KEY_GRAVE_ACCENT",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 1145,
+            "line": 1146,
             "description": "Code for the OPEN_BRACKET key.",
             "itemtype": "property",
             "name": "KEY_OPEN_BRACKET",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 1153,
+            "line": 1154,
             "description": "Code for the BACK_SLASH key.",
             "itemtype": "property",
             "name": "KEY_BACK_SLASH",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 1161,
+            "line": 1162,
             "description": "Code for the CLOSE_BRACKET key.",
             "itemtype": "property",
             "name": "KEY_CLOSE_BRACKET",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 1169,
+            "line": 1170,
             "description": "Code for the SINGLE_QUOTE key.",
             "itemtype": "property",
             "name": "KEY_SINGLE_QUOTE",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/input/input.js",
-            "line": 1177,
+            "line": 1178,
             "description": "Code for the SPACE key.",
             "itemtype": "property",
             "name": "KEY_SPACE",
             "final": 1,
             "type": "Number",
             "class": "Input",
-            "module": "BIMSURFER"
+            "module": "BIMSURFER",
+            "submodule": "input"
         },
         {
             "file": "src/core/light/ambientLight.js",
@@ -3573,6 +4362,31 @@
             "name": "className",
             "type": "String",
             "final": 1,
+            "class": "Light",
+            "module": "BIMSURFER"
+        },
+        {
+            "file": "src/core/light/light.js",
+            "line": 54,
+            "description": "Flag which indicates whether this Light is active or not.\n\nFires an {{#crossLink \"Light/active:event\"}}{{/crossLink}} event on change.",
+            "itemtype": "property",
+            "name": "active",
+            "type": "Boolean",
+            "class": "Light",
+            "module": "BIMSURFER"
+        },
+        {
+            "file": "src/core/light/light.js",
+            "line": 79,
+            "description": "Fired whenever this Light's {{#crossLink \"Light/active:property\"}}{{/crossLink}} property changes.",
+            "itemtype": "event",
+            "name": "active",
+            "params": [
+                {
+                    "name": "value",
+                    "description": "The property's new value"
+                }
+            ],
             "class": "Light",
             "module": "BIMSURFER"
         },
@@ -4879,13 +5693,13 @@
         },
         {
             "file": "src/core/object/boxObject.js",
-            "line": 7,
+            "line": 27,
             "description": "JavaScript class name for this Component.",
             "itemtype": "property",
             "name": "className",
             "type": "String",
             "final": 1,
-            "class": "Object",
+            "class": "BoxObject",
             "module": "BIMSURFER"
         },
         {
@@ -4901,7 +5715,32 @@
         },
         {
             "file": "src/core/object/object.js",
+            "line": 312,
+            "description": "Flag which indicates whether this Object is active or not.\n\nFires an {{#crossLink \"Object/active:event\"}}{{/crossLink}} event on change.",
+            "itemtype": "property",
+            "name": "active",
+            "type": "Boolean",
+            "class": "Object",
+            "module": "BIMSURFER"
+        },
+        {
+            "file": "src/core/object/object.js",
             "line": 332,
+            "description": "Fired whenever this Object's {{#crossLink \"Object/active:property\"}}{{/crossLink}} property changes.",
+            "itemtype": "event",
+            "name": "active",
+            "params": [
+                {
+                    "name": "value",
+                    "description": "The property's new value"
+                }
+            ],
+            "class": "Object",
+            "module": "BIMSURFER"
+        },
+        {
+            "file": "src/core/object/object.js",
+            "line": 345,
             "description": "Whether this Object is transparent.",
             "itemtype": "property",
             "name": "transparent",
@@ -4912,7 +5751,7 @@
         },
         {
             "file": "src/core/object/object.js",
-            "line": 361,
+            "line": 374,
             "description": "Whether this Object is highlighted.",
             "itemtype": "property",
             "name": "highlighted",
@@ -4923,7 +5762,7 @@
         },
         {
             "file": "src/core/object/object.js",
-            "line": 389,
+            "line": 402,
             "description": "Whether this Object is X-rayed",
             "itemtype": "property",
             "name": "xray",
@@ -4934,7 +5773,7 @@
         },
         {
             "file": "src/core/object/object.js",
-            "line": 418,
+            "line": 431,
             "description": "The color of this Object.",
             "itemtype": "property",
             "name": "color",
@@ -4945,7 +5784,7 @@
         },
         {
             "file": "src/core/object/object.js",
-            "line": 451,
+            "line": 464,
             "description": "Factor in the range [0..1] indicating how transparent this Object is.\n\nA value of 0.0 indicates fully transparent, 1.0 is fully opaque.\n\nThis Object will appear transparent only if {{#crossLink \"Object/transparent:property\"}}{{/crossLink}} is also\nset to **true**.",
             "itemtype": "property",
             "name": "opacity",
@@ -4956,7 +5795,7 @@
         },
         {
             "file": "src/core/object/object.js",
-            "line": 477,
+            "line": 490,
             "description": "This Object's transformation matrix.",
             "itemtype": "property",
             "name": "matrix",
@@ -4967,7 +5806,7 @@
         },
         {
             "file": "src/core/object/object.js",
-            "line": 502,
+            "line": 515,
             "description": "The World-space boundary of this Object.",
             "itemtype": "property",
             "name": "boundary",
@@ -4977,7 +5816,7 @@
         },
         {
             "file": "src/core/object/object.js",
-            "line": 526,
+            "line": 539,
             "description": "The World-space center of this Object.",
             "itemtype": "property",
             "name": "center",
@@ -4987,36 +5826,36 @@
         },
         {
             "file": "src/core/object/teapotObject.js",
-            "line": 7,
+            "line": 27,
             "description": "JavaScript class name for this Component.",
             "itemtype": "property",
             "name": "className",
             "type": "String",
             "final": 1,
-            "class": "BIMSURFER",
+            "class": "TeapotObject",
             "module": "BIMSURFER"
         },
         {
             "file": "src/core/selection/selection.js",
-            "line": 5,
+            "line": 26,
             "description": "A selection of {@link BIMSURFER.Object}s within a {@link BIMSURFER.Viewer}.",
-            "class": "BIMSURFER",
+            "class": "Selection",
             "module": "BIMSURFER"
         },
         {
             "file": "src/core/selection/selection.js",
-            "line": 10,
+            "line": 31,
             "description": "JavaScript class name for this Component.",
             "itemtype": "property",
             "name": "className",
             "type": "String",
             "final": 1,
-            "class": "BIMSURFER",
+            "class": "Selection",
             "module": "BIMSURFER"
         },
         {
             "file": "src/core/selection/selection.js",
-            "line": 255,
+            "line": 276,
             "description": "Iterates with a callback over the objects in this selection",
             "params": [
                 {
@@ -5030,7 +5869,7 @@
                     "type": "Function"
                 }
             ],
-            "class": "BIMSURFER",
+            "class": "Selection",
             "module": "BIMSURFER"
         },
         {
@@ -5120,7 +5959,7 @@
         },
         {
             "file": "src/core/component.js",
-            "line": 204,
+            "line": 177,
             "description": "JavaScript class name for this Component.",
             "itemtype": "property",
             "name": "className",
@@ -5131,7 +5970,7 @@
         },
         {
             "file": "src/core/component.js",
-            "line": 218,
+            "line": 191,
             "description": "The {{#crossLink \"Viewer\"}}{{/crossLink}} that contains this Component.",
             "itemtype": "property",
             "name": "viewer",
@@ -5142,18 +5981,7 @@
         },
         {
             "file": "src/core/component.js",
-            "line": 227,
-            "description": "The IFC type of this Component.",
-            "itemtype": "property",
-            "name": "type",
-            "type": "{String}",
-            "final": 1,
-            "class": "Component",
-            "module": "BIMSURFER"
-        },
-        {
-            "file": "src/core/component.js",
-            "line": 236,
+            "line": 200,
             "description": "Metadata on this component.",
             "itemtype": "property",
             "name": "metadata",
@@ -5163,7 +5991,7 @@
         },
         {
             "file": "src/core/component.js",
-            "line": 244,
+            "line": 208,
             "description": "Unique ID for this Component within its parent {{#crossLink \"Viewer\"}}Viewer{{/crossLink}}.",
             "itemtype": "property",
             "name": "id",
@@ -5174,7 +6002,7 @@
         },
         {
             "file": "src/core/component.js",
-            "line": 253,
+            "line": 217,
             "description": "True as soon as this Component has been destroyed",
             "itemtype": "property",
             "name": "destroyed",
@@ -5184,7 +6012,7 @@
         },
         {
             "file": "src/core/component.js",
-            "line": 277,
+            "line": 239,
             "description": "Initializes this component",
             "params": [
                 {
@@ -5199,7 +6027,7 @@
         },
         {
             "file": "src/core/component.js",
-            "line": 285,
+            "line": 247,
             "description": "Fires an event on this component.\n\nNotifies existing subscribers to the event, retains the event to give to\nany subsequent notifications on that location as they are made.",
             "itemtype": "method",
             "name": "fire",
@@ -5227,7 +6055,7 @@
         },
         {
             "file": "src/core/component.js",
-            "line": 312,
+            "line": 274,
             "description": "Subscribes to an event on this component.\n\nThe callback is be called with this component as scope.",
             "itemtype": "method",
             "name": "on",
@@ -5259,7 +6087,7 @@
         },
         {
             "file": "src/core/component.js",
-            "line": 342,
+            "line": 304,
             "description": "Cancels an event subscription that was previously made with {{#crossLink \"Component/on:method\"}}{{/crossLink}} or\n{{#crossLink \"Component/once:method\"}}{{/crossLink}}.",
             "itemtype": "method",
             "name": "off",
@@ -5275,7 +6103,7 @@
         },
         {
             "file": "src/core/component.js",
-            "line": 361,
+            "line": 323,
             "description": "Subscribes to the next occurrence of the given event, then un-subscribes as soon as the event is handled.",
             "itemtype": "method",
             "name": "once",
@@ -5303,7 +6131,7 @@
         },
         {
             "file": "src/core/component.js",
-            "line": 379,
+            "line": 341,
             "description": "Logs a console debugging message for this component.\n\nThe console message will have this format: *````[LOG] <component id>: <message>````*",
             "itemtype": "method",
             "name": "log",
@@ -5319,7 +6147,7 @@
         },
         {
             "file": "src/core/component.js",
-            "line": 391,
+            "line": 353,
             "description": "Logs an error for this component to the JavaScript console.\n\nThe console message will have this format: *````[ERROR] <component id>: <message>````*",
             "itemtype": "method",
             "name": "error",
@@ -5335,7 +6163,7 @@
         },
         {
             "file": "src/core/component.js",
-            "line": 403,
+            "line": 365,
             "description": "Logs a warning for this component to the JavaScript console.\n\nThe console message will have this format: *````[WARN] <component id>: <message>````*",
             "itemtype": "method",
             "name": "warn",
@@ -5351,7 +6179,7 @@
         },
         {
             "file": "src/core/component.js",
-            "line": 415,
+            "line": 377,
             "description": "Destroys this component.\n\nRemoves this Component from its {{#crossLink \"Viewer\"}}{{/crossLink}}.\n\nFires a {{#crossLink \"Component/destroyed:event\"}}{{/crossLink}} event on this Component.",
             "itemtype": "method",
             "name": "destroy",
@@ -5360,7 +6188,7 @@
         },
         {
             "file": "src/core/component.js",
-            "line": 435,
+            "line": 397,
             "description": "Fired when this Component is destroyed.",
             "itemtype": "event",
             "name": "destroyed",
@@ -5369,7 +6197,7 @@
         },
         {
             "file": "src/core/configs.js",
-            "line": 5,
+            "line": 30,
             "is_constructor": 1,
             "params": [
                 {
@@ -5396,19 +6224,19 @@
                     "optdefault": "false"
                 }
             ],
-            "class": "Viewer",
+            "class": "Configs",
             "module": "BIMSURFER"
         },
         {
             "file": "src/core/configs.js",
-            "line": 18,
+            "line": 43,
             "description": "The properties",
-            "class": "Viewer",
+            "class": "Configs",
             "module": "BIMSURFER"
         },
         {
             "file": "src/core/configs.js",
-            "line": 23,
+            "line": 48,
             "description": "Fires an event on this Viewer.\n\nNotifies existing subscribers to the event, retains the event to give to\nany subsequent notifications on that location as they are made.",
             "itemtype": "method",
             "name": "fire",
@@ -5424,12 +6252,12 @@
                     "type": "Object"
                 }
             ],
-            "class": "Viewer",
+            "class": "Configs",
             "module": "BIMSURFER"
         },
         {
             "file": "src/core/configs.js",
-            "line": 47,
+            "line": 72,
             "description": "Subscribes to an event on this Viewer.\n\nThe callback is be called with this Viewer as scope.",
             "itemtype": "method",
             "name": "on",
@@ -5456,12 +6284,12 @@
                 "description": "Handle to the subscription, which may be used to unsubscribe with {@link #off}.",
                 "type": "String"
             },
-            "class": "Viewer",
+            "class": "Configs",
             "module": "BIMSURFER"
         },
         {
             "file": "src/core/configs.js",
-            "line": 77,
+            "line": 102,
             "description": "Cancels an event subscription that was previously made with {{#crossLink \"Viewer/on:method\"}}{{/crossLink}} or\n{{#crossLink \"Viewer/once:method\"}}{{/crossLink}}.",
             "itemtype": "method",
             "name": "off",
@@ -5472,12 +6300,12 @@
                     "type": "String"
                 }
             ],
-            "class": "Viewer",
+            "class": "Configs",
             "module": "BIMSURFER"
         },
         {
             "file": "src/core/configs.js",
-            "line": 96,
+            "line": 121,
             "description": "Subscribes to the next occurrence of the given event on this Viewer, then un-subscribes as soon as the event is handled.",
             "itemtype": "method",
             "name": "once",
@@ -5500,7 +6328,7 @@
                     "optdefault": "this"
                 }
             ],
-            "class": "Viewer",
+            "class": "Configs",
             "module": "BIMSURFER"
         },
         {
@@ -6049,31 +6877,31 @@
         },
         {
             "message": "Missing item type\nDefines a viewpoint within a {@link BIMSURFER.Viewer}.",
-            "line": " src/core/camera/camera.js:48"
+            "line": " src/core/camera/camera.js:49"
         },
         {
             "message": "Missing item type\nRotate 'eye' about 'look', around the 'up' vector",
-            "line": " src/core/camera/camera.js:89"
+            "line": " src/core/camera/camera.js:90"
         },
         {
             "message": "Missing item type\nRotate 'eye' about 'look' around the X-axis",
-            "line": " src/core/camera/camera.js:109"
+            "line": " src/core/camera/camera.js:110"
         },
         {
             "message": "Missing item type\nRotate 'look' about 'eye', around the 'up' vector\n\n<p>Applies constraints added with {@link #addConstraint}.</p>",
-            "line": " src/core/camera/camera.js:135"
+            "line": " src/core/camera/camera.js:136"
         },
         {
             "message": "Missing item type\nRotate 'eye' about 'look' around the X-axis",
-            "line": " src/core/camera/camera.js:157"
+            "line": " src/core/camera/camera.js:158"
         },
         {
             "message": "Missing item type\nPans the camera along X and Y axis.",
-            "line": " src/core/camera/camera.js:183"
+            "line": " src/core/camera/camera.js:184"
         },
         {
             "message": "Missing item type\nIncrements/decrements zoom factor, ie. distance between eye and look.",
-            "line": " src/core/camera/camera.js:237"
+            "line": " src/core/camera/camera.js:238"
         },
         {
             "message": "Missing item type\nCreates a canvas",
@@ -6085,31 +6913,31 @@
         },
         {
             "message": "Missing item type",
-            "line": " src/core/input/input.js:110"
+            "line": " src/core/input/input.js:111"
         },
         {
             "message": "Missing item type",
-            "line": " src/core/input/input.js:116"
+            "line": " src/core/input/input.js:117"
         },
         {
             "message": "Missing item type",
-            "line": " src/core/input/input.js:122"
+            "line": " src/core/input/input.js:123"
         },
         {
             "message": "Missing item type",
-            "line": " src/core/input/input.js:128"
+            "line": " src/core/input/input.js:129"
         },
         {
             "message": "Missing item type",
-            "line": " src/core/input/input.js:134"
+            "line": " src/core/input/input.js:135"
         },
         {
             "message": "Missing item type",
-            "line": " src/core/input/input.js:140"
+            "line": " src/core/input/input.js:141"
         },
         {
             "message": "Missing item type\nEnable or disable all input handlers",
-            "line": " src/core/input/input.js:380"
+            "line": " src/core/input/input.js:381"
         },
         {
             "message": "Missing item type",
@@ -6373,11 +7201,11 @@
         },
         {
             "message": "Missing item type\nA selection of {@link BIMSURFER.Object}s within a {@link BIMSURFER.Viewer}.",
-            "line": " src/core/selection/selection.js:5"
+            "line": " src/core/selection/selection.js:26"
         },
         {
             "message": "Missing item type\nIterates with a callback over the objects in this selection",
-            "line": " src/core/selection/selection.js:255"
+            "line": " src/core/selection/selection.js:276"
         },
         {
             "message": "Missing item type\nGeneric map of IDs to items - can generate own IDs or accept given IDs. IDs should be strings in order to not\nclash with internally generated IDs, which are numbers.",
@@ -6417,15 +7245,15 @@
         },
         {
             "message": "Missing item type\nInitializes this component",
-            "line": " src/core/component.js:277"
+            "line": " src/core/component.js:239"
         },
         {
             "message": "Missing item type",
-            "line": " src/core/configs.js:5"
+            "line": " src/core/configs.js:30"
         },
         {
             "message": "Missing item type\nThe properties",
-            "line": " src/core/configs.js:18"
+            "line": " src/core/configs.js:43"
         },
         {
             "message": "Missing item type\nTime in milliseconds before a connect or login action will timeout",

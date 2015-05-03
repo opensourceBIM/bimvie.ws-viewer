@@ -13,6 +13,7 @@
  ````
  @class Fly
  @module BIMSURFER
+ @submodule animate
  @constructor
  @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}.
  @param [cfg] {*} Fly configuration

@@ -41,10 +41,13 @@
                                 <li><a href="../classes/AmbientLight.html">AmbientLight</a></li>
                                 <li><a href="../classes/BIMSURFER.html">BIMSURFER</a></li>
                                 <li><a href="../classes/BoxGeometry.html">BoxGeometry</a></li>
+                                <li><a href="../classes/BoxObject.html">BoxObject</a></li>
                                 <li><a href="../classes/Camera.html">Camera</a></li>
+                                <li><a href="../classes/CameraControl.html">CameraControl</a></li>
                                 <li><a href="../classes/Canvas.html">Canvas</a></li>
                                 <li><a href="../classes/ClickSelectObjects.html">ClickSelectObjects</a></li>
                                 <li><a href="../classes/Component.html">Component</a></li>
+                                <li><a href="../classes/Configs.html">Configs</a></li>
                                 <li><a href="../classes/DirLight.html">DirLight</a></li>
                                 <li><a href="../classes/Effect.html">Effect</a></li>
                                 <li><a href="../classes/Fly.html">Fly</a></li>
@@ -62,13 +65,21 @@
                                 <li><a href="../classes/MouseZoomCamera.html">MouseZoomCamera</a></li>
                                 <li><a href="../classes/Object.html">Object</a></li>
                                 <li><a href="../classes/PointLight.html">PointLight</a></li>
+                                <li><a href="../classes/Selection.html">Selection</a></li>
                                 <li><a href="../classes/TeapotGeometry.html">TeapotGeometry</a></li>
+                                <li><a href="../classes/TeapotObject.html">TeapotObject</a></li>
                                 <li><a href="../classes/Viewer.html">Viewer</a></li>
                                 <li><a href="../classes/XRayEffect.html">XRayEffect</a></li>
                             </ul>
                 
                             <ul id="api-modules" class="apis modules">
+                                <li><a href="../modules/animate.html">animate</a></li>
                                 <li><a href="../modules/BIMSURFER.html">BIMSURFER</a></li>
+                                <li><a href="../modules/camera.html">camera</a></li>
+                                <li><a href="../modules/control.html">control</a></li>
+                                <li><a href="../modules/effect.html">effect</a></li>
+                                <li><a href="../modules/geometry.html">geometry</a></li>
+                                <li><a href="../modules/input.html">input</a></li>
                             </ul>
                         </div>
                     </div>
@@ -128,39 +139,19 @@
  </ul></p>
 <p><hr></p>
 <h2 id="-a-name-ids-component-ids-a-"><a name="ids">Component IDs</a></h2>
-<p>Every Component has an ID that&#39;s unique within the parent <a href="../classes/Viewer.html" class="crosslink">Viewer</a>. BIMViewer generates
+<p>Every Component has an ID that&#39;s unique within the parent <a href="../classes/Viewer.html" class="crosslink">Viewer</a>. the <a href="../classes/Viewer.html" class="crosslink">Viewer</a> generates
  the IDs automatically by default, however you can also specify them yourself. In the example below, we&#39;re creating a
  viewer comprised of <a href="../classes/Viewer.html" class="crosslink">Viewer</a>, Material, <a href="../classes/Geometry.html" class="crosslink">Geometry</a> and
  GameObject components, while letting xeoEngine generate its own ID for
  the <a href="../classes/Geometry.html" class="crosslink">Geometry</a>:</p>
-<pre class="code prettyprint"><code class="lang-javascript"> // The Viewer is a Component too
- var viewer = new BIMSURFER.Viewer({
-    id: "myViewer"
-});
-var material = new BIMSURFER.Material(viewer, {
-    id: "myMaterial"
-});
-var geometry = new BIMSURFER.Geometry(viewer, {
-    id: "myGeometry"
-});
-// Let xeoEngine automatically generated the ID for our GameObject
- var object = new BIMSURFER.GameObject(viewer, {
-    material: material,
-    geometry: geometry
-});
-</code></pre>
-<p>We can then find those components like this:</p>
-<pre class="code prettyprint"><code class="lang-javascript"> // Find the Viewer
- var theViewer = BIMSURFER.viewers["myViewer"];
-// Find the Material
- var theMaterial = theViewer.components["myMaterial"];
-</code></pre>
-<h2 id="-a-name-componentprops-properties-a-"><a name="componentProps">Properties</a></h2>
-<p>Almost every property on a xeoEngine Component fires a change event when you update it. For example, we can subscribe
+<pre class="code prettyprint"><code class="lang-javascript"><code>&#x60;</code>`
+## &lt;a name="componentProps"&gt;Properties&lt;/a&gt;
+Almost every property on a xeoEngine Component fires a change event when you update it. For example, we can subscribe
  to the Material/diffuse:event event that a
  Material fires when its Material/diffuse:property
- property is updated, like so:</p>
-<pre class="code prettyprint"><code class="lang-javascript"> // Bind a change callback to a property
+ property is updated, like so:
+<code>&#x60;</code>`javascript
+ // Bind a change callback to a property
  var handle = material.on("diffuse", function(diffuse) {
     console.log("Material diffuse color has changed to: [" + diffuse[0] + ", " + diffuse[1] + "," + diffuse[2] + "]");
 });
@@ -422,10 +413,6 @@ var geometry = new BIMSURFER.Geometry(viewer, {
 
                             </li>
                             <li class="index-item property">
-                                <a href="#property_type">type</a>
-
-                            </li>
-                            <li class="index-item property">
                                 <a href="#property_viewer">viewer</a>
 
                             </li>
@@ -463,7 +450,7 @@ var geometry = new BIMSURFER.Geometry(viewer, {
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_core_component.js.html#l415"><code>src&#x2F;core&#x2F;component.js:415</code></a>
+        <a href="../files/src_core_component.js.html#l377"><code>src&#x2F;core&#x2F;component.js:377</code></a>
         </p>
 
 
@@ -502,7 +489,7 @@ var geometry = new BIMSURFER.Geometry(viewer, {
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_core_component.js.html#l391"><code>src&#x2F;core&#x2F;component.js:391</code></a>
+        <a href="../files/src_core_component.js.html#l353"><code>src&#x2F;core&#x2F;component.js:353</code></a>
         </p>
 
 
@@ -563,7 +550,7 @@ var geometry = new BIMSURFER.Geometry(viewer, {
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_core_component.js.html#l285"><code>src&#x2F;core&#x2F;component.js:285</code></a>
+        <a href="../files/src_core_component.js.html#l247"><code>src&#x2F;core&#x2F;component.js:247</code></a>
         </p>
 
 
@@ -642,7 +629,7 @@ any subsequent notifications on that location as they are made.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_core_component.js.html#l379"><code>src&#x2F;core&#x2F;component.js:379</code></a>
+        <a href="../files/src_core_component.js.html#l341"><code>src&#x2F;core&#x2F;component.js:341</code></a>
         </p>
 
 
@@ -697,7 +684,7 @@ any subsequent notifications on that location as they are made.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_core_component.js.html#l342"><code>src&#x2F;core&#x2F;component.js:342</code></a>
+        <a href="../files/src_core_component.js.html#l304"><code>src&#x2F;core&#x2F;component.js:304</code></a>
         </p>
 
 
@@ -761,7 +748,7 @@ any subsequent notifications on that location as they are made.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_core_component.js.html#l312"><code>src&#x2F;core&#x2F;component.js:312</code></a>
+        <a href="../files/src_core_component.js.html#l274"><code>src&#x2F;core&#x2F;component.js:274</code></a>
         </p>
 
 
@@ -854,7 +841,7 @@ any subsequent notifications on that location as they are made.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_core_component.js.html#l361"><code>src&#x2F;core&#x2F;component.js:361</code></a>
+        <a href="../files/src_core_component.js.html#l323"><code>src&#x2F;core&#x2F;component.js:323</code></a>
         </p>
 
 
@@ -931,7 +918,7 @@ any subsequent notifications on that location as they are made.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_core_component.js.html#l403"><code>src&#x2F;core&#x2F;component.js:403</code></a>
+        <a href="../files/src_core_component.js.html#l365"><code>src&#x2F;core&#x2F;component.js:365</code></a>
         </p>
 
 
@@ -982,7 +969,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_component.js.html#l204"><code>src&#x2F;core&#x2F;component.js:204</code></a>
+                            <a href="../files/src_core_component.js.html#l177"><code>src&#x2F;core&#x2F;component.js:177</code></a>
                             </p>
                     
                     
@@ -1007,7 +994,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_component.js.html#l253"><code>src&#x2F;core&#x2F;component.js:253</code></a>
+                            <a href="../files/src_core_component.js.html#l217"><code>src&#x2F;core&#x2F;component.js:217</code></a>
                             </p>
                     
                     
@@ -1033,7 +1020,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_component.js.html#l244"><code>src&#x2F;core&#x2F;component.js:244</code></a>
+                            <a href="../files/src_core_component.js.html#l208"><code>src&#x2F;core&#x2F;component.js:208</code></a>
                             </p>
                     
                     
@@ -1058,7 +1045,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_component.js.html#l236"><code>src&#x2F;core&#x2F;component.js:236</code></a>
+                            <a href="../files/src_core_component.js.html#l200"><code>src&#x2F;core&#x2F;component.js:200</code></a>
                             </p>
                     
                     
@@ -1066,32 +1053,6 @@ any subsequent notifications on that location as they are made.</p>
                     
                         <div class="description">
                             <p>Metadata on this component.</p>
-                    
-                        </div>
-                    
-                    
-                    
-                    </div>
-                    <div id="property_type" class="property item">
-                        <h3 class="name"><code>type</code></h3>
-                        <span class="type">String</span>
-                    
-                    
-                    
-                            <span class="flag final">final</span>
-                    
-                    
-                        <div class="meta">
-                                    <p>
-                                    Defined in
-                            <a href="../files/src_core_component.js.html#l227"><code>src&#x2F;core&#x2F;component.js:227</code></a>
-                            </p>
-                    
-                    
-                        </div>
-                    
-                        <div class="description">
-                            <p>The IFC type of this Component.</p>
                     
                         </div>
                     
@@ -1110,7 +1071,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_component.js.html#l218"><code>src&#x2F;core&#x2F;component.js:218</code></a>
+                            <a href="../files/src_core_component.js.html#l191"><code>src&#x2F;core&#x2F;component.js:191</code></a>
                             </p>
                     
                     
@@ -1141,7 +1102,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_component.js.html#l435"><code>src&#x2F;core&#x2F;component.js:435</code></a>
+                            <a href="../files/src_core_component.js.html#l397"><code>src&#x2F;core&#x2F;component.js:397</code></a>
                             </p>
                     
                     

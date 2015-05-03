@@ -41,10 +41,13 @@
                                 <li><a href="../classes/AmbientLight.html">AmbientLight</a></li>
                                 <li><a href="../classes/BIMSURFER.html">BIMSURFER</a></li>
                                 <li><a href="../classes/BoxGeometry.html">BoxGeometry</a></li>
+                                <li><a href="../classes/BoxObject.html">BoxObject</a></li>
                                 <li><a href="../classes/Camera.html">Camera</a></li>
+                                <li><a href="../classes/CameraControl.html">CameraControl</a></li>
                                 <li><a href="../classes/Canvas.html">Canvas</a></li>
                                 <li><a href="../classes/ClickSelectObjects.html">ClickSelectObjects</a></li>
                                 <li><a href="../classes/Component.html">Component</a></li>
+                                <li><a href="../classes/Configs.html">Configs</a></li>
                                 <li><a href="../classes/DirLight.html">DirLight</a></li>
                                 <li><a href="../classes/Effect.html">Effect</a></li>
                                 <li><a href="../classes/Fly.html">Fly</a></li>
@@ -62,13 +65,21 @@
                                 <li><a href="../classes/MouseZoomCamera.html">MouseZoomCamera</a></li>
                                 <li><a href="../classes/Object.html">Object</a></li>
                                 <li><a href="../classes/PointLight.html">PointLight</a></li>
+                                <li><a href="../classes/Selection.html">Selection</a></li>
                                 <li><a href="../classes/TeapotGeometry.html">TeapotGeometry</a></li>
+                                <li><a href="../classes/TeapotObject.html">TeapotObject</a></li>
                                 <li><a href="../classes/Viewer.html">Viewer</a></li>
                                 <li><a href="../classes/XRayEffect.html">XRayEffect</a></li>
                             </ul>
                 
                             <ul id="api-modules" class="apis modules">
+                                <li><a href="../modules/animate.html">animate</a></li>
                                 <li><a href="../modules/BIMSURFER.html">BIMSURFER</a></li>
+                                <li><a href="../modules/camera.html">camera</a></li>
+                                <li><a href="../modules/control.html">control</a></li>
+                                <li><a href="../modules/effect.html">effect</a></li>
+                                <li><a href="../modules/geometry.html">geometry</a></li>
+                                <li><a href="../modules/input.html">input</a></li>
                             </ul>
                         </div>
                     </div>
@@ -110,16 +121,17 @@
         </div>
 
         <div class="foundat">
-            Defined in: <a href="../files/src_core_control_cameraControl.js.html#l1"><code>src&#x2F;core&#x2F;control&#x2F;cameraControl.js:1</code></a>
+            Defined in: <a href="../files/src_core_camera_camera.js.html#l1"><code>src&#x2F;core&#x2F;camera&#x2F;camera.js:1</code></a>
         </div>
 
-            Module: <a href="../modules/BIMSURFER.html">BIMSURFER</a>
+            Module: <a href="../modules/camera.html">camera</a><br>
+            Parent Module: <a href="../modules/BIMSURFER.html">BIMSURFER</a>
 
 </div>
 
 
 <div class="box intro">
-    <p>A <strong>CameraControl</strong> allows you to control a <a href="../classes/Camera.html" class="crosslink">Camera</a> with mouse and keyboard.</p>
+    <p>A <strong>Camera</strong> defines a viewpoint within a <a href="../classes/Viewer.html" class="crosslink">Viewer</a>.</p>
 <h2 id="overview">Overview</h2>
 <ul>
 <li>You can have an unlimited number of Cameras in a <a href="../classes/Viewer.html" class="crosslink">GameObjects</a>.</li>
@@ -128,7 +140,7 @@
 
 <h2 id="example">Example</h2>
 <p>In this example we have a <a href="../classes/Viewer.html" class="crosslink">Viewer</a> with a
-<a href="../classes/Camera.html" class="crosslink">Camera</a> that&#39;s controlled by a CameraControl.</p>
+Camera, <a href="../classes/CameraControl.html" class="crosslink">CameraControl</a> and a <a href="../classes/TeapotObject.html" class="crosslink">TeapotObject</a>.</p>
 <pre class="code prettyprint"><code class="lang-Javascript">
 var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
 
@@ -171,7 +183,7 @@ var teapot = new BIMSURFER.TeapotObject(viewer);
             <div class="meta">
                         <p>
                         Defined in
-                <a href="../files/src_core_control_cameraControl.js.html#l1"><code>src&#x2F;core&#x2F;control&#x2F;cameraControl.js:1</code></a>
+                <a href="../files/src_core_camera_camera.js.html#l1"><code>src&#x2F;core&#x2F;camera&#x2F;camera.js:1</code></a>
                 </p>
         
         
@@ -339,10 +351,6 @@ var teapot = new BIMSURFER.TeapotObject(viewer);
                                 <a href="#property_className">className</a>
 
                             </li>
-                            <li class="index-item property">
-                                <a href="#property_className">className</a>
-
-                            </li>
                             <li class="index-item property inherited">
                                 <a href="#property_destroyed">destroyed</a>
 
@@ -361,14 +369,6 @@ var teapot = new BIMSURFER.TeapotObject(viewer);
                             </li>
                             <li class="index-item property inherited">
                                 <a href="#property_metadata">metadata</a>
-
-                            </li>
-                            <li class="index-item property">
-                                <a href="#property_project">project</a>
-
-                            </li>
-                            <li class="index-item property inherited">
-                                <a href="#property_type">type</a>
 
                             </li>
                             <li class="index-item property">
@@ -417,7 +417,7 @@ var teapot = new BIMSURFER.TeapotObject(viewer);
     <div class="meta">
                 <p>Inherited from
                 <a href="../classes/Component.html#method_destroy">Component</a>:
-        <a href="../files/src_core_component.js.html#l415"><code>src&#x2F;core&#x2F;component.js:415</code></a>
+        <a href="../files/src_core_component.js.html#l377"><code>src&#x2F;core&#x2F;component.js:377</code></a>
         </p>
 
 
@@ -456,7 +456,7 @@ var teapot = new BIMSURFER.TeapotObject(viewer);
     <div class="meta">
                 <p>Inherited from
                 <a href="../classes/Component.html#method_error">Component</a>:
-        <a href="../files/src_core_component.js.html#l391"><code>src&#x2F;core&#x2F;component.js:391</code></a>
+        <a href="../files/src_core_component.js.html#l353"><code>src&#x2F;core&#x2F;component.js:353</code></a>
         </p>
 
 
@@ -517,7 +517,7 @@ var teapot = new BIMSURFER.TeapotObject(viewer);
     <div class="meta">
                 <p>Inherited from
                 <a href="../classes/Component.html#method_fire">Component</a>:
-        <a href="../files/src_core_component.js.html#l285"><code>src&#x2F;core&#x2F;component.js:285</code></a>
+        <a href="../files/src_core_component.js.html#l247"><code>src&#x2F;core&#x2F;component.js:247</code></a>
         </p>
 
 
@@ -596,7 +596,7 @@ any subsequent notifications on that location as they are made.</p>
     <div class="meta">
                 <p>Inherited from
                 <a href="../classes/Component.html#method_log">Component</a>:
-        <a href="../files/src_core_component.js.html#l379"><code>src&#x2F;core&#x2F;component.js:379</code></a>
+        <a href="../files/src_core_component.js.html#l341"><code>src&#x2F;core&#x2F;component.js:341</code></a>
         </p>
 
 
@@ -651,7 +651,7 @@ any subsequent notifications on that location as they are made.</p>
     <div class="meta">
                 <p>Inherited from
                 <a href="../classes/Component.html#method_off">Component</a>:
-        <a href="../files/src_core_component.js.html#l342"><code>src&#x2F;core&#x2F;component.js:342</code></a>
+        <a href="../files/src_core_component.js.html#l304"><code>src&#x2F;core&#x2F;component.js:304</code></a>
         </p>
 
 
@@ -715,7 +715,7 @@ any subsequent notifications on that location as they are made.</p>
     <div class="meta">
                 <p>Inherited from
                 <a href="../classes/Component.html#method_on">Component</a>:
-        <a href="../files/src_core_component.js.html#l312"><code>src&#x2F;core&#x2F;component.js:312</code></a>
+        <a href="../files/src_core_component.js.html#l274"><code>src&#x2F;core&#x2F;component.js:274</code></a>
         </p>
 
 
@@ -808,7 +808,7 @@ any subsequent notifications on that location as they are made.</p>
     <div class="meta">
                 <p>Inherited from
                 <a href="../classes/Component.html#method_once">Component</a>:
-        <a href="../files/src_core_component.js.html#l361"><code>src&#x2F;core&#x2F;component.js:361</code></a>
+        <a href="../files/src_core_component.js.html#l323"><code>src&#x2F;core&#x2F;component.js:323</code></a>
         </p>
 
 
@@ -885,7 +885,7 @@ any subsequent notifications on that location as they are made.</p>
     <div class="meta">
                 <p>Inherited from
                 <a href="../classes/Component.html#method_warn">Component</a>:
-        <a href="../files/src_core_component.js.html#l403"><code>src&#x2F;core&#x2F;component.js:403</code></a>
+        <a href="../files/src_core_component.js.html#l365"><code>src&#x2F;core&#x2F;component.js:365</code></a>
         </p>
 
 
@@ -935,14 +935,15 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_control_cameraControl.js.html#l154"><code>src&#x2F;core&#x2F;control&#x2F;cameraControl.js:154</code></a>
+                            <a href="../files/src_core_camera_camera.js.html#l256"><code>src&#x2F;core&#x2F;camera&#x2F;camera.js:256</code></a>
                             </p>
                     
                     
                         </div>
                     
                         <div class="description">
-                            <p>Flag which indicates whether this CameraControl is active or not.</p>
+                            <p>Flag which indicates whether this Camera is active or not.</p>
+                    <p>Fires an <a href="../classes/Camera.html#event_active" class="crosslink">active</a> event on change.</p>
                     
                         </div>
                     
@@ -964,33 +965,7 @@ any subsequent notifications on that location as they are made.</p>
                                     Component
                                 </a>
                                 but overwritten in
-                            <a href="../files/src_core_camera_camera.js.html#l53"><code>src&#x2F;core&#x2F;camera&#x2F;camera.js:53</code></a>
-                            </p>
-                    
-                    
-                        </div>
-                    
-                        <div class="description">
-                            <p>JavaScript class name for this Component.</p>
-                    
-                        </div>
-                    
-                    
-                    
-                    </div>
-                    <div id="property_className" class="property item">
-                        <h3 class="name"><code>className</code></h3>
-                        <span class="type">String</span>
-                    
-                    
-                    
-                            <span class="flag final">final</span>
-                    
-                    
-                        <div class="meta">
-                                    <p>
-                                    Defined in
-                            <a href="../files/src_core_control_cameraControl.js.html#l48"><code>src&#x2F;core&#x2F;control&#x2F;cameraControl.js:48</code></a>
+                            <a href="../files/src_core_camera_camera.js.html#l54"><code>src&#x2F;core&#x2F;camera&#x2F;camera.js:54</code></a>
                             </p>
                     
                     
@@ -1015,7 +990,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>Inherited from
                                     <a href="../classes/Component.html#property_destroyed">Component</a>:
-                            <a href="../files/src_core_component.js.html#l253"><code>src&#x2F;core&#x2F;component.js:253</code></a>
+                            <a href="../files/src_core_component.js.html#l217"><code>src&#x2F;core&#x2F;component.js:217</code></a>
                             </p>
                     
                     
@@ -1040,7 +1015,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_camera_camera.js.html#l344"><code>src&#x2F;core&#x2F;camera&#x2F;camera.js:344</code></a>
+                            <a href="../files/src_core_camera_camera.js.html#l356"><code>src&#x2F;core&#x2F;camera&#x2F;camera.js:356</code></a>
                             </p>
                     
                     
@@ -1068,7 +1043,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>Inherited from
                                     <a href="../classes/Component.html#property_id">Component</a>:
-                            <a href="../files/src_core_component.js.html#l244"><code>src&#x2F;core&#x2F;component.js:244</code></a>
+                            <a href="../files/src_core_component.js.html#l208"><code>src&#x2F;core&#x2F;component.js:208</code></a>
                             </p>
                     
                     
@@ -1093,7 +1068,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_camera_camera.js.html#l363"><code>src&#x2F;core&#x2F;camera&#x2F;camera.js:363</code></a>
+                            <a href="../files/src_core_camera_camera.js.html#l375"><code>src&#x2F;core&#x2F;camera&#x2F;camera.js:375</code></a>
                             </p>
                     
                     
@@ -1120,7 +1095,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>Inherited from
                                     <a href="../classes/Component.html#property_metadata">Component</a>:
-                            <a href="../files/src_core_component.js.html#l236"><code>src&#x2F;core&#x2F;component.js:236</code></a>
+                            <a href="../files/src_core_component.js.html#l200"><code>src&#x2F;core&#x2F;component.js:200</code></a>
                             </p>
                     
                     
@@ -1128,58 +1103,6 @@ any subsequent notifications on that location as they are made.</p>
                     
                         <div class="description">
                             <p>Metadata on this component.</p>
-                    
-                        </div>
-                    
-                    
-                    
-                    </div>
-                    <div id="property_project" class="property item">
-                        <h3 class="name"><code>project</code></h3>
-                        <span class="type"><a href="../classes/Camera.html" class="crosslink">Camera</a></span>
-                    
-                    
-                    
-                    
-                    
-                        <div class="meta">
-                                    <p>
-                                    Defined in
-                            <a href="../files/src_core_control_cameraControl.js.html#l107"><code>src&#x2F;core&#x2F;control&#x2F;cameraControl.js:107</code></a>
-                            </p>
-                    
-                    
-                        </div>
-                    
-                        <div class="description">
-                            <p>The <a href="../classes/Camera.html" class="crosslink">Camera</a> being controlled.
-                                *</p>
-                    
-                        </div>
-                    
-                    
-                    
-                    </div>
-                    <div id="property_type" class="property item inherited">
-                        <h3 class="name"><code>type</code></h3>
-                        <span class="type">String</span>
-                    
-                    
-                    
-                            <span class="flag final">final</span>
-                    
-                    
-                        <div class="meta">
-                                    <p>Inherited from
-                                    <a href="../classes/Component.html#property_type">Component</a>:
-                            <a href="../files/src_core_component.js.html#l227"><code>src&#x2F;core&#x2F;component.js:227</code></a>
-                            </p>
-                    
-                    
-                        </div>
-                    
-                        <div class="description">
-                            <p>The IFC type of this Component.</p>
                     
                         </div>
                     
@@ -1197,7 +1120,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_camera_camera.js.html#l382"><code>src&#x2F;core&#x2F;camera&#x2F;camera.js:382</code></a>
+                            <a href="../files/src_core_camera_camera.js.html#l394"><code>src&#x2F;core&#x2F;camera&#x2F;camera.js:394</code></a>
                             </p>
                     
                     
@@ -1225,7 +1148,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>Inherited from
                                     <a href="../classes/Component.html#property_viewer">Component</a>:
-                            <a href="../files/src_core_component.js.html#l218"><code>src&#x2F;core&#x2F;component.js:218</code></a>
+                            <a href="../files/src_core_component.js.html#l191"><code>src&#x2F;core&#x2F;component.js:191</code></a>
                             </p>
                     
                     
@@ -1256,14 +1179,14 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_control_cameraControl.js.html#l173"><code>src&#x2F;core&#x2F;control&#x2F;cameraControl.js:173</code></a>
+                            <a href="../files/src_core_camera_camera.js.html#l331"><code>src&#x2F;core&#x2F;camera&#x2F;camera.js:331</code></a>
                             </p>
                     
                     
                         </div>
                     
                         <div class="description">
-                            <p>Fired whenever this CameraControl&#39;s CameraControl/active:property property changes.</p>
+                            <p>Fired whenever this Camera&#39;s <a href="../classes/Camera.html#property_active" class="crosslink">active</a> property changes.</p>
                     
                         </div>
                     
@@ -1298,7 +1221,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>Inherited from
                                     <a href="../classes/Component.html#event_destroyed">Component</a>:
-                            <a href="../files/src_core_component.js.html#l435"><code>src&#x2F;core&#x2F;component.js:435</code></a>
+                            <a href="../files/src_core_component.js.html#l397"><code>src&#x2F;core&#x2F;component.js:397</code></a>
                             </p>
                     
                     

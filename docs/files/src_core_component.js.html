@@ -41,10 +41,13 @@
                                 <li><a href="../classes/AmbientLight.html">AmbientLight</a></li>
                                 <li><a href="../classes/BIMSURFER.html">BIMSURFER</a></li>
                                 <li><a href="../classes/BoxGeometry.html">BoxGeometry</a></li>
+                                <li><a href="../classes/BoxObject.html">BoxObject</a></li>
                                 <li><a href="../classes/Camera.html">Camera</a></li>
+                                <li><a href="../classes/CameraControl.html">CameraControl</a></li>
                                 <li><a href="../classes/Canvas.html">Canvas</a></li>
                                 <li><a href="../classes/ClickSelectObjects.html">ClickSelectObjects</a></li>
                                 <li><a href="../classes/Component.html">Component</a></li>
+                                <li><a href="../classes/Configs.html">Configs</a></li>
                                 <li><a href="../classes/DirLight.html">DirLight</a></li>
                                 <li><a href="../classes/Effect.html">Effect</a></li>
                                 <li><a href="../classes/Fly.html">Fly</a></li>
@@ -62,13 +65,21 @@
                                 <li><a href="../classes/MouseZoomCamera.html">MouseZoomCamera</a></li>
                                 <li><a href="../classes/Object.html">Object</a></li>
                                 <li><a href="../classes/PointLight.html">PointLight</a></li>
+                                <li><a href="../classes/Selection.html">Selection</a></li>
                                 <li><a href="../classes/TeapotGeometry.html">TeapotGeometry</a></li>
+                                <li><a href="../classes/TeapotObject.html">TeapotObject</a></li>
                                 <li><a href="../classes/Viewer.html">Viewer</a></li>
                                 <li><a href="../classes/XRayEffect.html">XRayEffect</a></li>
                             </ul>
                 
                             <ul id="api-modules" class="apis modules">
+                                <li><a href="../modules/animate.html">animate</a></li>
                                 <li><a href="../modules/BIMSURFER.html">BIMSURFER</a></li>
+                                <li><a href="../modules/camera.html">camera</a></li>
+                                <li><a href="../modules/control.html">control</a></li>
+                                <li><a href="../modules/effect.html">effect</a></li>
+                                <li><a href="../modules/geometry.html">geometry</a></li>
+                                <li><a href="../modules/input.html">input</a></li>
                             </ul>
                         </div>
                     </div>
@@ -126,41 +137,14 @@
 
  ## &lt;a name=&quot;ids&quot;&gt;Component IDs&lt;/a&gt;
 
- Every Component has an ID that&#x27;s unique within the parent {{#crossLink &quot;Viewer&quot;}}{{/crossLink}}. BIMViewer generates
+ Every Component has an ID that&#x27;s unique within the parent {{#crossLink &quot;Viewer&quot;}}{{/crossLink}}. the {{#crossLink &quot;Viewer&quot;}}{{/crossLink}} generates
  the IDs automatically by default, however you can also specify them yourself. In the example below, we&#x27;re creating a
  viewer comprised of {{#crossLink &quot;Viewer&quot;}}{{/crossLink}}, {{#crossLink &quot;Material&quot;}}{{/crossLink}}, {{#crossLink &quot;Geometry&quot;}}{{/crossLink}} and
  {{#crossLink &quot;GameObject&quot;}}{{/crossLink}} components, while letting xeoEngine generate its own ID for
  the {{#crossLink &quot;Geometry&quot;}}{{/crossLink}}:
 
  &#x60;&#x60;&#x60;&#x60;javascript
- // The Viewer is a Component too
- var viewer = new BIMSURFER.Viewer({
-    id: &quot;myViewer&quot;
-});
 
- var material = new BIMSURFER.Material(viewer, {
-    id: &quot;myMaterial&quot;
-});
-
- var geometry = new BIMSURFER.Geometry(viewer, {
-    id: &quot;myGeometry&quot;
-});
-
- // Let xeoEngine automatically generated the ID for our GameObject
- var object = new BIMSURFER.GameObject(viewer, {
-    material: material,
-    geometry: geometry
-});
- &#x60;&#x60;&#x60;&#x60;
-
- We can then find those components like this:
-
- &#x60;&#x60;&#x60;&#x60;javascript
- // Find the Viewer
- var theViewer = BIMSURFER.viewers[&quot;myViewer&quot;];
-
- // Find the Material
- var theMaterial = theViewer.components[&quot;myMaterial&quot;];
  &#x60;&#x60;&#x60;&#x60;
 
  ## &lt;a name=&quot;componentProps&quot;&gt;Properties&lt;/a&gt;
@@ -333,15 +317,6 @@
             this.viewer = viewer;
 
             /**
-             The IFC type of this Component.
-
-             @property type
-             @type {String}
-             @final
-             */
-            this.type = cfg.type;
-
-            /**
              Metadata on this component.
 
              @property metadata
@@ -375,8 +350,6 @@
             // Add this component to the Viewer
             // Assigns this component an automatic ID if not yet assigned
             this.viewer._addComponent(this);
-
-            this._onTick = null;
 
             // Initialize
             this._init(cfg);
@@ -520,7 +493,7 @@
             window.console.warn(&quot;[WARN] &quot; + this.id + &quot;: &quot; + message);
         },
 
-        /**
+       /**
          * Destroys this component.
          *
          * Removes this Component from its {{#crossLink &quot;Viewer&quot;}}{{/crossLink}}.

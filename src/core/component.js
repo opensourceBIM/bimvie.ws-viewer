@@ -18,41 +18,14 @@
 
  ## <a name="ids">Component IDs</a>
 
- Every Component has an ID that's unique within the parent {{#crossLink "Viewer"}}{{/crossLink}}. BIMViewer generates
+ Every Component has an ID that's unique within the parent {{#crossLink "Viewer"}}{{/crossLink}}. the {{#crossLink "Viewer"}}{{/crossLink}} generates
  the IDs automatically by default, however you can also specify them yourself. In the example below, we're creating a
  viewer comprised of {{#crossLink "Viewer"}}{{/crossLink}}, {{#crossLink "Material"}}{{/crossLink}}, {{#crossLink "Geometry"}}{{/crossLink}} and
  {{#crossLink "GameObject"}}{{/crossLink}} components, while letting xeoEngine generate its own ID for
  the {{#crossLink "Geometry"}}{{/crossLink}}:
 
  ````javascript
- // The Viewer is a Component too
- var viewer = new BIMSURFER.Viewer({
-    id: "myViewer"
-});
 
- var material = new BIMSURFER.Material(viewer, {
-    id: "myMaterial"
-});
-
- var geometry = new BIMSURFER.Geometry(viewer, {
-    id: "myGeometry"
-});
-
- // Let xeoEngine automatically generated the ID for our GameObject
- var object = new BIMSURFER.GameObject(viewer, {
-    material: material,
-    geometry: geometry
-});
- ````
-
- We can then find those components like this:
-
- ````javascript
- // Find the Viewer
- var theViewer = BIMSURFER.viewers["myViewer"];
-
- // Find the Material
- var theMaterial = theViewer.components["myMaterial"];
  ````
 
  ## <a name="componentProps">Properties</a>
@@ -225,15 +198,6 @@
             this.viewer = viewer;
 
             /**
-             The IFC type of this Component.
-
-             @property type
-             @type {String}
-             @final
-             */
-            this.type = cfg.type;
-
-            /**
              Metadata on this component.
 
              @property metadata
@@ -267,8 +231,6 @@
             // Add this component to the Viewer
             // Assigns this component an automatic ID if not yet assigned
             this.viewer._addComponent(this);
-
-            this._onTick = null;
 
             // Initialize
             this._init(cfg);
@@ -412,7 +374,7 @@
             window.console.warn("[WARN] " + this.id + ": " + message);
         },
 
-        /**
+       /**
          * Destroys this component.
          *
          * Removes this Component from its {{#crossLink "Viewer"}}{{/crossLink}}.

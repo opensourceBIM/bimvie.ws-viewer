@@ -41,10 +41,13 @@
                                 <li><a href="../classes/AmbientLight.html">AmbientLight</a></li>
                                 <li><a href="../classes/BIMSURFER.html">BIMSURFER</a></li>
                                 <li><a href="../classes/BoxGeometry.html">BoxGeometry</a></li>
+                                <li><a href="../classes/BoxObject.html">BoxObject</a></li>
                                 <li><a href="../classes/Camera.html">Camera</a></li>
+                                <li><a href="../classes/CameraControl.html">CameraControl</a></li>
                                 <li><a href="../classes/Canvas.html">Canvas</a></li>
                                 <li><a href="../classes/ClickSelectObjects.html">ClickSelectObjects</a></li>
                                 <li><a href="../classes/Component.html">Component</a></li>
+                                <li><a href="../classes/Configs.html">Configs</a></li>
                                 <li><a href="../classes/DirLight.html">DirLight</a></li>
                                 <li><a href="../classes/Effect.html">Effect</a></li>
                                 <li><a href="../classes/Fly.html">Fly</a></li>
@@ -62,13 +65,21 @@
                                 <li><a href="../classes/MouseZoomCamera.html">MouseZoomCamera</a></li>
                                 <li><a href="../classes/Object.html">Object</a></li>
                                 <li><a href="../classes/PointLight.html">PointLight</a></li>
+                                <li><a href="../classes/Selection.html">Selection</a></li>
                                 <li><a href="../classes/TeapotGeometry.html">TeapotGeometry</a></li>
+                                <li><a href="../classes/TeapotObject.html">TeapotObject</a></li>
                                 <li><a href="../classes/Viewer.html">Viewer</a></li>
                                 <li><a href="../classes/XRayEffect.html">XRayEffect</a></li>
                             </ul>
                 
                             <ul id="api-modules" class="apis modules">
+                                <li><a href="../modules/animate.html">animate</a></li>
                                 <li><a href="../modules/BIMSURFER.html">BIMSURFER</a></li>
+                                <li><a href="../modules/camera.html">camera</a></li>
+                                <li><a href="../modules/control.html">control</a></li>
+                                <li><a href="../modules/effect.html">effect</a></li>
+                                <li><a href="../modules/geometry.html">geometry</a></li>
+                                <li><a href="../modules/input.html">input</a></li>
                             </ul>
                         </div>
                     </div>
@@ -126,39 +137,19 @@
  </ul></p>
 <p><hr></p>
 <h2 id="-a-name-ids-component-ids-a-"><a name="ids">Component IDs</a></h2>
-<p>Every Component has an ID that&#39;s unique within the parent <a href="../classes/Viewer.html" class="crosslink">Viewer</a>. BIMViewer generates
+<p>Every Component has an ID that&#39;s unique within the parent <a href="../classes/Viewer.html" class="crosslink">Viewer</a>. the <a href="../classes/Viewer.html" class="crosslink">Viewer</a> generates
  the IDs automatically by default, however you can also specify them yourself. In the example below, we&#39;re creating a
  viewer comprised of <a href="../classes/Viewer.html" class="crosslink">Viewer</a>, Material, <a href="../classes/Geometry.html" class="crosslink">Geometry</a> and
  GameObject components, while letting xeoEngine generate its own ID for
  the <a href="../classes/Geometry.html" class="crosslink">Geometry</a>:</p>
-<pre class="code prettyprint"><code class="lang-javascript"> // The Viewer is a Component too
- var viewer = new BIMSURFER.Viewer({
-    id: "myViewer"
-});
-var material = new BIMSURFER.Material(viewer, {
-    id: "myMaterial"
-});
-var geometry = new BIMSURFER.Geometry(viewer, {
-    id: "myGeometry"
-});
-// Let xeoEngine automatically generated the ID for our GameObject
- var object = new BIMSURFER.GameObject(viewer, {
-    material: material,
-    geometry: geometry
-});
-</code></pre>
-<p>We can then find those components like this:</p>
-<pre class="code prettyprint"><code class="lang-javascript"> // Find the Viewer
- var theViewer = BIMSURFER.viewers["myViewer"];
-// Find the Material
- var theMaterial = theViewer.components["myMaterial"];
-</code></pre>
-<h2 id="-a-name-componentprops-properties-a-"><a name="componentProps">Properties</a></h2>
-<p>Almost every property on a xeoEngine Component fires a change event when you update it. For example, we can subscribe
+<pre class="code prettyprint"><code class="lang-javascript"><code>&#x60;</code>`
+## &lt;a name="componentProps"&gt;Properties&lt;/a&gt;
+Almost every property on a xeoEngine Component fires a change event when you update it. For example, we can subscribe
  to the Material/diffuse:event event that a
  Material fires when its Material/diffuse:property
- property is updated, like so:</p>
-<pre class="code prettyprint"><code class="lang-javascript"> // Bind a change callback to a property
+ property is updated, like so:
+<code>&#x60;</code>`javascript
+ // Bind a change callback to a property
  var handle = material.on("diffuse", function(diffuse) {
     console.log("Material diffuse color has changed to: [" + diffuse[0] + ", " + diffuse[1] + "," + diffuse[2] + "]");
 });
@@ -271,8 +262,18 @@ var geometry = new BIMSURFER.Geometry(viewer, {
                     </a>
                 </li>
                 <li class="module-class">
+                    <a href="../classes/BoxObject.html">
+                        BoxObject
+                    </a>
+                </li>
+                <li class="module-class">
                     <a href="../classes/Camera.html">
                         Camera
+                    </a>
+                </li>
+                <li class="module-class">
+                    <a href="../classes/CameraControl.html">
+                        CameraControl
                     </a>
                 </li>
                 <li class="module-class">
@@ -288,6 +289,11 @@ var geometry = new BIMSURFER.Geometry(viewer, {
                 <li class="module-class">
                     <a href="../classes/Component.html">
                         Component
+                    </a>
+                </li>
+                <li class="module-class">
+                    <a href="../classes/Configs.html">
+                        Configs
                     </a>
                 </li>
                 <li class="module-class">
@@ -376,8 +382,18 @@ var geometry = new BIMSURFER.Geometry(viewer, {
                     </a>
                 </li>
                 <li class="module-class">
+                    <a href="../classes/Selection.html">
+                        Selection
+                    </a>
+                </li>
+                <li class="module-class">
                     <a href="../classes/TeapotGeometry.html">
                         TeapotGeometry
+                    </a>
+                </li>
+                <li class="module-class">
+                    <a href="../classes/TeapotObject.html">
+                        TeapotObject
                     </a>
                 </li>
                 <li class="module-class">
@@ -394,6 +410,229 @@ var geometry = new BIMSURFER.Geometry(viewer, {
     </div>
 
     <div class="yui3-u-1-2">
+            <p>This module is a rollup of the following modules:</p>
+
+            <ul class="module-submodules">
+                <li class="module-submodule">
+                    <a href="../modules/animate.html">
+                        animate
+                    </a>
+
+                    <div class="module-submodule-description">
+                        **Fly** flys a {{#crossLink "Camera"}}{{/crossLink}}
+## Overview
+## Example
+TODO
+<code>&#x60;</code>`javascript
+ TODO
+ <code>&#x60;</code>`
+                    </div>
+                </li>
+                <li class="module-submodule">
+                    <a href="../modules/camera.html">
+                        camera
+                    </a>
+
+                    <div class="module-submodule-description">
+                        A **Camera** defines a viewpoint within a {{#crossLink "Viewer"}}Viewer{{/crossLink}}.
+
+## Overview
+
+<ul>
+<li>You can have an unlimited number of Cameras in a {{#crossLink "Viewer"}}GameObjects{{/crossLink}}.</li>
+<li>At any instant, the Camera we're looking through is the one whose {{#crossLink "Camera/active:property"}}active{{/crossLink}} property is true.</li>
+</ul>
+
+## Example
+
+In this example we have a {{#crossLink "Viewer"}}{{/crossLink}} with a
+Camera, {{#crossLink "CameraControl"}}{{/crossLink}} and a {{#crossLink "TeapotObject"}}{{/crossLink}}.
+
+<code>&#x60;</code>`Javascript
+
+var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+
+var camera = new BIMSURFER.Camera(viewer, {
+       eye: [0, 0, -10]
+   });
+
+var cameraControl = new BIMSURFER.CameraControl(viewer, {
+       camera: camera
+   });
+
+var teapot = new BIMSURFER.TeapotObject(viewer);
+
+<code>&#x60;</code>`
+                    </div>
+                </li>
+                <li class="module-submodule">
+                    <a href="../modules/control.html">
+                        control
+                    </a>
+
+                    <div class="module-submodule-description">
+                        A **CameraControl** allows you to control a {{#crossLink "Camera"}}{{/crossLink}} with mouse and keyboard.
+
+## Overview
+
+<ul>
+<li>You can have an unlimited number of Cameras in a {{#crossLink "Viewer"}}GameObjects{{/crossLink}}.</li>
+<li>At any instant, the Camera we're looking through is the one whose {{#crossLink "Camera/active:property"}}active{{/crossLink}} property is true.</li>
+</ul>
+
+## Example
+
+In this example we have a {{#crossLink "Viewer"}}{{/crossLink}} with a
+{{#crossLink "Camera"}}{{/crossLink}} that's controlled by a CameraControl.
+
+<code>&#x60;</code>`Javascript
+
+var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+
+var camera = new BIMSURFER.Camera(viewer, {
+       eye: [0, 0, -10]
+   });
+
+var cameraControl = new BIMSURFER.CameraControl(viewer, {
+       camera: camera
+   });
+
+var teapot = new BIMSURFER.TeapotObject(viewer);
+
+<code>&#x60;</code>`
+                    </div>
+                </li>
+                <li class="module-submodule">
+                    <a href="../modules/effect.html">
+                        effect
+                    </a>
+
+                    <div class="module-submodule-description">
+                        TODO
+
+## Overview
+
+TODO
+
+## Example
+
+TODO
+                    </div>
+                </li>
+                <li class="module-submodule">
+                    <a href="../modules/geometry.html">
+                        geometry
+                    </a>
+
+                    <div class="module-submodule-description">
+                        TODO
+
+## Overview
+
+TODO
+
+## Example
+
+TODO
+                    </div>
+                </li>
+                <li class="module-submodule">
+                    <a href="../modules/input.html">
+                        input
+                    </a>
+
+                    <div class="module-submodule-description">
+                        Publishes key and mouse events that occur on the parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}'s {{#crossLink "Canvas"}}Canvas{{/crossLink}}.
+
+## Overview
+
+<ul>
+<li>Each {{#crossLink "Viewer"}}{{/crossLink}} provides an Input on itself as a read-only property.</li>
+</ul>
+
+## Example
+
+In this example, we're subscribing to some mouse and key events that will occur on
+a {{#crossLink "Viewer"}}Viewer's{{/crossLink}} {{#crossLink "Canvas"}}Canvas{{/crossLink}}.
+
+<code>&#x60;</code>`javascript
+var viewer = new BIMSURFER.Viewer(...);
+
+var input = viewer.input;
+
+// We'll save a handle to this subscription
+// to show how to unsubscribe, further down
+var handle = input.on("mousedown", function(coords) {
+      console.log("Mouse down at: x=" + coords[0] + ", y=" + coords[1]);
+});
+
+input.on("mouseup", function(coords) {
+      console.log("Mouse up at: x=" + coords[0] + ", y=" + coords[1]);
+});
+
+input.on("mouseclicked", function(coords) {
+     console.log("Mouse clicked at: x=" + coords[0] + ", y=" + coords[1]);
+});
+
+input.on("dblclick", function(coords) {
+      console.log("Double-click at: x=" + coords[0] + ", y=" + coords[1]);
+});
+
+input.on("keydown", function(keyCode) {
+       switch (keyCode) {
+
+           case this.KEY_A:
+              console.log("The 'A' key is down");
+              break;
+
+           case this.KEY_B:
+              console.log("The 'B' key is down");
+              break;
+
+           case this.KEY_C:
+              console.log("The 'C' key is down");
+              break;
+
+           default:
+              console.log("Some other key is down");
+      }
+    });
+
+input.on("keyup", function(keyCode) {
+       switch (keyCode) {
+
+           case this.KEY_A:
+              console.log("The 'A' key is up");
+              break;
+
+           case this.KEY_B:
+              console.log("The 'B' key is up");
+              break;
+
+           case this.KEY_C:
+              console.log("The 'C' key is up");
+              break;
+
+           default:
+              console.log("Some other key is up");
+       }
+    });
+
+// TODO: ALT and CTRL keys etc
+<code>&#x60;</code>`
+
+### Unsubscribing from Events
+
+In the snippet above, we saved a handle to one of our event subscriptions.
+
+We can then use that handle to unsubscribe again, like this:
+
+<code>&#x60;</code>`javascript
+input.off(handle);
+<code>&#x60;</code>`
+                    </div>
+                </li>
+            </ul>
     </div>
 </div>
                     </div>

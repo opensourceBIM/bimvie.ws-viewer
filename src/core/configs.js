@@ -1,3 +1,28 @@
+/**
+
+
+ ## Overview
+
+ TODO
+
+ ## Example
+
+ TODO
+
+ ```` javascript
+
+ ````
+
+ @class Configs
+ @module BIMSURFER
+ @constructor
+ @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}, creates this Configs within the
+ default {{#crossLink "Viewer"}}Viewer{{/crossLink}} when omitted
+ @param [cfg] {*} Configs configuration
+ @param [cfg.id] {String} Optional ID, unique among all components in the parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}, generated automatically when omitted.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Configs.
+ @extends Component
+ */
 (function () {
 
     "use strict";

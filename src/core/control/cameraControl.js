@@ -29,8 +29,9 @@
 
  ````
 
- @class Camera
+ @class CameraControl
  @module BIMSURFER
+ @submodule control
  @constructor
  @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
  @param [cfg] {*} Configs
@@ -106,8 +107,8 @@
 
             /**
              * The {{#crossLink "Camera"}}{{/crossLink}} being controlled.
-             *             *
-             * @property project
+             *
+             * @property camera
              * @type Camera
              */
             camera: {
@@ -153,6 +154,8 @@
 
             /**
              * Flag which indicates whether this CameraControl is active or not.
+             *
+             * Fires an {{#crossLink "CameraControl/active:event"}}{{/crossLink}} event on change.
              *
              * @property active
              * @type Boolean

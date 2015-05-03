@@ -41,10 +41,13 @@
                                 <li><a href="../classes/AmbientLight.html">AmbientLight</a></li>
                                 <li><a href="../classes/BIMSURFER.html">BIMSURFER</a></li>
                                 <li><a href="../classes/BoxGeometry.html">BoxGeometry</a></li>
+                                <li><a href="../classes/BoxObject.html">BoxObject</a></li>
                                 <li><a href="../classes/Camera.html">Camera</a></li>
+                                <li><a href="../classes/CameraControl.html">CameraControl</a></li>
                                 <li><a href="../classes/Canvas.html">Canvas</a></li>
                                 <li><a href="../classes/ClickSelectObjects.html">ClickSelectObjects</a></li>
                                 <li><a href="../classes/Component.html">Component</a></li>
+                                <li><a href="../classes/Configs.html">Configs</a></li>
                                 <li><a href="../classes/DirLight.html">DirLight</a></li>
                                 <li><a href="../classes/Effect.html">Effect</a></li>
                                 <li><a href="../classes/Fly.html">Fly</a></li>
@@ -62,13 +65,21 @@
                                 <li><a href="../classes/MouseZoomCamera.html">MouseZoomCamera</a></li>
                                 <li><a href="../classes/Object.html">Object</a></li>
                                 <li><a href="../classes/PointLight.html">PointLight</a></li>
+                                <li><a href="../classes/Selection.html">Selection</a></li>
                                 <li><a href="../classes/TeapotGeometry.html">TeapotGeometry</a></li>
+                                <li><a href="../classes/TeapotObject.html">TeapotObject</a></li>
                                 <li><a href="../classes/Viewer.html">Viewer</a></li>
                                 <li><a href="../classes/XRayEffect.html">XRayEffect</a></li>
                             </ul>
                 
                             <ul id="api-modules" class="apis modules">
+                                <li><a href="../modules/animate.html">animate</a></li>
                                 <li><a href="../modules/BIMSURFER.html">BIMSURFER</a></li>
+                                <li><a href="../modules/camera.html">camera</a></li>
+                                <li><a href="../modules/control.html">control</a></li>
+                                <li><a href="../modules/effect.html">effect</a></li>
+                                <li><a href="../modules/geometry.html">geometry</a></li>
+                                <li><a href="../modules/input.html">input</a></li>
                             </ul>
                         </div>
                     </div>
@@ -106,14 +117,15 @@
 <div class="box meta">
 
         <div class="extends">
-            Extends <a href="../classes/Component.html" class="crosslink">Component</a>
+            Extends <a href="../classes/Effect.html" class="crosslink">Effect</a>
         </div>
 
         <div class="foundat">
             Defined in: <a href="../files/src_core_effect_isolateEffect.js.html#l1"><code>src&#x2F;core&#x2F;effect&#x2F;isolateEffect.js:1</code></a>
         </div>
 
-            Module: <a href="../modules/BIMSURFER.html">BIMSURFER</a>
+            Module: <a href="../modules/effect.html">effect</a><br>
+            Parent Module: <a href="../modules/BIMSURFER.html">BIMSURFER</a>
 
 </div>
 
@@ -221,12 +233,12 @@
                         </li>
                         <li class="param">
                                 <code class="param-name optional">[selection]</code>
-                                <span class="type">Selection</span>
+                                <span class="type"><a href="../classes/Selection.html" class="crosslink">Selection</a></span>
                                 <span class="flag optional" title="This parameter is optional.">optional</span>
         
         
                             <div class="param-description">
-                                <p>The Selection to update.</p>
+                                <p>The <a href="../classes/Selection.html" class="crosslink">Selection</a> to update.</p>
         
                             </div>
         
@@ -296,6 +308,10 @@
 
                     <ul class="index-list properties extends">
                             <li class="index-item property inherited">
+                                <a href="#property_active">active</a>
+
+                            </li>
+                            <li class="index-item property inherited">
                                 <a href="#property_className">className</a>
 
                             </li>
@@ -312,10 +328,6 @@
 
                             </li>
                             <li class="index-item property inherited">
-                                <a href="#property_type">type</a>
-
-                            </li>
-                            <li class="index-item property inherited">
                                 <a href="#property_viewer">viewer</a>
 
                             </li>
@@ -327,6 +339,10 @@
                     <h3>Events</h3>
 
                     <ul class="index-list events extends">
+                            <li class="index-item event inherited">
+                                <a href="#event_active">active</a>
+
+                            </li>
                             <li class="index-item event inherited">
                                 <a href="#event_destroyed">destroyed</a>
 
@@ -353,7 +369,7 @@
     <div class="meta">
                 <p>Inherited from
                 <a href="../classes/Component.html#method_destroy">Component</a>:
-        <a href="../files/src_core_component.js.html#l415"><code>src&#x2F;core&#x2F;component.js:415</code></a>
+        <a href="../files/src_core_component.js.html#l377"><code>src&#x2F;core&#x2F;component.js:377</code></a>
         </p>
 
 
@@ -392,7 +408,7 @@
     <div class="meta">
                 <p>Inherited from
                 <a href="../classes/Component.html#method_error">Component</a>:
-        <a href="../files/src_core_component.js.html#l391"><code>src&#x2F;core&#x2F;component.js:391</code></a>
+        <a href="../files/src_core_component.js.html#l353"><code>src&#x2F;core&#x2F;component.js:353</code></a>
         </p>
 
 
@@ -453,7 +469,7 @@
     <div class="meta">
                 <p>Inherited from
                 <a href="../classes/Component.html#method_fire">Component</a>:
-        <a href="../files/src_core_component.js.html#l285"><code>src&#x2F;core&#x2F;component.js:285</code></a>
+        <a href="../files/src_core_component.js.html#l247"><code>src&#x2F;core&#x2F;component.js:247</code></a>
         </p>
 
 
@@ -532,7 +548,7 @@ any subsequent notifications on that location as they are made.</p>
     <div class="meta">
                 <p>Inherited from
                 <a href="../classes/Component.html#method_log">Component</a>:
-        <a href="../files/src_core_component.js.html#l379"><code>src&#x2F;core&#x2F;component.js:379</code></a>
+        <a href="../files/src_core_component.js.html#l341"><code>src&#x2F;core&#x2F;component.js:341</code></a>
         </p>
 
 
@@ -587,7 +603,7 @@ any subsequent notifications on that location as they are made.</p>
     <div class="meta">
                 <p>Inherited from
                 <a href="../classes/Component.html#method_off">Component</a>:
-        <a href="../files/src_core_component.js.html#l342"><code>src&#x2F;core&#x2F;component.js:342</code></a>
+        <a href="../files/src_core_component.js.html#l304"><code>src&#x2F;core&#x2F;component.js:304</code></a>
         </p>
 
 
@@ -651,7 +667,7 @@ any subsequent notifications on that location as they are made.</p>
     <div class="meta">
                 <p>Inherited from
                 <a href="../classes/Component.html#method_on">Component</a>:
-        <a href="../files/src_core_component.js.html#l312"><code>src&#x2F;core&#x2F;component.js:312</code></a>
+        <a href="../files/src_core_component.js.html#l274"><code>src&#x2F;core&#x2F;component.js:274</code></a>
         </p>
 
 
@@ -744,7 +760,7 @@ any subsequent notifications on that location as they are made.</p>
     <div class="meta">
                 <p>Inherited from
                 <a href="../classes/Component.html#method_once">Component</a>:
-        <a href="../files/src_core_component.js.html#l361"><code>src&#x2F;core&#x2F;component.js:361</code></a>
+        <a href="../files/src_core_component.js.html#l323"><code>src&#x2F;core&#x2F;component.js:323</code></a>
         </p>
 
 
@@ -821,7 +837,7 @@ any subsequent notifications on that location as they are made.</p>
     <div class="meta">
                 <p>Inherited from
                 <a href="../classes/Component.html#method_warn">Component</a>:
-        <a href="../files/src_core_component.js.html#l403"><code>src&#x2F;core&#x2F;component.js:403</code></a>
+        <a href="../files/src_core_component.js.html#l365"><code>src&#x2F;core&#x2F;component.js:365</code></a>
         </p>
 
 
@@ -860,6 +876,32 @@ any subsequent notifications on that location as they are made.</p>
             <div id="properties" class="api-class-tabpanel">
                 <h2 class="off-left">Properties</h2>
 
+                    <div id="property_active" class="property item inherited">
+                        <h3 class="name"><code>active</code></h3>
+                        <span class="type">Boolean</span>
+                    
+                    
+                    
+                    
+                    
+                        <div class="meta">
+                                    <p>Inherited from
+                                    <a href="../classes/Effect.html#property_active">Effect</a>:
+                            <a href="../files/src_core_effect_effect.js.html#l56"><code>src&#x2F;core&#x2F;effect&#x2F;effect.js:56</code></a>
+                            </p>
+                    
+                    
+                        </div>
+                    
+                        <div class="description">
+                            <p>Flag which indicates whether this Effect is active or not.</p>
+                    <p>Fires an <a href="../classes/Effect.html#event_active" class="crosslink">active</a> event on change.</p>
+                    
+                        </div>
+                    
+                    
+                    
+                    </div>
                     <div id="property_className" class="property item">
                         <h3 class="name"><code>className</code></h3>
                         <span class="type">String</span>
@@ -875,7 +917,7 @@ any subsequent notifications on that location as they are made.</p>
                                     Component
                                 </a>
                                 but overwritten in
-                            <a href="../files/src_core_effect_isolateEffect.js.html#l28"><code>src&#x2F;core&#x2F;effect&#x2F;isolateEffect.js:28</code></a>
+                            <a href="../files/src_core_effect_isolateEffect.js.html#l29"><code>src&#x2F;core&#x2F;effect&#x2F;isolateEffect.js:29</code></a>
                             </p>
                     
                     
@@ -900,7 +942,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>Inherited from
                                     <a href="../classes/Component.html#property_destroyed">Component</a>:
-                            <a href="../files/src_core_component.js.html#l253"><code>src&#x2F;core&#x2F;component.js:253</code></a>
+                            <a href="../files/src_core_component.js.html#l217"><code>src&#x2F;core&#x2F;component.js:217</code></a>
                             </p>
                     
                     
@@ -926,7 +968,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>Inherited from
                                     <a href="../classes/Component.html#property_id">Component</a>:
-                            <a href="../files/src_core_component.js.html#l244"><code>src&#x2F;core&#x2F;component.js:244</code></a>
+                            <a href="../files/src_core_component.js.html#l208"><code>src&#x2F;core&#x2F;component.js:208</code></a>
                             </p>
                     
                     
@@ -951,7 +993,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>Inherited from
                                     <a href="../classes/Component.html#property_metadata">Component</a>:
-                            <a href="../files/src_core_component.js.html#l236"><code>src&#x2F;core&#x2F;component.js:236</code></a>
+                            <a href="../files/src_core_component.js.html#l200"><code>src&#x2F;core&#x2F;component.js:200</code></a>
                             </p>
                     
                     
@@ -959,32 +1001,6 @@ any subsequent notifications on that location as they are made.</p>
                     
                         <div class="description">
                             <p>Metadata on this component.</p>
-                    
-                        </div>
-                    
-                    
-                    
-                    </div>
-                    <div id="property_type" class="property item inherited">
-                        <h3 class="name"><code>type</code></h3>
-                        <span class="type">String</span>
-                    
-                    
-                    
-                            <span class="flag final">final</span>
-                    
-                    
-                        <div class="meta">
-                                    <p>Inherited from
-                                    <a href="../classes/Component.html#property_type">Component</a>:
-                            <a href="../files/src_core_component.js.html#l227"><code>src&#x2F;core&#x2F;component.js:227</code></a>
-                            </p>
-                    
-                    
-                        </div>
-                    
-                        <div class="description">
-                            <p>The IFC type of this Component.</p>
                     
                         </div>
                     
@@ -1003,7 +1019,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>Inherited from
                                     <a href="../classes/Component.html#property_viewer">Component</a>:
-                            <a href="../files/src_core_component.js.html#l218"><code>src&#x2F;core&#x2F;component.js:218</code></a>
+                            <a href="../files/src_core_component.js.html#l191"><code>src&#x2F;core&#x2F;component.js:191</code></a>
                             </p>
                     
                     
@@ -1023,6 +1039,48 @@ any subsequent notifications on that location as they are made.</p>
             <div id="events" class="api-class-tabpanel">
                 <h2 class="off-left">Events</h2>
 
+                    <div id="event_active" class="events item inherited">
+                        <h3 class="name"><code>active</code></h3>
+                        <span class="type"></span>
+                    
+                    
+                    
+                    
+                    
+                        <div class="meta">
+                                    <p>Inherited from
+                                    <a href="../classes/Effect.html#event_active">Effect</a>:
+                            <a href="../files/src_core_effect_effect.js.html#l99"><code>src&#x2F;core&#x2F;effect&#x2F;effect.js:99</code></a>
+                            </p>
+                    
+                    
+                        </div>
+                    
+                        <div class="description">
+                            <p>Fired whenever this Effect&#39;s <a href="../classes/Effect.html#property_active" class="crosslink">active</a> property changes.</p>
+                    
+                        </div>
+                    
+                            <div class="params">
+                                <h4>Event Payload:</h4>
+                    
+                                <ul class="params-list">
+                                    <li class="param">
+                                            <code class="param-name">value</code>
+                                            <span class="type">Object</span>
+                    
+                    
+                                        <div class="param-description">
+                                            <p>The property&#39;s new value</p>
+                    
+                                        </div>
+                    
+                                    </li>
+                                </ul>
+                            </div>
+                    
+                    
+                    </div>
                     <div id="event_destroyed" class="events item inherited">
                         <h3 class="name"><code>destroyed</code></h3>
                         <span class="type"></span>
@@ -1034,7 +1092,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>Inherited from
                                     <a href="../classes/Component.html#event_destroyed">Component</a>:
-                            <a href="../files/src_core_component.js.html#l435"><code>src&#x2F;core&#x2F;component.js:435</code></a>
+                            <a href="../files/src_core_component.js.html#l397"><code>src&#x2F;core&#x2F;component.js:397</code></a>
                             </p>
                     
                     

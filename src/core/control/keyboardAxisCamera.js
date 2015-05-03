@@ -11,6 +11,7 @@
 
  @class KeyboardAxisCamera
  @module BIMSURFER
+ @submodule control
  @constructor
  @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
  @param [cfg] {*} Configs
@@ -45,6 +46,14 @@
 
         _props: {
 
+            /**
+             * Flag which indicates whether this KeyboardAxisCamera is active or not.
+             *
+             * Fires an {{#crossLink "KeyboardAxisCamera/active:event"}}{{/crossLink}} event on change.
+             *
+             * @property active
+             * @type Boolean
+             */
             active: {
 
                 set: function (value) {
@@ -152,14 +161,17 @@
                                 }
                             });
 
-                        this.fire('active', this._active = true);
-
                     } else {
 
                         this.viewer.off(this._onKeyDown);
-
-                        this.fire('active', this._active = false);
                     }
+
+                    /**
+                     * Fired whenever this KeyboardAxisCamera's {{#crossLink "KeyboardAxisCamera/active:property"}}{{/crossLink}} property changes.
+                     * @event active
+                     * @param value The property's new value
+                     */
+                    this.fire('active', this._active = value);
                 },
 
                 get: function () {
