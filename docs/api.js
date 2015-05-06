@@ -68,7 +68,7 @@ YUI.add("yuidoc-meta", function(Y) {
         {
             "displayName": "effect",
             "name": "effect",
-            "description": "An **Effect** is a the base class for visual effects that are applied to {{#crossLink \"ObjectSet\"}}ObjectSets{{/crossLink}}.\n\n## Overview\n\n<ul>\n<li>Effect is subclassed by {{#crossLink \"HighlightEffect\"}}{{/crossLink}}, {{#crossLink \"IsolateEffect\"}}{{/crossLink}} and {{#crossLink \"XRayEffect\"}}{{/crossLink}}.</li>\n<li>Multiple Effects can share the same {{#crossLink \"ObjectSet\"}}{{/crossLink}} if required.</li>\n<li>An Effect will provide its own default {{#crossLink \"ObjectSet\"}}{{/crossLink}} when you don't configure it with one.</li>\n</ul>\n\n## Example\n\nTODO"
+            "description": "An **Effect** is a the base class for visual effects that are applied to {{#crossLink \"ObjectSet\"}}ObjectSets{{/crossLink}}.\n\n## Overview\n\n<ul>\n<li>Effect is subclassed by {{#crossLink \"HighlightEffect\"}}{{/crossLink}}, {{#crossLink \"IsolateEffect\"}}{{/crossLink}} and {{#crossLink \"XRayEffect\"}}{{/crossLink}}.</li>\n<li>Multiple Effects can share the same {{#crossLink \"ObjectSet\"}}{{/crossLink}} if required.</li>\n<li>An Effect will provide its own default {{#crossLink \"ObjectSet\"}}{{/crossLink}} when you don't configure it with one.</li>\n</ul>"
         },
         {
             "displayName": "geometry",

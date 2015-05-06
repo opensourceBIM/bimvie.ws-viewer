@@ -135,7 +135,7 @@
 <h2 id="overview">Overview</h2>
 <p>TODO</p>
 <h2 id="example">Example</h2>
-<p>In the example below we&#39;ll create three Objects, each with a unique ID:</p>
+<p>In the example below we&#39;ll create three Objects, each with a unique ID and a modelling transform:</p>
 <pre class="code prettyprint"><code class="lang-Javascript">// Create a Viewer
 var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
 
@@ -169,7 +169,7 @@ new BIMSURFER.Object(viewer, {
    matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])
 });
 </code></pre>
-<p>We can find the objects in the <a href="../classes/Viewer.html" class="crosslink">Viewer</a> by ID:</p>
+<p>We can then find the objects in the <a href="../classes/Viewer.html" class="crosslink">Viewer</a> by ID:</p>
 <pre class="code prettyprint"><code class="lang-javascript">var foo = viewer.components["foo"];
 </code></pre>
 <p>or by IFC type:</p>

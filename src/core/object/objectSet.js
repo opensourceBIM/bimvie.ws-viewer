@@ -4,71 +4,18 @@
  ## Overview
 
  <ul>
- <li>{{#crossLink "Object"}}Objects{{/crossLink}} can be added and removed to and from an ObjectSet using IDs or IFC types.</li>
- <li>An {{#crossLink "ObjectSet"}}{{/crossLink}} can be queried at any time for the {{#crossLink "ObjectSet/boundary:property"}}{{/crossLink}}
+ <li>Supports addition and removal of {{#crossLink "Object"}}Objects{{/crossLink}} by instance, ID or IFC type.</li>
+ <li>Can be queried for the {{#crossLink "ObjectSet/boundary:property"}}{{/crossLink}}
  and {{#crossLink "ObjectSet/center:property"}}{{/crossLink}} of its {{#crossLink "Object"}}Objects{{/crossLink}}.</li>
- <li>Effects like {{#crossLink "HighlightEffect"}}{{/crossLink}}, {{#crossLink "XRayEffect"}}{{/crossLink}} and
- {{#crossLink "IsolateEffect"}}{{/crossLink}} apply their effects to ObjectSets.</li>
- <li>A {{#crossLink "ClickSelectObjects"}}{{/crossLink}} can be used to add and remove {{#crossLink "Object"}}Objects{{/crossLink}} to or from an ObjectSet as you click them.</li>
+ <li>Use with a {{#crossLink "ClickSelectObjects"}}{{/crossLink}} to add and remove {{#crossLink "Object"}}Objects{{/crossLink}} with mouse clicks.</li>
+ <li>Can be used to mask {{#crossLink "Object"}}Objects{{/crossLink}} for Effects such as {{#crossLink "HighlightEffect"}}{{/crossLink}}, {{#crossLink "XRayEffect"}}{{/crossLink}} and
+ {{#crossLink "IsolateEffect"}}{{/crossLink}}.</li>
 
  </ul>
 
-
- TODO
-
  ## Examples
 
- Highlighting clicked objects, using an ObjectSet, {{#crossLink "HighlightEffect"}}{{/crossLink}} and {{#crossLink "ClickSelectObjects"}}{{/crossLink}}:
-
- ````javascript
-
- // Create a Viewer
- var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
-
- // Create a Camera
- var camera = new BIMSURFER.Camera(viewer, {
-    eye: [0, 0, -10]
- });
-
- // Create a CameraControl to interact with the Camera
- var cameraControl = new BIMSURFER.CameraControl(viewer, {
-    camera: camera
- });
-
- // Create some BoxObjects
-
- new BIMSURFER.BoxObject(viewer, {
-    objectId: "foo",
-    ifcType: "IfcWall",
-    matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])
- });
-
- new BIMSURFER.BoxObject(viewer, {
-    objectId: "bar",
-    ifcType: "IfcWall",
-    matrix: BIMSURFER.math.translationMat4v([4, 0, -4])
- });
-
- new BIMSURFER.Object(viewer, {
-    objectId: "baz",
-    ifcType: "IfcBeam",
-    matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])
- });
-
- // Create an ObjectSet
- var objectSet = new BIMSURFER.ObjectSet(viewer);
-
- // Apply a Highlight effect to the ObjectSet
- var highlightEffect = new BIMSURFER.HighlightEffect(viewer, {
-        objectSet: objectSet
-    });
-
- // Create a ClickSelectObjects control, which will add and remove objects to and from the ObjectSet
- // to and from the ObjectSet as we click them
- var clickSelect = new BIMSURFER.ClickSelectObjects(viewer, {
-        objectSet: objectSet
-    });
- ````
+ #### Adding and removing Objects by ID
 
  Isolate objects that match given IDs, using an ObjectSet and an {{#crossLink "IsolateEffect"}}{{/crossLink}}:
 
@@ -113,7 +60,7 @@
  // Apply an Isolate effect to the ObjectSet
  var isolateEffect = new BIMSURFER.IsolateEffect(viewer, {
         objectSet: objectSet
-    });
+ });
 
  // Add Objects to the ObjectSet by ID
  // These Objects become visible
@@ -124,6 +71,8 @@
  objectSet.removeObjectIds(["baz"]);
 
  ````
+
+ #### Adding and removing Objects by IFC type
 
  X-ray and highlight objects that match given IFC types, using an ObjectSet, {{#crossLink "XRayEffect"}}{{/crossLink}} and {{#crossLink "HighlightEffect"}}{{/crossLink}}:
 
@@ -177,12 +126,66 @@
 
  // Add Objects to the ObjectSet by IFC type
  // These Objects become opaque and highlighted
- objectSet.addObjectTypes(["IfcWall", "IfcBeam"]);
+ objectSet.addTypes(["IfcWall", "IfcBeam"]);
 
  // Remove an Object from the ObjectSet by IFC type
  // That Object becomes transparent and non-highlighted
- objectSet.removeObjectTypes(["IfcWall"]);
+ objectSet.removeTypes(["IfcWall"]);
 
+ ````
+
+ #### Using with a ClickSelectObjects
+
+ Highlighting clicked objects, using an ObjectSet, {{#crossLink "HighlightEffect"}}{{/crossLink}} and {{#crossLink "ClickSelectObjects"}}{{/crossLink}}:
+
+ ````javascript
+
+ // Create a Viewer
+ var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+
+ // Create a Camera
+ var camera = new BIMSURFER.Camera(viewer, {
+    eye: [0, 0, -10]
+ });
+
+ // Create a CameraControl to interact with the Camera
+ var cameraControl = new BIMSURFER.CameraControl(viewer, {
+    camera: camera
+ });
+
+ // Create some BoxObjects
+
+ new BIMSURFER.BoxObject(viewer, {
+    objectId: "foo",
+    ifcType: "IfcWall",
+    matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])
+ });
+
+ new BIMSURFER.BoxObject(viewer, {
+    objectId: "bar",
+    ifcType: "IfcWall",
+    matrix: BIMSURFER.math.translationMat4v([4, 0, -4])
+ });
+
+ new BIMSURFER.Object(viewer, {
+    objectId: "baz",
+    ifcType: "IfcBeam",
+    matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])
+ });
+
+ // Create an ObjectSet
+ var objectSet = new BIMSURFER.ObjectSet(viewer);
+
+ // Apply a Highlight effect to the ObjectSet
+ var highlightEffect = new BIMSURFER.HighlightEffect(viewer, {
+        objectSet: objectSet
+    });
+
+ // Create a ClickSelectObjects control, which will add and remove objects to and from the ObjectSet
+ // to and from the ObjectSet as we click them
+ var clickSelect = new BIMSURFER.ClickSelectObjects(viewer, {
+        objectSet: objectSet
+    });
  ````
 
  #### Boundaries
@@ -203,9 +206,6 @@
 
     "use strict";
 
-    /**
-     * A selection of {@link BIMSURFER.Object}s within a {@link BIMSURFER.Viewer}.
-     */
     BIMSURFER.ObjectSet = BIMSURFER.Component.extend({
 
         /**
@@ -221,12 +221,26 @@
 
             var self = this;
 
+            /**
+             * The {{#crossLink "Objects"}}{{/crossLink}} within this ObjectSet, mapped to their IDs.
+             *
+             * Fires an {{#crossLink "ObjectSet/updated:event"}}{{/crossLink}} event on change.
+             *
+             * @property objects
+             * @type {{String:Object}}
+             */
             this.objects = {};
 
             // Subscribe to each Object's transform matrix
             // so we can mark selection boundary dirty
             this._onObjectMatrix = {};
 
+            /**
+             * The number of {{#crossLink "Objects"}}{{/crossLink}} within this ObjectSet.
+             *
+             * @property numObjects
+             * @type Number
+             */
             this.numObjects = 0;
 
             this._boundary = {xmin: 0.0, ymin: 0.0, zmin: 0.0, xmax: 0.0, ymax: 0.0, zmax: 0.0 };
@@ -243,6 +257,22 @@
 
                         self._boundaryDirty = true;
 
+                        /**
+                         * Fired whenever {{#crossLink "Object"}}Objects{{/crossLink}} are added or removed from this ObjectSet.
+                         *
+                         * Note that this event also indicates that the ObjectSet's {{#crossLink "ObjectSet/boundary:property"}}{{/crossLink}}
+                         * and {{#crossLink "ObjectSet/center:property"}}{{/crossLink}} will have updated, accordingly.
+                         *
+                         * @event updated
+                         * @param e The event
+                         * @param Boolean [cleared
+                         * @param [e.removed] Info on removed Objects
+                         * @param {Array of String} [e.removed.objectIds] IDs of removed Objects, when they were removed by ID
+                         * @param {{Array of String} [e.removed.ifcTypes] IFC types of removed Objects, when they were removed by IFC type
+                         * @param {} [e.added] Info on added Objects
+                         * @param {Array of String} [e.added.objectIds] IDs of added Objects, when they were added by ID
+                         * @param {Array of String} [e.added.ifcTypes] IFC types of added Objects, when they were added by IFC type
+                         */
                         self.fire("updated", {
                             removed: {
                                 objectIds: [component.id]
@@ -264,6 +294,13 @@
             }
         },
 
+        /**
+         * Removes all {{#crossLink "Object"}}Objects{{/crossLink}} from this ObjectSet.
+         *
+         * Fires an {{#crossLink "ObjectSet/updated:event"}}{{/crossLink}} event.
+         *
+         * @method clear
+         */
         clear: function () {
             for (var objectId in this.objects) {
                 if (this.objects.hasOwnProperty(objectId)) {
@@ -276,6 +313,16 @@
             });
         },
 
+        /**
+         * Adds {{#crossLink "Object"}}Objects{{/crossLink}} instances to this ObjectSet.
+         *
+         * The {{#crossLink "Object"}}Objects{{/crossLink}} must be in the same {{#crossLink "Viewer"}}{{/crossLink}} as this ObjectSet.
+         *
+         * Fires an {{#crossLink "ObjectSet/updated:event"}}{{/crossLink}} event.
+         *
+         * @method addObjects
+         * @param {Array of Objects} objects Array of {{#crossLink "Object"}}Objects{{/crossLink}} instances.
+         */
         addObjects: function (objects) {
 
             for (var i = 0, len = objects.length; i < len; i++) {
@@ -329,6 +376,16 @@
             this._boundaryDirty = true;
         },
 
+        /**
+         * Removes {{#crossLink "Object"}}Objects{{/crossLink}} instances from this ObjectSet.
+         *
+         * The {{#crossLink "Object"}}Objects{{/crossLink}} must be in the same {{#crossLink "Viewer"}}{{/crossLink}} as this ObjectSet.
+         *
+         * Fires an {{#crossLink "ObjectSet/updated:event"}}{{/crossLink}} event.
+         *
+         * @method removeObjects
+         * @param {Array of Objects} objects Array of {{#crossLink "Object"}}Objects{{/crossLink}} instances.
+         */
         removeObjects: function (objects) {
 
             for (var i = 0, len = objects.length; i < len; i++) {
@@ -342,6 +399,16 @@
             });
         },
 
+        /**
+         * Adds {{#crossLink "Object"}}Objects{{/crossLink}} by ID to this ObjectSet.
+         *
+         * The {{#crossLink "Object"}}Objects{{/crossLink}} must be in the same {{#crossLink "Viewer"}}{{/crossLink}} as this ObjectSet.
+         *
+         * Fires an {{#crossLink "ObjectSet/updated:event"}}{{/crossLink}} event.
+         *
+         * @method addObjectIds
+         * @param {Array of String} objects Array of {{#crossLink "Object"}}Object{{/crossLink}} IDs.
+         */
         addObjectIds: function (objectIds) {
 
             var objectId;
@@ -367,6 +434,16 @@
             });
         },
 
+        /**
+         * Removes {{#crossLink "Object"}}Objects{{/crossLink}} by ID from this ObjectSet.
+         *
+         * The {{#crossLink "Object"}}Objects{{/crossLink}} must be in the same {{#crossLink "Viewer"}}{{/crossLink}} as this ObjectSet.
+         *
+         * Fires an {{#crossLink "ObjectSet/updated:event"}}{{/crossLink}} event.
+         *
+         * @method removeObjectIds
+         * @param {Array of String} objects Array of {{#crossLink "Object"}}Object{{/crossLink}} IDs.
+         */
         removeObjectIds: function (objectIds) {
 
             var objectId;
@@ -392,6 +469,16 @@
             });
         },
 
+        /**
+         * Adds {{#crossLink "Object"}}Objects{{/crossLink}} by IFC type to this ObjectSet.
+         *
+         * The {{#crossLink "Object"}}Objects{{/crossLink}} must be in the same {{#crossLink "Viewer"}}{{/crossLink}} as this ObjectSet.
+         *
+         * Fires an {{#crossLink "ObjectSet/updated:event"}}{{/crossLink}} event.
+         *
+         * @method addTypes
+         * @param {Array of String} objects Array of IFC types.
+         */
         addTypes: function (types) {
 
             var type;
@@ -423,6 +510,16 @@
             });
         },
 
+        /**
+         * Removes {{#crossLink "Object"}}Objects{{/crossLink}} by IFC type from this ObjectSet.
+         *
+         * The {{#crossLink "Object"}}Objects{{/crossLink}} must be in the same {{#crossLink "Viewer"}}{{/crossLink}} as this ObjectSet.
+         *
+         * Fires an {{#crossLink "ObjectSet/updated:event"}}{{/crossLink}} event.
+         *
+         * @method removeTypes
+         * @param {Array of String} objects Array of IFC types.
+         */
         removeTypes: function (types) {
 
             var type;
@@ -454,10 +551,10 @@
         },
 
         /**
-         * Iterates with a callback over the objects in this selection
+         * Iterates with a callback over the {{#crossLink "Object"}}Objects{{/crossLink}} in this ObjectSet.
          *
-         * @param {String} typeNames List of type names
-         * @param {Function} callback Callback called for each Component of the given types
+         * @method withObjects
+         * @param {Function} callback Callback called for each {{#crossLink "Object"}}{{/crossLink}}.
          */
         withObjects: function (callback) {
             for (var objectId in this.objects) {

@@ -7,7 +7,67 @@
 
  ## Example
 
- TODO
+ #### Creating a triangle mesh Geometry
+
+ ````javascript
+
+ // Create a Viewer
+ var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+
+ // Create a Camera
+ var camera = new BIMSURFER.Camera(viewer, {
+    eye: [0, 0, -10]
+ });
+
+ // Create a CameraControl to interact with the Camera
+ var cameraControl = new BIMSURFER.CameraControl(viewer, {
+    camera: camera
+ });
+
+ // Create a triangle mesh Geometry
+
+ var geometry = new BIMSURFER.Geometry(viewer, {
+
+    primitive: "triangles",
+
+    positions: [
+        5, 5, 5, -5, 5, 5, -5, -5, 5, 5, -5, 5, // v0-v1-v2-v3 front
+        5, 5, 5, 5, -5, 5, 5, -5, -5, 5, 5, -5, // v0-v3-v4-v5 right
+        5, 5, 5, 5, 5, -5, -5, 5, -5, -5, 5, 5, // v0-v5-v6-v1 top
+        -5, 5, 5, -5, 5, -5, -5, -5, -5, -5, -5, 5, // v1-v6-v7-v2 left
+        -5, -5, -5, 5, -5, -5, 5, -5, 5, -5, -5, 5, // v7-v4-v3-v2 bottom
+        5, -5, -5, -5, -5, -5, -5, 5, -5, 5, 5, -5 // v4-v7-v6-v5 back
+    ],
+
+    normals: [
+        0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, // v0-v1-v2-v3 front
+        1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, // v0-v3-v4-v5 right
+        0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, // v0-v5-v6-v1 top
+       -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, // v1-v6-v7-v2 left
+        0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, // v7-v4-v3-v2 bottom
+        0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1 // v4-v7-v6-v5 back
+    ],
+
+    indices: [
+        0, 1, 2, 0, 2, 3, // back
+        4, 5, 6, 4, 6, 7,  // front
+        8, 9, 10, 8, 10, 11, // right
+        12, 13, 14, 12, 14, 15, // top
+        16, 17, 18, 16, 18, 19, // left
+        20, 21, 22, 20, 22, 23 // bottom
+    ]
+ });
+
+ // Create an Object that uses our Geometry
+ // Note that an Object can have multiple Geometries
+
+ new BIMSURFER.BoxObject(viewer, {
+    objectId: "foo",
+    ifcType: "IfcWall",
+    geometries: [ geometry ]
+ });
+
+ ````
 
  @class Geometry
  @module BIMSURFER

@@ -9,10 +9,6 @@
  <li>An Effect will provide its own default {{#crossLink "ObjectSet"}}{{/crossLink}} when you don't configure it with one.</li>
  </ul>
 
- ## Example
-
- TODO
-
  @class Effect
  @module BIMSURFER
  @submodule effect
