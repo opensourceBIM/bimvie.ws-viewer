@@ -131,7 +131,7 @@
 
 
 <div class="box intro">
-    <p>A <strong>PointLight</strong> defines a positional light source that originates from a single point and spreads outward in all directions.</p>
+    <p>A <strong>PointLight</strong> is a <a href="../classes/Light.html" class="crosslink">Light</a> that defines a positional light source that originates from a single point and spreads outward in all directions.</p>
 <h2 id="overview">Overview</h2>
 <ul>
 
@@ -149,7 +149,26 @@ head as the <a href="../classes/Camera.html" class="crosslink">Camera</a> moves.
 
 
 <h2 id="example">Example</h2>
-<p>TODO</p>
+<pre class="code prettyprint"><code class="lang-javascript">var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+
+var camera = new BIMSURFER.Camera(viewer, {
+   eye: [0, 0, -10]
+});
+
+var cameraControl = new BIMSURFER.CameraControl(viewer, {
+   camera: camera
+});
+
+var box = new BIMSURFER.BoxObject(viewer);
+
+var pointLight = new BIMSURFER.PointLight(viewer, {
+   color: [1.0, 0.5, 0.5],
+   pos: [1.0, 1.0, -1.0],
+   constantAttenuation: 0.0,
+   linearAttenuation: 0.0,
+   quadraticAttenuation: 0.0
+});
+</code></pre>
 
 </div>
 
@@ -976,7 +995,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>Inherited from
                                     <a href="../classes/Light.html#property_active">Light</a>:
-                            <a href="../files/src_core_light_light.js.html#l54"><code>src&#x2F;core&#x2F;light&#x2F;light.js:54</code></a>
+                            <a href="../files/src_core_light_light.js.html#l51"><code>src&#x2F;core&#x2F;light&#x2F;light.js:51</code></a>
                             </p>
                     
                     
@@ -1006,7 +1025,7 @@ any subsequent notifications on that location as they are made.</p>
                                     Component
                                 </a>
                                 but overwritten in
-                            <a href="../files/src_core_light_light.js.html#l30"><code>src&#x2F;core&#x2F;light&#x2F;light.js:30</code></a>
+                            <a href="../files/src_core_light_light.js.html#l27"><code>src&#x2F;core&#x2F;light&#x2F;light.js:27</code></a>
                             </p>
                     
                     
@@ -1031,7 +1050,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_light_pointLight.js.html#l85"><code>src&#x2F;core&#x2F;light&#x2F;pointLight.js:85</code></a>
+                            <a href="../files/src_core_light_pointLight.js.html#l105"><code>src&#x2F;core&#x2F;light&#x2F;pointLight.js:105</code></a>
                             </p>
                     
                     
@@ -1057,7 +1076,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_light_pointLight.js.html#l106"><code>src&#x2F;core&#x2F;light&#x2F;pointLight.js:106</code></a>
+                            <a href="../files/src_core_light_pointLight.js.html#l126"><code>src&#x2F;core&#x2F;light&#x2F;pointLight.js:126</code></a>
                             </p>
                     
                     
@@ -1134,7 +1153,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_light_pointLight.js.html#l126"><code>src&#x2F;core&#x2F;light&#x2F;pointLight.js:126</code></a>
+                            <a href="../files/src_core_light_pointLight.js.html#l146"><code>src&#x2F;core&#x2F;light&#x2F;pointLight.js:146</code></a>
                             </p>
                     
                     
@@ -1185,7 +1204,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_light_pointLight.js.html#l62"><code>src&#x2F;core&#x2F;light&#x2F;pointLight.js:62</code></a>
+                            <a href="../files/src_core_light_pointLight.js.html#l82"><code>src&#x2F;core&#x2F;light&#x2F;pointLight.js:82</code></a>
                             </p>
                     
                     
@@ -1212,7 +1231,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_light_pointLight.js.html#l146"><code>src&#x2F;core&#x2F;light&#x2F;pointLight.js:146</code></a>
+                            <a href="../files/src_core_light_pointLight.js.html#l166"><code>src&#x2F;core&#x2F;light&#x2F;pointLight.js:166</code></a>
                             </p>
                     
                     
@@ -1238,7 +1257,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_light_pointLight.js.html#l166"><code>src&#x2F;core&#x2F;light&#x2F;pointLight.js:166</code></a>
+                            <a href="../files/src_core_light_pointLight.js.html#l186"><code>src&#x2F;core&#x2F;light&#x2F;pointLight.js:186</code></a>
                             </p>
                     
                     
@@ -1300,7 +1319,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>Inherited from
                                     <a href="../classes/Light.html#event_active">Light</a>:
-                            <a href="../files/src_core_light_light.js.html#l79"><code>src&#x2F;core&#x2F;light&#x2F;light.js:79</code></a>
+                            <a href="../files/src_core_light_light.js.html#l76"><code>src&#x2F;core&#x2F;light&#x2F;light.js:76</code></a>
                             </p>
                     
                     

@@ -146,7 +146,54 @@ more <a href="../classes/Effect.html" class="crosslink">Effects</a>, in order to
 <h2 id="overview">Overview</h2>
 <p>TODO</p>
 <h2 id="example">Example</h2>
-<p>TODO</p>
+<p>In this example we have a <a href="../classes/Viewer.html" class="crosslink">Viewer</a> with a
+<a href="../classes/Camera.html" class="crosslink">Camera</a> that&#39;s controlled by a CameraControl.</p>
+<pre class="code prettyprint"><code class="lang-Javascript">// Create a Viewer
+var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+
+// Create a Camera
+var camera = new BIMSURFER.Camera(viewer, {
+   eye: [0, 0, -10]
+});
+
+// Create a CameraControl
+var cameraControl = new BIMSURFER.CameraControl(viewer, {
+   camera: camera
+});
+
+// Create some BoxObjects
+
+new BIMSURFER.BoxObject(viewer, {
+   objectId: "foo",
+   ifcType: "IfcWall",
+   matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])
+});
+
+new BIMSURFER.BoxObject(viewer, {
+   objectId: "bar",
+   ifcType: "IfcWall",
+   matrix: BIMSURFER.math.translationMat4v([4, 0, -4])
+});
+
+new BIMSURFER.BoxObject(viewer, {
+   objectId: "baz",
+   ifcType: "IfcBeam",
+   matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])
+});
+
+// Create an ObjectSet
+var objectSet = new BIMSURFER.ObjectSet(viewer);
+
+// Apply a highlight effect to the ObjectSet
+var highlightEffect = new BIMSURFER.HighlightEffect(viewer, {
+   objectSet: objectSet
+});
+
+// Create a ClickSelectObjects
+var clickSelectObjects = new BIMSURFER.ClickSelectObjects(viewer, {
+   objectSet: objectSet
+});
+</code></pre>
 
 </div>
 
@@ -898,7 +945,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_control_clickSelectObjects.js.html#l62"><code>src&#x2F;core&#x2F;control&#x2F;clickSelectObjects.js:62</code></a>
+                            <a href="../files/src_core_control_clickSelectObjects.js.html#l112"><code>src&#x2F;core&#x2F;control&#x2F;clickSelectObjects.js:112</code></a>
                             </p>
                     
                     
@@ -928,7 +975,7 @@ any subsequent notifications on that location as they are made.</p>
                                     Component
                                 </a>
                                 but overwritten in
-                            <a href="../files/src_core_control_clickSelectObjects.js.html#l42"><code>src&#x2F;core&#x2F;control&#x2F;clickSelectObjects.js:42</code></a>
+                            <a href="../files/src_core_control_clickSelectObjects.js.html#l92"><code>src&#x2F;core&#x2F;control&#x2F;clickSelectObjects.js:92</code></a>
                             </p>
                     
                     
@@ -1061,7 +1108,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_control_clickSelectObjects.js.html#l139"><code>src&#x2F;core&#x2F;control&#x2F;clickSelectObjects.js:139</code></a>
+                            <a href="../files/src_core_control_clickSelectObjects.js.html#l189"><code>src&#x2F;core&#x2F;control&#x2F;clickSelectObjects.js:189</code></a>
                             </p>
                     
                     

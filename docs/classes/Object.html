@@ -149,23 +149,29 @@ var cameraControl = new BIMSURFER.CameraControl(viewer, {
    camera: camera
 });
 
-// Create some BoxObjects
+// Create a BoxGeometry
+var boxGeometry = new BIMSURFER.BoxGeometry(viewer);
 
-new BIMSURFER.BoxObject(viewer, {
+// Create some Objects that use our BoxGeometry
+
+new BIMSURFER.Object(viewer, {
    objectId: "foo",
    ifcType: "IfcWall",
+   geometries: [boxGeometry],
    matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])
 });
 
 new BIMSURFER.BoxObject(viewer, {
    objectId: "bar",
    ifcType: "IfcWall",
+   geometries: [boxGeometry],
    matrix: BIMSURFER.math.translationMat4v([4, 0, -4])
 });
 
 new BIMSURFER.Object(viewer, {
    objectId: "baz",
    ifcType: "IfcBeam",
+   geometries: [boxGeometry],
    matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])
 });
 </code></pre>
@@ -1048,7 +1054,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_object_object.js.html#l362"><code>src&#x2F;core&#x2F;object&#x2F;object.js:362</code></a>
+                            <a href="../files/src_core_object_object.js.html#l368"><code>src&#x2F;core&#x2F;object&#x2F;object.js:368</code></a>
                             </p>
                     
                     
@@ -1074,7 +1080,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_object_object.js.html#l565"><code>src&#x2F;core&#x2F;object&#x2F;object.js:565</code></a>
+                            <a href="../files/src_core_object_object.js.html#l571"><code>src&#x2F;core&#x2F;object&#x2F;object.js:571</code></a>
                             </p>
                     
                     
@@ -1099,7 +1105,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_object_object.js.html#l589"><code>src&#x2F;core&#x2F;object&#x2F;object.js:589</code></a>
+                            <a href="../files/src_core_object_object.js.html#l595"><code>src&#x2F;core&#x2F;object&#x2F;object.js:595</code></a>
                             </p>
                     
                     
@@ -1128,7 +1134,7 @@ any subsequent notifications on that location as they are made.</p>
                                     Component
                                 </a>
                                 but overwritten in
-                            <a href="../files/src_core_object_object.js.html#l87"><code>src&#x2F;core&#x2F;object&#x2F;object.js:87</code></a>
+                            <a href="../files/src_core_object_object.js.html#l93"><code>src&#x2F;core&#x2F;object&#x2F;object.js:93</code></a>
                             </p>
                     
                     
@@ -1153,7 +1159,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_object_object.js.html#l481"><code>src&#x2F;core&#x2F;object&#x2F;object.js:481</code></a>
+                            <a href="../files/src_core_object_object.js.html#l487"><code>src&#x2F;core&#x2F;object&#x2F;object.js:487</code></a>
                             </p>
                     
                     
@@ -1204,7 +1210,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_object_object.js.html#l424"><code>src&#x2F;core&#x2F;object&#x2F;object.js:424</code></a>
+                            <a href="../files/src_core_object_object.js.html#l430"><code>src&#x2F;core&#x2F;object&#x2F;object.js:430</code></a>
                             </p>
                     
                     
@@ -1256,7 +1262,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_object_object.js.html#l540"><code>src&#x2F;core&#x2F;object&#x2F;object.js:540</code></a>
+                            <a href="../files/src_core_object_object.js.html#l546"><code>src&#x2F;core&#x2F;object&#x2F;object.js:546</code></a>
                             </p>
                     
                     
@@ -1307,7 +1313,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_object_object.js.html#l514"><code>src&#x2F;core&#x2F;object&#x2F;object.js:514</code></a>
+                            <a href="../files/src_core_object_object.js.html#l520"><code>src&#x2F;core&#x2F;object&#x2F;object.js:520</code></a>
                             </p>
                     
                     
@@ -1336,7 +1342,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_object_object.js.html#l395"><code>src&#x2F;core&#x2F;object&#x2F;object.js:395</code></a>
+                            <a href="../files/src_core_object_object.js.html#l401"><code>src&#x2F;core&#x2F;object&#x2F;object.js:401</code></a>
                             </p>
                     
                     
@@ -1388,7 +1394,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_object_object.js.html#l452"><code>src&#x2F;core&#x2F;object&#x2F;object.js:452</code></a>
+                            <a href="../files/src_core_object_object.js.html#l458"><code>src&#x2F;core&#x2F;object&#x2F;object.js:458</code></a>
                             </p>
                     
                     
@@ -1420,7 +1426,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_object_object.js.html#l382"><code>src&#x2F;core&#x2F;object&#x2F;object.js:382</code></a>
+                            <a href="../files/src_core_object_object.js.html#l388"><code>src&#x2F;core&#x2F;object&#x2F;object.js:388</code></a>
                             </p>
                     
                     

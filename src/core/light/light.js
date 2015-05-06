@@ -4,13 +4,10 @@
 
  ## Overview
 
- ## Example
-
- TODO
-
- ````javascript
- TODO
- ````
+ <ul>
+ <li>Light is subclassed by {{#crossLink "AmbientLight"}}{{/crossLink}}, {{#crossLink "DirLight"}}{{/crossLink}} and {{#crossLink "PointLight"}}{{/crossLink}}.</li>
+ <li>The number of Lights allowed is governed by the number of ````varying```` types supported in your WebGL.</li>
+ </ul>
  @class Light
  @module BIMSURFER
  @constructor

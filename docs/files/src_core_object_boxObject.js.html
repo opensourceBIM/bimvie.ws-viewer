@@ -127,7 +127,28 @@
 
  ## Example
 
- TODO
+ &#x60;&#x60;&#x60;&#x60;Javascript
+ // Create a Viewer
+ var viewer = new BIMSURFER.Viewer(null, &quot;myDiv&quot;, {}, false);
+
+ // Create a Camera
+ var camera = new BIMSURFER.Camera(viewer, {
+    eye: [0, 0, -10]
+ });
+
+ // Create a CameraControl to interact with the Camera
+ var cameraControl = new BIMSURFER.CameraControl(viewer, {
+    camera: camera
+ });
+
+ // Create a BoxObject
+ new BIMSURFER.BoxObject(viewer, {
+    objectId: &quot;foo&quot;,
+    ifcType: &quot;IfcWall&quot;,
+    matrix: BIMSURFER.math.scaleMat4v([1.5, 1.5, 1.5])
+ });
+
+ &#x60;&#x60;&#x60;&#x60;
 
  @class BoxObject
  @module BIMSURFER

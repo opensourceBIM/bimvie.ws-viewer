@@ -1,5 +1,5 @@
 /**
- A **PointLight** defines a positional light source that originates from a single point and spreads outward in all directions.
+ A **PointLight** is a {{#crossLink "Light"}}{{/crossLink}} that defines a positional light source that originates from a single point and spreads outward in all directions.
 
  ## Overview
 
@@ -20,7 +20,27 @@
 
  ## Example
 
-TODO
+ ```` javascript
+ var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+
+ var camera = new BIMSURFER.Camera(viewer, {
+    eye: [0, 0, -10]
+ });
+
+ var cameraControl = new BIMSURFER.CameraControl(viewer, {
+    camera: camera
+ });
+
+ var box = new BIMSURFER.BoxObject(viewer);
+
+ var pointLight = new BIMSURFER.PointLight(viewer, {
+    color: [1.0, 0.5, 0.5],
+    pos: [1.0, 1.0, -1.0],
+    constantAttenuation: 0.0,
+    linearAttenuation: 0.0,
+    quadraticAttenuation: 0.0
+ });
+ ````
 
  @class PointLight
  @module BIMSURFER

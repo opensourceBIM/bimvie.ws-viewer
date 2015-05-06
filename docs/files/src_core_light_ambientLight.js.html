@@ -120,7 +120,7 @@
     <pre class="code prettyprint linenums">
 /**
 
- An **AmbientLight** defines an ambient light source of fixed intensity and color that affects all attached {{#crossLink &quot;Object&quot;}}Objects{{/crossLink}}
+ An **AmbientLight** is a {{#crossLink &quot;Light&quot;}}{{/crossLink}} that defines an ambient light source of fixed intensity and color that affects all attached {{#crossLink &quot;Object&quot;}}Objects{{/crossLink}}
  equally.
 
  ## Overview
@@ -129,10 +129,22 @@ TODO
 
  ## Example
 
- TODO
-
  &#x60;&#x60;&#x60;&#x60; javascript
+var viewer = new BIMSURFER.Viewer(null, &quot;myDiv&quot;, {}, false);
 
+var camera = new BIMSURFER.Camera(viewer, {
+    eye: [0, 0, -10]
+});
+
+var cameraControl = new BIMSURFER.CameraControl(viewer, {
+    camera: camera
+});
+
+var box = new BIMSURFER.BoxObject(viewer);
+
+var ambientLight = new BIMSURFER.AmbientLight(viewer, {
+    color: [0.4, 0.4, 0.4]
+});
  &#x60;&#x60;&#x60;&#x60;
 
  @class AmbientLight

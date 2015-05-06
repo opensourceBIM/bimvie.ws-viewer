@@ -136,7 +136,31 @@
 <h2 id="overview">Overview</h2>
 <p>TODO</p>
 <h2 id="example">Example</h2>
-<p>TODO</p>
+<pre class="code prettyprint"><code class="lang-javascript">// Create a Viewer
+var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+
+// Create a Camera
+var camera = new BIMSURFER.Camera(viewer, {
+   eye: [0, 0, -10]
+});
+
+// Create a CameraControl to interact with the Camera
+var cameraControl = new BIMSURFER.CameraControl(viewer, {
+   camera: camera
+});
+
+// Create a BoxGeometry
+var boxGeometry = new BIMSURFER.BoxGeometry(viewer);
+
+// Create an Object that uses our BoxGeometry
+// Note that an Object can have multiple Geometries
+
+new BIMSURFER.Object(viewer, {
+   objectId: "foo",
+   ifcType: "IfcWall",
+   geometries: [ boxGeometry ]
+});
+</code></pre>
 
 </div>
 
@@ -869,7 +893,7 @@ any subsequent notifications on that location as they are made.</p>
                                     Component
                                 </a>
                                 but overwritten in
-                            <a href="../files/src_core_geometry_boxGeometry.js.html#l28"><code>src&#x2F;core&#x2F;geometry&#x2F;boxGeometry.js:28</code></a>
+                            <a href="../files/src_core_geometry_boxGeometry.js.html#l53"><code>src&#x2F;core&#x2F;geometry&#x2F;boxGeometry.js:53</code></a>
                             </p>
                     
                     

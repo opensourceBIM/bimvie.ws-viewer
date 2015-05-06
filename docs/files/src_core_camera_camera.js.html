@@ -139,17 +139,22 @@
  // Create a Viewer
  var viewer = new BIMSURFER.Viewer(null, &quot;myDiv&quot;, {}, false);
 
- //...
-
  // Create a Camera
  var camera = new BIMSURFER.Camera(viewer, {
-        eye: [0, 0, -10]
-    });
+    eye: [0, 0, -10]
+ });
 
- // Create a CameraControl that controls our Camera
+ // Create a CameraControl to interact with the Camera
  var cameraControl = new BIMSURFER.CameraControl(viewer, {
-        camera: camera
-    });
+    camera: camera
+ });
+
+ // Create a BoxObject
+ new BIMSURFER.BoxObject(viewer, {
+    objectId: &quot;foo&quot;,
+    ifcType: &quot;IfcWall&quot;,
+    matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])
+ });
  &#x60;&#x60;&#x60;&#x60;
 
  Now let&#x27;s create a second Camera and switch the {{#crossLink &quot;CameraControl&quot;}}{{/crossLink}} over to it:

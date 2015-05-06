@@ -137,18 +137,21 @@
  {{#crossLink &quot;Camera&quot;}}{{/crossLink}} that&#x27;s controlled by a CameraControl.
 
  &#x60;&#x60;&#x60;&#x60;Javascript
-
+ // Create a Viewer
  var viewer = new BIMSURFER.Viewer(null, &quot;myDiv&quot;, {}, false);
 
+ // Create a Camera
  var camera = new BIMSURFER.Camera(viewer, {
-        eye: [0, 0, -10]
-    });
+    eye: [0, 0, -10]
+ });
 
+ // Create a CameraControl
  var cameraControl = new BIMSURFER.CameraControl(viewer, {
-        camera: camera
-    });
+    camera: camera
+ });
 
- var teapot = new BIMSURFER.BoxObject(viewer);
+ // Create a BoxObject
+ new BIMSURFER.BoxObject(viewer);
 
  &#x60;&#x60;&#x60;&#x60;
 

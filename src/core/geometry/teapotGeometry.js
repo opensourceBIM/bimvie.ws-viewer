@@ -7,7 +7,33 @@
 
  ## Example
 
- TODO
+ ````javascript
+ // Create a Viewer
+ var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+
+ // Create a Camera
+ var camera = new BIMSURFER.Camera(viewer, {
+    eye: [0, 0, -10]
+ });
+
+ // Create a CameraControl to interact with the Camera
+ var cameraControl = new BIMSURFER.CameraControl(viewer, {
+    camera: camera
+ });
+
+ // Create a TeapotGeometry
+ var teapotGeometry = new BIMSURFER.TeapotGeometry(viewer);
+
+ // Create an Object that uses our TeapotGeometry
+ // Note that an Object can have multiple Geometries
+
+ new BIMSURFER.Object(viewer, {
+    objectId: "foo",
+    ifcType: "IfcWall",
+    geometries: [ teapotGeometry ]
+ });
+ ````
+
 
  @class TeapotGeometry
  @module BIMSURFER

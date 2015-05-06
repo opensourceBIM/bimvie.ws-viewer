@@ -1,6 +1,6 @@
 /**
 
- An **AmbientLight** defines an ambient light source of fixed intensity and color that affects all attached {{#crossLink "Object"}}Objects{{/crossLink}}
+ An **AmbientLight** is a {{#crossLink "Light"}}{{/crossLink}} that defines an ambient light source of fixed intensity and color that affects all attached {{#crossLink "Object"}}Objects{{/crossLink}}
  equally.
 
  ## Overview
@@ -9,10 +9,22 @@ TODO
 
  ## Example
 
- TODO
-
  ```` javascript
+var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
 
+var camera = new BIMSURFER.Camera(viewer, {
+    eye: [0, 0, -10]
+});
+
+var cameraControl = new BIMSURFER.CameraControl(viewer, {
+    camera: camera
+});
+
+var box = new BIMSURFER.BoxObject(viewer);
+
+var ambientLight = new BIMSURFER.AmbientLight(viewer, {
+    color: [0.4, 0.4, 0.4]
+});
  ````
 
  @class AmbientLight

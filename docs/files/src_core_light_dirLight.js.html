@@ -119,7 +119,7 @@
 <div class="file">
     <pre class="code prettyprint linenums">
 /**
- A **DirLight** defines a directional light source that originates from a single point and spreads outward in all directions.
+ A **DirLight** is a {{#crossLink &quot;Light&quot;}}{{/crossLink}} that defines a directional light source that originates from a single point and spreads outward in all directions.
 
  ## Overview
 
@@ -144,7 +144,25 @@
 
  ## Example
 
-TODO
+ &#x60;&#x60;&#x60;&#x60; javascript
+ var viewer = new BIMSURFER.Viewer(null, &quot;myDiv&quot;, {}, false);
+
+ var camera = new BIMSURFER.Camera(viewer, {
+    eye: [0, 0, -10]
+ });
+
+ var cameraControl = new BIMSURFER.CameraControl(viewer, {
+    camera: camera
+ });
+
+ var box = new BIMSURFER.BoxObject(viewer);
+
+ var dirLight = new BIMSURFER.DirLight(viewer, {
+    color: [0.6, 0.9, 0.9],
+    dir: [1.0, 0.0, 0.0],
+    space: &quot;view&quot;
+ });
+ &#x60;&#x60;&#x60;&#x60;
 
  @class DirLight
  @module BIMSURFER

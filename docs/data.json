@@ -408,7 +408,7 @@
             "namespaces": {},
             "module": "BIMSURFER",
             "namespace": "",
-            "description": "A **Camera** defines a viewpoint within a {{#crossLink \"Viewer\"}}Viewer{{/crossLink}}.\n\n## Overview\n\n<ul>\n<li>You can have an unlimited number of Cameras in a {{#crossLink \"Viewer\"}}{{/crossLink}}.</li>\n<li>At any instant, the Camera we're looking through is the one whose {{#crossLink \"Camera/active:property\"}}active{{/crossLink}} property is true.</li>\n<li>Cameras can be controlled with controls such as {{#crossLink \"CameraControl\"}}{{/crossLink}}, {{#crossLink \"KeyboardAxisCamera\"}}{{/crossLink}},\n{{#crossLink \"KeyboardOrbitCamera\"}}{{/crossLink}}, {{#crossLink \"KeyboardPanCamera\"}}{{/crossLink}}, {{#crossLink \"KeyboardZoomCamera\"}}{{/crossLink}},\n{{#crossLink \"MouseOrbitCamera\"}}{{/crossLink}}, {{#crossLink \"MousePanCamera\"}}{{/crossLink}} and {{#crossLink \"MouseZoomCamera\"}}{{/crossLink}}.</li>\n</ul>\n\n## Example\n\nLet's create a {{#crossLink \"Viewer\"}}{{/crossLink}} with a Camera that's controlled by a {{#crossLink \"CameraControl\"}}{{/crossLink}}:\n\n````Javascript\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n//...\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n       eye: [0, 0, -10]\n   });\n\n// Create a CameraControl that controls our Camera\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n       camera: camera\n   });\n````\n\nNow let's create a second Camera and switch the {{#crossLink \"CameraControl\"}}{{/crossLink}} over to it:\n\n````Javascript\n\n// Deactivate our Camera\ncamera.active = false;\n\n// Create a second Camera\n// Camera is active by default\nvar camera2 = new BIMSURFER.Camera(viewer, {\n       eye: [-10, 0, 0]\n   });\n\n// Switch our CameraControl to the second Camera\n// Now we're controlling that Camera\ncameraControl.camera = camera2;\n````",
+            "description": "A **Camera** defines a viewpoint within a {{#crossLink \"Viewer\"}}Viewer{{/crossLink}}.\n\n## Overview\n\n<ul>\n<li>You can have an unlimited number of Cameras in a {{#crossLink \"Viewer\"}}{{/crossLink}}.</li>\n<li>At any instant, the Camera we're looking through is the one whose {{#crossLink \"Camera/active:property\"}}active{{/crossLink}} property is true.</li>\n<li>Cameras can be controlled with controls such as {{#crossLink \"CameraControl\"}}{{/crossLink}}, {{#crossLink \"KeyboardAxisCamera\"}}{{/crossLink}},\n{{#crossLink \"KeyboardOrbitCamera\"}}{{/crossLink}}, {{#crossLink \"KeyboardPanCamera\"}}{{/crossLink}}, {{#crossLink \"KeyboardZoomCamera\"}}{{/crossLink}},\n{{#crossLink \"MouseOrbitCamera\"}}{{/crossLink}}, {{#crossLink \"MousePanCamera\"}}{{/crossLink}} and {{#crossLink \"MouseZoomCamera\"}}{{/crossLink}}.</li>\n</ul>\n\n## Example\n\nLet's create a {{#crossLink \"Viewer\"}}{{/crossLink}} with a Camera that's controlled by a {{#crossLink \"CameraControl\"}}{{/crossLink}}:\n\n````Javascript\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n   eye: [0, 0, -10]\n});\n\n// Create a CameraControl to interact with the Camera\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n   camera: camera\n});\n\n// Create a BoxObject\nnew BIMSURFER.BoxObject(viewer, {\n   objectId: \"foo\",\n   ifcType: \"IfcWall\",\n   matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])\n});\n````\n\nNow let's create a second Camera and switch the {{#crossLink \"CameraControl\"}}{{/crossLink}} over to it:\n\n````Javascript\n\n// Deactivate our Camera\ncamera.active = false;\n\n// Create a second Camera\n// Camera is active by default\nvar camera2 = new BIMSURFER.Camera(viewer, {\n       eye: [-10, 0, 0]\n   });\n\n// Switch our CameraControl to the second Camera\n// Now we're controlling that Camera\ncameraControl.camera = camera2;\n````",
             "file": "src/core/camera/camera.js",
             "line": 1
         },
@@ -431,7 +431,7 @@
             "namespaces": {},
             "module": "BIMSURFER",
             "namespace": "",
-            "description": "A **CameraControl** allows you to pan, rotate and zoom a {{#crossLink \"Camera\"}}{{/crossLink}} using the mouse and keyboard,\nas well as switch it between preset left, right, anterior, posterior, superior and inferior views.\n\n## Overview\n\n<ul>\n<li>You can have multiple CameraControls within the same {{#crossLink \"Viewer\"}}{{/crossLink}}.</li>\n<li>Multiple CameraControls can drive the same {{#crossLink \"Camera\"}}{{/crossLink}}, or can each drive their own separate {{#crossLink \"Camera\"}}Cameras{{/crossLink}}.</li>\n<li>At any instant, the CameraControl we're driving is the one whose {{#crossLink \"Camera/active:property\"}}active{{/crossLink}} property is true.</li>\n<li>You can switch a CameraControl to a different {{#crossLink \"Camera\"}}{{/crossLink}} at any time.</li>\n</ul>\n\n## Example\n\nIn this example we have a {{#crossLink \"Viewer\"}}{{/crossLink}} with a\n{{#crossLink \"Camera\"}}{{/crossLink}} that's controlled by a CameraControl.\n\n````Javascript\n\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\nvar camera = new BIMSURFER.Camera(viewer, {\n       eye: [0, 0, -10]\n   });\n\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n       camera: camera\n   });\n\nvar teapot = new BIMSURFER.BoxObject(viewer);\n\n````",
+            "description": "A **CameraControl** allows you to pan, rotate and zoom a {{#crossLink \"Camera\"}}{{/crossLink}} using the mouse and keyboard,\nas well as switch it between preset left, right, anterior, posterior, superior and inferior views.\n\n## Overview\n\n<ul>\n<li>You can have multiple CameraControls within the same {{#crossLink \"Viewer\"}}{{/crossLink}}.</li>\n<li>Multiple CameraControls can drive the same {{#crossLink \"Camera\"}}{{/crossLink}}, or can each drive their own separate {{#crossLink \"Camera\"}}Cameras{{/crossLink}}.</li>\n<li>At any instant, the CameraControl we're driving is the one whose {{#crossLink \"Camera/active:property\"}}active{{/crossLink}} property is true.</li>\n<li>You can switch a CameraControl to a different {{#crossLink \"Camera\"}}{{/crossLink}} at any time.</li>\n</ul>\n\n## Example\n\nIn this example we have a {{#crossLink \"Viewer\"}}{{/crossLink}} with a\n{{#crossLink \"Camera\"}}{{/crossLink}} that's controlled by a CameraControl.\n\n````Javascript\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n   eye: [0, 0, -10]\n});\n\n// Create a CameraControl\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n   camera: camera\n});\n\n// Create a BoxObject\nnew BIMSURFER.BoxObject(viewer);\n\n````",
             "file": "src/core/control/mouseZoomCamera.js",
             "line": 1
         },
@@ -466,7 +466,7 @@
             "namespaces": {},
             "module": "BIMSURFER",
             "namespace": "",
-            "description": "An **BoxGeometry** is a box-shaped {{#crossLink \"Geometry\"}}{{/crossLink}}.\n\n## Overview\n\nTODO\n\n## Example\n\nTODO",
+            "description": "An **BoxGeometry** is a box-shaped {{#crossLink \"Geometry\"}}{{/crossLink}}.\n\n## Overview\n\nTODO\n\n## Example\n\n````javascript\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n   eye: [0, 0, -10]\n});\n\n// Create a CameraControl to interact with the Camera\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n   camera: camera\n});\n\n// Create a BoxGeometry\nvar boxGeometry = new BIMSURFER.BoxGeometry(viewer);\n\n// Create an Object that uses our BoxGeometry\n// Note that an Object can have multiple Geometries\n\nnew BIMSURFER.Object(viewer, {\n   objectId: \"foo\",\n   ifcType: \"IfcWall\",\n   geometries: [ boxGeometry ]\n});\n````",
             "file": "src/core/geometry/teapotGeometry.js",
             "line": 1
         },
@@ -549,7 +549,7 @@
             "namespace": "",
             "file": "src/core/camera/camera.js",
             "line": 1,
-            "description": "A **Camera** defines a viewpoint within a {{#crossLink \"Viewer\"}}Viewer{{/crossLink}}.\n\n## Overview\n\n<ul>\n<li>You can have an unlimited number of Cameras in a {{#crossLink \"Viewer\"}}{{/crossLink}}.</li>\n<li>At any instant, the Camera we're looking through is the one whose {{#crossLink \"Camera/active:property\"}}active{{/crossLink}} property is true.</li>\n<li>Cameras can be controlled with controls such as {{#crossLink \"CameraControl\"}}{{/crossLink}}, {{#crossLink \"KeyboardAxisCamera\"}}{{/crossLink}},\n{{#crossLink \"KeyboardOrbitCamera\"}}{{/crossLink}}, {{#crossLink \"KeyboardPanCamera\"}}{{/crossLink}}, {{#crossLink \"KeyboardZoomCamera\"}}{{/crossLink}},\n{{#crossLink \"MouseOrbitCamera\"}}{{/crossLink}}, {{#crossLink \"MousePanCamera\"}}{{/crossLink}} and {{#crossLink \"MouseZoomCamera\"}}{{/crossLink}}.</li>\n</ul>\n\n## Example\n\nLet's create a {{#crossLink \"Viewer\"}}{{/crossLink}} with a Camera that's controlled by a {{#crossLink \"CameraControl\"}}{{/crossLink}}:\n\n````Javascript\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n//...\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n       eye: [0, 0, -10]\n   });\n\n// Create a CameraControl that controls our Camera\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n       camera: camera\n   });\n````\n\nNow let's create a second Camera and switch the {{#crossLink \"CameraControl\"}}{{/crossLink}} over to it:\n\n````Javascript\n\n// Deactivate our Camera\ncamera.active = false;\n\n// Create a second Camera\n// Camera is active by default\nvar camera2 = new BIMSURFER.Camera(viewer, {\n       eye: [-10, 0, 0]\n   });\n\n// Switch our CameraControl to the second Camera\n// Now we're controlling that Camera\ncameraControl.camera = camera2;\n````",
+            "description": "A **Camera** defines a viewpoint within a {{#crossLink \"Viewer\"}}Viewer{{/crossLink}}.\n\n## Overview\n\n<ul>\n<li>You can have an unlimited number of Cameras in a {{#crossLink \"Viewer\"}}{{/crossLink}}.</li>\n<li>At any instant, the Camera we're looking through is the one whose {{#crossLink \"Camera/active:property\"}}active{{/crossLink}} property is true.</li>\n<li>Cameras can be controlled with controls such as {{#crossLink \"CameraControl\"}}{{/crossLink}}, {{#crossLink \"KeyboardAxisCamera\"}}{{/crossLink}},\n{{#crossLink \"KeyboardOrbitCamera\"}}{{/crossLink}}, {{#crossLink \"KeyboardPanCamera\"}}{{/crossLink}}, {{#crossLink \"KeyboardZoomCamera\"}}{{/crossLink}},\n{{#crossLink \"MouseOrbitCamera\"}}{{/crossLink}}, {{#crossLink \"MousePanCamera\"}}{{/crossLink}} and {{#crossLink \"MouseZoomCamera\"}}{{/crossLink}}.</li>\n</ul>\n\n## Example\n\nLet's create a {{#crossLink \"Viewer\"}}{{/crossLink}} with a Camera that's controlled by a {{#crossLink \"CameraControl\"}}{{/crossLink}}:\n\n````Javascript\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n   eye: [0, 0, -10]\n});\n\n// Create a CameraControl to interact with the Camera\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n   camera: camera\n});\n\n// Create a BoxObject\nnew BIMSURFER.BoxObject(viewer, {\n   objectId: \"foo\",\n   ifcType: \"IfcWall\",\n   matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])\n});\n````\n\nNow let's create a second Camera and switch the {{#crossLink \"CameraControl\"}}{{/crossLink}} over to it:\n\n````Javascript\n\n// Deactivate our Camera\ncamera.active = false;\n\n// Create a second Camera\n// Camera is active by default\nvar camera2 = new BIMSURFER.Camera(viewer, {\n       eye: [-10, 0, 0]\n   });\n\n// Switch our CameraControl to the second Camera\n// Now we're controlling that Camera\ncameraControl.camera = camera2;\n````",
             "submodule": "camera",
             "is_constructor": 1,
             "params": [
@@ -638,7 +638,7 @@
             "namespace": "",
             "file": "src/core/control/cameraControl.js",
             "line": 1,
-            "description": "A **CameraControl** allows you to pan, rotate and zoom a {{#crossLink \"Camera\"}}{{/crossLink}} using the mouse and keyboard,\nas well as switch it between preset left, right, anterior, posterior, superior and inferior views.\n\n## Overview\n\n<ul>\n<li>You can have multiple CameraControls within the same {{#crossLink \"Viewer\"}}{{/crossLink}}.</li>\n<li>Multiple CameraControls can drive the same {{#crossLink \"Camera\"}}{{/crossLink}}, or can each drive their own separate {{#crossLink \"Camera\"}}Cameras{{/crossLink}}.</li>\n<li>At any instant, the CameraControl we're driving is the one whose {{#crossLink \"Camera/active:property\"}}active{{/crossLink}} property is true.</li>\n<li>You can switch a CameraControl to a different {{#crossLink \"Camera\"}}{{/crossLink}} at any time.</li>\n</ul>\n\n## Example\n\nIn this example we have a {{#crossLink \"Viewer\"}}{{/crossLink}} with a\n{{#crossLink \"Camera\"}}{{/crossLink}} that's controlled by a CameraControl.\n\n````Javascript\n\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\nvar camera = new BIMSURFER.Camera(viewer, {\n       eye: [0, 0, -10]\n   });\n\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n       camera: camera\n   });\n\nvar teapot = new BIMSURFER.BoxObject(viewer);\n\n````",
+            "description": "A **CameraControl** allows you to pan, rotate and zoom a {{#crossLink \"Camera\"}}{{/crossLink}} using the mouse and keyboard,\nas well as switch it between preset left, right, anterior, posterior, superior and inferior views.\n\n## Overview\n\n<ul>\n<li>You can have multiple CameraControls within the same {{#crossLink \"Viewer\"}}{{/crossLink}}.</li>\n<li>Multiple CameraControls can drive the same {{#crossLink \"Camera\"}}{{/crossLink}}, or can each drive their own separate {{#crossLink \"Camera\"}}Cameras{{/crossLink}}.</li>\n<li>At any instant, the CameraControl we're driving is the one whose {{#crossLink \"Camera/active:property\"}}active{{/crossLink}} property is true.</li>\n<li>You can switch a CameraControl to a different {{#crossLink \"Camera\"}}{{/crossLink}} at any time.</li>\n</ul>\n\n## Example\n\nIn this example we have a {{#crossLink \"Viewer\"}}{{/crossLink}} with a\n{{#crossLink \"Camera\"}}{{/crossLink}} that's controlled by a CameraControl.\n\n````Javascript\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n   eye: [0, 0, -10]\n});\n\n// Create a CameraControl\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n   camera: camera\n});\n\n// Create a BoxObject\nnew BIMSURFER.BoxObject(viewer);\n\n````",
             "submodule": "control",
             "is_constructor": 1,
             "params": [
@@ -689,7 +689,7 @@
             "namespace": "",
             "file": "src/core/control/clickSelectObjects.js",
             "line": 1,
-            "description": "A **ClickSelectObjects** lets you add or remove {{#crossLink \"Object\"}}Objects{{/crossLink}} to and from an {{#crossLink \"ObjectSet\"}}ObjectSet{{/crossLink}} by clicking them with the mouse.\n\n## Overview\n\n<ul>\n<li>A ClickSelectObjects adds {{#crossLink \"Object\"}}Objects{{/crossLink}} to the {{#crossLink \"ObjectSet\"}}{{/crossLink}} as you\nclick them with the mouse, removing them again when you click them a second time.</li>\n<li>Typically a ClickSelectObjects will share an {{#crossLink \"ObjectSet\"}}{{/crossLink}} with one or\nmore {{#crossLink \"Effect\"}}Effects{{/crossLink}}, in order to select which {{#crossLink \"Object\"}}Objects{{/crossLink}} are influenced by the {{#crossLink \"Effect\"}}Effects{{/crossLink}}.</li>\n<li>A ClickSelectObjects will provide its own {{#crossLink \"ObjectSet\"}}{{/crossLink}} by default.</li>\n<li>Hold down SHIFT while clicking to multi-select.</li>\n</ul>\n\n## Overview\n\nTODO\n\n## Example\n\nTODO",
+            "description": "A **ClickSelectObjects** lets you add or remove {{#crossLink \"Object\"}}Objects{{/crossLink}} to and from an {{#crossLink \"ObjectSet\"}}ObjectSet{{/crossLink}} by clicking them with the mouse.\n\n## Overview\n\n<ul>\n<li>A ClickSelectObjects adds {{#crossLink \"Object\"}}Objects{{/crossLink}} to the {{#crossLink \"ObjectSet\"}}{{/crossLink}} as you\nclick them with the mouse, removing them again when you click them a second time.</li>\n<li>Typically a ClickSelectObjects will share an {{#crossLink \"ObjectSet\"}}{{/crossLink}} with one or\nmore {{#crossLink \"Effect\"}}Effects{{/crossLink}}, in order to select which {{#crossLink \"Object\"}}Objects{{/crossLink}} are influenced by the {{#crossLink \"Effect\"}}Effects{{/crossLink}}.</li>\n<li>A ClickSelectObjects will provide its own {{#crossLink \"ObjectSet\"}}{{/crossLink}} by default.</li>\n<li>Hold down SHIFT while clicking to multi-select.</li>\n</ul>\n\n## Overview\n\nTODO\n\n## Example\n\nIn this example we have a {{#crossLink \"Viewer\"}}{{/crossLink}} with a\n{{#crossLink \"Camera\"}}{{/crossLink}} that's controlled by a CameraControl.\n\n````Javascript\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n   eye: [0, 0, -10]\n});\n\n// Create a CameraControl\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n   camera: camera\n});\n\n// Create some BoxObjects\n\nnew BIMSURFER.BoxObject(viewer, {\n   objectId: \"foo\",\n   ifcType: \"IfcWall\",\n   matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])\n});\n\nnew BIMSURFER.BoxObject(viewer, {\n   objectId: \"bar\",\n   ifcType: \"IfcWall\",\n   matrix: BIMSURFER.math.translationMat4v([4, 0, -4])\n});\n\nnew BIMSURFER.BoxObject(viewer, {\n   objectId: \"baz\",\n   ifcType: \"IfcBeam\",\n   matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])\n});\n\n// Create an ObjectSet\nvar objectSet = new BIMSURFER.ObjectSet(viewer);\n\n// Apply a highlight effect to the ObjectSet\nvar highlightEffect = new BIMSURFER.HighlightEffect(viewer, {\n   objectSet: objectSet\n});\n\n// Create a ClickSelectObjects\nvar clickSelectObjects = new BIMSURFER.ClickSelectObjects(viewer, {\n   objectSet: objectSet\n});\n\n````",
             "submodule": "control",
             "is_constructor": 1,
             "params": [
@@ -1152,7 +1152,7 @@
             "namespace": "",
             "file": "src/core/effect/highlightEffect.js",
             "line": 1,
-            "description": "A **HighlightEffect** is an {{#crossLink \"Effect\"}}{{/crossLink}} that highlights the {{#crossLink \"Object\"}}Objects{{/crossLink}} within an {{#crossLink \"ObjectSet\"}}{{/crossLink}}.\n\n## Overview\n\nTODO\n\n## Example\n\nHighlight objects that match given IDs, using an {{#crossLink \"ObjectSet\"}}{{/crossLink}} and a HighlightEffect:\n\n````javascript\n\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n       eye: [0, 0, -10]\n   });\n\n// Create a CameraControl to interact with the Camera\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n       camera: camera\n   });\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n   eye: [0, 0, -10]\n});\n\n// Create a CameraControl to interact with the Camera\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n   camera: camera\n});\n\n// Create some BoxObjects\n\nnew BIMSURFER.BoxObject(viewer, {\n   objectId: \"foo\",\n   ifcType: \"IfcWall\",\n   matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])\n});\n\nnew BIMSURFER.BoxObject(viewer, {\n   objectId: \"bar\",\n   ifcType: \"IfcWall\",\n   matrix: BIMSURFER.math.translationMat4v([4, 0, -4])\n});\n\nnew BIMSURFER.Object(viewer, {\n   objectId: \"baz\",\n   ifcType: \"IfcBeam\",\n   matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])\n});\n\n// Create an ObjectSet\nvar objectSet = new BIMSURFER.ObjectSet(viewer);\n\n// Apply a highlight effect to the ObjectSet\nvar highlightEffect = new BIMSURFER.HighlightEffect(viewer, {\n       objectSet: objectSet\n   });\n\n// Add Objects to the ObjectSet by ID\n// These Objects become highlighted\nobjectSet.addObjectIds([\"foo\", \"bar\", \"baz\"]);\n\n// Remove an Object from the ObjectSet by ID\n// That Object becomes non-highlighted again\nobjectSet.removeObjectIds([\"baz\"]);\n\n````",
+            "description": "A **HighlightEffect** is an {{#crossLink \"Effect\"}}{{/crossLink}} that highlights the {{#crossLink \"Object\"}}Objects{{/crossLink}} within an {{#crossLink \"ObjectSet\"}}{{/crossLink}}.\n\n## Overview\n\nTODO\n\n## Example\n\nHighlight objects that match given IDs, using an {{#crossLink \"ObjectSet\"}}{{/crossLink}} and a HighlightEffect:\n\n````javascript\n\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n   eye: [0, 0, -10]\n});\n\n// Create a CameraControl to interact with the Camera\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n   camera: camera\n});\n\n// Create some BoxObjects\n\nnew BIMSURFER.BoxObject(viewer, {\n   objectId: \"foo\",\n   ifcType: \"IfcWall\",\n   matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])\n});\n\nnew BIMSURFER.BoxObject(viewer, {\n   objectId: \"bar\",\n   ifcType: \"IfcWall\",\n   matrix: BIMSURFER.math.translationMat4v([4, 0, -4])\n});\n\nnew BIMSURFER.BoxObject(viewer, {\n   objectId: \"baz\",\n   ifcType: \"IfcBeam\",\n   matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])\n});\n\n// Create an ObjectSet\nvar objectSet = new BIMSURFER.ObjectSet(viewer);\n\n// Apply a highlight effect to the ObjectSet\nvar highlightEffect = new BIMSURFER.HighlightEffect(viewer, {\n       objectSet: objectSet\n   });\n\n// Add Objects to the ObjectSet by ID\n// These Objects become highlighted\nobjectSet.addObjectIds([\"foo\", \"bar\", \"baz\"]);\n\n// Remove an Object from the ObjectSet by ID\n// That Object becomes non-highlighted again\nobjectSet.removeObjectIds([\"baz\"]);\n\n````",
             "submodule": "effect",
             "is_constructor": 1,
             "params": [
@@ -1203,7 +1203,7 @@
             "namespace": "",
             "file": "src/core/effect/isolateEffect.js",
             "line": 1,
-            "description": "A **IsolateEffect** is an {{#crossLink \"Effect\"}}{{/crossLink}} that exclusively shows the {{#crossLink \"Object\"}}Objects{{/crossLink}} within an {{#crossLink \"ObjectSet\"}}{{/crossLink}}.\n\n## Overview\n\nTODO\n\n## Example\n\nIsolate objects that match given IDs, using an {{#crossLink \"ObjectSet\"}}{{/crossLink}} and an IsolateEffect:\n\n````javascript\n\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n   eye: [0, 0, -10]\n});\n\n// Create a CameraControl to interact with the Camera\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n   camera: camera\n});\n\n// Create some BoxObjects\n\nnew BIMSURFER.BoxObject(viewer, {\n   objectId: \"foo\",\n   ifcType: \"IfcWall\",\n   matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])\n});\n\nnew BIMSURFER.BoxObject(viewer, {\n   objectId: \"bar\",\n   ifcType: \"IfcWall\",\n   matrix: BIMSURFER.math.translationMat4v([4, 0, -4])\n});\n\nnew BIMSURFER.Object(viewer, {\n   objectId: \"baz\",\n   ifcType: \"IfcBeam\",\n   matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])\n});\n\n// Create an ObjectSet\nvar objectSet = new BIMSURFER.ObjectSet(viewer);\n\n// Apply an Isolate effect to the ObjectSet\nvar isolateEffect = new BIMSURFER.IsolateEffect(viewer, {\n   objectSet: objectSet\n});\n\n// Add Objects to the ObjectSet by ID\n// These Objects become visible\nobjectSet.addObjectIds([\"foo\", \"bar\", \"baz\"]);\n\n// Remove an Object from the ObjectSet by ID\n// That Object becomes invisible again\nobjectSet.removeObjectIds([\"baz\"]);\n\n````",
+            "description": "A **IsolateEffect** is an {{#crossLink \"Effect\"}}{{/crossLink}} that exclusively shows the {{#crossLink \"Object\"}}Objects{{/crossLink}} within an {{#crossLink \"ObjectSet\"}}{{/crossLink}}.\n\n## Overview\n\nTODO\n\n## Example\n\nIsolate objects that match given IDs, using an {{#crossLink \"ObjectSet\"}}{{/crossLink}} and an IsolateEffect:\n\n````javascript\n\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n   eye: [0, 0, -10]\n});\n\n// Create a CameraControl to interact with the Camera\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n   camera: camera\n});\n\n// Create some BoxObjects\n\nnew BIMSURFER.BoxObject(viewer, {\n   objectId: \"foo\",\n   ifcType: \"IfcWall\",\n   matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])\n});\n\nnew BIMSURFER.BoxObject(viewer, {\n   objectId: \"bar\",\n   ifcType: \"IfcWall\",\n   matrix: BIMSURFER.math.translationMat4v([4, 0, -4])\n});\n\nnew BIMSURFER.BoxObject(viewer, {\n   objectId: \"baz\",\n   ifcType: \"IfcBeam\",\n   matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])\n});\n\n// Create an ObjectSet\nvar objectSet = new BIMSURFER.ObjectSet(viewer);\n\n// Apply an Isolate effect to the ObjectSet\nvar isolateEffect = new BIMSURFER.IsolateEffect(viewer, {\n   objectSet: objectSet\n});\n\n// Add Objects to the ObjectSet by ID\n// These Objects become visible\nobjectSet.addObjectIds([\"foo\", \"bar\", \"baz\"]);\n\n// Remove an Object from the ObjectSet by ID\n// That Object becomes invisible again\nobjectSet.removeObjectIds([\"baz\"]);\n\n````",
             "submodule": "effect",
             "is_constructor": 1,
             "params": [
@@ -1254,7 +1254,7 @@
             "namespace": "",
             "file": "src/core/effect/xrayEffect.js",
             "line": 1,
-            "description": "An **XRayEffect** is an {{#crossLink \"Effect\"}}{{/crossLink}} that creates an X-ray view of the {{#crossLink \"Object\"}}Objects{{/crossLink}} within an {{#crossLink \"ObjectSet\"}}{{/crossLink}}.\n\n## Overview\n\nTODO\n\n## Example\n\nX-ray objects that match given IFC types, using an {{#crossLink \"ObjectSet\"}}{{/crossLink}} and an XRayEffect:\n\n````javascript\n\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n   eye: [0, 0, -10]\n});\n\n// Create a CameraControl to interact with the Camera\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n   camera: camera\n});\n\n// Create some BoxObjects\n\nnew BIMSURFER.BoxObject(viewer, {\n   objectId: \"foo\",\n   ifcType: \"IfcWall\",\n   matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])\n});\n\nnew BIMSURFER.BoxObject(viewer, {\n   objectId: \"bar\",\n   ifcType: \"IfcWall\",\n   matrix: BIMSURFER.math.translationMat4v([4, 0, -4])\n});\n\nnew BIMSURFER.Object(viewer, {\n   objectId: \"baz\",\n   ifcType: \"IfcBeam\",\n   matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])\n});\n\n// Create an ObjectSet\nvar objectSet = new BIMSURFER.ObjectSet(viewer);\n\n// Apply an X-Ray effect to the ObjectSet\nvar xrayEffect = new BIMSURFER.XRayEffect(viewer, {\n   objectSet: objectSet\n});\n\n// Add Objects to the ObjectSet by IFC type\n// These Objects become opaque\nobjectSet.addObjectTypes([\"IfcWall\", \"IfcBeam\"]);\n\n// Remove an Object from the ObjectSet by IFC type\n// That Object becomes transparent\nobjectSet.removeObjectTypes([\"IfcWall\"]);\n\n````",
+            "description": "An **XRayEffect** is an {{#crossLink \"Effect\"}}{{/crossLink}} that creates an X-ray view of the {{#crossLink \"Object\"}}Objects{{/crossLink}} within an {{#crossLink \"ObjectSet\"}}{{/crossLink}}.\n\n## Overview\n\nTODO\n\n## Example\n\nX-ray objects that match given IFC types, using an {{#crossLink \"ObjectSet\"}}{{/crossLink}} and an XRayEffect:\n\n````javascript\n\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n   eye: [0, 0, -10]\n});\n\n// Create a CameraControl to interact with the Camera\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n   camera: camera\n});\n\n// Create some BoxObjects\n\nnew BIMSURFER.BoxObject(viewer, {\n   objectId: \"foo\",\n   ifcType: \"IfcWall\",\n   matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])\n});\n\nnew BIMSURFER.BoxObject(viewer, {\n   objectId: \"bar\",\n   ifcType: \"IfcWall\",\n   matrix: BIMSURFER.math.translationMat4v([4, 0, -4])\n});\n\nnew BIMSURFER.BoxObject(viewer, {\n   objectId: \"baz\",\n   ifcType: \"IfcBeam\",\n   matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])\n});\n\n// Create an ObjectSet\nvar objectSet = new BIMSURFER.ObjectSet(viewer);\n\n// Apply an X-Ray effect to the ObjectSet\nvar xrayEffect = new BIMSURFER.XRayEffect(viewer, {\n   objectSet: objectSet\n});\n\n// Add Objects to the ObjectSet by IFC type\n// These Objects become opaque\nobjectSet.addObjectTypes([\"IfcWall\", \"IfcBeam\"]);\n\n// Remove an Object from the ObjectSet by IFC type\n// That Object becomes transparent\nobjectSet.removeObjectTypes([\"IfcWall\"]);\n\n````",
             "submodule": "effect",
             "is_constructor": 1,
             "params": [
@@ -1305,7 +1305,7 @@
             "namespace": "",
             "file": "src/core/geometry/boxGeometry.js",
             "line": 1,
-            "description": "An **BoxGeometry** is a box-shaped {{#crossLink \"Geometry\"}}{{/crossLink}}.\n\n## Overview\n\nTODO\n\n## Example\n\nTODO",
+            "description": "An **BoxGeometry** is a box-shaped {{#crossLink \"Geometry\"}}{{/crossLink}}.\n\n## Overview\n\nTODO\n\n## Example\n\n````javascript\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n   eye: [0, 0, -10]\n});\n\n// Create a CameraControl to interact with the Camera\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n   camera: camera\n});\n\n// Create a BoxGeometry\nvar boxGeometry = new BIMSURFER.BoxGeometry(viewer);\n\n// Create an Object that uses our BoxGeometry\n// Note that an Object can have multiple Geometries\n\nnew BIMSURFER.Object(viewer, {\n   objectId: \"foo\",\n   ifcType: \"IfcWall\",\n   geometries: [ boxGeometry ]\n});\n````",
             "submodule": "geometry",
             "is_constructor": 1,
             "params": [
@@ -1438,7 +1438,7 @@
             "namespace": "",
             "file": "src/core/geometry/teapotGeometry.js",
             "line": 1,
-            "description": "An **TeapotGeometry** is a teapot-shaped {{#crossLink \"Geometry\"}}{{/crossLink}}.\n\n## Overview\n\nTODO\n\n## Example\n\nTODO",
+            "description": "An **TeapotGeometry** is a teapot-shaped {{#crossLink \"Geometry\"}}{{/crossLink}}.\n\n## Overview\n\nTODO\n\n## Example\n\n````javascript\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n   eye: [0, 0, -10]\n});\n\n// Create a CameraControl to interact with the Camera\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n   camera: camera\n});\n\n// Create a TeapotGeometry\nvar teapotGeometry = new BIMSURFER.TeapotGeometry(viewer);\n\n// Create an Object that uses our TeapotGeometry\n// Note that an Object can have multiple Geometries\n\nnew BIMSURFER.Object(viewer, {\n   objectId: \"foo\",\n   ifcType: \"IfcWall\",\n   geometries: [ teapotGeometry ]\n});\n````",
             "submodule": "geometry",
             "is_constructor": 1,
             "params": [
@@ -1499,7 +1499,7 @@
             "namespace": "",
             "file": "src/core/light/ambientLight.js",
             "line": 1,
-            "description": "An **AmbientLight** defines an ambient light source of fixed intensity and color that affects all attached {{#crossLink \"Object\"}}Objects{{/crossLink}}\n equally.\n## Overview\n\nTODO\n## Example\nTODO\n```` javascript\n````",
+            "description": "An **AmbientLight** is a {{#crossLink \"Light\"}}{{/crossLink}} that defines an ambient light source of fixed intensity and color that affects all attached {{#crossLink \"Object\"}}Objects{{/crossLink}}\n equally.\n## Overview\n\nTODO\n## Example\n```` javascript\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\nvar camera = new BIMSURFER.Camera(viewer, {\n    eye: [0, 0, -10]\n});\n\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n    camera: camera\n});\n\nvar box = new BIMSURFER.BoxObject(viewer);\n\nvar ambientLight = new BIMSURFER.AmbientLight(viewer, {\n    color: [0.4, 0.4, 0.4]\n});\n ````",
             "is_constructor": 1,
             "params": [
                 {
@@ -1550,7 +1550,7 @@
             "namespace": "",
             "file": "src/core/light/dirLight.js",
             "line": 1,
-            "description": "A **DirLight** defines a directional light source that originates from a single point and spreads outward in all directions.\n\n## Overview\n\n<ul>\n\n<li>DirLights have a position, but no direction.</li>\n\n<li>DirLights may be defined in either **World** or **View** coordinate space. When in World-space, their position\nis relative to the World coordinate system, and will appear to move as the {{#crossLink \"Camera\"}}{{/crossLink}} moves.\nWhen in View-space, their position is relative to the View coordinate system, and will behave as if fixed to the viewer's\nhead as the {{#crossLink \"Camera\"}}{{/crossLink}} moves.</li>\n\n<li>Within bIMSurfer's's Phong lighting calculations, DirLight {{#crossLink \"DirLight/diffuse:property\"}}{{/crossLink}} and\n{{#crossLink \"DirLight/specular:property\"}}{{/crossLink}}.</li>\n\n<li>DirLights have {{#crossLink \"DirLight/constantAttenuation:property\"}}{{/crossLink}}, {{#crossLink \"DirLight/linearAttenuation:property\"}}{{/crossLink}} and\n{{#crossLink \"DirLight/quadraticAttenuation:property\"}}{{/crossLink}} factors, which indicate how their intensity attenuates over distance.</li>\n\n\n</ul>\n\n\n## Example\n\nTODO",
+            "description": "A **DirLight** is a {{#crossLink \"Light\"}}{{/crossLink}} that defines a directional light source that originates from a single point and spreads outward in all directions.\n\n## Overview\n\n<ul>\n\n<li>DirLights have a position, but no direction.</li>\n\n<li>DirLights may be defined in either **World** or **View** coordinate space. When in World-space, their position\nis relative to the World coordinate system, and will appear to move as the {{#crossLink \"Camera\"}}{{/crossLink}} moves.\nWhen in View-space, their position is relative to the View coordinate system, and will behave as if fixed to the viewer's\nhead as the {{#crossLink \"Camera\"}}{{/crossLink}} moves.</li>\n\n<li>Within bIMSurfer's's Phong lighting calculations, DirLight {{#crossLink \"DirLight/diffuse:property\"}}{{/crossLink}} and\n{{#crossLink \"DirLight/specular:property\"}}{{/crossLink}}.</li>\n\n<li>DirLights have {{#crossLink \"DirLight/constantAttenuation:property\"}}{{/crossLink}}, {{#crossLink \"DirLight/linearAttenuation:property\"}}{{/crossLink}} and\n{{#crossLink \"DirLight/quadraticAttenuation:property\"}}{{/crossLink}} factors, which indicate how their intensity attenuates over distance.</li>\n\n\n</ul>\n\n\n## Example\n\n```` javascript\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\nvar camera = new BIMSURFER.Camera(viewer, {\n   eye: [0, 0, -10]\n});\n\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n   camera: camera\n});\n\nvar box = new BIMSURFER.BoxObject(viewer);\n\nvar dirLight = new BIMSURFER.DirLight(viewer, {\n   color: [0.6, 0.9, 0.9],\n   dir: [1.0, 0.0, 0.0],\n   space: \"view\"\n});\n````",
             "is_constructor": 1,
             "extends": "Light",
             "params": [
@@ -1615,7 +1615,7 @@
             "namespace": "",
             "file": "src/core/light/light.js",
             "line": 1,
-            "description": "**Light** is the base class for all light source classes in BIMViewer.\n## Overview\n## Example\nTODO\n````javascript\n TODO\n ````",
+            "description": "**Light** is the base class for all light source classes in BIMViewer.\n## Overview\n<ul>\n <li>Light is subclassed by {{#crossLink \"AmbientLight\"}}{{/crossLink}}, {{#crossLink \"DirLight\"}}{{/crossLink}} and {{#crossLink \"PointLight\"}}{{/crossLink}}.</li>\n <li>The number of Lights allowed is governed by the number of ````varying```` types supported in your WebGL.</li>\n </ul>",
             "is_constructor": 1,
             "params": [
                 {
@@ -1665,7 +1665,7 @@
             "namespace": "",
             "file": "src/core/light/pointLight.js",
             "line": 1,
-            "description": "A **PointLight** defines a positional light source that originates from a single point and spreads outward in all directions.\n\n## Overview\n\n<ul>\n\n<li>PointLights have a position, but no direction.</li>\n\n<li>PointLights may be defined in either **World** or **View** coordinate space. When in World-space, their position\nis relative to the World coordinate system, and will appear to move as the {{#crossLink \"Camera\"}}{{/crossLink}} moves.\nWhen in View-space, their position is relative to the View coordinate system, and will behave as if fixed to the viewer's\nhead as the {{#crossLink \"Camera\"}}{{/crossLink}} moves.</li>\n\n<li>PointLights have {{#crossLink \"PointLight/constantAttenuation:property\"}}{{/crossLink}}, {{#crossLink \"PointLight/linearAttenuation:property\"}}{{/crossLink}} and\n{{#crossLink \"PointLight/quadraticAttenuation:property\"}}{{/crossLink}} factors, which indicate how their intensity attenuates over distance.</li>\n\n</ul>\n\n\n## Example\n\nTODO",
+            "description": "A **PointLight** is a {{#crossLink \"Light\"}}{{/crossLink}} that defines a positional light source that originates from a single point and spreads outward in all directions.\n\n## Overview\n\n<ul>\n\n<li>PointLights have a position, but no direction.</li>\n\n<li>PointLights may be defined in either **World** or **View** coordinate space. When in World-space, their position\nis relative to the World coordinate system, and will appear to move as the {{#crossLink \"Camera\"}}{{/crossLink}} moves.\nWhen in View-space, their position is relative to the View coordinate system, and will behave as if fixed to the viewer's\nhead as the {{#crossLink \"Camera\"}}{{/crossLink}} moves.</li>\n\n<li>PointLights have {{#crossLink \"PointLight/constantAttenuation:property\"}}{{/crossLink}}, {{#crossLink \"PointLight/linearAttenuation:property\"}}{{/crossLink}} and\n{{#crossLink \"PointLight/quadraticAttenuation:property\"}}{{/crossLink}} factors, which indicate how their intensity attenuates over distance.</li>\n\n</ul>\n\n\n## Example\n\n```` javascript\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\nvar camera = new BIMSURFER.Camera(viewer, {\n   eye: [0, 0, -10]\n});\n\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n   camera: camera\n});\n\nvar box = new BIMSURFER.BoxObject(viewer);\n\nvar pointLight = new BIMSURFER.PointLight(viewer, {\n   color: [1.0, 0.5, 0.5],\n   pos: [1.0, 1.0, -1.0],\n   constantAttenuation: 0.0,\n   linearAttenuation: 0.0,\n   quadraticAttenuation: 0.0\n});\n````",
             "is_constructor": 1,
             "extends": "Light",
             "params": [
@@ -1765,7 +1765,7 @@
             "namespace": "",
             "file": "src/core/object/boxObject.js",
             "line": 1,
-            "description": "An **BoxObject** is a box-shaped {{#crossLink \"Object\"}}{{/crossLink}}.\n\n## Overview\n\nTODO\n\n## Example\n\nTODO",
+            "description": "An **BoxObject** is a box-shaped {{#crossLink \"Object\"}}{{/crossLink}}.\n\n## Overview\n\nTODO\n\n## Example\n\n````Javascript\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n   eye: [0, 0, -10]\n});\n\n// Create a CameraControl to interact with the Camera\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n   camera: camera\n});\n\n// Create a BoxObject\nnew BIMSURFER.BoxObject(viewer, {\n   objectId: \"foo\",\n   ifcType: \"IfcWall\",\n   matrix: BIMSURFER.math.scaleMat4v([1.5, 1.5, 1.5])\n});\n\n````",
             "is_constructor": 1,
             "params": [
                 {
@@ -1809,7 +1809,7 @@
             "namespace": "",
             "file": "src/core/object/object.js",
             "line": 1,
-            "description": "An **Object** is a visible 3D element within a {{#crossLink \"Viewer\"}}{{/crossLink}}.\n\n## Overview\n\nTODO\n\n## Example\n\nIn the example below we'll create three Objects, each with a unique ID and a modelling transform:\n````Javascript\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n   eye: [0, 0, -10]\n});\n\n// Create a CameraControl to interact with the Camera\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n   camera: camera\n});\n\n// Create some BoxObjects\n\nnew BIMSURFER.BoxObject(viewer, {\n   objectId: \"foo\",\n   ifcType: \"IfcWall\",\n   matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])\n});\n\nnew BIMSURFER.BoxObject(viewer, {\n   objectId: \"bar\",\n   ifcType: \"IfcWall\",\n   matrix: BIMSURFER.math.translationMat4v([4, 0, -4])\n});\n\nnew BIMSURFER.Object(viewer, {\n   objectId: \"baz\",\n   ifcType: \"IfcBeam\",\n   matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])\n});\n````\n\nWe can then find the objects in the {{#crossLink \"Viewer\"}}{{/crossLink}} by ID:\n````javascript\nvar foo = viewer.components[\"foo\"];\n````\nor by IFC type:\n````javascript\n\n// Get all Objects of the given IFC type\nvar wallObjects = viewer.components[\"IfcWall\"];\n\n// Get our \"foo\" object from those\nvar foo = wallObjects[\"foo\"];\n````",
+            "description": "An **Object** is a visible 3D element within a {{#crossLink \"Viewer\"}}{{/crossLink}}.\n\n## Overview\n\nTODO\n\n## Example\n\nIn the example below we'll create three Objects, each with a unique ID and a modelling transform:\n````Javascript\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n   eye: [0, 0, -10]\n});\n\n// Create a CameraControl to interact with the Camera\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n   camera: camera\n});\n\n// Create a BoxGeometry\nvar boxGeometry = new BIMSURFER.BoxGeometry(viewer);\n\n// Create some Objects that use our BoxGeometry\n\nnew BIMSURFER.Object(viewer, {\n   objectId: \"foo\",\n   ifcType: \"IfcWall\",\n   geometries: [boxGeometry],\n   matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])\n});\n\nnew BIMSURFER.BoxObject(viewer, {\n   objectId: \"bar\",\n   ifcType: \"IfcWall\",\n   geometries: [boxGeometry],\n   matrix: BIMSURFER.math.translationMat4v([4, 0, -4])\n});\n\nnew BIMSURFER.Object(viewer, {\n   objectId: \"baz\",\n   ifcType: \"IfcBeam\",\n   geometries: [boxGeometry],\n   matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])\n});\n````\n\nWe can then find the objects in the {{#crossLink \"Viewer\"}}{{/crossLink}} by ID:\n````javascript\nvar foo = viewer.components[\"foo\"];\n````\nor by IFC type:\n````javascript\n\n// Get all Objects of the given IFC type\nvar wallObjects = viewer.components[\"IfcWall\"];\n\n// Get our \"foo\" object from those\nvar foo = wallObjects[\"foo\"];\n````",
             "is_constructor": 1,
             "params": [
                 {
@@ -1913,7 +1913,7 @@
             "namespace": "",
             "file": "src/core/object/objectSet.js",
             "line": 1,
-            "description": "An **ObjectSet** is a set of {{#crossLink \"Object\"}}Objects{{/crossLink}}.\n\n## Overview\n\n<ul>\n<li>Supports addition and removal of {{#crossLink \"Object\"}}Objects{{/crossLink}} by instance, ID or IFC type.</li>\n<li>Can be queried for the {{#crossLink \"ObjectSet/boundary:property\"}}{{/crossLink}}\nand {{#crossLink \"ObjectSet/center:property\"}}{{/crossLink}} of its {{#crossLink \"Object\"}}Objects{{/crossLink}}.</li>\n<li>Use with a {{#crossLink \"ClickSelectObjects\"}}{{/crossLink}} to add and remove {{#crossLink \"Object\"}}Objects{{/crossLink}} with mouse clicks.</li>\n<li>Can be used to mask {{#crossLink \"Object\"}}Objects{{/crossLink}} for Effects such as {{#crossLink \"HighlightEffect\"}}{{/crossLink}}, {{#crossLink \"XRayEffect\"}}{{/crossLink}} and\n{{#crossLink \"IsolateEffect\"}}{{/crossLink}}.</li>\n\n</ul>\n\n## Examples\n\n#### Adding and removing Objects by ID\n\nIsolate objects that match given IDs, using an ObjectSet and an {{#crossLink \"IsolateEffect\"}}{{/crossLink}}:\n\n````javascript\n\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n   eye: [0, 0, -10]\n});\n\n// Create a CameraControl to interact with the Camera\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n   camera: camera\n});\n\n// Create some BoxObjects\n\nnew BIMSURFER.BoxObject(viewer, {\n   objectId: \"foo\",\n   ifcType: \"IfcWall\",\n   matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])\n});\n\nnew BIMSURFER.BoxObject(viewer, {\n   objectId: \"bar\",\n   ifcType: \"IfcWall\",\n   matrix: BIMSURFER.math.translationMat4v([4, 0, -4])\n});\n\nnew BIMSURFER.Object(viewer, {\n   objectId: \"baz\",\n   ifcType: \"IfcBeam\",\n   matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])\n});\n\n// Create an ObjectSet\nvar objectSet = new BIMSURFER.ObjectSet(viewer);\n\n// Apply an Isolate effect to the ObjectSet\nvar isolateEffect = new BIMSURFER.IsolateEffect(viewer, {\n       objectSet: objectSet\n});\n\n// Add Objects to the ObjectSet by ID\n// These Objects become visible\nobjectSet.addObjectIds([\"foo\", \"bar\", \"baz\"]);\n\n// Remove an Object from the ObjectSet by ID\n// That Object becomes invisible again\nobjectSet.removeObjectIds([\"baz\"]);\n\n````\n\n#### Adding and removing Objects by IFC type\n\nX-ray and highlight objects that match given IFC types, using an ObjectSet, {{#crossLink \"XRayEffect\"}}{{/crossLink}} and {{#crossLink \"HighlightEffect\"}}{{/crossLink}}:\n\n````javascript\n\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n   eye: [0, 0, -10]\n});\n\n// Create a CameraControl to interact with the Camera\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n   camera: camera\n});\n\n// Create some BoxObjects\n\nnew BIMSURFER.BoxObject(viewer, {\n   objectId: \"foo\",\n   ifcType: \"IfcWall\",\n   matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])\n});\n\nnew BIMSURFER.BoxObject(viewer, {\n   objectId: \"bar\",\n   ifcType: \"IfcWall\",\n   matrix: BIMSURFER.math.translationMat4v([4, 0, -4])\n});\n\nnew BIMSURFER.Object(viewer, {\n   objectId: \"baz\",\n   ifcType: \"IfcBeam\",\n   matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])\n});\n\n// Create an ObjectSet\nvar objectSet = new BIMSURFER.ObjectSet(viewer);\n\n// Apply an X-Ray effect to the ObjectSet\nvar xrayEffect = new BIMSURFER.XRayEffect(viewer, {\n   objectSet: objectSet\n});\n\n// Apply a Highlight effect to the ObjectSet\nvar highlightEffect = new BIMSURFER.HighlightEffect(viewer, {\n   objectSet: objectSet\n});\n\n// Add Objects to the ObjectSet by IFC type\n// These Objects become opaque and highlighted\nobjectSet.addTypes([\"IfcWall\", \"IfcBeam\"]);\n\n// Remove an Object from the ObjectSet by IFC type\n// That Object becomes transparent and non-highlighted\nobjectSet.removeTypes([\"IfcWall\"]);\n\n````\n\n#### Using with a ClickSelectObjects\n\nHighlighting clicked objects, using an ObjectSet, {{#crossLink \"HighlightEffect\"}}{{/crossLink}} and {{#crossLink \"ClickSelectObjects\"}}{{/crossLink}}:\n\n````javascript\n\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n   eye: [0, 0, -10]\n});\n\n// Create a CameraControl to interact with the Camera\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n   camera: camera\n});\n\n// Create some BoxObjects\n\nnew BIMSURFER.BoxObject(viewer, {\n   objectId: \"foo\",\n   ifcType: \"IfcWall\",\n   matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])\n});\n\nnew BIMSURFER.BoxObject(viewer, {\n   objectId: \"bar\",\n   ifcType: \"IfcWall\",\n   matrix: BIMSURFER.math.translationMat4v([4, 0, -4])\n});\n\nnew BIMSURFER.Object(viewer, {\n   objectId: \"baz\",\n   ifcType: \"IfcBeam\",\n   matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])\n});\n\n// Create an ObjectSet\nvar objectSet = new BIMSURFER.ObjectSet(viewer);\n\n// Apply a Highlight effect to the ObjectSet\nvar highlightEffect = new BIMSURFER.HighlightEffect(viewer, {\n       objectSet: objectSet\n   });\n\n// Create a ClickSelectObjects control, which will add and remove objects to and from the ObjectSet\n// to and from the ObjectSet as we click them\nvar clickSelect = new BIMSURFER.ClickSelectObjects(viewer, {\n       objectSet: objectSet\n   });\n````\n\n#### Boundaries\n\nTODO",
+            "description": "An **ObjectSet** is a set of {{#crossLink \"Object\"}}Objects{{/crossLink}}.\n\n## Overview\n\n<ul>\n<li>Supports addition and removal of {{#crossLink \"Object\"}}Objects{{/crossLink}} by instance, ID or IFC type.</li>\n<li>Can be queried for the {{#crossLink \"ObjectSet/boundary:property\"}}{{/crossLink}}\nand {{#crossLink \"ObjectSet/center:property\"}}{{/crossLink}} of its {{#crossLink \"Object\"}}Objects{{/crossLink}}.</li>\n<li>Use with a {{#crossLink \"ClickSelectObjects\"}}{{/crossLink}} to add and remove {{#crossLink \"Object\"}}Objects{{/crossLink}} with mouse clicks.</li>\n<li>Can be used to mask {{#crossLink \"Object\"}}Objects{{/crossLink}} for Effects such as {{#crossLink \"HighlightEffect\"}}{{/crossLink}}, {{#crossLink \"XRayEffect\"}}{{/crossLink}} and\n{{#crossLink \"IsolateEffect\"}}{{/crossLink}}.</li>\n\n</ul>\n\n## Examples\n\n#### Adding and removing Objects by ID\n\nIsolate objects that match given IDs, using an ObjectSet and an {{#crossLink \"IsolateEffect\"}}{{/crossLink}}:\n\n````javascript\n\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n   eye: [0, 0, -10]\n});\n\n// Create a CameraControl to interact with the Camera\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n   camera: camera\n});\n\n// Create some BoxObjects\n\nnew BIMSURFER.BoxObject(viewer, {\n   objectId: \"foo\",\n   ifcType: \"IfcWall\",\n   matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])\n});\n\nnew BIMSURFER.BoxObject(viewer, {\n   objectId: \"bar\",\n   ifcType: \"IfcWall\",\n   matrix: BIMSURFER.math.translationMat4v([4, 0, -4])\n});\n\nnew BIMSURFER.BoxObject(viewer, {\n   objectId: \"baz\",\n   ifcType: \"IfcBeam\",\n   matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])\n});\n\n// Create an ObjectSet\nvar objectSet = new BIMSURFER.ObjectSet(viewer);\n\n// Apply an Isolate effect to the ObjectSet\nvar isolateEffect = new BIMSURFER.IsolateEffect(viewer, {\n       objectSet: objectSet\n});\n\n// Add Objects to the ObjectSet by ID\n// These Objects become visible\nobjectSet.addObjectIds([\"foo\", \"bar\", \"baz\"]);\n\n// Remove an Object from the ObjectSet by ID\n// That Object becomes invisible again\nobjectSet.removeObjectIds([\"baz\"]);\n\n````\n\n#### Adding and removing Objects by IFC type\n\nX-ray and highlight objects that match given IFC types, using an ObjectSet, {{#crossLink \"XRayEffect\"}}{{/crossLink}} and {{#crossLink \"HighlightEffect\"}}{{/crossLink}}:\n\n````javascript\n\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n   eye: [0, 0, -10]\n});\n\n// Create a CameraControl to interact with the Camera\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n   camera: camera\n});\n\n// Create some BoxObjects\n\nnew BIMSURFER.BoxObject(viewer, {\n   objectId: \"foo\",\n   ifcType: \"IfcWall\",\n   matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])\n});\n\nnew BIMSURFER.BoxObject(viewer, {\n   objectId: \"bar\",\n   ifcType: \"IfcWall\",\n   matrix: BIMSURFER.math.translationMat4v([4, 0, -4])\n});\n\nnew BIMSURFER.Object(viewer, {\n   objectId: \"baz\",\n   ifcType: \"IfcBeam\",\n   matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])\n});\n\n// Create an ObjectSet\nvar objectSet = new BIMSURFER.ObjectSet(viewer);\n\n// Apply an X-Ray effect to the ObjectSet\nvar xrayEffect = new BIMSURFER.XRayEffect(viewer, {\n   objectSet: objectSet\n});\n\n// Apply a Highlight effect to the ObjectSet\nvar highlightEffect = new BIMSURFER.HighlightEffect(viewer, {\n   objectSet: objectSet\n});\n\n// Add Objects to the ObjectSet by IFC type\n// These Objects become opaque and highlighted\nobjectSet.addTypes([\"IfcWall\", \"IfcBeam\"]);\n\n// Remove an Object from the ObjectSet by IFC type\n// That Object becomes transparent and non-highlighted\nobjectSet.removeTypes([\"IfcWall\"]);\n\n````\n\n#### Using with a ClickSelectObjects\n\nHighlighting clicked objects, using an ObjectSet, {{#crossLink \"HighlightEffect\"}}{{/crossLink}} and {{#crossLink \"ClickSelectObjects\"}}{{/crossLink}}:\n\n````javascript\n\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n   eye: [0, 0, -10]\n});\n\n// Create a CameraControl to interact with the Camera\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n   camera: camera\n});\n\n// Create some BoxObjects\n\nnew BIMSURFER.BoxObject(viewer, {\n   objectId: \"foo\",\n   ifcType: \"IfcWall\",\n   matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])\n});\n\nnew BIMSURFER.BoxObject(viewer, {\n   objectId: \"bar\",\n   ifcType: \"IfcWall\",\n   matrix: BIMSURFER.math.translationMat4v([4, 0, -4])\n});\n\nnew BIMSURFER.Object(viewer, {\n   objectId: \"baz\",\n   ifcType: \"IfcBeam\",\n   matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])\n});\n\n// Create an ObjectSet\nvar objectSet = new BIMSURFER.ObjectSet(viewer);\n\n// Apply a Highlight effect to the ObjectSet\nvar highlightEffect = new BIMSURFER.HighlightEffect(viewer, {\n       objectSet: objectSet\n   });\n\n// Create a ClickSelectObjects control, which will add and remove objects to and from the ObjectSet\n// to and from the ObjectSet as we click them\nvar clickSelect = new BIMSURFER.ClickSelectObjects(viewer, {\n       objectSet: objectSet\n   });\n````\n\n#### Boundaries\n\nTODO",
             "is_constructor": 1,
             "params": [
                 {
@@ -1963,7 +1963,7 @@
             "namespace": "",
             "file": "src/core/object/teapotObject.js",
             "line": 1,
-            "description": "An **TeapotObject** is a teapot-shaped {{#crossLink \"Object\"}}{{/crossLink}}.\n\n## Overview\n\nTODO\n\n## Example\n\nTODO",
+            "description": "An **TeapotObject** is a teapot-shaped {{#crossLink \"Object\"}}{{/crossLink}}.\n\n## Overview\n\nTODO\n\n## Example\n\n````Javascript\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n   eye: [0, 0, -10]\n});\n\n// Create a CameraControl to interact with the Camera\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n   camera: camera\n});\n\n// Create a TeapotObject\nnew BIMSURFER.TeapotObject(viewer, {\n   objectId: \"foo\",\n   ifcType: \"IfcWall\",\n   matrix: BIMSURFER.math.scaleMat4v([ 1.5, 1.5, 1.5 ])\n});\n\n````",
             "is_constructor": 1,
             "params": [
                 {
@@ -2193,7 +2193,7 @@
         },
         {
             "file": "src/core/camera/camera.js",
-            "line": 70,
+            "line": 75,
             "description": "Defines a viewpoint within a {@link BIMSURFER.Viewer}.",
             "class": "Camera",
             "module": "BIMSURFER",
@@ -2201,7 +2201,7 @@
         },
         {
             "file": "src/core/camera/camera.js",
-            "line": 75,
+            "line": 80,
             "description": "JavaScript class name for this Component.",
             "itemtype": "property",
             "name": "className",
@@ -2213,7 +2213,7 @@
         },
         {
             "file": "src/core/camera/camera.js",
-            "line": 111,
+            "line": 116,
             "description": "Rotate 'eye' about 'look', around the 'up' vector",
             "params": [
                 {
@@ -2228,7 +2228,7 @@
         },
         {
             "file": "src/core/camera/camera.js",
-            "line": 131,
+            "line": 136,
             "description": "Rotate 'eye' about 'look' around the X-axis",
             "params": [
                 {
@@ -2243,7 +2243,7 @@
         },
         {
             "file": "src/core/camera/camera.js",
-            "line": 157,
+            "line": 162,
             "description": "Rotate 'look' about 'eye', around the 'up' vector\n\n<p>Applies constraints added with {@link #addConstraint}.</p>",
             "params": [
                 {
@@ -2258,7 +2258,7 @@
         },
         {
             "file": "src/core/camera/camera.js",
-            "line": 179,
+            "line": 184,
             "description": "Rotate 'eye' about 'look' around the X-axis",
             "params": [
                 {
@@ -2273,7 +2273,7 @@
         },
         {
             "file": "src/core/camera/camera.js",
-            "line": 205,
+            "line": 210,
             "description": "Pans the camera along X and Y axis.",
             "params": [
                 {
@@ -2287,7 +2287,7 @@
         },
         {
             "file": "src/core/camera/camera.js",
-            "line": 259,
+            "line": 264,
             "description": "Increments/decrements zoom factor, ie. distance between eye and look.",
             "params": [
                 {
@@ -2301,7 +2301,7 @@
         },
         {
             "file": "src/core/camera/camera.js",
-            "line": 277,
+            "line": 282,
             "description": "Flag which indicates whether this Camera is active or not.\n\nFires an {{#crossLink \"Camera/active:event\"}}{{/crossLink}} event on change.",
             "itemtype": "property",
             "name": "active",
@@ -2312,7 +2312,7 @@
         },
         {
             "file": "src/core/camera/camera.js",
-            "line": 352,
+            "line": 357,
             "description": "Fired whenever this Camera's {{#crossLink \"Camera/active:property\"}}{{/crossLink}} property changes.",
             "itemtype": "event",
             "name": "active",
@@ -2328,7 +2328,7 @@
         },
         {
             "file": "src/core/camera/camera.js",
-            "line": 377,
+            "line": 382,
             "description": "Position of the eye.\nFires an {{#crossLink \"Camera/eye:event\"}}{{/crossLink}} event on change.",
             "itemtype": "property",
             "name": "eye",
@@ -2340,7 +2340,7 @@
         },
         {
             "file": "src/core/camera/camera.js",
-            "line": 396,
+            "line": 401,
             "description": "Position of the point-of-interest.\nFires a {{#crossLink \"Camera/look:event\"}}{{/crossLink}} event on change.",
             "itemtype": "property",
             "name": "look",
@@ -2352,7 +2352,7 @@
         },
         {
             "file": "src/core/camera/camera.js",
-            "line": 415,
+            "line": 420,
             "description": "Direction of the \"up\" vector.\nFires an {{#crossLink \"Camera/up:event\"}}{{/crossLink}} event on change.",
             "itemtype": "property",
             "name": "up",
@@ -2512,7 +2512,7 @@
         },
         {
             "file": "src/core/control/cameraControl.js",
-            "line": 52,
+            "line": 55,
             "description": "JavaScript class name for this Component.",
             "itemtype": "property",
             "name": "className",
@@ -2524,7 +2524,7 @@
         },
         {
             "file": "src/core/control/cameraControl.js",
-            "line": 111,
+            "line": 114,
             "description": "The {{#crossLink \"Camera\"}}{{/crossLink}} being controlled.",
             "itemtype": "property",
             "name": "camera",
@@ -2535,7 +2535,7 @@
         },
         {
             "file": "src/core/control/cameraControl.js",
-            "line": 158,
+            "line": 161,
             "description": "Flag which indicates whether this CameraControl is active or not.\n\nFires an {{#crossLink \"CameraControl/active:event\"}}{{/crossLink}} event on change.",
             "itemtype": "property",
             "name": "active",
@@ -2546,7 +2546,7 @@
         },
         {
             "file": "src/core/control/cameraControl.js",
-            "line": 179,
+            "line": 182,
             "description": "Fired whenever this CameraControl's {{#crossLink \"CameraControl/active:property\"}}{{/crossLink}} property changes.",
             "itemtype": "event",
             "name": "active",
@@ -2562,7 +2562,7 @@
         },
         {
             "file": "src/core/control/clickSelectObjects.js",
-            "line": 42,
+            "line": 92,
             "description": "JavaScript class name for this Component.",
             "itemtype": "property",
             "name": "className",
@@ -2574,7 +2574,7 @@
         },
         {
             "file": "src/core/control/clickSelectObjects.js",
-            "line": 62,
+            "line": 112,
             "description": "Flag which indicates whether this ClickSelectObjects is active or not.\n\nFires a {{#crossLink \"ClickSelectObjects/active:event\"}}{{/crossLink}} event on change.",
             "itemtype": "property",
             "name": "active",
@@ -2585,7 +2585,7 @@
         },
         {
             "file": "src/core/control/clickSelectObjects.js",
-            "line": 139,
+            "line": 189,
             "description": "Fired whenever this ClickSelectObjects's {{#crossLink \"ClickSelectObjects/active:property\"}}{{/crossLink}} property changes.",
             "itemtype": "event",
             "name": "active",
@@ -2951,7 +2951,7 @@
         },
         {
             "file": "src/core/effect/highlightEffect.js",
-            "line": 92,
+            "line": 82,
             "description": "JavaScript class name for this Component.",
             "itemtype": "property",
             "name": "className",
@@ -2987,7 +2987,7 @@
         },
         {
             "file": "src/core/geometry/boxGeometry.js",
-            "line": 28,
+            "line": 53,
             "description": "JavaScript class name for this Component.",
             "itemtype": "property",
             "name": "className",
@@ -3011,7 +3011,7 @@
         },
         {
             "file": "src/core/geometry/teapotGeometry.js",
-            "line": 28,
+            "line": 54,
             "description": "JavaScript class name for this Component.",
             "itemtype": "property",
             "name": "className",
@@ -4409,7 +4409,7 @@
         },
         {
             "file": "src/core/light/ambientLight.js",
-            "line": 46,
+            "line": 58,
             "description": "The color of this AmbientLight.",
             "itemtype": "property",
             "name": "color",
@@ -4420,7 +4420,7 @@
         },
         {
             "file": "src/core/light/dirLight.js",
-            "line": 60,
+            "line": 78,
             "description": "The direction of this DirLight.\n\nThis will be either World- or View-space, depending on the value of {{#crossLink \"DirLight/space:property\"}}{{/crossLink}}.",
             "itemtype": "property",
             "name": "dir",
@@ -4431,7 +4431,7 @@
         },
         {
             "file": "src/core/light/dirLight.js",
-            "line": 83,
+            "line": 101,
             "description": "The color of this DirLight.",
             "itemtype": "property",
             "name": "color",
@@ -4442,7 +4442,7 @@
         },
         {
             "file": "src/core/light/dirLight.js",
-            "line": 104,
+            "line": 122,
             "description": "Indicates which coordinate space this DirLight is in.\n\nSupported values are:\n\n<ul>\n<li>\"view\" - View space, aligned within the view volume as if fixed to the viewer's head</li>\n<li>\"world\" - World space, fixed within the world, moving within the view volume with respect to camera</li>\n</ul>",
             "itemtype": "property",
             "name": "space",
@@ -4453,7 +4453,7 @@
         },
         {
             "file": "src/core/light/light.js",
-            "line": 30,
+            "line": 27,
             "description": "JavaScript class name for this Component.",
             "itemtype": "property",
             "name": "className",
@@ -4464,7 +4464,7 @@
         },
         {
             "file": "src/core/light/light.js",
-            "line": 54,
+            "line": 51,
             "description": "Flag which indicates whether this Light is active or not.\n\nFires an {{#crossLink \"Light/active:event\"}}{{/crossLink}} event on change.",
             "itemtype": "property",
             "name": "active",
@@ -4474,7 +4474,7 @@
         },
         {
             "file": "src/core/light/light.js",
-            "line": 79,
+            "line": 76,
             "description": "Fired whenever this Light's {{#crossLink \"Light/active:property\"}}{{/crossLink}} property changes.",
             "itemtype": "event",
             "name": "active",
@@ -4489,7 +4489,7 @@
         },
         {
             "file": "src/core/light/pointLight.js",
-            "line": 62,
+            "line": 82,
             "description": "The position of this PointLight.\n\nThis will be either World- or View-space, depending on the value of {{#crossLink \"PointLight/space:property\"}}{{/crossLink}}.",
             "itemtype": "property",
             "name": "pos",
@@ -4500,7 +4500,7 @@
         },
         {
             "file": "src/core/light/pointLight.js",
-            "line": 85,
+            "line": 105,
             "description": "The color of this PointLight.",
             "itemtype": "property",
             "name": "color",
@@ -4511,7 +4511,7 @@
         },
         {
             "file": "src/core/light/pointLight.js",
-            "line": 106,
+            "line": 126,
             "description": "The constant attenuation factor for this PointLight.",
             "itemtype": "property",
             "name": "constantAttenuation",
@@ -4522,7 +4522,7 @@
         },
         {
             "file": "src/core/light/pointLight.js",
-            "line": 126,
+            "line": 146,
             "description": "The linear attenuation factor for this PointLight.",
             "itemtype": "property",
             "name": "linearAttenuation",
@@ -4533,7 +4533,7 @@
         },
         {
             "file": "src/core/light/pointLight.js",
-            "line": 146,
+            "line": 166,
             "description": "The quadratic attenuation factor for this Pointlight.",
             "itemtype": "property",
             "name": "quadraticAttenuation",
@@ -4544,7 +4544,7 @@
         },
         {
             "file": "src/core/light/pointLight.js",
-            "line": 166,
+            "line": 186,
             "description": "Indicates which coordinate space this PointLight is in.\n\nSupported values are:\n\n<ul>\n<li>\"view\" - View space, aligned within the view volume as if fixed to the viewer's head</li>\n<li>\"world\" - World space, fixed within the world, moving within the view volume with respect to camera</li>\n</ul>",
             "itemtype": "property",
             "name": "space",
@@ -5790,7 +5790,7 @@
         },
         {
             "file": "src/core/object/boxObject.js",
-            "line": 27,
+            "line": 48,
             "description": "JavaScript class name for this Component.",
             "itemtype": "property",
             "name": "className",
@@ -5801,7 +5801,7 @@
         },
         {
             "file": "src/core/object/object.js",
-            "line": 87,
+            "line": 93,
             "description": "JavaScript class name for this Component.",
             "itemtype": "property",
             "name": "className",
@@ -5812,7 +5812,7 @@
         },
         {
             "file": "src/core/object/object.js",
-            "line": 362,
+            "line": 368,
             "description": "Whether this Object is active or not.\n\nFires an {{#crossLink \"Object/active:event\"}}{{/crossLink}} event on change.",
             "itemtype": "property",
             "name": "active",
@@ -5822,7 +5822,7 @@
         },
         {
             "file": "src/core/object/object.js",
-            "line": 382,
+            "line": 388,
             "description": "Fired whenever this Object's {{#crossLink \"Object/active:property\"}}{{/crossLink}} property changes.",
             "itemtype": "event",
             "name": "active",
@@ -5837,7 +5837,7 @@
         },
         {
             "file": "src/core/object/object.js",
-            "line": 395,
+            "line": 401,
             "description": "Whether this Object is transparent.",
             "itemtype": "property",
             "name": "transparent",
@@ -5848,7 +5848,7 @@
         },
         {
             "file": "src/core/object/object.js",
-            "line": 424,
+            "line": 430,
             "description": "Whether this Object is highlighted.",
             "itemtype": "property",
             "name": "highlighted",
@@ -5859,7 +5859,7 @@
         },
         {
             "file": "src/core/object/object.js",
-            "line": 452,
+            "line": 458,
             "description": "Whether this Object is X-rayed",
             "itemtype": "property",
             "name": "xray",
@@ -5870,7 +5870,7 @@
         },
         {
             "file": "src/core/object/object.js",
-            "line": 481,
+            "line": 487,
             "description": "The color of this Object.",
             "itemtype": "property",
             "name": "color",
@@ -5881,7 +5881,7 @@
         },
         {
             "file": "src/core/object/object.js",
-            "line": 514,
+            "line": 520,
             "description": "Factor in the range [0..1] indicating how transparent this Object is.\n\nA value of 0.0 indicates fully transparent, 1.0 is fully opaque.\n\nThis Object will appear transparent only if {{#crossLink \"Object/transparent:property\"}}{{/crossLink}} is also\nset to **true**.",
             "itemtype": "property",
             "name": "opacity",
@@ -5892,7 +5892,7 @@
         },
         {
             "file": "src/core/object/object.js",
-            "line": 540,
+            "line": 546,
             "description": "This Object's transformation matrix.",
             "itemtype": "property",
             "name": "matrix",
@@ -5903,7 +5903,7 @@
         },
         {
             "file": "src/core/object/object.js",
-            "line": 565,
+            "line": 571,
             "description": "The World-space boundary of this Object.",
             "itemtype": "property",
             "name": "boundary",
@@ -5913,7 +5913,7 @@
         },
         {
             "file": "src/core/object/object.js",
-            "line": 589,
+            "line": 595,
             "description": "The World-space center of this Object.",
             "itemtype": "property",
             "name": "center",
@@ -6156,7 +6156,7 @@
         },
         {
             "file": "src/core/object/teapotObject.js",
-            "line": 27,
+            "line": 48,
             "description": "JavaScript class name for this Component.",
             "itemtype": "property",
             "name": "className",
@@ -7170,31 +7170,31 @@
         },
         {
             "message": "Missing item type\nDefines a viewpoint within a {@link BIMSURFER.Viewer}.",
-            "line": " src/core/camera/camera.js:70"
+            "line": " src/core/camera/camera.js:75"
         },
         {
             "message": "Missing item type\nRotate 'eye' about 'look', around the 'up' vector",
-            "line": " src/core/camera/camera.js:111"
+            "line": " src/core/camera/camera.js:116"
         },
         {
             "message": "Missing item type\nRotate 'eye' about 'look' around the X-axis",
-            "line": " src/core/camera/camera.js:131"
+            "line": " src/core/camera/camera.js:136"
         },
         {
             "message": "Missing item type\nRotate 'look' about 'eye', around the 'up' vector\n\n<p>Applies constraints added with {@link #addConstraint}.</p>",
-            "line": " src/core/camera/camera.js:157"
+            "line": " src/core/camera/camera.js:162"
         },
         {
             "message": "Missing item type\nRotate 'eye' about 'look' around the X-axis",
-            "line": " src/core/camera/camera.js:179"
+            "line": " src/core/camera/camera.js:184"
         },
         {
             "message": "Missing item type\nPans the camera along X and Y axis.",
-            "line": " src/core/camera/camera.js:205"
+            "line": " src/core/camera/camera.js:210"
         },
         {
             "message": "Missing item type\nIncrements/decrements zoom factor, ie. distance between eye and look.",
-            "line": " src/core/camera/camera.js:259"
+            "line": " src/core/camera/camera.js:264"
         },
         {
             "message": "Missing item type\nCreates a canvas",

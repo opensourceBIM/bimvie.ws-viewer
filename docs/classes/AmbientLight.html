@@ -131,13 +131,27 @@
 
 
 <div class="box intro">
-    <p>An <strong>AmbientLight</strong> defines an ambient light source of fixed intensity and color that affects all attached Object
+    <p>An <strong>AmbientLight</strong> is a <a href="../classes/Light.html" class="crosslink">Light</a> that defines an ambient light source of fixed intensity and color that affects all attached Object
  equally.</p>
 <h2 id="overview">Overview</h2>
 <p>TODO</p>
 <h2 id="example">Example</h2>
-<p>TODO
-<code>javascript</code></p>
+<pre class="code prettyprint"><code class="lang-javascript">var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+
+var camera = new BIMSURFER.Camera(viewer, {
+    eye: [0, 0, -10]
+});
+
+var cameraControl = new BIMSURFER.CameraControl(viewer, {
+    camera: camera
+});
+
+var box = new BIMSURFER.BoxObject(viewer);
+
+var ambientLight = new BIMSURFER.AmbientLight(viewer, {
+    color: [0.4, 0.4, 0.4]
+});
+</code></pre>
 
 </div>
 
@@ -890,7 +904,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>Inherited from
                                     <a href="../classes/Light.html#property_active">Light</a>:
-                            <a href="../files/src_core_light_light.js.html#l54"><code>src&#x2F;core&#x2F;light&#x2F;light.js:54</code></a>
+                            <a href="../files/src_core_light_light.js.html#l51"><code>src&#x2F;core&#x2F;light&#x2F;light.js:51</code></a>
                             </p>
                     
                     
@@ -920,7 +934,7 @@ any subsequent notifications on that location as they are made.</p>
                                     Component
                                 </a>
                                 but overwritten in
-                            <a href="../files/src_core_light_light.js.html#l30"><code>src&#x2F;core&#x2F;light&#x2F;light.js:30</code></a>
+                            <a href="../files/src_core_light_light.js.html#l27"><code>src&#x2F;core&#x2F;light&#x2F;light.js:27</code></a>
                             </p>
                     
                     
@@ -945,7 +959,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_light_ambientLight.js.html#l46"><code>src&#x2F;core&#x2F;light&#x2F;ambientLight.js:46</code></a>
+                            <a href="../files/src_core_light_ambientLight.js.html#l58"><code>src&#x2F;core&#x2F;light&#x2F;ambientLight.js:58</code></a>
                             </p>
                     
                     
@@ -1079,7 +1093,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>Inherited from
                                     <a href="../classes/Light.html#event_active">Light</a>:
-                            <a href="../files/src_core_light_light.js.html#l79"><code>src&#x2F;core&#x2F;light&#x2F;light.js:79</code></a>
+                            <a href="../files/src_core_light_light.js.html#l76"><code>src&#x2F;core&#x2F;light&#x2F;light.js:76</code></a>
                             </p>
                     
                     

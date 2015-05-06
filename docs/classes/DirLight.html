@@ -131,7 +131,7 @@
 
 
 <div class="box intro">
-    <p>A <strong>DirLight</strong> defines a directional light source that originates from a single point and spreads outward in all directions.</p>
+    <p>A <strong>DirLight</strong> is a <a href="../classes/Light.html" class="crosslink">Light</a> that defines a directional light source that originates from a single point and spreads outward in all directions.</p>
 <h2 id="overview">Overview</h2>
 <ul>
 
@@ -153,7 +153,24 @@ DirLight/quadraticAttenuation:property factors, which indicate how their intensi
 
 
 <h2 id="example">Example</h2>
-<p>TODO</p>
+<pre class="code prettyprint"><code class="lang-javascript">var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+
+var camera = new BIMSURFER.Camera(viewer, {
+   eye: [0, 0, -10]
+});
+
+var cameraControl = new BIMSURFER.CameraControl(viewer, {
+   camera: camera
+});
+
+var box = new BIMSURFER.BoxObject(viewer);
+
+var dirLight = new BIMSURFER.DirLight(viewer, {
+   color: [0.6, 0.9, 0.9],
+   dir: [1.0, 0.0, 0.0],
+   space: "view"
+});
+</code></pre>
 
 </div>
 
@@ -935,7 +952,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>Inherited from
                                     <a href="../classes/Light.html#property_active">Light</a>:
-                            <a href="../files/src_core_light_light.js.html#l54"><code>src&#x2F;core&#x2F;light&#x2F;light.js:54</code></a>
+                            <a href="../files/src_core_light_light.js.html#l51"><code>src&#x2F;core&#x2F;light&#x2F;light.js:51</code></a>
                             </p>
                     
                     
@@ -965,7 +982,7 @@ any subsequent notifications on that location as they are made.</p>
                                     Component
                                 </a>
                                 but overwritten in
-                            <a href="../files/src_core_light_light.js.html#l30"><code>src&#x2F;core&#x2F;light&#x2F;light.js:30</code></a>
+                            <a href="../files/src_core_light_light.js.html#l27"><code>src&#x2F;core&#x2F;light&#x2F;light.js:27</code></a>
                             </p>
                     
                     
@@ -990,7 +1007,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_light_dirLight.js.html#l83"><code>src&#x2F;core&#x2F;light&#x2F;dirLight.js:83</code></a>
+                            <a href="../files/src_core_light_dirLight.js.html#l101"><code>src&#x2F;core&#x2F;light&#x2F;dirLight.js:101</code></a>
                             </p>
                     
                     
@@ -1041,7 +1058,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_light_dirLight.js.html#l60"><code>src&#x2F;core&#x2F;light&#x2F;dirLight.js:60</code></a>
+                            <a href="../files/src_core_light_dirLight.js.html#l78"><code>src&#x2F;core&#x2F;light&#x2F;dirLight.js:78</code></a>
                             </p>
                     
                     
@@ -1119,7 +1136,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_light_dirLight.js.html#l104"><code>src&#x2F;core&#x2F;light&#x2F;dirLight.js:104</code></a>
+                            <a href="../files/src_core_light_dirLight.js.html#l122"><code>src&#x2F;core&#x2F;light&#x2F;dirLight.js:122</code></a>
                             </p>
                     
                     
@@ -1181,7 +1198,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>Inherited from
                                     <a href="../classes/Light.html#event_active">Light</a>:
-                            <a href="../files/src_core_light_light.js.html#l79"><code>src&#x2F;core&#x2F;light&#x2F;light.js:79</code></a>
+                            <a href="../files/src_core_light_light.js.html#l76"><code>src&#x2F;core&#x2F;light&#x2F;light.js:76</code></a>
                             </p>
                     
                     

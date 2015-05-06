@@ -143,16 +143,6 @@ var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
 
 // Create a Camera
 var camera = new BIMSURFER.Camera(viewer, {
-       eye: [0, 0, -10]
-   });
-
-// Create a CameraControl to interact with the Camera
-var cameraControl = new BIMSURFER.CameraControl(viewer, {
-       camera: camera
-   });
-
-// Create a Camera
-var camera = new BIMSURFER.Camera(viewer, {
    eye: [0, 0, -10]
 });
 
@@ -175,7 +165,7 @@ new BIMSURFER.BoxObject(viewer, {
    matrix: BIMSURFER.math.translationMat4v([4, 0, -4])
 });
 
-new BIMSURFER.Object(viewer, {
+new BIMSURFER.BoxObject(viewer, {
    objectId: "baz",
    ifcType: "IfcBeam",
    matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])
@@ -990,7 +980,7 @@ any subsequent notifications on that location as they are made.</p>
                                     Component
                                 </a>
                                 but overwritten in
-                            <a href="../files/src_core_effect_highlightEffect.js.html#l92"><code>src&#x2F;core&#x2F;effect&#x2F;highlightEffect.js:92</code></a>
+                            <a href="../files/src_core_effect_highlightEffect.js.html#l82"><code>src&#x2F;core&#x2F;effect&#x2F;highlightEffect.js:82</code></a>
                             </p>
                     
                     

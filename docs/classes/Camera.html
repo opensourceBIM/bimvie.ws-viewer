@@ -147,17 +147,22 @@
 <pre class="code prettyprint"><code class="lang-Javascript">// Create a Viewer
 var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
 
-//...
-
 // Create a Camera
 var camera = new BIMSURFER.Camera(viewer, {
-       eye: [0, 0, -10]
-   });
+   eye: [0, 0, -10]
+});
 
-// Create a CameraControl that controls our Camera
+// Create a CameraControl to interact with the Camera
 var cameraControl = new BIMSURFER.CameraControl(viewer, {
-       camera: camera
-   });
+   camera: camera
+});
+
+// Create a BoxObject
+new BIMSURFER.BoxObject(viewer, {
+   objectId: "foo",
+   ifcType: "IfcWall",
+   matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])
+});
 </code></pre>
 <p>Now let&#39;s create a second Camera and switch the <a href="../classes/CameraControl.html" class="crosslink">CameraControl</a> over to it:</p>
 <pre class="code prettyprint"><code class="lang-Javascript">
@@ -955,7 +960,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_camera_camera.js.html#l277"><code>src&#x2F;core&#x2F;camera&#x2F;camera.js:277</code></a>
+                            <a href="../files/src_core_camera_camera.js.html#l282"><code>src&#x2F;core&#x2F;camera&#x2F;camera.js:282</code></a>
                             </p>
                     
                     
@@ -985,7 +990,7 @@ any subsequent notifications on that location as they are made.</p>
                                     Component
                                 </a>
                                 but overwritten in
-                            <a href="../files/src_core_camera_camera.js.html#l75"><code>src&#x2F;core&#x2F;camera&#x2F;camera.js:75</code></a>
+                            <a href="../files/src_core_camera_camera.js.html#l80"><code>src&#x2F;core&#x2F;camera&#x2F;camera.js:80</code></a>
                             </p>
                     
                     
@@ -1035,7 +1040,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_camera_camera.js.html#l377"><code>src&#x2F;core&#x2F;camera&#x2F;camera.js:377</code></a>
+                            <a href="../files/src_core_camera_camera.js.html#l382"><code>src&#x2F;core&#x2F;camera&#x2F;camera.js:382</code></a>
                             </p>
                     
                     
@@ -1088,7 +1093,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_camera_camera.js.html#l396"><code>src&#x2F;core&#x2F;camera&#x2F;camera.js:396</code></a>
+                            <a href="../files/src_core_camera_camera.js.html#l401"><code>src&#x2F;core&#x2F;camera&#x2F;camera.js:401</code></a>
                             </p>
                     
                     
@@ -1140,7 +1145,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_camera_camera.js.html#l415"><code>src&#x2F;core&#x2F;camera&#x2F;camera.js:415</code></a>
+                            <a href="../files/src_core_camera_camera.js.html#l420"><code>src&#x2F;core&#x2F;camera&#x2F;camera.js:420</code></a>
                             </p>
                     
                     
@@ -1199,7 +1204,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_camera_camera.js.html#l352"><code>src&#x2F;core&#x2F;camera&#x2F;camera.js:352</code></a>
+                            <a href="../files/src_core_camera_camera.js.html#l357"><code>src&#x2F;core&#x2F;camera&#x2F;camera.js:357</code></a>
                             </p>
                     
                     

@@ -38,7 +38,7 @@
     matrix: BIMSURFER.math.translationMat4v([4, 0, -4])
  });
 
- new BIMSURFER.Object(viewer, {
+ new BIMSURFER.BoxObject(viewer, {
     objectId: "baz",
     ifcType: "IfcBeam",
     matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])

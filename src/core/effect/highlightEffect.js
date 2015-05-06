@@ -16,16 +16,6 @@
 
  // Create a Camera
  var camera = new BIMSURFER.Camera(viewer, {
-        eye: [0, 0, -10]
-    });
-
- // Create a CameraControl to interact with the Camera
- var cameraControl = new BIMSURFER.CameraControl(viewer, {
-        camera: camera
-    });
-
- // Create a Camera
- var camera = new BIMSURFER.Camera(viewer, {
     eye: [0, 0, -10]
  });
 
@@ -48,7 +38,7 @@
     matrix: BIMSURFER.math.translationMat4v([4, 0, -4])
  });
 
- new BIMSURFER.Object(viewer, {
+ new BIMSURFER.BoxObject(viewer, {
     objectId: "baz",
     ifcType: "IfcBeam",
     matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])

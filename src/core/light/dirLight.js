@@ -1,5 +1,5 @@
 /**
- A **DirLight** defines a directional light source that originates from a single point and spreads outward in all directions.
+ A **DirLight** is a {{#crossLink "Light"}}{{/crossLink}} that defines a directional light source that originates from a single point and spreads outward in all directions.
 
  ## Overview
 
@@ -24,7 +24,25 @@
 
  ## Example
 
-TODO
+ ```` javascript
+ var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+
+ var camera = new BIMSURFER.Camera(viewer, {
+    eye: [0, 0, -10]
+ });
+
+ var cameraControl = new BIMSURFER.CameraControl(viewer, {
+    camera: camera
+ });
+
+ var box = new BIMSURFER.BoxObject(viewer);
+
+ var dirLight = new BIMSURFER.DirLight(viewer, {
+    color: [0.6, 0.9, 0.9],
+    dir: [1.0, 0.0, 0.0],
+    space: "view"
+ });
+ ````
 
  @class DirLight
  @module BIMSURFER

@@ -22,23 +22,29 @@
     camera: camera
  });
 
- // Create some BoxObjects
+ // Create a BoxGeometry
+ var boxGeometry = new BIMSURFER.BoxGeometry(viewer);
 
- new BIMSURFER.BoxObject(viewer, {
+ // Create some Objects that use our BoxGeometry
+
+ new BIMSURFER.Object(viewer, {
     objectId: "foo",
     ifcType: "IfcWall",
+    geometries: [boxGeometry],
     matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])
  });
 
  new BIMSURFER.BoxObject(viewer, {
     objectId: "bar",
     ifcType: "IfcWall",
+    geometries: [boxGeometry],
     matrix: BIMSURFER.math.translationMat4v([4, 0, -4])
  });
 
  new BIMSURFER.Object(viewer, {
     objectId: "baz",
     ifcType: "IfcBeam",
+    geometries: [boxGeometry],
     matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])
  });
  ````

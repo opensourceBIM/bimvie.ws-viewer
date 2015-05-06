@@ -138,7 +138,57 @@
 
  ## Example
 
- TODO
+ In this example we have a {{#crossLink &quot;Viewer&quot;}}{{/crossLink}} with a
+ {{#crossLink &quot;Camera&quot;}}{{/crossLink}} that&#x27;s controlled by a CameraControl.
+
+ &#x60;&#x60;&#x60;&#x60;Javascript
+ // Create a Viewer
+ var viewer = new BIMSURFER.Viewer(null, &quot;myDiv&quot;, {}, false);
+
+ // Create a Camera
+ var camera = new BIMSURFER.Camera(viewer, {
+    eye: [0, 0, -10]
+ });
+
+ // Create a CameraControl
+ var cameraControl = new BIMSURFER.CameraControl(viewer, {
+    camera: camera
+ });
+
+ // Create some BoxObjects
+
+ new BIMSURFER.BoxObject(viewer, {
+    objectId: &quot;foo&quot;,
+    ifcType: &quot;IfcWall&quot;,
+    matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])
+ });
+
+ new BIMSURFER.BoxObject(viewer, {
+    objectId: &quot;bar&quot;,
+    ifcType: &quot;IfcWall&quot;,
+    matrix: BIMSURFER.math.translationMat4v([4, 0, -4])
+ });
+
+ new BIMSURFER.BoxObject(viewer, {
+    objectId: &quot;baz&quot;,
+    ifcType: &quot;IfcBeam&quot;,
+    matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])
+ });
+
+ // Create an ObjectSet
+ var objectSet = new BIMSURFER.ObjectSet(viewer);
+
+ // Apply a highlight effect to the ObjectSet
+ var highlightEffect = new BIMSURFER.HighlightEffect(viewer, {
+    objectSet: objectSet
+ });
+
+ // Create a ClickSelectObjects
+ var clickSelectObjects = new BIMSURFER.ClickSelectObjects(viewer, {
+    objectSet: objectSet
+ });
+
+ &#x60;&#x60;&#x60;&#x60;
 
  @class ClickSelectObjects
  @module BIMSURFER
