@@ -1,6 +1,9 @@
 # bimvie.ws-viewer
 
-## Install Grunt Tasks
+ * [API Docs](http://opensourcebim.github.io/bimvie.ws-viewer/docs/)
+ * [Live Examples](http://opensourcebim.github.io/bimvie.ws-viewer/examples/)
+ 
+## Install
 
 ````
 npm install grunt --save-dev
