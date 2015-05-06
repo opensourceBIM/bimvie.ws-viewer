@@ -116,19 +116,19 @@
 
     // Create a Selection
 
-    var selection = new BIMSURFER.Selection(viewer);
+    var objectSet = new BIMSURFER.ObjectSet(viewer);
 
     // Apply a Highlight effect to the Selection, which will cause the selected
     // objects to appear highlighted and all other Objects normal
 
     new BIMSURFER.HighlightEffect(viewer, {
-        selection: selection
+        objectSet: objectSet
     });
 
-    // Create a selection control
+    // Create a objectSet control
 
     new BIMSURFER.ClickSelectObjects(viewer, {
-        selection: selection
+        objectSet: objectSet
     });
 
 </script>

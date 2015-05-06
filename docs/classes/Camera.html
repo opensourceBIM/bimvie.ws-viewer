@@ -57,6 +57,7 @@
                                 <li><a href="../classes/IsolateEffect.html">IsolateEffect</a></li>
                                 <li><a href="../classes/KeyboardAxisCamera.html">KeyboardAxisCamera</a></li>
                                 <li><a href="../classes/KeyboardOrbitCamera.html">KeyboardOrbitCamera</a></li>
+                                <li><a href="../classes/KeyboardPanCamera.html">KeyboardPanCamera</a></li>
                                 <li><a href="../classes/KeyboardZoomCamera.html">KeyboardZoomCamera</a></li>
                                 <li><a href="../classes/Light.html">Light</a></li>
                                 <li><a href="../classes/math.html">math</a></li>
@@ -64,8 +65,8 @@
                                 <li><a href="../classes/MousePanCamera.html">MousePanCamera</a></li>
                                 <li><a href="../classes/MouseZoomCamera.html">MouseZoomCamera</a></li>
                                 <li><a href="../classes/Object.html">Object</a></li>
+                                <li><a href="../classes/ObjectSet.html">ObjectSet</a></li>
                                 <li><a href="../classes/PointLight.html">PointLight</a></li>
-                                <li><a href="../classes/Selection.html">Selection</a></li>
                                 <li><a href="../classes/TeapotGeometry.html">TeapotGeometry</a></li>
                                 <li><a href="../classes/TeapotObject.html">TeapotObject</a></li>
                                 <li><a href="../classes/Viewer.html">Viewer</a></li>
@@ -134,25 +135,44 @@
     <p>A <strong>Camera</strong> defines a viewpoint within a <a href="../classes/Viewer.html" class="crosslink">Viewer</a>.</p>
 <h2 id="overview">Overview</h2>
 <ul>
-<li>You can have an unlimited number of Cameras in a <a href="../classes/Viewer.html" class="crosslink">GameObjects</a>.</li>
+<li>You can have an unlimited number of Cameras in a <a href="../classes/Viewer.html" class="crosslink">Viewer</a>.</li>
 <li>At any instant, the Camera we&#39;re looking through is the one whose <a href="../classes/Camera.html#property_active" class="crosslink">active</a> property is true.</li>
+<li>Cameras can be controlled with controls such as <a href="../classes/CameraControl.html" class="crosslink">CameraControl</a>, <a href="../classes/KeyboardAxisCamera.html" class="crosslink">KeyboardAxisCamera</a>,
+<a href="../classes/KeyboardOrbitCamera.html" class="crosslink">KeyboardOrbitCamera</a>, <a href="../classes/KeyboardPanCamera.html" class="crosslink">KeyboardPanCamera</a>, <a href="../classes/KeyboardZoomCamera.html" class="crosslink">KeyboardZoomCamera</a>,
+<a href="../classes/MouseOrbitCamera.html" class="crosslink">MouseOrbitCamera</a>, <a href="../classes/MousePanCamera.html" class="crosslink">MousePanCamera</a> and <a href="../classes/MouseZoomCamera.html" class="crosslink">MouseZoomCamera</a>.</li>
 </ul>
 
 <h2 id="example">Example</h2>
-<p>In this example we have a <a href="../classes/Viewer.html" class="crosslink">Viewer</a> with a
-Camera, <a href="../classes/CameraControl.html" class="crosslink">CameraControl</a> and a <a href="../classes/TeapotObject.html" class="crosslink">TeapotObject</a>.</p>
-<pre class="code prettyprint"><code class="lang-Javascript">
+<p>Let&#39;s create a <a href="../classes/Viewer.html" class="crosslink">Viewer</a> with a Camera that&#39;s controlled by a <a href="../classes/CameraControl.html" class="crosslink">CameraControl</a>:</p>
+<pre class="code prettyprint"><code class="lang-Javascript">// Create a Viewer
 var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
 
+//...
+
+// Create a Camera
 var camera = new BIMSURFER.Camera(viewer, {
        eye: [0, 0, -10]
    });
 
+// Create a CameraControl that controls our Camera
 var cameraControl = new BIMSURFER.CameraControl(viewer, {
        camera: camera
    });
+</code></pre>
+<p>Now let&#39;s create a second Camera and switch the <a href="../classes/CameraControl.html" class="crosslink">CameraControl</a> over to it:</p>
+<pre class="code prettyprint"><code class="lang-Javascript">
+// Deactivate our Camera
+camera.active = false;
 
-var teapot = new BIMSURFER.TeapotObject(viewer);
+// Create a second Camera
+// Camera is active by default
+var camera2 = new BIMSURFER.Camera(viewer, {
+       eye: [-10, 0, 0]
+   });
+
+// Switch our CameraControl to the second Camera
+// Now we&#39;re controlling that Camera
+cameraControl.camera = camera2;
 </code></pre>
 
 </div>
@@ -935,7 +955,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_camera_camera.js.html#l256"><code>src&#x2F;core&#x2F;camera&#x2F;camera.js:256</code></a>
+                            <a href="../files/src_core_camera_camera.js.html#l277"><code>src&#x2F;core&#x2F;camera&#x2F;camera.js:277</code></a>
                             </p>
                     
                     
@@ -965,7 +985,7 @@ any subsequent notifications on that location as they are made.</p>
                                     Component
                                 </a>
                                 but overwritten in
-                            <a href="../files/src_core_camera_camera.js.html#l54"><code>src&#x2F;core&#x2F;camera&#x2F;camera.js:54</code></a>
+                            <a href="../files/src_core_camera_camera.js.html#l75"><code>src&#x2F;core&#x2F;camera&#x2F;camera.js:75</code></a>
                             </p>
                     
                     
@@ -1015,7 +1035,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_camera_camera.js.html#l356"><code>src&#x2F;core&#x2F;camera&#x2F;camera.js:356</code></a>
+                            <a href="../files/src_core_camera_camera.js.html#l377"><code>src&#x2F;core&#x2F;camera&#x2F;camera.js:377</code></a>
                             </p>
                     
                     
@@ -1068,7 +1088,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_camera_camera.js.html#l375"><code>src&#x2F;core&#x2F;camera&#x2F;camera.js:375</code></a>
+                            <a href="../files/src_core_camera_camera.js.html#l396"><code>src&#x2F;core&#x2F;camera&#x2F;camera.js:396</code></a>
                             </p>
                     
                     
@@ -1120,7 +1140,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_camera_camera.js.html#l394"><code>src&#x2F;core&#x2F;camera&#x2F;camera.js:394</code></a>
+                            <a href="../files/src_core_camera_camera.js.html#l415"><code>src&#x2F;core&#x2F;camera&#x2F;camera.js:415</code></a>
                             </p>
                     
                     
@@ -1179,7 +1199,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_camera_camera.js.html#l331"><code>src&#x2F;core&#x2F;camera&#x2F;camera.js:331</code></a>
+                            <a href="../files/src_core_camera_camera.js.html#l352"><code>src&#x2F;core&#x2F;camera&#x2F;camera.js:352</code></a>
                             </p>
                     
                     

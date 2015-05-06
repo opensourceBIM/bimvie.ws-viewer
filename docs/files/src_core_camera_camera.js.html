@@ -57,6 +57,7 @@
                                 <li><a href="../classes/IsolateEffect.html">IsolateEffect</a></li>
                                 <li><a href="../classes/KeyboardAxisCamera.html">KeyboardAxisCamera</a></li>
                                 <li><a href="../classes/KeyboardOrbitCamera.html">KeyboardOrbitCamera</a></li>
+                                <li><a href="../classes/KeyboardPanCamera.html">KeyboardPanCamera</a></li>
                                 <li><a href="../classes/KeyboardZoomCamera.html">KeyboardZoomCamera</a></li>
                                 <li><a href="../classes/Light.html">Light</a></li>
                                 <li><a href="../classes/math.html">math</a></li>
@@ -64,8 +65,8 @@
                                 <li><a href="../classes/MousePanCamera.html">MousePanCamera</a></li>
                                 <li><a href="../classes/MouseZoomCamera.html">MouseZoomCamera</a></li>
                                 <li><a href="../classes/Object.html">Object</a></li>
+                                <li><a href="../classes/ObjectSet.html">ObjectSet</a></li>
                                 <li><a href="../classes/PointLight.html">PointLight</a></li>
-                                <li><a href="../classes/Selection.html">Selection</a></li>
                                 <li><a href="../classes/TeapotGeometry.html">TeapotGeometry</a></li>
                                 <li><a href="../classes/TeapotObject.html">TeapotObject</a></li>
                                 <li><a href="../classes/Viewer.html">Viewer</a></li>
@@ -123,29 +124,50 @@
  ## Overview
 
  &lt;ul&gt;
- &lt;li&gt;You can have an unlimited number of Cameras in a {{#crossLink &quot;Viewer&quot;}}GameObjects{{/crossLink}}.&lt;/li&gt;
+ &lt;li&gt;You can have an unlimited number of Cameras in a {{#crossLink &quot;Viewer&quot;}}{{/crossLink}}.&lt;/li&gt;
  &lt;li&gt;At any instant, the Camera we&#x27;re looking through is the one whose {{#crossLink &quot;Camera/active:property&quot;}}active{{/crossLink}} property is true.&lt;/li&gt;
+ &lt;li&gt;Cameras can be controlled with controls such as {{#crossLink &quot;CameraControl&quot;}}{{/crossLink}}, {{#crossLink &quot;KeyboardAxisCamera&quot;}}{{/crossLink}},
+ {{#crossLink &quot;KeyboardOrbitCamera&quot;}}{{/crossLink}}, {{#crossLink &quot;KeyboardPanCamera&quot;}}{{/crossLink}}, {{#crossLink &quot;KeyboardZoomCamera&quot;}}{{/crossLink}},
+ {{#crossLink &quot;MouseOrbitCamera&quot;}}{{/crossLink}}, {{#crossLink &quot;MousePanCamera&quot;}}{{/crossLink}} and {{#crossLink &quot;MouseZoomCamera&quot;}}{{/crossLink}}.&lt;/li&gt;
  &lt;/ul&gt;
 
  ## Example
 
- In this example we have a {{#crossLink &quot;Viewer&quot;}}{{/crossLink}} with a
- Camera, {{#crossLink &quot;CameraControl&quot;}}{{/crossLink}} and a {{#crossLink &quot;TeapotObject&quot;}}{{/crossLink}}.
+ Let&#x27;s create a {{#crossLink &quot;Viewer&quot;}}{{/crossLink}} with a Camera that&#x27;s controlled by a {{#crossLink &quot;CameraControl&quot;}}{{/crossLink}}:
 
  &#x60;&#x60;&#x60;&#x60;Javascript
-
+ // Create a Viewer
  var viewer = new BIMSURFER.Viewer(null, &quot;myDiv&quot;, {}, false);
 
+ //...
+
+ // Create a Camera
  var camera = new BIMSURFER.Camera(viewer, {
         eye: [0, 0, -10]
     });
 
+ // Create a CameraControl that controls our Camera
  var cameraControl = new BIMSURFER.CameraControl(viewer, {
         camera: camera
     });
+ &#x60;&#x60;&#x60;&#x60;
 
- var teapot = new BIMSURFER.TeapotObject(viewer);
+ Now let&#x27;s create a second Camera and switch the {{#crossLink &quot;CameraControl&quot;}}{{/crossLink}} over to it:
 
+ &#x60;&#x60;&#x60;&#x60;Javascript
+
+ // Deactivate our Camera
+ camera.active = false;
+
+ // Create a second Camera
+ // Camera is active by default
+ var camera2 = new BIMSURFER.Camera(viewer, {
+        eye: [-10, 0, 0]
+    });
+
+ // Switch our CameraControl to the second Camera
+ // Now we&#x27;re controlling that Camera
+ cameraControl.camera = camera2;
  &#x60;&#x60;&#x60;&#x60;
 
  @class Camera

@@ -57,6 +57,7 @@
                                 <li><a href="../classes/IsolateEffect.html">IsolateEffect</a></li>
                                 <li><a href="../classes/KeyboardAxisCamera.html">KeyboardAxisCamera</a></li>
                                 <li><a href="../classes/KeyboardOrbitCamera.html">KeyboardOrbitCamera</a></li>
+                                <li><a href="../classes/KeyboardPanCamera.html">KeyboardPanCamera</a></li>
                                 <li><a href="../classes/KeyboardZoomCamera.html">KeyboardZoomCamera</a></li>
                                 <li><a href="../classes/Light.html">Light</a></li>
                                 <li><a href="../classes/math.html">math</a></li>
@@ -64,8 +65,8 @@
                                 <li><a href="../classes/MousePanCamera.html">MousePanCamera</a></li>
                                 <li><a href="../classes/MouseZoomCamera.html">MouseZoomCamera</a></li>
                                 <li><a href="../classes/Object.html">Object</a></li>
+                                <li><a href="../classes/ObjectSet.html">ObjectSet</a></li>
                                 <li><a href="../classes/PointLight.html">PointLight</a></li>
-                                <li><a href="../classes/Selection.html">Selection</a></li>
                                 <li><a href="../classes/TeapotGeometry.html">TeapotGeometry</a></li>
                                 <li><a href="../classes/TeapotObject.html">TeapotObject</a></li>
                                 <li><a href="../classes/Viewer.html">Viewer</a></li>
@@ -118,7 +119,7 @@
 <div class="file">
     <pre class="code prettyprint linenums">
 /**
- TODO
+ An **XRayEffect** is an {{#crossLink &quot;Effect&quot;}}{{/crossLink}} that creates an X-ray view of the {{#crossLink &quot;Object&quot;}}Objects{{/crossLink}} within an {{#crossLink &quot;ObjectSet&quot;}}{{/crossLink}}.
 
  ## Overview
 
@@ -126,7 +127,60 @@
 
  ## Example
 
- TODO
+ X-ray objects that match given IFC types, using an {{#crossLink &quot;ObjectSet&quot;}}{{/crossLink}} and an XRayEffect:
+
+ &#x60;&#x60;&#x60;&#x60;javascript
+
+ // Create a Viewer
+ var viewer = new BIMSURFER.Viewer(null, &quot;myDiv&quot;, {}, false);
+
+ // Create a Camera
+ var camera = new BIMSURFER.Camera(viewer, {
+    eye: [0, 0, -10]
+ });
+
+ // Create a CameraControl to interact with the Camera
+ var cameraControl = new BIMSURFER.CameraControl(viewer, {
+    camera: camera
+ });
+
+ // Create some BoxObjects
+
+ new BIMSURFER.BoxObject(viewer, {
+    objectId: &quot;foo&quot;,
+    ifcType: &quot;IfcWall&quot;,
+    matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])
+ });
+
+ new BIMSURFER.BoxObject(viewer, {
+    objectId: &quot;bar&quot;,
+    ifcType: &quot;IfcWall&quot;,
+    matrix: BIMSURFER.math.translationMat4v([4, 0, -4])
+ });
+
+ new BIMSURFER.Object(viewer, {
+    objectId: &quot;baz&quot;,
+    ifcType: &quot;IfcBeam&quot;,
+    matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])
+ });
+
+ // Create an ObjectSet
+ var objectSet = new BIMSURFER.ObjectSet(viewer);
+
+ // Apply an X-Ray effect to the ObjectSet
+ var xrayEffect = new BIMSURFER.XRayEffect(viewer, {
+    objectSet: objectSet
+ });
+
+ // Add Objects to the ObjectSet by IFC type
+ // These Objects become opaque
+ objectSet.addObjectTypes([&quot;IfcWall&quot;, &quot;IfcBeam&quot;]);
+
+ // Remove an Object from the ObjectSet by IFC type
+ // That Object becomes transparent
+ objectSet.removeObjectTypes([&quot;IfcWall&quot;]);
+
+ &#x60;&#x60;&#x60;&#x60;
 
  @class XRayEffect
  @module BIMSURFER

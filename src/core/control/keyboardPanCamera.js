@@ -1,15 +1,23 @@
 /**
- TODO
+ A **KeyboardPanCamera** lets you pan a {{#crossLink "Camera"}}{{/crossLink}} using the W, S, A and D keys.
 
  ## Overview
 
- TODO
+ <ul>
+ <li>Panning up and down involves moving the {{#crossLink "Camera"}}Camera's{{/crossLink}} {{#crossLink "Camera/eye:property"}}{{/crossLink}} and {{#crossLink "Camera/look:property"}}{{/crossLink}} positions along the direction of its {{#crossLink "Camera/up:property"}}{{/crossLink}} vector.</li>
+ <li>Panning backwards and forwards involves moving the {{#crossLink "Camera"}}Camera's{{/crossLink}} {{#crossLink "Camera/eye:property"}}{{/crossLink}} and {{#crossLink "Camera/look:property"}}{{/crossLink}} positions along the direction of its {{#crossLink "Camera/eye:property"}}{{/crossLink}} - {{#crossLink "Camera/look:property"}}{{/crossLink}} vector.</li>
+ <li>Panning left and right involves moving the {{#crossLink "Camera"}}Camera's{{/crossLink}} {{#crossLink "Camera/eye:property"}}{{/crossLink}} and {{#crossLink "Camera/look:property"}}{{/crossLink}} positions along the the vector that is perpendicular to its {{#crossLink "Camera/up:property"}}{{/crossLink}} and {{#crossLink "Camera/eye:property"}}{{/crossLink}}-{{#crossLink "Camera/look:property"}}{{/crossLink}} vector.</li>
+ <li>If desired, you can have multiple KeyboardPanCameras within the same {{#crossLink "Viewer"}}{{/crossLink}}.</li>
+ <li>Multiple KeyboardPanCameras can drive the same {{#crossLink "Camera"}}{{/crossLink}}, or can each drive their own separate {{#crossLink "Camera"}}{{/crossLink}}.</li>
+ <li>At any instant, the KeyboardPanCameras we're driving is the one whose {{#crossLink "KeyboardPanCamera/active:property"}}active{{/crossLink}} property is true.</li>
+ <li>You can switch a KeyboardPanCameras to a different {{#crossLink "Camera"}}{{/crossLink}} at any time.</li>
+ </ul>
 
  ## Example
 
  TODO
 
- @class KeyboardOrbitCamera
+ @class KeyboardPanCamera
  @module BIMSURFER
  @submodule control
  @constructor

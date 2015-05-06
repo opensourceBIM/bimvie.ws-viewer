@@ -1,7 +1,15 @@
 /**
- TODO
+ A **KeyboardZoomCamera** lets you zoom a {{#crossLink "Camera"}}{{/crossLink}} using the + and - keys.
 
  ## Overview
+
+ <ul>
+ <li>Zooming involves moving the {{#crossLink "Camera"}}Camera's{{/crossLink}} {{#crossLink "Camera/eye:property"}}{{/crossLink}} closer and farther to its {{#crossLink "Camera/look:property"}}{{/crossLink}} position.</li>
+ <li>If desired, you can have multiple KeyboardZoomCameras within the same {{#crossLink "Viewer"}}{{/crossLink}}.</li>
+ <li>Multiple KeyboardZoomCameras can drive the same {{#crossLink "Camera"}}{{/crossLink}}, or can each drive their own separate {{#crossLink "Camera"}}{{/crossLink}}.</li>
+ <li>At any instant, the KeyboardZoomCameras we're driving is the one whose {{#crossLink "KeyboardZoomCamera/active:property"}}active{{/crossLink}} property is true.</li>
+ <li>You can switch a KeyboardZoomCameras to a different {{#crossLink "Camera"}}{{/crossLink}} at any time.</li>
+ </ul>
 
  TODO
 

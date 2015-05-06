@@ -1,5 +1,5 @@
 /**
- TODO
+ An **TeapotGeometry** is a teapot-shaped {{#crossLink "Geometry"}}{{/crossLink}}.
 
  ## Overview
 

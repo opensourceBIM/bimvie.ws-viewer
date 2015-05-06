@@ -1,5 +1,5 @@
 /**
- TODO
+ An **XRayEffect** is an {{#crossLink "Effect"}}{{/crossLink}} that creates an X-ray view of the {{#crossLink "Object"}}Objects{{/crossLink}} within an {{#crossLink "ObjectSet"}}{{/crossLink}}.
 
  ## Overview
 
@@ -7,7 +7,60 @@
 
  ## Example
 
- TODO
+ X-ray objects that match given IFC types, using an {{#crossLink "ObjectSet"}}{{/crossLink}} and an XRayEffect:
+
+ ````javascript
+
+ // Create a Viewer
+ var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+
+ // Create a Camera
+ var camera = new BIMSURFER.Camera(viewer, {
+    eye: [0, 0, -10]
+ });
+
+ // Create a CameraControl to interact with the Camera
+ var cameraControl = new BIMSURFER.CameraControl(viewer, {
+    camera: camera
+ });
+
+ // Create some BoxObjects
+
+ new BIMSURFER.BoxObject(viewer, {
+    objectId: "foo",
+    ifcType: "IfcWall",
+    matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])
+ });
+
+ new BIMSURFER.BoxObject(viewer, {
+    objectId: "bar",
+    ifcType: "IfcWall",
+    matrix: BIMSURFER.math.translationMat4v([4, 0, -4])
+ });
+
+ new BIMSURFER.Object(viewer, {
+    objectId: "baz",
+    ifcType: "IfcBeam",
+    matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])
+ });
+
+ // Create an ObjectSet
+ var objectSet = new BIMSURFER.ObjectSet(viewer);
+
+ // Apply an X-Ray effect to the ObjectSet
+ var xrayEffect = new BIMSURFER.XRayEffect(viewer, {
+    objectSet: objectSet
+ });
+
+ // Add Objects to the ObjectSet by IFC type
+ // These Objects become opaque
+ objectSet.addObjectTypes(["IfcWall", "IfcBeam"]);
+
+ // Remove an Object from the ObjectSet by IFC type
+ // That Object becomes transparent
+ objectSet.removeObjectTypes(["IfcWall"]);
+
+ ````
 
  @class XRayEffect
  @module BIMSURFER

@@ -11937,7 +11937,7 @@ var viewer = new BIMSURFER.Viewer(...);
     /**
      * A selection of {@link BIMSURFER.Object}s within a {@link BIMSURFER.Viewer}.
      */
-    BIMSURFER.Selection = BIMSURFER.Component.extend({
+    BIMSURFER.ObjectSet = BIMSURFER.Component.extend({
 
         /**
          JavaScript class name for this Component.
@@ -11946,7 +11946,7 @@ var viewer = new BIMSURFER.Viewer(...);
          @type String
          @final
          */
-        className: "BIMSURFER.Selection",
+        className: "BIMSURFER.ObjectSet",
 
         _init: function (cfg) {
 
@@ -12308,7 +12308,7 @@ var viewer = new BIMSURFER.Viewer(...);
     "use strict";
 
     /**
-     * Applies an effect to the {@link BIMSURFER.Object}s within a {@link BIMSURFER.Selection}.
+     * Applies an effect to the {@link BIMSURFER.Object}s within a {@link BIMSURFER.ObjectSet}.
      */
     BIMSURFER.Effect = BIMSURFER.Component.extend({
 
@@ -12323,7 +12323,7 @@ var viewer = new BIMSURFER.Viewer(...);
 
         _init: function (cfg) {
 
-            this.selection = cfg.selection || new BIMSURFER.Selection(this.viewer);
+            this.selection = cfg.selection || new BIMSURFER.ObjectSet(this.viewer);
 
             this._dirty = true;
 
@@ -12419,7 +12419,7 @@ var viewer = new BIMSURFER.Viewer(...);
     "use strict";
 
     /**
-     * Applies a highlight effect to the {@link BIMSURFER.Object}s within a {@link BIMSURFER.Selection}.
+     * Applies a highlight effect to the {@link BIMSURFER.Object}s within a {@link BIMSURFER.ObjectSet}.
      */
     BIMSURFER.HighlightEffect = BIMSURFER.Effect.extend({
 
@@ -12447,7 +12447,7 @@ var viewer = new BIMSURFER.Viewer(...);
     "use strict";
 
     /**
-     * Sets the selected {@link BIMSURFER.Object}s in a  {@link BIMSURFER.Selection} as visible.
+     * Sets the selected {@link BIMSURFER.Object}s in a  {@link BIMSURFER.ObjectSet} as visible.
      */
     BIMSURFER.IsolateEffect = BIMSURFER.Effect.extend({
 
@@ -12475,7 +12475,7 @@ var viewer = new BIMSURFER.Viewer(...);
     "use strict";
 
     /**
-     * Applies an X-Ray effect to the {@link BIMSURFER.Object}s within a {@link BIMSURFER.Selection}.
+     * Applies an X-Ray effect to the {@link BIMSURFER.Object}s within a {@link BIMSURFER.ObjectSet}.
      */
     BIMSURFER.XRayEffect = BIMSURFER.Effect.extend({
 
@@ -13906,7 +13906,7 @@ var viewer = new BIMSURFER.Viewer(...);
     "use strict";
 
     /**
-     * Selects {@link BIMSURFER.Object}s within a {@link BIMSURFER.Selection}.
+     * Selects {@link BIMSURFER.Object}s within a {@link BIMSURFER.ObjectSet}.
      */
     BIMSURFER.ClickSelectObjects = BIMSURFER.Component.extend({
 
@@ -13921,7 +13921,7 @@ var viewer = new BIMSURFER.Viewer(...);
 
         _init: function (cfg) {
 
-            this.selection = cfg.selection || new BIMSURFER.Selection(this.viewer);
+            this.selection = cfg.selection || new BIMSURFER.ObjectSet(this.viewer);
 
             this._multi = false;
 

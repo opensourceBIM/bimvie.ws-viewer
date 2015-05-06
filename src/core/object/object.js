@@ -1,5 +1,5 @@
 /**
- A 3D object within a {{#crossLink "Viewer"}}{{/crossLink}}.
+ An **Object** is a visible 3D element within a {{#crossLink "Viewer"}}{{/crossLink}}.
 
  ## Overview
 
@@ -7,7 +7,57 @@
 
  ## Example
 
- TODO
+ In the example below we'll create three Objects, each with a unique ID and a modelling transform:
+ ````Javascript
+ // Create a Viewer
+ var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+
+ // Create a Camera
+ var camera = new BIMSURFER.Camera(viewer, {
+    eye: [0, 0, -10]
+ });
+
+ // Create a CameraControl to interact with the Camera
+ var cameraControl = new BIMSURFER.CameraControl(viewer, {
+    camera: camera
+ });
+
+ // Create some BoxObjects
+
+ new BIMSURFER.BoxObject(viewer, {
+    objectId: "foo",
+    ifcType: "IfcWall",
+    matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])
+ });
+
+ new BIMSURFER.BoxObject(viewer, {
+    objectId: "bar",
+    ifcType: "IfcWall",
+    matrix: BIMSURFER.math.translationMat4v([4, 0, -4])
+ });
+
+ new BIMSURFER.Object(viewer, {
+    objectId: "baz",
+    ifcType: "IfcBeam",
+    matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])
+ });
+ ````
+
+ We can then find the objects in the {{#crossLink "Viewer"}}{{/crossLink}} by ID:
+ ````javascript
+ var foo = viewer.components["foo"];
+ ````
+ or by IFC type:
+ ````javascript
+
+ // Get all Objects of the given IFC type
+ var wallObjects = viewer.components["IfcWall"];
+
+ // Get our "foo" object from those
+ var foo = wallObjects["foo"];
+ ````
+
+
 
  @class Object
  @module BIMSURFER
@@ -310,7 +360,7 @@
         _props: {
 
             /**
-             * Flag which indicates whether this Object is active or not.
+             * Whether this Object is active or not.
              *
              * Fires an {{#crossLink "Object/active:event"}}{{/crossLink}} event on change.
              *

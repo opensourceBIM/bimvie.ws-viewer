@@ -113,7 +113,7 @@
 
     // Create a Selection that initially selects two of our Objects
 
-    var selection = new BIMSURFER.Selection(viewer, {
+    var objectSet = new BIMSURFER.ObjectSet(viewer, {
         objects: [object1, object2 ]
     });
 
@@ -121,13 +121,13 @@
     // objects to be visible and all other Objects invisible
 
     var activate = new BIMSURFER.IsolateEffect(viewer, {
-        selection: selection
+        objectSet: objectSet
     });
 
     // Add a third Object to the Selection, causing the Isolate to now render
     // that Object as opaque also
 
-    selection.addObjects([object3]);
+    objectSet.addObjects([object3]);
 
 </script>
 

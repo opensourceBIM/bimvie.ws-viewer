@@ -1,11 +1,14 @@
 /**
- A **CameraControl** allows you to control a {{#crossLink "Camera"}}{{/crossLink}} with mouse and keyboard.
+ A **CameraControl** allows you to pan, rotate and zoom a {{#crossLink "Camera"}}{{/crossLink}} using the mouse and keyboard,
+ as well as switch it between preset left, right, anterior, posterior, superior and inferior views.
 
  ## Overview
 
  <ul>
- <li>You can have an unlimited number of Cameras in a {{#crossLink "Viewer"}}GameObjects{{/crossLink}}.</li>
- <li>At any instant, the Camera we're looking through is the one whose {{#crossLink "Camera/active:property"}}active{{/crossLink}} property is true.</li>
+ <li>You can have multiple CameraControls within the same {{#crossLink "Viewer"}}{{/crossLink}}.</li>
+ <li>Multiple CameraControls can drive the same {{#crossLink "Camera"}}{{/crossLink}}, or can each drive their own separate {{#crossLink "Camera"}}Cameras{{/crossLink}}.</li>
+ <li>At any instant, the CameraControl we're driving is the one whose {{#crossLink "Camera/active:property"}}active{{/crossLink}} property is true.</li>
+ <li>You can switch a CameraControl to a different {{#crossLink "Camera"}}{{/crossLink}} at any time.</li>
  </ul>
 
  ## Example
@@ -25,7 +28,7 @@
         camera: camera
     });
 
- var teapot = new BIMSURFER.TeapotObject(viewer);
+ var teapot = new BIMSURFER.BoxObject(viewer);
 
  ````
 

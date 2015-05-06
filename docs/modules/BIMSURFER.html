@@ -57,6 +57,7 @@
                                 <li><a href="../classes/IsolateEffect.html">IsolateEffect</a></li>
                                 <li><a href="../classes/KeyboardAxisCamera.html">KeyboardAxisCamera</a></li>
                                 <li><a href="../classes/KeyboardOrbitCamera.html">KeyboardOrbitCamera</a></li>
+                                <li><a href="../classes/KeyboardPanCamera.html">KeyboardPanCamera</a></li>
                                 <li><a href="../classes/KeyboardZoomCamera.html">KeyboardZoomCamera</a></li>
                                 <li><a href="../classes/Light.html">Light</a></li>
                                 <li><a href="../classes/math.html">math</a></li>
@@ -64,8 +65,8 @@
                                 <li><a href="../classes/MousePanCamera.html">MousePanCamera</a></li>
                                 <li><a href="../classes/MouseZoomCamera.html">MouseZoomCamera</a></li>
                                 <li><a href="../classes/Object.html">Object</a></li>
+                                <li><a href="../classes/ObjectSet.html">ObjectSet</a></li>
                                 <li><a href="../classes/PointLight.html">PointLight</a></li>
-                                <li><a href="../classes/Selection.html">Selection</a></li>
                                 <li><a href="../classes/TeapotGeometry.html">TeapotGeometry</a></li>
                                 <li><a href="../classes/TeapotObject.html">TeapotObject</a></li>
                                 <li><a href="../classes/Viewer.html">Viewer</a></li>
@@ -342,6 +343,11 @@ Almost every property on a xeoEngine Component fires a change event when you upd
                     </a>
                 </li>
                 <li class="module-class">
+                    <a href="../classes/KeyboardPanCamera.html">
+                        KeyboardPanCamera
+                    </a>
+                </li>
+                <li class="module-class">
                     <a href="../classes/KeyboardZoomCamera.html">
                         KeyboardZoomCamera
                     </a>
@@ -377,13 +383,13 @@ Almost every property on a xeoEngine Component fires a change event when you upd
                     </a>
                 </li>
                 <li class="module-class">
-                    <a href="../classes/PointLight.html">
-                        PointLight
+                    <a href="../classes/ObjectSet.html">
+                        ObjectSet
                     </a>
                 </li>
                 <li class="module-class">
-                    <a href="../classes/Selection.html">
-                        Selection
+                    <a href="../classes/PointLight.html">
+                        PointLight
                     </a>
                 </li>
                 <li class="module-class">
@@ -439,29 +445,50 @@ TODO
 ## Overview
 
 <ul>
-<li>You can have an unlimited number of Cameras in a {{#crossLink "Viewer"}}GameObjects{{/crossLink}}.</li>
+<li>You can have an unlimited number of Cameras in a {{#crossLink "Viewer"}}{{/crossLink}}.</li>
 <li>At any instant, the Camera we're looking through is the one whose {{#crossLink "Camera/active:property"}}active{{/crossLink}} property is true.</li>
+<li>Cameras can be controlled with controls such as {{#crossLink "CameraControl"}}{{/crossLink}}, {{#crossLink "KeyboardAxisCamera"}}{{/crossLink}},
+{{#crossLink "KeyboardOrbitCamera"}}{{/crossLink}}, {{#crossLink "KeyboardPanCamera"}}{{/crossLink}}, {{#crossLink "KeyboardZoomCamera"}}{{/crossLink}},
+{{#crossLink "MouseOrbitCamera"}}{{/crossLink}}, {{#crossLink "MousePanCamera"}}{{/crossLink}} and {{#crossLink "MouseZoomCamera"}}{{/crossLink}}.</li>
 </ul>
 
 ## Example
 
-In this example we have a {{#crossLink "Viewer"}}{{/crossLink}} with a
-Camera, {{#crossLink "CameraControl"}}{{/crossLink}} and a {{#crossLink "TeapotObject"}}{{/crossLink}}.
+Let's create a {{#crossLink "Viewer"}}{{/crossLink}} with a Camera that's controlled by a {{#crossLink "CameraControl"}}{{/crossLink}}:
 
 <code>&#x60;</code>`Javascript
-
+// Create a Viewer
 var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
 
+//...
+
+// Create a Camera
 var camera = new BIMSURFER.Camera(viewer, {
        eye: [0, 0, -10]
    });
 
+// Create a CameraControl that controls our Camera
 var cameraControl = new BIMSURFER.CameraControl(viewer, {
        camera: camera
    });
+<code>&#x60;</code>`
 
-var teapot = new BIMSURFER.TeapotObject(viewer);
+Now let's create a second Camera and switch the {{#crossLink "CameraControl"}}{{/crossLink}} over to it:
 
+<code>&#x60;</code>`Javascript
+
+// Deactivate our Camera
+camera.active = false;
+
+// Create a second Camera
+// Camera is active by default
+var camera2 = new BIMSURFER.Camera(viewer, {
+       eye: [-10, 0, 0]
+   });
+
+// Switch our CameraControl to the second Camera
+// Now we're controlling that Camera
+cameraControl.camera = camera2;
 <code>&#x60;</code>`
                     </div>
                 </li>
@@ -471,13 +498,16 @@ var teapot = new BIMSURFER.TeapotObject(viewer);
                     </a>
 
                     <div class="module-submodule-description">
-                        A **CameraControl** allows you to control a {{#crossLink "Camera"}}{{/crossLink}} with mouse and keyboard.
+                        A **CameraControl** allows you to pan, rotate and zoom a {{#crossLink "Camera"}}{{/crossLink}} using the mouse and keyboard,
+as well as switch it between preset left, right, anterior, posterior, superior and inferior views.
 
 ## Overview
 
 <ul>
-<li>You can have an unlimited number of Cameras in a {{#crossLink "Viewer"}}GameObjects{{/crossLink}}.</li>
-<li>At any instant, the Camera we're looking through is the one whose {{#crossLink "Camera/active:property"}}active{{/crossLink}} property is true.</li>
+<li>You can have multiple CameraControls within the same {{#crossLink "Viewer"}}{{/crossLink}}.</li>
+<li>Multiple CameraControls can drive the same {{#crossLink "Camera"}}{{/crossLink}}, or can each drive their own separate {{#crossLink "Camera"}}Cameras{{/crossLink}}.</li>
+<li>At any instant, the CameraControl we're driving is the one whose {{#crossLink "Camera/active:property"}}active{{/crossLink}} property is true.</li>
+<li>You can switch a CameraControl to a different {{#crossLink "Camera"}}{{/crossLink}} at any time.</li>
 </ul>
 
 ## Example
@@ -497,7 +527,7 @@ var cameraControl = new BIMSURFER.CameraControl(viewer, {
        camera: camera
    });
 
-var teapot = new BIMSURFER.TeapotObject(viewer);
+var teapot = new BIMSURFER.BoxObject(viewer);
 
 <code>&#x60;</code>`
                     </div>
@@ -508,11 +538,15 @@ var teapot = new BIMSURFER.TeapotObject(viewer);
                     </a>
 
                     <div class="module-submodule-description">
-                        TODO
+                        An **Effect** is a the base class for visual effects that are applied to {{#crossLink "ObjectSet"}}ObjectSets{{/crossLink}}.
 
 ## Overview
 
-TODO
+<ul>
+<li>Effect is subclassed by {{#crossLink "HighlightEffect"}}{{/crossLink}}, {{#crossLink "IsolateEffect"}}{{/crossLink}} and {{#crossLink "XRayEffect"}}{{/crossLink}}.</li>
+<li>Multiple Effects can share the same {{#crossLink "ObjectSet"}}{{/crossLink}} if required.</li>
+<li>An Effect will provide its own default {{#crossLink "ObjectSet"}}{{/crossLink}} when you don't configure it with one.</li>
+</ul>
 
 ## Example
 
@@ -525,7 +559,7 @@ TODO
                     </a>
 
                     <div class="module-submodule-description">
-                        TODO
+                        An **BoxGeometry** is a box-shaped {{#crossLink "Geometry"}}{{/crossLink}}.
 
 ## Overview
 

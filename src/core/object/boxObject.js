@@ -1,5 +1,5 @@
 /**
- TODO
+ An **BoxObject** is a box-shaped {{#crossLink "Object"}}{{/crossLink}}.
 
  ## Overview
 

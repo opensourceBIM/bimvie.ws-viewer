@@ -57,6 +57,7 @@
                                 <li><a href="../classes/IsolateEffect.html">IsolateEffect</a></li>
                                 <li><a href="../classes/KeyboardAxisCamera.html">KeyboardAxisCamera</a></li>
                                 <li><a href="../classes/KeyboardOrbitCamera.html">KeyboardOrbitCamera</a></li>
+                                <li><a href="../classes/KeyboardPanCamera.html">KeyboardPanCamera</a></li>
                                 <li><a href="../classes/KeyboardZoomCamera.html">KeyboardZoomCamera</a></li>
                                 <li><a href="../classes/Light.html">Light</a></li>
                                 <li><a href="../classes/math.html">math</a></li>
@@ -64,8 +65,8 @@
                                 <li><a href="../classes/MousePanCamera.html">MousePanCamera</a></li>
                                 <li><a href="../classes/MouseZoomCamera.html">MouseZoomCamera</a></li>
                                 <li><a href="../classes/Object.html">Object</a></li>
+                                <li><a href="../classes/ObjectSet.html">ObjectSet</a></li>
                                 <li><a href="../classes/PointLight.html">PointLight</a></li>
-                                <li><a href="../classes/Selection.html">Selection</a></li>
                                 <li><a href="../classes/TeapotGeometry.html">TeapotGeometry</a></li>
                                 <li><a href="../classes/TeapotObject.html">TeapotObject</a></li>
                                 <li><a href="../classes/Viewer.html">Viewer</a></li>
@@ -131,11 +132,61 @@
 
 
 <div class="box intro">
-    <p>TODO</p>
+    <p>An <strong>XRayEffect</strong> is an <a href="../classes/Effect.html" class="crosslink">Effect</a> that creates an X-ray view of the Object within an <a href="../classes/ObjectSet.html" class="crosslink">ObjectSet</a>.</p>
 <h2 id="overview">Overview</h2>
 <p>TODO</p>
 <h2 id="example">Example</h2>
-<p>TODO</p>
+<p>X-ray objects that match given IFC types, using an <a href="../classes/ObjectSet.html" class="crosslink">ObjectSet</a> and an XRayEffect:</p>
+<pre class="code prettyprint"><code class="lang-javascript">
+// Create a Viewer
+var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+
+// Create a Camera
+var camera = new BIMSURFER.Camera(viewer, {
+   eye: [0, 0, -10]
+});
+
+// Create a CameraControl to interact with the Camera
+var cameraControl = new BIMSURFER.CameraControl(viewer, {
+   camera: camera
+});
+
+// Create some BoxObjects
+
+new BIMSURFER.BoxObject(viewer, {
+   objectId: "foo",
+   ifcType: "IfcWall",
+   matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])
+});
+
+new BIMSURFER.BoxObject(viewer, {
+   objectId: "bar",
+   ifcType: "IfcWall",
+   matrix: BIMSURFER.math.translationMat4v([4, 0, -4])
+});
+
+new BIMSURFER.Object(viewer, {
+   objectId: "baz",
+   ifcType: "IfcBeam",
+   matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])
+});
+
+// Create an ObjectSet
+var objectSet = new BIMSURFER.ObjectSet(viewer);
+
+// Apply an X-Ray effect to the ObjectSet
+var xrayEffect = new BIMSURFER.XRayEffect(viewer, {
+   objectSet: objectSet
+});
+
+// Add Objects to the ObjectSet by IFC type
+// These Objects become opaque
+objectSet.addObjectTypes(["IfcWall", "IfcBeam"]);
+
+// Remove an Object from the ObjectSet by IFC type
+// That Object becomes transparent
+objectSet.removeObjectTypes(["IfcWall"]);
+</code></pre>
 
 </div>
 
@@ -233,12 +284,12 @@
                         </li>
                         <li class="param">
                                 <code class="param-name optional">[selection]</code>
-                                <span class="type"><a href="../classes/Selection.html" class="crosslink">Selection</a></span>
+                                <span class="type">Selection</span>
                                 <span class="flag optional" title="This parameter is optional.">optional</span>
         
         
                             <div class="param-description">
-                                <p>The <a href="../classes/Selection.html" class="crosslink">Selection</a> to update.</p>
+                                <p>The Selection to update.</p>
         
                             </div>
         
@@ -324,7 +375,15 @@
 
                             </li>
                             <li class="index-item property inherited">
+                                <a href="#property_invert">invert</a>
+
+                            </li>
+                            <li class="index-item property inherited">
                                 <a href="#property_metadata">metadata</a>
+
+                            </li>
+                            <li class="index-item property inherited">
+                                <a href="#property_objectSet">objectSet</a>
 
                             </li>
                             <li class="index-item property inherited">
@@ -345,6 +404,10 @@
                             </li>
                             <li class="index-item event inherited">
                                 <a href="#event_destroyed">destroyed</a>
+
+                            </li>
+                            <li class="index-item event inherited">
+                                <a href="#event_invert">invert</a>
 
                             </li>
                     </ul>
@@ -887,7 +950,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>Inherited from
                                     <a href="../classes/Effect.html#property_active">Effect</a>:
-                            <a href="../files/src_core_effect_effect.js.html#l56"><code>src&#x2F;core&#x2F;effect&#x2F;effect.js:56</code></a>
+                            <a href="../files/src_core_effect_effect.js.html#l66"><code>src&#x2F;core&#x2F;effect&#x2F;effect.js:66</code></a>
                             </p>
                     
                     
@@ -917,7 +980,7 @@ any subsequent notifications on that location as they are made.</p>
                                     Component
                                 </a>
                                 but overwritten in
-                            <a href="../files/src_core_effect_xrayEffect.js.html#l29"><code>src&#x2F;core&#x2F;effect&#x2F;xrayEffect.js:29</code></a>
+                            <a href="../files/src_core_effect_xrayEffect.js.html#l82"><code>src&#x2F;core&#x2F;effect&#x2F;xrayEffect.js:82</code></a>
                             </p>
                     
                     
@@ -982,6 +1045,40 @@ any subsequent notifications on that location as they are made.</p>
                     
                     
                     </div>
+                    <div id="property_invert" class="property item inherited">
+                        <h3 class="name"><code>invert</code></h3>
+                        <span class="type">Boolean</span>
+                    
+                    
+                    
+                    
+                    
+                        <div class="meta">
+                                    <p>Inherited from
+                                    <a href="../classes/Effect.html#property_invert">Effect</a>:
+                            <a href="../files/src_core_effect_effect.js.html#l124"><code>src&#x2F;core&#x2F;effect&#x2F;effect.js:124</code></a>
+                            </p>
+                    
+                    
+                        </div>
+                    
+                        <div class="description">
+                            <p>Flag which inverts the Object that this Effect applies to.</p>
+                    <ul>
+                        <li>When true, this Effect applies to Object that are in
+                        the <a href="../classes/Component.html#property_viewer" class="crosslink">viewer</a> but <strong>not</strong> in the <a href="../classes/Effect.html#property_objectSet" class="crosslink">objectSet</a>.</li>
+                    
+                        <li>When false, this Effect applies to Object that are in
+                        the <a href="../classes/Component.html#property_viewer" class="crosslink">viewer</a> and <strong>also</strong> in the <a href="../classes/Effect.html#property_objectSet" class="crosslink">objectSet</a>.</li>
+                    </ul>
+                    
+                    <p>Fires an <a href="../classes/Effect.html#event_invert" class="crosslink">invert</a> event on change.</p>
+                    
+                        </div>
+                    
+                    
+                    
+                    </div>
                     <div id="property_metadata" class="property item inherited">
                         <h3 class="name"><code>metadata</code></h3>
                         <span class="type">Object</span>
@@ -1001,6 +1098,31 @@ any subsequent notifications on that location as they are made.</p>
                     
                         <div class="description">
                             <p>Metadata on this component.</p>
+                    
+                        </div>
+                    
+                    
+                    
+                    </div>
+                    <div id="property_objectSet" class="property item inherited">
+                        <h3 class="name"><code>objectSet</code></h3>
+                        <span class="type"><a href="../classes/ObjectSet.html" class="crosslink">ObjectSet</a></span>
+                    
+                    
+                    
+                    
+                    
+                        <div class="meta">
+                                    <p>Inherited from
+                                    <a href="../classes/Effect.html#property_objectSet">Effect</a>:
+                            <a href="../files/src_core_effect_effect.js.html#l44"><code>src&#x2F;core&#x2F;effect&#x2F;effect.js:44</code></a>
+                            </p>
+                    
+                    
+                        </div>
+                    
+                        <div class="description">
+                            <p>The <a href="../classes/ObjectSet.html" class="crosslink">ObjectSet</a> that this Effect applies to.</p>
                     
                         </div>
                     
@@ -1050,7 +1172,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>Inherited from
                                     <a href="../classes/Effect.html#event_active">Effect</a>:
-                            <a href="../files/src_core_effect_effect.js.html#l99"><code>src&#x2F;core&#x2F;effect&#x2F;effect.js:99</code></a>
+                            <a href="../files/src_core_effect_effect.js.html#l109"><code>src&#x2F;core&#x2F;effect&#x2F;effect.js:109</code></a>
                             </p>
                     
                     
@@ -1103,6 +1225,48 @@ any subsequent notifications on that location as they are made.</p>
                     
                         </div>
                     
+                    
+                    
+                    </div>
+                    <div id="event_invert" class="events item inherited">
+                        <h3 class="name"><code>invert</code></h3>
+                        <span class="type"></span>
+                    
+                    
+                    
+                    
+                    
+                        <div class="meta">
+                                    <p>Inherited from
+                                    <a href="../classes/Effect.html#event_invert">Effect</a>:
+                            <a href="../files/src_core_effect_effect.js.html#l150"><code>src&#x2F;core&#x2F;effect&#x2F;effect.js:150</code></a>
+                            </p>
+                    
+                    
+                        </div>
+                    
+                        <div class="description">
+                            <p>Fired whenever this Effect&#39;s <a href="../classes/Effect.html#property_invert" class="crosslink">invert</a> property changes.</p>
+                    
+                        </div>
+                    
+                            <div class="params">
+                                <h4>Event Payload:</h4>
+                    
+                                <ul class="params-list">
+                                    <li class="param">
+                                            <code class="param-name">value</code>
+                                            <span class="type">Object</span>
+                    
+                    
+                                        <div class="param-description">
+                                            <p>The property&#39;s new value</p>
+                    
+                                        </div>
+                    
+                                    </li>
+                                </ul>
+                            </div>
                     
                     
                     </div>

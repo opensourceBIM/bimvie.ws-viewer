@@ -1,9 +1,14 @@
 /**
- TODO
+ A **KeyboardAxisCamera** lets you switch a {{#crossLink "Camera"}}{{/crossLink}} between preset left, right, anterior, posterior, superior and inferior views using the keyboard.
 
  ## Overview
 
- TODO
+ <ul>
+ <li>If desired, you can have multiple KeyboardAxisCameras within the same {{#crossLink "Viewer"}}{{/crossLink}}.</li>
+ <li>Multiple KeyboardAxisCameras can drive the same {{#crossLink "Camera"}}{{/crossLink}}, or can each drive their own separate {{#crossLink "Camera"}}Cameras{{/crossLink}}.</li>
+ <li>At any instant, the KeyboardAxisCamera we're driving is the one whose {{#crossLink "Camera/active:property"}}active{{/crossLink}} property is true.</li>
+ <li>You can switch a KeyboardAxisCamera to a different {{#crossLink "Camera"}}{{/crossLink}} at any time.</li>
+ </ul>
 
  ## Example
 

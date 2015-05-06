@@ -113,20 +113,20 @@
 
     // Create a Selection
 
-    var selection = new BIMSURFER.Selection(viewer);
+    var objectSet = new BIMSURFER.ObjectSet(viewer);
 
     // Apply a X-Ray effect to the Selection, which will cause the selected
     // objects to appear transparent and all other Objects opaque
 
     new BIMSURFER.XRayEffect(viewer, {
-        selection: selection,
+        objectSet: objectSet,
         invert: true
     });
 
-    // Create a selection control
+    // Create a objectSet control
 
     new BIMSURFER.ClickSelectObjects(viewer, {
-        selection: selection
+        objectSet: objectSet
     });
 
 </script>

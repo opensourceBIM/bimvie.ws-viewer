@@ -57,6 +57,7 @@
                                 <li><a href="../classes/IsolateEffect.html">IsolateEffect</a></li>
                                 <li><a href="../classes/KeyboardAxisCamera.html">KeyboardAxisCamera</a></li>
                                 <li><a href="../classes/KeyboardOrbitCamera.html">KeyboardOrbitCamera</a></li>
+                                <li><a href="../classes/KeyboardPanCamera.html">KeyboardPanCamera</a></li>
                                 <li><a href="../classes/KeyboardZoomCamera.html">KeyboardZoomCamera</a></li>
                                 <li><a href="../classes/Light.html">Light</a></li>
                                 <li><a href="../classes/math.html">math</a></li>
@@ -64,8 +65,8 @@
                                 <li><a href="../classes/MousePanCamera.html">MousePanCamera</a></li>
                                 <li><a href="../classes/MouseZoomCamera.html">MouseZoomCamera</a></li>
                                 <li><a href="../classes/Object.html">Object</a></li>
+                                <li><a href="../classes/ObjectSet.html">ObjectSet</a></li>
                                 <li><a href="../classes/PointLight.html">PointLight</a></li>
-                                <li><a href="../classes/Selection.html">Selection</a></li>
                                 <li><a href="../classes/TeapotGeometry.html">TeapotGeometry</a></li>
                                 <li><a href="../classes/TeapotObject.html">TeapotObject</a></li>
                                 <li><a href="../classes/Viewer.html">Viewer</a></li>
@@ -118,13 +119,16 @@
 <div class="file">
     <pre class="code prettyprint linenums">
 /**
- A **CameraControl** allows you to control a {{#crossLink &quot;Camera&quot;}}{{/crossLink}} with mouse and keyboard.
+ A **CameraControl** allows you to pan, rotate and zoom a {{#crossLink &quot;Camera&quot;}}{{/crossLink}} using the mouse and keyboard,
+ as well as switch it between preset left, right, anterior, posterior, superior and inferior views.
 
  ## Overview
 
  &lt;ul&gt;
- &lt;li&gt;You can have an unlimited number of Cameras in a {{#crossLink &quot;Viewer&quot;}}GameObjects{{/crossLink}}.&lt;/li&gt;
- &lt;li&gt;At any instant, the Camera we&#x27;re looking through is the one whose {{#crossLink &quot;Camera/active:property&quot;}}active{{/crossLink}} property is true.&lt;/li&gt;
+ &lt;li&gt;You can have multiple CameraControls within the same {{#crossLink &quot;Viewer&quot;}}{{/crossLink}}.&lt;/li&gt;
+ &lt;li&gt;Multiple CameraControls can drive the same {{#crossLink &quot;Camera&quot;}}{{/crossLink}}, or can each drive their own separate {{#crossLink &quot;Camera&quot;}}Cameras{{/crossLink}}.&lt;/li&gt;
+ &lt;li&gt;At any instant, the CameraControl we&#x27;re driving is the one whose {{#crossLink &quot;Camera/active:property&quot;}}active{{/crossLink}} property is true.&lt;/li&gt;
+ &lt;li&gt;You can switch a CameraControl to a different {{#crossLink &quot;Camera&quot;}}{{/crossLink}} at any time.&lt;/li&gt;
  &lt;/ul&gt;
 
  ## Example
@@ -144,7 +148,7 @@
         camera: camera
     });
 
- var teapot = new BIMSURFER.TeapotObject(viewer);
+ var teapot = new BIMSURFER.BoxObject(viewer);
 
  &#x60;&#x60;&#x60;&#x60;
 

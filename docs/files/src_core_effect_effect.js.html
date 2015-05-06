@@ -57,6 +57,7 @@
                                 <li><a href="../classes/IsolateEffect.html">IsolateEffect</a></li>
                                 <li><a href="../classes/KeyboardAxisCamera.html">KeyboardAxisCamera</a></li>
                                 <li><a href="../classes/KeyboardOrbitCamera.html">KeyboardOrbitCamera</a></li>
+                                <li><a href="../classes/KeyboardPanCamera.html">KeyboardPanCamera</a></li>
                                 <li><a href="../classes/KeyboardZoomCamera.html">KeyboardZoomCamera</a></li>
                                 <li><a href="../classes/Light.html">Light</a></li>
                                 <li><a href="../classes/math.html">math</a></li>
@@ -64,8 +65,8 @@
                                 <li><a href="../classes/MousePanCamera.html">MousePanCamera</a></li>
                                 <li><a href="../classes/MouseZoomCamera.html">MouseZoomCamera</a></li>
                                 <li><a href="../classes/Object.html">Object</a></li>
+                                <li><a href="../classes/ObjectSet.html">ObjectSet</a></li>
                                 <li><a href="../classes/PointLight.html">PointLight</a></li>
-                                <li><a href="../classes/Selection.html">Selection</a></li>
                                 <li><a href="../classes/TeapotGeometry.html">TeapotGeometry</a></li>
                                 <li><a href="../classes/TeapotObject.html">TeapotObject</a></li>
                                 <li><a href="../classes/Viewer.html">Viewer</a></li>
@@ -118,11 +119,15 @@
 <div class="file">
     <pre class="code prettyprint linenums">
 /**
- TODO
+ An **Effect** is a the base class for visual effects that are applied to {{#crossLink &quot;ObjectSet&quot;}}ObjectSets{{/crossLink}}.
 
  ## Overview
 
- TODO
+ &lt;ul&gt;
+ &lt;li&gt;Effect is subclassed by {{#crossLink &quot;HighlightEffect&quot;}}{{/crossLink}}, {{#crossLink &quot;IsolateEffect&quot;}}{{/crossLink}} and {{#crossLink &quot;XRayEffect&quot;}}{{/crossLink}}.&lt;/li&gt;
+ &lt;li&gt;Multiple Effects can share the same {{#crossLink &quot;ObjectSet&quot;}}{{/crossLink}} if required.&lt;/li&gt;
+ &lt;li&gt;An Effect will provide its own default {{#crossLink &quot;ObjectSet&quot;}}{{/crossLink}} when you don&#x27;t configure it with one.&lt;/li&gt;
+ &lt;/ul&gt;
 
  ## Example
 
@@ -136,7 +141,7 @@
  @param [cfg] {*} Configs
  @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
  @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Effect.
- @param [selection] {Selection} The {{#crossLink &quot;Selection&quot;}}{{/crossLink}} to update.
+ @param [objectSet] {ObjectSet} The {{#crossLink &quot;Objectset&quot;}}{{/crossLink}} to update.
  @extends Component
  */
 (function () {
@@ -156,13 +161,19 @@
 
         _init: function (cfg) {
 
-            this.selection = cfg.selection || new BIMSURFER.Selection(this.viewer);
+            /**
+             * The {{#crossLink &quot;ObjectSet&quot;}}{{/crossLink}} that this Effect applies to.
+             *
+             * @property objectSet
+             * @type ObjectSet
+             */
+            this.objectSet = cfg.objectSet || new BIMSURFER.ObjectSet(this.viewer);
 
             this._dirty = true;
 
             var self = this;
 
-            this._onSelectionUpdated = this.selection.on(&quot;updated&quot;,
+            this._onObjectSetUpdated = this.objectSet.on(&quot;updated&quot;,
                 function () {
                     self._dirty = true;
                 });
@@ -230,6 +241,22 @@
                 }
             },
 
+            /**
+             * Flag which inverts the {{#crossLink &quot;Object&quot;}}Objects{{/crossLink}} that this Effect applies to.
+             *
+             * &lt;ul&gt;
+             *     &lt;li&gt;When true, this Effect applies to {{#crossLink &quot;Object&quot;}}Objects{{/crossLink}} that are in
+             *     the {{#crossLink &quot;Component/viewer:property&quot;}}{{/crossLink}} but **not** in the {{#crossLink &quot;Effect/objectSet:property&quot;}}{{/crossLink}}.&lt;/li&gt;
+             *
+             *     &lt;li&gt;When false, this Effect applies to {{#crossLink &quot;Object&quot;}}Objects{{/crossLink}} that are in
+             *     the {{#crossLink &quot;Component/viewer:property&quot;}}{{/crossLink}} and **also** in the {{#crossLink &quot;Effect/objectSet:property&quot;}}{{/crossLink}}.&lt;/li&gt;
+             * &lt;/ul&gt;
+             *
+             * Fires an {{#crossLink &quot;Effect/invert:event&quot;}}{{/crossLink}} event on change.
+             *
+             * @property invert
+             * @type Boolean
+             */
             invert: {
 
                 set: function (value) {
@@ -240,6 +267,11 @@
 
                     self._dirty = false;
 
+                    /**
+                     * Fired whenever this Effect&#x27;s {{#crossLink &quot;Effect/invert:property&quot;}}{{/crossLink}} property changes.
+                     * @event invert
+                     * @param value The property&#x27;s new value
+                     */
                     this.fire(&#x27;invert&#x27;, this._invert = true);
                 },
 
@@ -251,7 +283,7 @@
 
         _destroy: function () {
 
-            this.selection.off(this._onSelectionUpdated);
+            this.objectSet.off(this._onObjectSetUpdated);
 
             this.active = false;
         }

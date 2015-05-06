@@ -1,5 +1,16 @@
 /**
- TODO
+ A **ClickSelectObjects** lets you add or remove {{#crossLink "Object"}}Objects{{/crossLink}} to and from an {{#crossLink "ObjectSet"}}ObjectSet{{/crossLink}} by clicking them with the mouse.
+
+ ## Overview
+
+ <ul>
+ <li>A ClickSelectObjects adds {{#crossLink "Object"}}Objects{{/crossLink}} to the {{#crossLink "ObjectSet"}}{{/crossLink}} as you
+ click them with the mouse, removing them again when you click them a second time.</li>
+ <li>Typically a ClickSelectObjects will share an {{#crossLink "ObjectSet"}}{{/crossLink}} with one or
+ more {{#crossLink "Effect"}}Effects{{/crossLink}}, in order to select which {{#crossLink "Object"}}Objects{{/crossLink}} are influenced by the {{#crossLink "Effect"}}Effects{{/crossLink}}.</li>
+ <li>A ClickSelectObjects will provide its own {{#crossLink "ObjectSet"}}{{/crossLink}} by default.</li>
+ <li>Hold down SHIFT while clicking to multi-select.</li>
+ </ul>
 
  ## Overview
 
@@ -18,6 +29,8 @@
  @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
  @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Camera.
  @param [selection] {Selection} The Selection to update.
+ @see {Object}
+ @see {ObjectSet}
  @extends Component
  */
 (function () {
@@ -37,7 +50,7 @@
 
         _init: function (cfg) {
 
-            this.selection = cfg.selection || new BIMSURFER.Selection(this.viewer);
+            this.selection = cfg.selection || new BIMSURFER.ObjectSet(this.viewer);
 
             this._multi = false;
 

@@ -57,6 +57,7 @@
                                 <li><a href="../classes/IsolateEffect.html">IsolateEffect</a></li>
                                 <li><a href="../classes/KeyboardAxisCamera.html">KeyboardAxisCamera</a></li>
                                 <li><a href="../classes/KeyboardOrbitCamera.html">KeyboardOrbitCamera</a></li>
+                                <li><a href="../classes/KeyboardPanCamera.html">KeyboardPanCamera</a></li>
                                 <li><a href="../classes/KeyboardZoomCamera.html">KeyboardZoomCamera</a></li>
                                 <li><a href="../classes/Light.html">Light</a></li>
                                 <li><a href="../classes/math.html">math</a></li>
@@ -64,8 +65,8 @@
                                 <li><a href="../classes/MousePanCamera.html">MousePanCamera</a></li>
                                 <li><a href="../classes/MouseZoomCamera.html">MouseZoomCamera</a></li>
                                 <li><a href="../classes/Object.html">Object</a></li>
+                                <li><a href="../classes/ObjectSet.html">ObjectSet</a></li>
                                 <li><a href="../classes/PointLight.html">PointLight</a></li>
-                                <li><a href="../classes/Selection.html">Selection</a></li>
                                 <li><a href="../classes/TeapotGeometry.html">TeapotGeometry</a></li>
                                 <li><a href="../classes/TeapotObject.html">TeapotObject</a></li>
                                 <li><a href="../classes/Viewer.html">Viewer</a></li>
@@ -118,7 +119,7 @@
 <div class="file">
     <pre class="code prettyprint linenums">
 /**
- A 3D object within a {{#crossLink &quot;Viewer&quot;}}{{/crossLink}}.
+ An **Object** is a visible 3D element within a {{#crossLink &quot;Viewer&quot;}}{{/crossLink}}.
 
  ## Overview
 
@@ -126,7 +127,57 @@
 
  ## Example
 
- TODO
+ In the example below we&#x27;ll create three Objects, each with a unique ID:
+ &#x60;&#x60;&#x60;&#x60;Javascript
+ // Create a Viewer
+ var viewer = new BIMSURFER.Viewer(null, &quot;myDiv&quot;, {}, false);
+
+ // Create a Camera
+ var camera = new BIMSURFER.Camera(viewer, {
+    eye: [0, 0, -10]
+ });
+
+ // Create a CameraControl to interact with the Camera
+ var cameraControl = new BIMSURFER.CameraControl(viewer, {
+    camera: camera
+ });
+
+ // Create some BoxObjects
+
+ new BIMSURFER.BoxObject(viewer, {
+    objectId: &quot;foo&quot;,
+    ifcType: &quot;IfcWall&quot;,
+    matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])
+ });
+
+ new BIMSURFER.BoxObject(viewer, {
+    objectId: &quot;bar&quot;,
+    ifcType: &quot;IfcWall&quot;,
+    matrix: BIMSURFER.math.translationMat4v([4, 0, -4])
+ });
+
+ new BIMSURFER.Object(viewer, {
+    objectId: &quot;baz&quot;,
+    ifcType: &quot;IfcBeam&quot;,
+    matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])
+ });
+ &#x60;&#x60;&#x60;&#x60;
+
+ We can find the objects in the {{#crossLink &quot;Viewer&quot;}}{{/crossLink}} by ID:
+ &#x60;&#x60;&#x60;&#x60;javascript
+ var foo = viewer.components[&quot;foo&quot;];
+ &#x60;&#x60;&#x60;&#x60;
+ or by IFC type:
+ &#x60;&#x60;&#x60;&#x60;javascript
+
+ // Get all Objects of the given IFC type
+ var wallObjects = viewer.components[&quot;IfcWall&quot;];
+
+ // Get our &quot;foo&quot; object from those
+ var foo = wallObjects[&quot;foo&quot;];
+ &#x60;&#x60;&#x60;&#x60;
+
+
 
  @class Object
  @module BIMSURFER
@@ -429,7 +480,7 @@
         _props: {
 
             /**
-             * Flag which indicates whether this Object is active or not.
+             * Whether this Object is active or not.
              *
              * Fires an {{#crossLink &quot;Object/active:event&quot;}}{{/crossLink}} event on change.
              *

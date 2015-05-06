@@ -57,6 +57,7 @@
                                 <li><a href="../classes/IsolateEffect.html">IsolateEffect</a></li>
                                 <li><a href="../classes/KeyboardAxisCamera.html">KeyboardAxisCamera</a></li>
                                 <li><a href="../classes/KeyboardOrbitCamera.html">KeyboardOrbitCamera</a></li>
+                                <li><a href="../classes/KeyboardPanCamera.html">KeyboardPanCamera</a></li>
                                 <li><a href="../classes/KeyboardZoomCamera.html">KeyboardZoomCamera</a></li>
                                 <li><a href="../classes/Light.html">Light</a></li>
                                 <li><a href="../classes/math.html">math</a></li>
@@ -64,8 +65,8 @@
                                 <li><a href="../classes/MousePanCamera.html">MousePanCamera</a></li>
                                 <li><a href="../classes/MouseZoomCamera.html">MouseZoomCamera</a></li>
                                 <li><a href="../classes/Object.html">Object</a></li>
+                                <li><a href="../classes/ObjectSet.html">ObjectSet</a></li>
                                 <li><a href="../classes/PointLight.html">PointLight</a></li>
-                                <li><a href="../classes/Selection.html">Selection</a></li>
                                 <li><a href="../classes/TeapotGeometry.html">TeapotGeometry</a></li>
                                 <li><a href="../classes/TeapotObject.html">TeapotObject</a></li>
                                 <li><a href="../classes/Viewer.html">Viewer</a></li>
@@ -118,7 +119,18 @@
 <div class="file">
     <pre class="code prettyprint linenums">
 /**
- TODO
+ A **ClickSelectObjects** lets you add or remove {{#crossLink &quot;Object&quot;}}Objects{{/crossLink}} to and from an {{#crossLink &quot;ObjectSet&quot;}}ObjectSet{{/crossLink}} by clicking them with the mouse.
+
+ ## Overview
+
+ &lt;ul&gt;
+ &lt;li&gt;A ClickSelectObjects adds {{#crossLink &quot;Object&quot;}}Objects{{/crossLink}} to the {{#crossLink &quot;ObjectSet&quot;}}{{/crossLink}} as you
+ click them with the mouse, removing them again when you click them a second time.&lt;/li&gt;
+ &lt;li&gt;Typically a ClickSelectObjects will share an {{#crossLink &quot;ObjectSet&quot;}}{{/crossLink}} with one or
+ more {{#crossLink &quot;Effect&quot;}}Effects{{/crossLink}}, in order to select which {{#crossLink &quot;Object&quot;}}Objects{{/crossLink}} are influenced by the {{#crossLink &quot;Effect&quot;}}Effects{{/crossLink}}.&lt;/li&gt;
+ &lt;li&gt;A ClickSelectObjects will provide its own {{#crossLink &quot;ObjectSet&quot;}}{{/crossLink}} by default.&lt;/li&gt;
+ &lt;li&gt;Hold down SHIFT while clicking to multi-select.&lt;/li&gt;
+ &lt;/ul&gt;
 
  ## Overview
 
@@ -137,6 +149,8 @@
  @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
  @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Camera.
  @param [selection] {Selection} The Selection to update.
+ @see {Object}
+ @see {ObjectSet}
  @extends Component
  */
 (function () {
@@ -156,7 +170,7 @@
 
         _init: function (cfg) {
 
-            this.selection = cfg.selection || new BIMSURFER.Selection(this.viewer);
+            this.selection = cfg.selection || new BIMSURFER.ObjectSet(this.viewer);
 
             this._multi = false;
 

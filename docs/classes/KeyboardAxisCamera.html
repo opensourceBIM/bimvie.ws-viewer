@@ -57,6 +57,7 @@
                                 <li><a href="../classes/IsolateEffect.html">IsolateEffect</a></li>
                                 <li><a href="../classes/KeyboardAxisCamera.html">KeyboardAxisCamera</a></li>
                                 <li><a href="../classes/KeyboardOrbitCamera.html">KeyboardOrbitCamera</a></li>
+                                <li><a href="../classes/KeyboardPanCamera.html">KeyboardPanCamera</a></li>
                                 <li><a href="../classes/KeyboardZoomCamera.html">KeyboardZoomCamera</a></li>
                                 <li><a href="../classes/Light.html">Light</a></li>
                                 <li><a href="../classes/math.html">math</a></li>
@@ -64,8 +65,8 @@
                                 <li><a href="../classes/MousePanCamera.html">MousePanCamera</a></li>
                                 <li><a href="../classes/MouseZoomCamera.html">MouseZoomCamera</a></li>
                                 <li><a href="../classes/Object.html">Object</a></li>
+                                <li><a href="../classes/ObjectSet.html">ObjectSet</a></li>
                                 <li><a href="../classes/PointLight.html">PointLight</a></li>
-                                <li><a href="../classes/Selection.html">Selection</a></li>
                                 <li><a href="../classes/TeapotGeometry.html">TeapotGeometry</a></li>
                                 <li><a href="../classes/TeapotObject.html">TeapotObject</a></li>
                                 <li><a href="../classes/Viewer.html">Viewer</a></li>
@@ -131,9 +132,15 @@
 
 
 <div class="box intro">
-    <p>TODO</p>
+    <p>A <strong>KeyboardAxisCamera</strong> lets you switch a <a href="../classes/Camera.html" class="crosslink">Camera</a> between preset left, right, anterior, posterior, superior and inferior views using the keyboard.</p>
 <h2 id="overview">Overview</h2>
-<p>TODO</p>
+<ul>
+<li>If desired, you can have multiple KeyboardAxisCameras within the same <a href="../classes/Viewer.html" class="crosslink">Viewer</a>.</li>
+<li>Multiple KeyboardAxisCameras can drive the same <a href="../classes/Camera.html" class="crosslink">Camera</a>, or can each drive their own separate <a href="../classes/Camera.html" class="crosslink">Cameras</a>.</li>
+<li>At any instant, the KeyboardAxisCamera we&#39;re driving is the one whose <a href="../classes/Camera.html#property_active" class="crosslink">active</a> property is true.</li>
+<li>You can switch a KeyboardAxisCamera to a different <a href="../classes/Camera.html" class="crosslink">Camera</a> at any time.</li>
+</ul>
+
 <h2 id="example">Example</h2>
 <p>TODO</p>
 
@@ -887,7 +894,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_control_keyboardAxisCamera.js.html#l49"><code>src&#x2F;core&#x2F;control&#x2F;keyboardAxisCamera.js:49</code></a>
+                            <a href="../files/src_core_control_keyboardAxisCamera.js.html#l54"><code>src&#x2F;core&#x2F;control&#x2F;keyboardAxisCamera.js:54</code></a>
                             </p>
                     
                     
@@ -917,7 +924,7 @@ any subsequent notifications on that location as they are made.</p>
                                     Component
                                 </a>
                                 but overwritten in
-                            <a href="../files/src_core_control_keyboardAxisCamera.js.html#l29"><code>src&#x2F;core&#x2F;control&#x2F;keyboardAxisCamera.js:29</code></a>
+                            <a href="../files/src_core_control_keyboardAxisCamera.js.html#l34"><code>src&#x2F;core&#x2F;control&#x2F;keyboardAxisCamera.js:34</code></a>
                             </p>
                     
                     
@@ -1050,7 +1057,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_control_keyboardAxisCamera.js.html#l169"><code>src&#x2F;core&#x2F;control&#x2F;keyboardAxisCamera.js:169</code></a>
+                            <a href="../files/src_core_control_keyboardAxisCamera.js.html#l174"><code>src&#x2F;core&#x2F;control&#x2F;keyboardAxisCamera.js:174</code></a>
                             </p>
                     
                     

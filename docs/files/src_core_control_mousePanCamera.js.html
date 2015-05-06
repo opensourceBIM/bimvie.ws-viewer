@@ -57,6 +57,7 @@
                                 <li><a href="../classes/IsolateEffect.html">IsolateEffect</a></li>
                                 <li><a href="../classes/KeyboardAxisCamera.html">KeyboardAxisCamera</a></li>
                                 <li><a href="../classes/KeyboardOrbitCamera.html">KeyboardOrbitCamera</a></li>
+                                <li><a href="../classes/KeyboardPanCamera.html">KeyboardPanCamera</a></li>
                                 <li><a href="../classes/KeyboardZoomCamera.html">KeyboardZoomCamera</a></li>
                                 <li><a href="../classes/Light.html">Light</a></li>
                                 <li><a href="../classes/math.html">math</a></li>
@@ -64,8 +65,8 @@
                                 <li><a href="../classes/MousePanCamera.html">MousePanCamera</a></li>
                                 <li><a href="../classes/MouseZoomCamera.html">MouseZoomCamera</a></li>
                                 <li><a href="../classes/Object.html">Object</a></li>
+                                <li><a href="../classes/ObjectSet.html">ObjectSet</a></li>
                                 <li><a href="../classes/PointLight.html">PointLight</a></li>
-                                <li><a href="../classes/Selection.html">Selection</a></li>
                                 <li><a href="../classes/TeapotGeometry.html">TeapotGeometry</a></li>
                                 <li><a href="../classes/TeapotObject.html">TeapotObject</a></li>
                                 <li><a href="../classes/Viewer.html">Viewer</a></li>
@@ -118,9 +119,20 @@
 <div class="file">
     <pre class="code prettyprint linenums">
 /**
- TODO
+ A **MousePanCamera** lets you pan a {{#crossLink &quot;Camera&quot;}}{{/crossLink}} using the mouse.
 
  ## Overview
+
+ &lt;ul&gt;
+ &lt;li&gt;Panning is done by dragging the mouse with the left and right buttons down.&lt;/li&gt;
+ &lt;li&gt;Panning up and down involves moving the {{#crossLink &quot;Camera&quot;}}Camera&#x27;s{{/crossLink}} {{#crossLink &quot;Camera/eye:property&quot;}}{{/crossLink}} and {{#crossLink &quot;Camera/look:property&quot;}}{{/crossLink}} positions along the direction of its {{#crossLink &quot;Camera/up:property&quot;}}{{/crossLink}} vector.&lt;/li&gt;
+ &lt;li&gt;Panning left and right involves moving the {{#crossLink &quot;Camera&quot;}}Camera&#x27;s{{/crossLink}} {{#crossLink &quot;Camera/eye:property&quot;}}{{/crossLink}} and {{#crossLink &quot;Camera/look:property&quot;}}{{/crossLink}} positions along the the vector that is perpendicular to its {{#crossLink &quot;Camera/up:property&quot;}}{{/crossLink}} and {{#crossLink &quot;Camera/eye:property&quot;}}{{/crossLink}}-{{#crossLink &quot;Camera/look:property&quot;}}{{/crossLink}} vector.&lt;/li&gt;
+ &lt;li&gt;If desired, you can have multiple MousePanCameras within the same {{#crossLink &quot;Viewer&quot;}}{{/crossLink}}.&lt;/li&gt;
+ &lt;li&gt;Multiple MousePanCameras can drive the same {{#crossLink &quot;Camera&quot;}}{{/crossLink}}, or can each drive their own separate {{#crossLink &quot;Camera&quot;}}{{/crossLink}}.&lt;/li&gt;
+ &lt;li&gt;At any instant, the MousePanCameras we&#x27;re driving is the one whose {{#crossLink &quot;MousePanCamera/active:property&quot;}}active{{/crossLink}} property is true.&lt;/li&gt;
+ &lt;li&gt;You can switch a MousePanCameras to a different {{#crossLink &quot;Camera&quot;}}{{/crossLink}} at any time.&lt;/li&gt;
+ &lt;/ul&gt;
+
 
  TODO
 

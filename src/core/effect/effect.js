@@ -1,9 +1,13 @@
 /**
- TODO
+ An **Effect** is a the base class for visual effects that are applied to {{#crossLink "ObjectSet"}}ObjectSets{{/crossLink}}.
 
  ## Overview
 
- TODO
+ <ul>
+ <li>Effect is subclassed by {{#crossLink "HighlightEffect"}}{{/crossLink}}, {{#crossLink "IsolateEffect"}}{{/crossLink}} and {{#crossLink "XRayEffect"}}{{/crossLink}}.</li>
+ <li>Multiple Effects can share the same {{#crossLink "ObjectSet"}}{{/crossLink}} if required.</li>
+ <li>An Effect will provide its own default {{#crossLink "ObjectSet"}}{{/crossLink}} when you don't configure it with one.</li>
+ </ul>
 
  ## Example
 
@@ -17,7 +21,7 @@
  @param [cfg] {*} Configs
  @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
  @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Effect.
- @param [selection] {Selection} The {{#crossLink "Selection"}}{{/crossLink}} to update.
+ @param [objectSet] {ObjectSet} The {{#crossLink "Objectset"}}{{/crossLink}} to update.
  @extends Component
  */
 (function () {
@@ -37,13 +41,19 @@
 
         _init: function (cfg) {
 
-            this.selection = cfg.selection || new BIMSURFER.Selection(this.viewer);
+            /**
+             * The {{#crossLink "ObjectSet"}}{{/crossLink}} that this Effect applies to.
+             *
+             * @property objectSet
+             * @type ObjectSet
+             */
+            this.objectSet = cfg.objectSet || new BIMSURFER.ObjectSet(this.viewer);
 
             this._dirty = true;
 
             var self = this;
 
-            this._onSelectionUpdated = this.selection.on("updated",
+            this._onObjectSetUpdated = this.objectSet.on("updated",
                 function () {
                     self._dirty = true;
                 });
@@ -111,6 +121,22 @@
                 }
             },
 
+            /**
+             * Flag which inverts the {{#crossLink "Object"}}Objects{{/crossLink}} that this Effect applies to.
+             *
+             * <ul>
+             *     <li>When true, this Effect applies to {{#crossLink "Object"}}Objects{{/crossLink}} that are in
+             *     the {{#crossLink "Component/viewer:property"}}{{/crossLink}} but **not** in the {{#crossLink "Effect/objectSet:property"}}{{/crossLink}}.</li>
+             *
+             *     <li>When false, this Effect applies to {{#crossLink "Object"}}Objects{{/crossLink}} that are in
+             *     the {{#crossLink "Component/viewer:property"}}{{/crossLink}} and **also** in the {{#crossLink "Effect/objectSet:property"}}{{/crossLink}}.</li>
+             * </ul>
+             *
+             * Fires an {{#crossLink "Effect/invert:event"}}{{/crossLink}} event on change.
+             *
+             * @property invert
+             * @type Boolean
+             */
             invert: {
 
                 set: function (value) {
@@ -121,6 +147,11 @@
 
                     self._dirty = false;
 
+                    /**
+                     * Fired whenever this Effect's {{#crossLink "Effect/invert:property"}}{{/crossLink}} property changes.
+                     * @event invert
+                     * @param value The property's new value
+                     */
                     this.fire('invert', this._invert = true);
                 },
 
@@ -132,7 +163,7 @@
 
         _destroy: function () {
 
-            this.selection.off(this._onSelectionUpdated);
+            this.objectSet.off(this._onObjectSetUpdated);
 
             this.active = false;
         }

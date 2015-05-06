@@ -20,14 +20,15 @@ YUI.add("yuidoc-meta", function(Y) {
         "IsolateEffect",
         "KeyboardAxisCamera",
         "KeyboardOrbitCamera",
+        "KeyboardPanCamera",
         "KeyboardZoomCamera",
         "Light",
         "MouseOrbitCamera",
         "MousePanCamera",
         "MouseZoomCamera",
         "Object",
+        "ObjectSet",
         "PointLight",
-        "Selection",
         "TeapotGeometry",
         "TeapotObject",
         "Viewer",
@@ -57,22 +58,22 @@ YUI.add("yuidoc-meta", function(Y) {
         {
             "displayName": "camera",
             "name": "camera",
-            "description": "A **Camera** defines a viewpoint within a {{#crossLink \"Viewer\"}}Viewer{{/crossLink}}.\n\n## Overview\n\n<ul>\n<li>You can have an unlimited number of Cameras in a {{#crossLink \"Viewer\"}}GameObjects{{/crossLink}}.</li>\n<li>At any instant, the Camera we're looking through is the one whose {{#crossLink \"Camera/active:property\"}}active{{/crossLink}} property is true.</li>\n</ul>\n\n## Example\n\nIn this example we have a {{#crossLink \"Viewer\"}}{{/crossLink}} with a\nCamera, {{#crossLink \"CameraControl\"}}{{/crossLink}} and a {{#crossLink \"TeapotObject\"}}{{/crossLink}}.\n\n````Javascript\n\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\nvar camera = new BIMSURFER.Camera(viewer, {\n       eye: [0, 0, -10]\n   });\n\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n       camera: camera\n   });\n\nvar teapot = new BIMSURFER.TeapotObject(viewer);\n\n````"
+            "description": "A **Camera** defines a viewpoint within a {{#crossLink \"Viewer\"}}Viewer{{/crossLink}}.\n\n## Overview\n\n<ul>\n<li>You can have an unlimited number of Cameras in a {{#crossLink \"Viewer\"}}{{/crossLink}}.</li>\n<li>At any instant, the Camera we're looking through is the one whose {{#crossLink \"Camera/active:property\"}}active{{/crossLink}} property is true.</li>\n<li>Cameras can be controlled with controls such as {{#crossLink \"CameraControl\"}}{{/crossLink}}, {{#crossLink \"KeyboardAxisCamera\"}}{{/crossLink}},\n{{#crossLink \"KeyboardOrbitCamera\"}}{{/crossLink}}, {{#crossLink \"KeyboardPanCamera\"}}{{/crossLink}}, {{#crossLink \"KeyboardZoomCamera\"}}{{/crossLink}},\n{{#crossLink \"MouseOrbitCamera\"}}{{/crossLink}}, {{#crossLink \"MousePanCamera\"}}{{/crossLink}} and {{#crossLink \"MouseZoomCamera\"}}{{/crossLink}}.</li>\n</ul>\n\n## Example\n\nLet's create a {{#crossLink \"Viewer\"}}{{/crossLink}} with a Camera that's controlled by a {{#crossLink \"CameraControl\"}}{{/crossLink}}:\n\n````Javascript\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n//...\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n       eye: [0, 0, -10]\n   });\n\n// Create a CameraControl that controls our Camera\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n       camera: camera\n   });\n````\n\nNow let's create a second Camera and switch the {{#crossLink \"CameraControl\"}}{{/crossLink}} over to it:\n\n````Javascript\n\n// Deactivate our Camera\ncamera.active = false;\n\n// Create a second Camera\n// Camera is active by default\nvar camera2 = new BIMSURFER.Camera(viewer, {\n       eye: [-10, 0, 0]\n   });\n\n// Switch our CameraControl to the second Camera\n// Now we're controlling that Camera\ncameraControl.camera = camera2;\n````"
         },
         {
             "displayName": "control",
             "name": "control",
-            "description": "A **CameraControl** allows you to control a {{#crossLink \"Camera\"}}{{/crossLink}} with mouse and keyboard.\n\n## Overview\n\n<ul>\n<li>You can have an unlimited number of Cameras in a {{#crossLink \"Viewer\"}}GameObjects{{/crossLink}}.</li>\n<li>At any instant, the Camera we're looking through is the one whose {{#crossLink \"Camera/active:property\"}}active{{/crossLink}} property is true.</li>\n</ul>\n\n## Example\n\nIn this example we have a {{#crossLink \"Viewer\"}}{{/crossLink}} with a\n{{#crossLink \"Camera\"}}{{/crossLink}} that's controlled by a CameraControl.\n\n````Javascript\n\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\nvar camera = new BIMSURFER.Camera(viewer, {\n       eye: [0, 0, -10]\n   });\n\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n       camera: camera\n   });\n\nvar teapot = new BIMSURFER.TeapotObject(viewer);\n\n````"
+            "description": "A **CameraControl** allows you to pan, rotate and zoom a {{#crossLink \"Camera\"}}{{/crossLink}} using the mouse and keyboard,\nas well as switch it between preset left, right, anterior, posterior, superior and inferior views.\n\n## Overview\n\n<ul>\n<li>You can have multiple CameraControls within the same {{#crossLink \"Viewer\"}}{{/crossLink}}.</li>\n<li>Multiple CameraControls can drive the same {{#crossLink \"Camera\"}}{{/crossLink}}, or can each drive their own separate {{#crossLink \"Camera\"}}Cameras{{/crossLink}}.</li>\n<li>At any instant, the CameraControl we're driving is the one whose {{#crossLink \"Camera/active:property\"}}active{{/crossLink}} property is true.</li>\n<li>You can switch a CameraControl to a different {{#crossLink \"Camera\"}}{{/crossLink}} at any time.</li>\n</ul>\n\n## Example\n\nIn this example we have a {{#crossLink \"Viewer\"}}{{/crossLink}} with a\n{{#crossLink \"Camera\"}}{{/crossLink}} that's controlled by a CameraControl.\n\n````Javascript\n\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\nvar camera = new BIMSURFER.Camera(viewer, {\n       eye: [0, 0, -10]\n   });\n\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n       camera: camera\n   });\n\nvar teapot = new BIMSURFER.BoxObject(viewer);\n\n````"
         },
         {
             "displayName": "effect",
             "name": "effect",
-            "description": "TODO\n\n## Overview\n\nTODO\n\n## Example\n\nTODO"
+            "description": "An **Effect** is a the base class for visual effects that are applied to {{#crossLink \"ObjectSet\"}}ObjectSets{{/crossLink}}.\n\n## Overview\n\n<ul>\n<li>Effect is subclassed by {{#crossLink \"HighlightEffect\"}}{{/crossLink}}, {{#crossLink \"IsolateEffect\"}}{{/crossLink}} and {{#crossLink \"XRayEffect\"}}{{/crossLink}}.</li>\n<li>Multiple Effects can share the same {{#crossLink \"ObjectSet\"}}{{/crossLink}} if required.</li>\n<li>An Effect will provide its own default {{#crossLink \"ObjectSet\"}}{{/crossLink}} when you don't configure it with one.</li>\n</ul>\n\n## Example\n\nTODO"
         },
         {
             "displayName": "geometry",
             "name": "geometry",
-            "description": "TODO\n\n## Overview\n\nTODO\n\n## Example\n\nTODO"
+            "description": "An **BoxGeometry** is a box-shaped {{#crossLink \"Geometry\"}}{{/crossLink}}.\n\n## Overview\n\nTODO\n\n## Example\n\nTODO"
         },
         {
             "displayName": "input",

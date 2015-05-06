@@ -114,18 +114,18 @@
         matrix: BIMSURFER.math.translationMat4v([8, 0, 8])
     });
 
-    var selection = new BIMSURFER.Selection(viewer);
+    var objectSet = new BIMSURFER.ObjectSet(viewer);
 
     var fly = new BIMSURFER.CameraFlyAnimation(viewer, {
         camera: camera
     });
 
-    selection.on("updated",
+    objectSet.on("updated",
             function () {
-                fly.flyTo({ boundary: selection.boundary });
+                fly.flyTo({ boundary: objectSet.boundary });
             });
 
-    selection.addTypes(["ifcRoof"]);
+    objectSet.addTypes(["ifcRoof"]);
 
 
     // ------ Switch visibilities by IFC type ------------
@@ -137,10 +137,10 @@
     setInterval(function () {
 
         if (lastType !== null) {
-            selection.removeTypes([lastType]);
+            objectSet.removeTypes([lastType]);
         }
 
-        selection.addTypes([types[i]], null);
+        objectSet.addTypes([types[i]], null);
 
         lastType = types[i];
 

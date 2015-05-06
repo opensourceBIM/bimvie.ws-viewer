@@ -1,5 +1,5 @@
 /**
- TODO
+ An **BoxGeometry** is a box-shaped {{#crossLink "Geometry"}}{{/crossLink}}.
 
  ## Overview
 

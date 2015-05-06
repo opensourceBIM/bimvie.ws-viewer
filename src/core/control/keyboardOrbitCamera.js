@@ -1,9 +1,17 @@
 /**
- TODO
+ A **KeyboardOrbitCamera** lets you orbit a {{#crossLink "Camera"}}{{/crossLink}} about its point-of-interest using the keyboard's arrow keys.
 
  ## Overview
 
- TODO
+ <ul>
+ <li>Orbiting involves rotating the {{#crossLink "Camera"}}Camera's{{/crossLink}} {{#crossLink "Camera/eye:property"}}{{/crossLink}}
+ position about its current {{#crossLink "Camera/look:property"}}{{/crossLink}} position.</li>
+ <li>The orbit is freely rotating, without gimbal-lock.</li>
+ <li>If desired, you can have multiple KeyboardOrbitCameras within the same {{#crossLink "Viewer"}}{{/crossLink}}.</li>
+ <li>Multiple KeyboardOrbitCameras can drive the same {{#crossLink "Camera"}}{{/crossLink}}, or can each drive their own separate {{#crossLink "Camera"}}Cameras{{/crossLink}}.</li>
+ <li>At any instant, the KeyboardOrbitCameras we're driving is the one whose {{#crossLink "KeyboardOrbitCamera/active:property"}}active{{/crossLink}} property is true.</li>
+ <li>You can switch a KeyboardOrbitCameras to a different {{#crossLink "Camera"}}{{/crossLink}} at any time.</li>
+ </ul>
 
  ## Example
 

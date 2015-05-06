@@ -1,5 +1,5 @@
 /**
- TODO
+ An **TeapotObject** is a teapot-shaped {{#crossLink "Object"}}{{/crossLink}}.
 
  ## Overview
 

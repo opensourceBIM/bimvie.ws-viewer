@@ -57,6 +57,7 @@
                                 <li><a href="../classes/IsolateEffect.html">IsolateEffect</a></li>
                                 <li><a href="../classes/KeyboardAxisCamera.html">KeyboardAxisCamera</a></li>
                                 <li><a href="../classes/KeyboardOrbitCamera.html">KeyboardOrbitCamera</a></li>
+                                <li><a href="../classes/KeyboardPanCamera.html">KeyboardPanCamera</a></li>
                                 <li><a href="../classes/KeyboardZoomCamera.html">KeyboardZoomCamera</a></li>
                                 <li><a href="../classes/Light.html">Light</a></li>
                                 <li><a href="../classes/math.html">math</a></li>
@@ -64,8 +65,8 @@
                                 <li><a href="../classes/MousePanCamera.html">MousePanCamera</a></li>
                                 <li><a href="../classes/MouseZoomCamera.html">MouseZoomCamera</a></li>
                                 <li><a href="../classes/Object.html">Object</a></li>
+                                <li><a href="../classes/ObjectSet.html">ObjectSet</a></li>
                                 <li><a href="../classes/PointLight.html">PointLight</a></li>
-                                <li><a href="../classes/Selection.html">Selection</a></li>
                                 <li><a href="../classes/TeapotGeometry.html">TeapotGeometry</a></li>
                                 <li><a href="../classes/TeapotObject.html">TeapotObject</a></li>
                                 <li><a href="../classes/Viewer.html">Viewer</a></li>
@@ -131,7 +132,17 @@
 
 
 <div class="box intro">
-    <p>TODO</p>
+    <p>A <strong>ClickSelectObjects</strong> lets you add or remove Object to and from an <a href="../classes/ObjectSet.html" class="crosslink">ObjectSet</a> by clicking them with the mouse.</p>
+<h2 id="overview">Overview</h2>
+<ul>
+<li>A ClickSelectObjects adds Object to the <a href="../classes/ObjectSet.html" class="crosslink">ObjectSet</a> as you
+click them with the mouse, removing them again when you click them a second time.</li>
+<li>Typically a ClickSelectObjects will share an <a href="../classes/ObjectSet.html" class="crosslink">ObjectSet</a> with one or
+more <a href="../classes/Effect.html" class="crosslink">Effects</a>, in order to select which Object are influenced by the <a href="../classes/Effect.html" class="crosslink">Effects</a>.</li>
+<li>A ClickSelectObjects will provide its own <a href="../classes/ObjectSet.html" class="crosslink">ObjectSet</a> by default.</li>
+<li>Hold down SHIFT while clicking to multi-select.</li>
+</ul>
+
 <h2 id="overview">Overview</h2>
 <p>TODO</p>
 <h2 id="example">Example</h2>
@@ -233,7 +244,7 @@
                         </li>
                         <li class="param">
                                 <code class="param-name optional">[selection]</code>
-                                <span class="type"><a href="../classes/Selection.html" class="crosslink">Selection</a></span>
+                                <span class="type">Selection</span>
                                 <span class="flag optional" title="This parameter is optional.">optional</span>
         
         
@@ -887,7 +898,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_control_clickSelectObjects.js.html#l49"><code>src&#x2F;core&#x2F;control&#x2F;clickSelectObjects.js:49</code></a>
+                            <a href="../files/src_core_control_clickSelectObjects.js.html#l62"><code>src&#x2F;core&#x2F;control&#x2F;clickSelectObjects.js:62</code></a>
                             </p>
                     
                     
@@ -917,7 +928,7 @@ any subsequent notifications on that location as they are made.</p>
                                     Component
                                 </a>
                                 but overwritten in
-                            <a href="../files/src_core_control_clickSelectObjects.js.html#l29"><code>src&#x2F;core&#x2F;control&#x2F;clickSelectObjects.js:29</code></a>
+                            <a href="../files/src_core_control_clickSelectObjects.js.html#l42"><code>src&#x2F;core&#x2F;control&#x2F;clickSelectObjects.js:42</code></a>
                             </p>
                     
                     
@@ -1050,7 +1061,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_control_clickSelectObjects.js.html#l126"><code>src&#x2F;core&#x2F;control&#x2F;clickSelectObjects.js:126</code></a>
+                            <a href="../files/src_core_control_clickSelectObjects.js.html#l139"><code>src&#x2F;core&#x2F;control&#x2F;clickSelectObjects.js:139</code></a>
                             </p>
                     
                     

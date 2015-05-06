@@ -115,7 +115,7 @@
 
     // Create a Selection that initially selects two of our Objects
 
-    var selection = new BIMSURFER.Selection(viewer, {
+    var objectSet = new BIMSURFER.ObjectSet(viewer, {
         objects: [object1, object2 ]
     });
 
@@ -126,20 +126,20 @@
     // Whenever the Selection changes, schedule the Camera to fly
     // to the updated Selection boundary on the next render loop
 
-    selection.on("updated",
+    objectSet.on("updated",
             function () {
 
                 viewer.once("tick",
                         function () {
 
-                            flyTo.flyToBoundary(selection.boundary);
+                            flyTo.flyToBoundary(objectSet.boundary);
                         });
             });
 
     // Add a third Object to the Selection, causing the Highlight to now render
     // that Object as highlighted also
 
-    selection.addObjects([object3]);
+    objectSet.addObjects([object3]);
 
 </script>
 

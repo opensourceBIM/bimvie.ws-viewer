@@ -57,6 +57,7 @@
                                 <li><a href="../classes/IsolateEffect.html">IsolateEffect</a></li>
                                 <li><a href="../classes/KeyboardAxisCamera.html">KeyboardAxisCamera</a></li>
                                 <li><a href="../classes/KeyboardOrbitCamera.html">KeyboardOrbitCamera</a></li>
+                                <li><a href="../classes/KeyboardPanCamera.html">KeyboardPanCamera</a></li>
                                 <li><a href="../classes/KeyboardZoomCamera.html">KeyboardZoomCamera</a></li>
                                 <li><a href="../classes/Light.html">Light</a></li>
                                 <li><a href="../classes/math.html">math</a></li>
@@ -64,8 +65,8 @@
                                 <li><a href="../classes/MousePanCamera.html">MousePanCamera</a></li>
                                 <li><a href="../classes/MouseZoomCamera.html">MouseZoomCamera</a></li>
                                 <li><a href="../classes/Object.html">Object</a></li>
+                                <li><a href="../classes/ObjectSet.html">ObjectSet</a></li>
                                 <li><a href="../classes/PointLight.html">PointLight</a></li>
-                                <li><a href="../classes/Selection.html">Selection</a></li>
                                 <li><a href="../classes/TeapotGeometry.html">TeapotGeometry</a></li>
                                 <li><a href="../classes/TeapotObject.html">TeapotObject</a></li>
                                 <li><a href="../classes/Viewer.html">Viewer</a></li>
@@ -130,11 +131,55 @@
 
 
 <div class="box intro">
-    <p>A 3D object within a <a href="../classes/Viewer.html" class="crosslink">Viewer</a>.</p>
+    <p>An <strong>Object</strong> is a visible 3D element within a <a href="../classes/Viewer.html" class="crosslink">Viewer</a>.</p>
 <h2 id="overview">Overview</h2>
 <p>TODO</p>
 <h2 id="example">Example</h2>
-<p>TODO</p>
+<p>In the example below we&#39;ll create three Objects, each with a unique ID:</p>
+<pre class="code prettyprint"><code class="lang-Javascript">// Create a Viewer
+var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+
+// Create a Camera
+var camera = new BIMSURFER.Camera(viewer, {
+   eye: [0, 0, -10]
+});
+
+// Create a CameraControl to interact with the Camera
+var cameraControl = new BIMSURFER.CameraControl(viewer, {
+   camera: camera
+});
+
+// Create some BoxObjects
+
+new BIMSURFER.BoxObject(viewer, {
+   objectId: "foo",
+   ifcType: "IfcWall",
+   matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])
+});
+
+new BIMSURFER.BoxObject(viewer, {
+   objectId: "bar",
+   ifcType: "IfcWall",
+   matrix: BIMSURFER.math.translationMat4v([4, 0, -4])
+});
+
+new BIMSURFER.Object(viewer, {
+   objectId: "baz",
+   ifcType: "IfcBeam",
+   matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])
+});
+</code></pre>
+<p>We can find the objects in the <a href="../classes/Viewer.html" class="crosslink">Viewer</a> by ID:</p>
+<pre class="code prettyprint"><code class="lang-javascript">var foo = viewer.components["foo"];
+</code></pre>
+<p>or by IFC type:</p>
+<pre class="code prettyprint"><code class="lang-javascript">
+// Get all Objects of the given IFC type
+var wallObjects = viewer.components["IfcWall"];
+
+// Get our "foo" object from those
+var foo = wallObjects["foo"];
+</code></pre>
 
 </div>
 
@@ -1003,14 +1048,14 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_object_object.js.html#l312"><code>src&#x2F;core&#x2F;object&#x2F;object.js:312</code></a>
+                            <a href="../files/src_core_object_object.js.html#l362"><code>src&#x2F;core&#x2F;object&#x2F;object.js:362</code></a>
                             </p>
                     
                     
                         </div>
                     
                         <div class="description">
-                            <p>Flag which indicates whether this Object is active or not.</p>
+                            <p>Whether this Object is active or not.</p>
                     <p>Fires an <a href="../classes/Object.html#event_active" class="crosslink">active</a> event on change.</p>
                     
                         </div>
@@ -1029,7 +1074,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_object_object.js.html#l515"><code>src&#x2F;core&#x2F;object&#x2F;object.js:515</code></a>
+                            <a href="../files/src_core_object_object.js.html#l565"><code>src&#x2F;core&#x2F;object&#x2F;object.js:565</code></a>
                             </p>
                     
                     
@@ -1054,7 +1099,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_object_object.js.html#l539"><code>src&#x2F;core&#x2F;object&#x2F;object.js:539</code></a>
+                            <a href="../files/src_core_object_object.js.html#l589"><code>src&#x2F;core&#x2F;object&#x2F;object.js:589</code></a>
                             </p>
                     
                     
@@ -1083,7 +1128,7 @@ any subsequent notifications on that location as they are made.</p>
                                     Component
                                 </a>
                                 but overwritten in
-                            <a href="../files/src_core_object_object.js.html#l37"><code>src&#x2F;core&#x2F;object&#x2F;object.js:37</code></a>
+                            <a href="../files/src_core_object_object.js.html#l87"><code>src&#x2F;core&#x2F;object&#x2F;object.js:87</code></a>
                             </p>
                     
                     
@@ -1108,7 +1153,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_object_object.js.html#l431"><code>src&#x2F;core&#x2F;object&#x2F;object.js:431</code></a>
+                            <a href="../files/src_core_object_object.js.html#l481"><code>src&#x2F;core&#x2F;object&#x2F;object.js:481</code></a>
                             </p>
                     
                     
@@ -1159,7 +1204,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_object_object.js.html#l374"><code>src&#x2F;core&#x2F;object&#x2F;object.js:374</code></a>
+                            <a href="../files/src_core_object_object.js.html#l424"><code>src&#x2F;core&#x2F;object&#x2F;object.js:424</code></a>
                             </p>
                     
                     
@@ -1211,7 +1256,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_object_object.js.html#l490"><code>src&#x2F;core&#x2F;object&#x2F;object.js:490</code></a>
+                            <a href="../files/src_core_object_object.js.html#l540"><code>src&#x2F;core&#x2F;object&#x2F;object.js:540</code></a>
                             </p>
                     
                     
@@ -1262,7 +1307,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_object_object.js.html#l464"><code>src&#x2F;core&#x2F;object&#x2F;object.js:464</code></a>
+                            <a href="../files/src_core_object_object.js.html#l514"><code>src&#x2F;core&#x2F;object&#x2F;object.js:514</code></a>
                             </p>
                     
                     
@@ -1291,7 +1336,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_object_object.js.html#l345"><code>src&#x2F;core&#x2F;object&#x2F;object.js:345</code></a>
+                            <a href="../files/src_core_object_object.js.html#l395"><code>src&#x2F;core&#x2F;object&#x2F;object.js:395</code></a>
                             </p>
                     
                     
@@ -1343,7 +1388,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_object_object.js.html#l402"><code>src&#x2F;core&#x2F;object&#x2F;object.js:402</code></a>
+                            <a href="../files/src_core_object_object.js.html#l452"><code>src&#x2F;core&#x2F;object&#x2F;object.js:452</code></a>
                             </p>
                     
                     
@@ -1375,7 +1420,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_object_object.js.html#l332"><code>src&#x2F;core&#x2F;object&#x2F;object.js:332</code></a>
+                            <a href="../files/src_core_object_object.js.html#l382"><code>src&#x2F;core&#x2F;object&#x2F;object.js:382</code></a>
                             </p>
                     
                     

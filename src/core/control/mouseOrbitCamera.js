@@ -1,7 +1,17 @@
 /**
- TODO
+ A **MouseOrbitCamera** lets you orbit a {{#crossLink "Camera"}}{{/crossLink}} about its point-of-interest using the mouse.
 
  ## Overview
+
+ <ul>
+ <li>Orbiting involves rotating the {{#crossLink "Camera"}}Camera's{{/crossLink}} {{#crossLink "Camera/eye:property"}}{{/crossLink}}
+ position about its current {{#crossLink "Camera/look:property"}}{{/crossLink}} position.</li>
+ <li>The orbit is freely rotating, without gimbal-lock.</li>
+ <li>If desired, you can have multiple MouseOrbitCameras within the same {{#crossLink "Viewer"}}{{/crossLink}}.</li>
+ <li>Multiple MouseOrbitCameras can drive the same {{#crossLink "Camera"}}{{/crossLink}}, or can each drive their own separate {{#crossLink "Camera"}}Cameras{{/crossLink}}.</li>
+ <li>At any instant, the MouseOrbitCameras we're driving is the one whose {{#crossLink "MouseOrbitCamera/active:property"}}active{{/crossLink}} property is true.</li>
+ <li>You can switch a MouseOrbitCameras to a different {{#crossLink "Camera"}}{{/crossLink}} at any time.</li>
+ </ul>
 
  TODO
 
@@ -140,7 +150,7 @@
                     }
 
                     /**
-                     * Fired whenever this KeyboardOrbitCamera's {{#crossLink "KeyboardOrbitCamera/active:property"}}{{/crossLink}} property changes.
+                     * Fired whenever this MouseOrbitCamera's {{#crossLink "MouseOrbitCamera/active:property"}}{{/crossLink}} property changes.
                      * @event active
                      * @param value The property's new value
                      */

@@ -1,7 +1,15 @@
 /**
- TODO
+ A **MouseZoomCamera** lets you zoom a {{#crossLink "Camera"}}{{/crossLink}} using the mouse wheel.
 
  ## Overview
+
+ <ul>
+ <li>Zooming involves moving the {{#crossLink "Camera"}}Camera's{{/crossLink}} {{#crossLink "Camera/eye:property"}}{{/crossLink}} closer and farther to its {{#crossLink "Camera/look:property"}}{{/crossLink}} position.</li>
+ <li>If desired, you can have multiple MouseZoomCameras within the same {{#crossLink "Viewer"}}{{/crossLink}}.</li>
+ <li>Multiple MouseZoomCameras can drive the same {{#crossLink "Camera"}}{{/crossLink}}, or can each drive their own separate {{#crossLink "Camera"}}{{/crossLink}}.</li>
+ <li>At any instant, the MouseZoomCameras we're driving is the one whose {{#crossLink "MouseZoomCamera/active:property"}}active{{/crossLink}} property is true.</li>
+ <li>You can switch a MouseZoomCameras to a different {{#crossLink "Camera"}}{{/crossLink}} at any time.</li>
+ </ul>
 
  TODO
 

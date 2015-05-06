@@ -4,29 +4,50 @@
  ## Overview
 
  <ul>
- <li>You can have an unlimited number of Cameras in a {{#crossLink "Viewer"}}GameObjects{{/crossLink}}.</li>
+ <li>You can have an unlimited number of Cameras in a {{#crossLink "Viewer"}}{{/crossLink}}.</li>
  <li>At any instant, the Camera we're looking through is the one whose {{#crossLink "Camera/active:property"}}active{{/crossLink}} property is true.</li>
+ <li>Cameras can be controlled with controls such as {{#crossLink "CameraControl"}}{{/crossLink}}, {{#crossLink "KeyboardAxisCamera"}}{{/crossLink}},
+ {{#crossLink "KeyboardOrbitCamera"}}{{/crossLink}}, {{#crossLink "KeyboardPanCamera"}}{{/crossLink}}, {{#crossLink "KeyboardZoomCamera"}}{{/crossLink}},
+ {{#crossLink "MouseOrbitCamera"}}{{/crossLink}}, {{#crossLink "MousePanCamera"}}{{/crossLink}} and {{#crossLink "MouseZoomCamera"}}{{/crossLink}}.</li>
  </ul>
 
  ## Example
 
- In this example we have a {{#crossLink "Viewer"}}{{/crossLink}} with a
- Camera, {{#crossLink "CameraControl"}}{{/crossLink}} and a {{#crossLink "TeapotObject"}}{{/crossLink}}.
+ Let's create a {{#crossLink "Viewer"}}{{/crossLink}} with a Camera that's controlled by a {{#crossLink "CameraControl"}}{{/crossLink}}:
 
  ````Javascript
-
+ // Create a Viewer
  var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
 
+ //...
+
+ // Create a Camera
  var camera = new BIMSURFER.Camera(viewer, {
         eye: [0, 0, -10]
     });
 
+ // Create a CameraControl that controls our Camera
  var cameraControl = new BIMSURFER.CameraControl(viewer, {
         camera: camera
     });
+ ````
 
- var teapot = new BIMSURFER.TeapotObject(viewer);
+ Now let's create a second Camera and switch the {{#crossLink "CameraControl"}}{{/crossLink}} over to it:
 
+ ````Javascript
+
+ // Deactivate our Camera
+ camera.active = false;
+
+ // Create a second Camera
+ // Camera is active by default
+ var camera2 = new BIMSURFER.Camera(viewer, {
+        eye: [-10, 0, 0]
+    });
+
+ // Switch our CameraControl to the second Camera
+ // Now we're controlling that Camera
+ cameraControl.camera = camera2;
  ````
 
  @class Camera

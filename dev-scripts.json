@@ -20,6 +20,7 @@
         "src/core/object/object.js",
         "src/core/object/boxObject.js",
         "src/core/object/teapotObject.js",
+        "src/core/object/objectSet.js",
 
         "src/core/camera/camera.js",
 
@@ -31,8 +32,6 @@
         "src/core/geometry/geometry.js",
         "src/core/geometry/boxGeometry.js",
         "src/core/geometry/teapotGeometry.js",
-
-        "src/core/selection/selection.js",
 
         "src/core/effect/effect.js",
         "src/core/effect/highlightEffect.js",

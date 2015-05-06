@@ -57,6 +57,7 @@
                                 <li><a href="../classes/IsolateEffect.html">IsolateEffect</a></li>
                                 <li><a href="../classes/KeyboardAxisCamera.html">KeyboardAxisCamera</a></li>
                                 <li><a href="../classes/KeyboardOrbitCamera.html">KeyboardOrbitCamera</a></li>
+                                <li><a href="../classes/KeyboardPanCamera.html">KeyboardPanCamera</a></li>
                                 <li><a href="../classes/KeyboardZoomCamera.html">KeyboardZoomCamera</a></li>
                                 <li><a href="../classes/Light.html">Light</a></li>
                                 <li><a href="../classes/math.html">math</a></li>
@@ -64,8 +65,8 @@
                                 <li><a href="../classes/MousePanCamera.html">MousePanCamera</a></li>
                                 <li><a href="../classes/MouseZoomCamera.html">MouseZoomCamera</a></li>
                                 <li><a href="../classes/Object.html">Object</a></li>
+                                <li><a href="../classes/ObjectSet.html">ObjectSet</a></li>
                                 <li><a href="../classes/PointLight.html">PointLight</a></li>
-                                <li><a href="../classes/Selection.html">Selection</a></li>
                                 <li><a href="../classes/TeapotGeometry.html">TeapotGeometry</a></li>
                                 <li><a href="../classes/TeapotObject.html">TeapotObject</a></li>
                                 <li><a href="../classes/Viewer.html">Viewer</a></li>
@@ -118,7 +119,7 @@
 <div class="file">
     <pre class="code prettyprint linenums">
 /**
- TODO
+ A **HighlightEffect** is an {{#crossLink &quot;Effect&quot;}}{{/crossLink}} that highlights the {{#crossLink &quot;Object&quot;}}Objects{{/crossLink}} within an {{#crossLink &quot;ObjectSet&quot;}}{{/crossLink}}.
 
  ## Overview
 
@@ -126,7 +127,70 @@
 
  ## Example
 
- TODO
+ Highlight objects that match given IDs, using an {{#crossLink &quot;ObjectSet&quot;}}{{/crossLink}} and a HighlightEffect:
+
+ &#x60;&#x60;&#x60;&#x60;javascript
+
+ // Create a Viewer
+ var viewer = new BIMSURFER.Viewer(null, &quot;myDiv&quot;, {}, false);
+
+ // Create a Camera
+ var camera = new BIMSURFER.Camera(viewer, {
+        eye: [0, 0, -10]
+    });
+
+ // Create a CameraControl to interact with the Camera
+ var cameraControl = new BIMSURFER.CameraControl(viewer, {
+        camera: camera
+    });
+
+ // Create a Camera
+ var camera = new BIMSURFER.Camera(viewer, {
+    eye: [0, 0, -10]
+ });
+
+ // Create a CameraControl to interact with the Camera
+ var cameraControl = new BIMSURFER.CameraControl(viewer, {
+    camera: camera
+ });
+
+ // Create some BoxObjects
+
+ new BIMSURFER.BoxObject(viewer, {
+    objectId: &quot;foo&quot;,
+    ifcType: &quot;IfcWall&quot;,
+    matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])
+ });
+
+ new BIMSURFER.BoxObject(viewer, {
+    objectId: &quot;bar&quot;,
+    ifcType: &quot;IfcWall&quot;,
+    matrix: BIMSURFER.math.translationMat4v([4, 0, -4])
+ });
+
+ new BIMSURFER.Object(viewer, {
+    objectId: &quot;baz&quot;,
+    ifcType: &quot;IfcBeam&quot;,
+    matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])
+ });
+
+ // Create an ObjectSet
+ var objectSet = new BIMSURFER.ObjectSet(viewer);
+
+ // Apply a highlight effect to the ObjectSet
+ var highlightEffect = new BIMSURFER.HighlightEffect(viewer, {
+        objectSet: objectSet
+    });
+
+ // Add Objects to the ObjectSet by ID
+ // These Objects become highlighted
+ objectSet.addObjectIds([&quot;foo&quot;, &quot;bar&quot;, &quot;baz&quot;]);
+
+ // Remove an Object from the ObjectSet by ID
+ // That Object becomes non-highlighted again
+ objectSet.removeObjectIds([&quot;baz&quot;]);
+
+ &#x60;&#x60;&#x60;&#x60;
 
  @class HighlightEffect
  @module BIMSURFER

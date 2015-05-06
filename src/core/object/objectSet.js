@@ -1,15 +1,195 @@
 /**
- TODO
+ An **ObjectSet** is a set of {{#crossLink "Object"}}Objects{{/crossLink}}.
 
  ## Overview
 
+ <ul>
+ <li>{{#crossLink "Object"}}Objects{{/crossLink}} can be added and removed to and from an ObjectSet using IDs or IFC types.</li>
+ <li>An {{#crossLink "ObjectSet"}}{{/crossLink}} can be queried at any time for the {{#crossLink "ObjectSet/boundary:property"}}{{/crossLink}}
+ and {{#crossLink "ObjectSet/center:property"}}{{/crossLink}} of its {{#crossLink "Object"}}Objects{{/crossLink}}.</li>
+ <li>Effects like {{#crossLink "HighlightEffect"}}{{/crossLink}}, {{#crossLink "XRayEffect"}}{{/crossLink}} and
+ {{#crossLink "IsolateEffect"}}{{/crossLink}} apply their effects to ObjectSets.</li>
+ <li>A {{#crossLink "ClickSelectObjects"}}{{/crossLink}} can be used to add and remove {{#crossLink "Object"}}Objects{{/crossLink}} to or from an ObjectSet as you click them.</li>
+
+ </ul>
+
+
  TODO
 
- ## Example
+ ## Examples
+
+ Highlighting clicked objects, using an ObjectSet, {{#crossLink "HighlightEffect"}}{{/crossLink}} and {{#crossLink "ClickSelectObjects"}}{{/crossLink}}:
+
+ ````javascript
+
+ // Create a Viewer
+ var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+
+ // Create a Camera
+ var camera = new BIMSURFER.Camera(viewer, {
+    eye: [0, 0, -10]
+ });
+
+ // Create a CameraControl to interact with the Camera
+ var cameraControl = new BIMSURFER.CameraControl(viewer, {
+    camera: camera
+ });
+
+ // Create some BoxObjects
+
+ new BIMSURFER.BoxObject(viewer, {
+    objectId: "foo",
+    ifcType: "IfcWall",
+    matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])
+ });
+
+ new BIMSURFER.BoxObject(viewer, {
+    objectId: "bar",
+    ifcType: "IfcWall",
+    matrix: BIMSURFER.math.translationMat4v([4, 0, -4])
+ });
+
+ new BIMSURFER.Object(viewer, {
+    objectId: "baz",
+    ifcType: "IfcBeam",
+    matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])
+ });
+
+ // Create an ObjectSet
+ var objectSet = new BIMSURFER.ObjectSet(viewer);
+
+ // Apply a Highlight effect to the ObjectSet
+ var highlightEffect = new BIMSURFER.HighlightEffect(viewer, {
+        objectSet: objectSet
+    });
+
+ // Create a ClickSelectObjects control, which will add and remove objects to and from the ObjectSet
+ // to and from the ObjectSet as we click them
+ var clickSelect = new BIMSURFER.ClickSelectObjects(viewer, {
+        objectSet: objectSet
+    });
+ ````
+
+ Isolate objects that match given IDs, using an ObjectSet and an {{#crossLink "IsolateEffect"}}{{/crossLink}}:
+
+ ````javascript
+
+ // Create a Viewer
+ var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+
+ // Create a Camera
+ var camera = new BIMSURFER.Camera(viewer, {
+    eye: [0, 0, -10]
+ });
+
+ // Create a CameraControl to interact with the Camera
+ var cameraControl = new BIMSURFER.CameraControl(viewer, {
+    camera: camera
+ });
+
+ // Create some BoxObjects
+
+ new BIMSURFER.BoxObject(viewer, {
+    objectId: "foo",
+    ifcType: "IfcWall",
+    matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])
+ });
+
+ new BIMSURFER.BoxObject(viewer, {
+    objectId: "bar",
+    ifcType: "IfcWall",
+    matrix: BIMSURFER.math.translationMat4v([4, 0, -4])
+ });
+
+ new BIMSURFER.Object(viewer, {
+    objectId: "baz",
+    ifcType: "IfcBeam",
+    matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])
+ });
+
+ // Create an ObjectSet
+ var objectSet = new BIMSURFER.ObjectSet(viewer);
+
+ // Apply an Isolate effect to the ObjectSet
+ var isolateEffect = new BIMSURFER.IsolateEffect(viewer, {
+        objectSet: objectSet
+    });
+
+ // Add Objects to the ObjectSet by ID
+ // These Objects become visible
+ objectSet.addObjectIds(["foo", "bar", "baz"]);
+
+ // Remove an Object from the ObjectSet by ID
+ // That Object becomes invisible again
+ objectSet.removeObjectIds(["baz"]);
+
+ ````
+
+ X-ray and highlight objects that match given IFC types, using an ObjectSet, {{#crossLink "XRayEffect"}}{{/crossLink}} and {{#crossLink "HighlightEffect"}}{{/crossLink}}:
+
+ ````javascript
+
+ // Create a Viewer
+ var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+
+ // Create a Camera
+ var camera = new BIMSURFER.Camera(viewer, {
+    eye: [0, 0, -10]
+ });
+
+ // Create a CameraControl to interact with the Camera
+ var cameraControl = new BIMSURFER.CameraControl(viewer, {
+    camera: camera
+ });
+
+ // Create some BoxObjects
+
+ new BIMSURFER.BoxObject(viewer, {
+    objectId: "foo",
+    ifcType: "IfcWall",
+    matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])
+ });
+
+ new BIMSURFER.BoxObject(viewer, {
+    objectId: "bar",
+    ifcType: "IfcWall",
+    matrix: BIMSURFER.math.translationMat4v([4, 0, -4])
+ });
+
+ new BIMSURFER.Object(viewer, {
+    objectId: "baz",
+    ifcType: "IfcBeam",
+    matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])
+ });
+
+ // Create an ObjectSet
+ var objectSet = new BIMSURFER.ObjectSet(viewer);
+
+ // Apply an X-Ray effect to the ObjectSet
+ var xrayEffect = new BIMSURFER.XRayEffect(viewer, {
+    objectSet: objectSet
+ });
+
+ // Apply a Highlight effect to the ObjectSet
+ var highlightEffect = new BIMSURFER.HighlightEffect(viewer, {
+    objectSet: objectSet
+ });
+
+ // Add Objects to the ObjectSet by IFC type
+ // These Objects become opaque and highlighted
+ objectSet.addObjectTypes(["IfcWall", "IfcBeam"]);
+
+ // Remove an Object from the ObjectSet by IFC type
+ // That Object becomes transparent and non-highlighted
+ objectSet.removeObjectTypes(["IfcWall"]);
+
+ ````
+
+ #### Boundaries
 
  TODO
 
- @class Selection
+ @class ObjectSet
  @module BIMSURFER
  @constructor
  @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
@@ -17,7 +197,7 @@
  @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
  @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Selection.
  @param [cfg.objects] {{Array of String|Object}} Array of {{#crossLink "Object"}}{{/crossLink}} IDs or instances.
- @extends Object
+ @extends Component
  */
 (function () {
 
@@ -26,7 +206,7 @@
     /**
      * A selection of {@link BIMSURFER.Object}s within a {@link BIMSURFER.Viewer}.
      */
-    BIMSURFER.Selection = BIMSURFER.Component.extend({
+    BIMSURFER.ObjectSet = BIMSURFER.Component.extend({
 
         /**
          JavaScript class name for this Component.
@@ -35,7 +215,7 @@
          @type String
          @final
          */
-        className: "BIMSURFER.Selection",
+        className: "BIMSURFER.ObjectSet",
 
         _init: function (cfg) {
 
@@ -355,6 +535,13 @@
 
         _props: {
 
+            /**
+             * The axis-aligned World-space boundary of the {{#crossLink "Object"}}Objects{{/crossLink}} within this ObjectSet.
+             *
+             * @property boundary
+             * @readonly
+             * @type {{}}
+             */
             boundary: {
 
                 get: function () {
@@ -368,6 +555,13 @@
                 }
             },
 
+            /**
+             * The World-space center of the {{#crossLink "Object"}}Objects{{/crossLink}} within this ObjectSet.
+             *
+             * @property center
+             * @readonly
+             * @type {{}}
+             */
             center: {
 
                 get: function () {
