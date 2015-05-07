@@ -7,14 +7,17 @@
 
  ## Example
 
- In the example below we'll create three Objects, each with a unique ID and a modelling transform:
+ In the example below we'll create three Objects, each with a unique ID and a modelling transform.
+
+ <iframe style="width: 600px; height: 400px" src="../../examples/object_Object.html"></iframe>
+
  ````Javascript
  // Create a Viewer
  var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
 
  // Create a Camera
  var camera = new BIMSURFER.Camera(viewer, {
-    eye: [0, 0, -10]
+    eye: [10, 10, -10]
  });
 
  // Create a CameraControl to interact with the Camera

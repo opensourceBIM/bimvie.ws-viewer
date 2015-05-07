@@ -43,7 +43,7 @@
 
     // Create a Camera
     var camera = new BIMSURFER.Camera(viewer, {
-        eye: [0, 0, -10]
+        eye: [10, 10, -10]
     });
 
     var cameraControl = new BIMSURFER.CameraControl(viewer, {
@@ -63,7 +63,7 @@
         id: "myObject1",
         ifcType: "IfcCovering",
         geometries: [ geometry ],
-        matrix: BIMSURFER.math.translationMat4v([-8, 0,0])
+        matrix: BIMSURFER.math.translationMat4v([-4, 0,0])
     });
 
     // Create second box Object
@@ -72,7 +72,7 @@
         id: "myObject2",
         ifcType: "IfcFlowTerminal",
         geometries: [ geometry ],
-        matrix: BIMSURFER.math.translationMat4v([8, 0,0])
+        matrix: BIMSURFER.math.translationMat4v([4, 0,0])
     });
 
 </script>

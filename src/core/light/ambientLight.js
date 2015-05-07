@@ -9,7 +9,7 @@ TODO
 
  ## Example
 
- <iframe style="width: 600px; height: 400px" src="../../examples/light_ambient.html"></iframe>
+ <iframe style="width: 600px; height: 400px" src="../../examples/light_AmbientLight.html"></iframe>
 
  ```` javascript
 // Create a Viewer

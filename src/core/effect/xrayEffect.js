@@ -7,7 +7,11 @@
 
  ## Example
 
- X-ray objects that match given IFC types, using an {{#crossLink "ObjectSet"}}{{/crossLink}} and an XRayEffect:
+ In this example we create four {{#crossLink "Object"}}Objects{{/crossLink}}, then add two of them to an {{#crossLink "ObjectSet"}}{{/crossLink}}. Then we
+ apply an {{#crossLink "XRayEffect"}}{{/crossLink}} to the {{#crossLink "ObjectSet"}}{{/crossLink}}, causing
+ it's {{#crossLink "Object"}}Objects{{/crossLink}} to remain opaque while the other two {{#crossLink "Object"}}Objects{{/crossLink}} become transparent.
+
+ <iframe style="width: 600px; height: 400px" src="../../examples/effect_XRayEffect.html"></iframe>
 
  ````javascript
 
@@ -16,50 +20,92 @@
 
  // Create a Camera
  var camera = new BIMSURFER.Camera(viewer, {
-    eye: [0, 0, -10]
- });
+        eye: [20, 10, -20]
+    });
 
- // Create a CameraControl to interact with the Camera
+ // Spin the camera
+ viewer.on("tick", function () {
+        camera.rotateEyeY(0.2);
+    });
+
+ // Create a CameraControl so we can move the Camera
  var cameraControl = new BIMSURFER.CameraControl(viewer, {
-    camera: camera
- });
+        camera: camera
+    });
 
- // Create some BoxObjects
+ // Create an AmbientLight
+ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
+        color: [0.7, 0.7, 0.7]
+    });
 
- new BIMSURFER.BoxObject(viewer, {
-    objectId: "foo",
-    ifcType: "IfcWall",
-    matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])
- });
+ // Create a DirLight
+ var dirLight1 = new BIMSURFER.DirLight(viewer, {
+        color: [0.6, 0.9, 0.9],
+        dir: [1.0, 0.0, 0.0],
+        space: "view"
+    });
 
- new BIMSURFER.BoxObject(viewer, {
-    objectId: "bar",
-    ifcType: "IfcWall",
-    matrix: BIMSURFER.math.translationMat4v([4, 0, -4])
- });
+ // Create a DirLight
+ var dirLight2 = new BIMSURFER.DirLight(viewer, {
+        color: [0.6, 0.9, 0.9],
+        dir: [-0.5, 0.0, -1.0],
+        space: "view"
+    });
 
- new BIMSURFER.BoxObject(viewer, {
-    objectId: "baz",
-    ifcType: "IfcBeam",
-    matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])
- });
+ // Create a BoxGeometry
+ var geometry = new BIMSURFER.BoxGeometry(viewer, {
+        id: "myGeometry"
+    });
 
- // Create an ObjectSet
- var objectSet = new BIMSURFER.ObjectSet(viewer);
+ // Create some Objects
+ // Share the BoxGeometry among them
 
- // Apply an X-Ray effect to the ObjectSet
- var xrayEffect = new BIMSURFER.XRayEffect(viewer, {
-    objectSet: objectSet
- });
+ var object1 = new BIMSURFER.Object(viewer, {
+        ifcType: "IfcRoof",
+        geometries: [ geometry ],
+        matrix: BIMSURFER.math.translationMat4v([-8, 0, -8])
+    });
 
- // Add Objects to the ObjectSet by IFC type
- // These Objects become opaque
- objectSet.addObjectTypes(["IfcWall", "IfcBeam"]);
+ var object2 = new BIMSURFER.Object(viewer, {
+        ifcType: "IfcDistributionFlowElement",
+        geometries: [ geometry ],
+        matrix: BIMSURFER.math.translationMat4v([8, 0, -8])
+    });
 
- // Remove an Object from the ObjectSet by IFC type
- // That Object becomes transparent
- objectSet.removeObjectTypes(["IfcWall"]);
+ var object3 = new BIMSURFER.Object(viewer, {
+        ifcType: "IfcDistributionFlowElement",
+        geometries: [ geometry ],
+        matrix: BIMSURFER.math.translationMat4v([-8, 0, 8])
+    });
 
+ var object4 = new BIMSURFER.Object(viewer, {
+        ifcType: "IfcRoof",
+        geometries: [ geometry ],
+        matrix: BIMSURFER.math.translationMat4v([8, 0, 8])
+    });
+
+ // Create an ObjectSet that initially contains one of our Objects
+
+ var objectSet = new BIMSURFER.ObjectSet(viewer, {
+        objects: [object1 ]
+    });
+
+ // Apply an XRay effect to the ObjectSet, which causes all Objects in the Viewer
+ // that are not in the ObjectSet to become transparent.
+
+ var xray = new BIMSURFER.XRayEffect(viewer, {
+        objectSet: objectSet
+    });
+
+ // Add a second Object to the ObjectSet, causing the XRay to now render
+ // that Object as opaque also
+
+ objectSet.addObjects([object3]);
+
+ // Adjust the opacity of the transparent Objects
+
+ object2.opacity = 0.2;
+ object4.opacity = 0.2;
  ````
 
  @class XRayEffect
@@ -70,7 +116,7 @@
  @param [cfg] {*} Configs
  @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
  @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this XRayEffect.
- @param [selection] {Selection} The {{#crossLink "Selection"}}{{/crossLink}} to update.
+ @param [objectSet] {ObjectSet} The {{#crossLink "ObjectSet"}}{{/crossLink}} to apply this XRayEffect to.
  @extends Effect
  */
 (function () {

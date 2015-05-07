@@ -7,7 +7,9 @@
 
  ## Example
 
- Isolate objects that match given IDs, using an {{#crossLink "ObjectSet"}}{{/crossLink}} and an IsolateEffect:
+ Isolate objects that match given IDs, using an {{#crossLink "ObjectSet"}}{{/crossLink}} and an IsolateEffect
+
+ <iframe style="width: 600px; height: 400px" src="../../examples/effect_IsolateEffect.html"></iframe>
 
  ````javascript
 
@@ -70,7 +72,7 @@
  @param [cfg] {*} Configs
  @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
  @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this IsolateEffect.
- @param [selection] {Selection} The {{#crossLink "Selection"}}{{/crossLink}} to update.
+ @param [objectSet] {ObjectSet} The {{#crossLink "ObjectSet"}}{{/crossLink}} to apply this IsolateEffect to.
  @extends Effect
  */
 (function () {

@@ -7,13 +7,15 @@
 
  ## Example
 
+ <iframe style="width: 600px; height: 400px" src="../../examples/object_BoxObject.html"></iframe>
+
  ````Javascript
  // Create a Viewer
  var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
 
  // Create a Camera
  var camera = new BIMSURFER.Camera(viewer, {
-    eye: [0, 0, -10]
+     eye: [20, 20, -20]
  });
 
  // Create a CameraControl to interact with the Camera

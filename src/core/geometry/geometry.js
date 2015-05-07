@@ -9,7 +9,7 @@
 
  #### Creating a triangle mesh Geometry
 
- <iframe style="width: 600px; height: 400px" src="../../examples/geometry_custom.html">Run this example</iframe>
+ <iframe style="width: 600px; height: 400px" src="../../examples/geometry_Geometry.html">Run this example</iframe>
 
  ````javascript
 

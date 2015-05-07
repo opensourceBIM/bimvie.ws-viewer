@@ -15,7 +15,7 @@
 
  ## Example
 
- TODO
+ <iframe style="width: 600px; height: 400px" src="../../examples/control_KeyboardZoomCamera.html"></iframe>
 
  @class KeyboardZoomCamera
  @module BIMSURFER

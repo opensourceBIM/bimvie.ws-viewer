@@ -45,20 +45,20 @@
     // Create a Viewer
     var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
 
-    // -------------- Camera -------------------------
-
     // Create a Camera
     var camera = new BIMSURFER.Camera(viewer, {
-        eye: [10, 10, -10]
+        eye: [20, 10, -20]
     });
 
-    // -------------- Controls -------------------------
+    // Spin the camera
+    viewer.on("tick", function () {
+        camera.rotateEyeY(0.2);
+    });
 
+    // Create a CameraControl so we can move the Camera
     var cameraControl = new BIMSURFER.CameraControl(viewer, {
         camera: camera
     });
-
-    // -------------- Lights -------------------------
 
     // Create an AmbientLight
     var ambientLight = new BIMSURFER.AmbientLight(viewer, {
@@ -79,60 +79,60 @@
         space: "view"
     });
 
-    // -------------- Geometries -------------------------
-
-    // Create a box Geometry
-    // Geometry defaults to a 2x2x2 box when no vertex or index arrays are specified
-    var geometry = new BIMSURFER.TeapotGeometry(viewer, {
+    // Create a BoxGeometry
+    var geometry = new BIMSURFER.BoxGeometry(viewer, {
         id: "myGeometry"
     });
 
-    // -------------- Objects -------------------------
-
     // Create some Objects
-    // Share the box Geometry among them
+    // Share the BoxGeometry among them
 
     var object1 = new BIMSURFER.Object(viewer, {
         ifcType: "IfcRoof",
         geometries: [ geometry ],
-        matrix: BIMSURFER.math.translationMat4v([-3, 0, -3])
+        matrix: BIMSURFER.math.translationMat4v([-8, 0, -8])
     });
 
     var object2 = new BIMSURFER.Object(viewer, {
         ifcType: "IfcDistributionFlowElement",
         geometries: [ geometry ],
-        matrix: BIMSURFER.math.translationMat4v([3, 0, -3])
+        matrix: BIMSURFER.math.translationMat4v([8, 0, -8])
     });
 
     var object3 = new BIMSURFER.Object(viewer, {
         ifcType: "IfcDistributionFlowElement",
         geometries: [ geometry ],
-        matrix: BIMSURFER.math.translationMat4v([-3, 0, 3])
+        matrix: BIMSURFER.math.translationMat4v([-8, 0, 8])
     });
 
     var object4 = new BIMSURFER.Object(viewer, {
         ifcType: "IfcRoof",
         geometries: [ geometry ],
-        matrix: BIMSURFER.math.translationMat4v([3, 0, 3])
+        matrix: BIMSURFER.math.translationMat4v([8, 0, 8])
     });
 
-    // Create a Selection that initially selects two of our Objects
+    // Create an ObjectSet that initially contains one of our Objects
 
     var objectSet = new BIMSURFER.ObjectSet(viewer, {
-        objects: [object1, object2 ]
+        objects: [object1 ]
     });
 
-    // Apply an XRay effect to the Selection, which will cause the selected
-    // objects to appear opaque and all other Objects transparent
+    // Apply an XRay effect to the ObjectSet, which causes all Objects in the Viewer
+    // that are not in the ObjectSet to become transparent.
 
     var xray = new BIMSURFER.XRayEffect(viewer, {
         objectSet: objectSet
     });
 
-    // Add a third Object to the Selection, causing the XRay to now render
+    // Add a second Object to the ObjectSet, causing the XRay to now render
     // that Object as opaque also
 
     objectSet.addObjects([object3]);
+
+   // Adjust the opacity of the transparent Objects
+
+    object2.opacity = 0.2;
+    object4.opacity = 0.2;
 
 </script>
 

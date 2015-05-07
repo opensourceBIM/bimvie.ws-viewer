@@ -24,7 +24,7 @@
 
  ## Example
 
- <iframe style="width: 600px; height: 400px" src="../../examples/light_directional.html"></iframe>
+ <iframe style="width: 600px; height: 400px" src="../../examples/light_DirLight.html"></iframe>
 
  ```` javascript
  // Create a Viewer

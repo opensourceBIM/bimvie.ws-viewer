@@ -7,6 +7,8 @@
 
  ## Example
 
+ <iframe style="width: 600px; height: 400px" src="../../examples/object_TeapotObject.html"></iframe>
+
  ````Javascript
  // Create a Viewer
  var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);

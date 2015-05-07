@@ -17,7 +17,9 @@
 
  #### Adding and removing Objects by ID
 
- Isolate objects that match given IDs, using an ObjectSet and an {{#crossLink "IsolateEffect"}}{{/crossLink}}:
+ Isolate objects that match given IDs, using an ObjectSet and an {{#crossLink "IsolateEffect"}}{{/crossLink}}.
+
+ <iframe style="width: 600px; height: 400px" src="../../examples/object_ObjectSet.html"></iframe>
 
  ````javascript
 

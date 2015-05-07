@@ -136,7 +136,9 @@
 <h2 id="overview">Overview</h2>
 <p>TODO</p>
 <h2 id="example">Example</h2>
-<p>Isolate objects that match given IDs, using an <a href="../classes/ObjectSet.html" class="crosslink">ObjectSet</a> and an IsolateEffect:</p>
+<p>Isolate objects that match given IDs, using an <a href="../classes/ObjectSet.html" class="crosslink">ObjectSet</a> and an IsolateEffect</p>
+<iframe style="width: 600px; height: 400px" src="../../examples/effect_IsolateEffect.html"></iframe>
+
 <pre class="code prettyprint"><code class="lang-javascript">
 // Create a Viewer
 var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
@@ -204,7 +206,7 @@ objectSet.removeObjectIds(["baz"]);
                                 <code class="optional">[cfg]</code>
                         </li>
                         <li class="arg">
-                                <code class="optional">[selection]</code>
+                                <code class="optional">[objectSet]</code>
                         </li>
                     </ul><span class="paren">)</span>
                 </div>
@@ -283,13 +285,13 @@ objectSet.removeObjectIds(["baz"]);
                                 </ul>
                         </li>
                         <li class="param">
-                                <code class="param-name optional">[selection]</code>
-                                <span class="type">Selection</span>
+                                <code class="param-name optional">[objectSet]</code>
+                                <span class="type"><a href="../classes/ObjectSet.html" class="crosslink">ObjectSet</a></span>
                                 <span class="flag optional" title="This parameter is optional.">optional</span>
         
         
                             <div class="param-description">
-                                <p>The Selection to update.</p>
+                                <p>The <a href="../classes/ObjectSet.html" class="crosslink">ObjectSet</a> to apply this IsolateEffect to.</p>
         
                             </div>
         
@@ -980,7 +982,7 @@ any subsequent notifications on that location as they are made.</p>
                                     Component
                                 </a>
                                 but overwritten in
-                            <a href="../files/src_core_effect_isolateEffect.js.html#l82"><code>src&#x2F;core&#x2F;effect&#x2F;isolateEffect.js:82</code></a>
+                            <a href="../files/src_core_effect_isolateEffect.js.html#l84"><code>src&#x2F;core&#x2F;effect&#x2F;isolateEffect.js:84</code></a>
                             </p>
                     
                     

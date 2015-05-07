@@ -7,7 +7,7 @@
 
  ## Example
 
- <iframe style="width: 600px; height: 400px" src="../../examples/geometry_box.html"></iframe>
+ <iframe style="width: 600px; height: 400px" src="../../examples/geometry_BoxGeometry.html"></iframe>
 
  ````javascript
  // Create a Viewer

@@ -15,7 +15,7 @@
 
  ## Example
 
- TODO
+ <iframe style="width: 600px; height: 400px" src="../../examples/control_MouseZoomCamera.html"></iframe>
 
  @class MouseZoomCamera
  @module BIMSURFER

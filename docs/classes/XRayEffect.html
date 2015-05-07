@@ -136,56 +136,103 @@
 <h2 id="overview">Overview</h2>
 <p>TODO</p>
 <h2 id="example">Example</h2>
-<p>X-ray objects that match given IFC types, using an <a href="../classes/ObjectSet.html" class="crosslink">ObjectSet</a> and an XRayEffect:</p>
+<p>In this example we create four Object, then add two of them to a <a href="../classes/ObjectSet.html" class="crosslink">ObjectSet</a>. Then we
+apply an <a href="../classes/XRayEffect.html" class="crosslink">XRayEffect</a> to the <a href="../classes/ObjectSet.html" class="crosslink">ObjectSet</a>, causing
+it&#39;s Object to remain opaque while the other two Object become transparent.</p>
+<iframe style="width: 600px; height: 400px" src="../../examples/effect_XRayEffect.html"></iframe>
+
 <pre class="code prettyprint"><code class="lang-javascript">
 // Create a Viewer
 var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
 
 // Create a Camera
 var camera = new BIMSURFER.Camera(viewer, {
-   eye: [0, 0, -10]
-});
+       eye: [20, 10, -20]
+   });
 
-// Create a CameraControl to interact with the Camera
+// Spin the camera
+viewer.on("tick", function () {
+       camera.rotateEyeY(0.2);
+   });
+
+// Create a CameraControl so we can move the Camera
 var cameraControl = new BIMSURFER.CameraControl(viewer, {
-   camera: camera
-});
+       camera: camera
+   });
 
-// Create some BoxObjects
+// Create an AmbientLight
+var ambientLight = new BIMSURFER.AmbientLight(viewer, {
+       color: [0.7, 0.7, 0.7]
+   });
 
-new BIMSURFER.BoxObject(viewer, {
-   objectId: "foo",
-   ifcType: "IfcWall",
-   matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])
-});
+// Create a DirLight
+var dirLight1 = new BIMSURFER.DirLight(viewer, {
+       color: [0.6, 0.9, 0.9],
+       dir: [1.0, 0.0, 0.0],
+       space: "view"
+   });
 
-new BIMSURFER.BoxObject(viewer, {
-   objectId: "bar",
-   ifcType: "IfcWall",
-   matrix: BIMSURFER.math.translationMat4v([4, 0, -4])
-});
+// Create a DirLight
+var dirLight2 = new BIMSURFER.DirLight(viewer, {
+       color: [0.6, 0.9, 0.9],
+       dir: [-0.5, 0.0, -1.0],
+       space: "view"
+   });
 
-new BIMSURFER.BoxObject(viewer, {
-   objectId: "baz",
-   ifcType: "IfcBeam",
-   matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])
-});
+// Create a BoxGeometry
+var geometry = new BIMSURFER.BoxGeometry(viewer, {
+       id: "myGeometry"
+   });
 
-// Create an ObjectSet
-var objectSet = new BIMSURFER.ObjectSet(viewer);
+// Create some Objects
+// Share the BoxGeometry among them
 
-// Apply an X-Ray effect to the ObjectSet
-var xrayEffect = new BIMSURFER.XRayEffect(viewer, {
-   objectSet: objectSet
-});
+var object1 = new BIMSURFER.Object(viewer, {
+       ifcType: "IfcRoof",
+       geometries: [ geometry ],
+       matrix: BIMSURFER.math.translationMat4v([-8, 0, -8])
+   });
 
-// Add Objects to the ObjectSet by IFC type
-// These Objects become opaque
-objectSet.addObjectTypes(["IfcWall", "IfcBeam"]);
+var object2 = new BIMSURFER.Object(viewer, {
+       ifcType: "IfcDistributionFlowElement",
+       geometries: [ geometry ],
+       matrix: BIMSURFER.math.translationMat4v([8, 0, -8])
+   });
 
-// Remove an Object from the ObjectSet by IFC type
-// That Object becomes transparent
-objectSet.removeObjectTypes(["IfcWall"]);
+var object3 = new BIMSURFER.Object(viewer, {
+       ifcType: "IfcDistributionFlowElement",
+       geometries: [ geometry ],
+       matrix: BIMSURFER.math.translationMat4v([-8, 0, 8])
+   });
+
+var object4 = new BIMSURFER.Object(viewer, {
+       ifcType: "IfcRoof",
+       geometries: [ geometry ],
+       matrix: BIMSURFER.math.translationMat4v([8, 0, 8])
+   });
+
+// Create an ObjectSet that initially contains one of our Objects
+
+var objectSet = new BIMSURFER.ObjectSet(viewer, {
+       objects: [object1 ]
+   });
+
+// Apply an XRay effect to the ObjectSet, which causes all Objects in the Viewer
+// that are not in the ObjectSet to become transparent.
+
+var xray = new BIMSURFER.XRayEffect(viewer, {
+       objectSet: objectSet
+   });
+
+// Add a second Object to the ObjectSet, causing the XRay to now render
+// that Object as opaque also
+
+objectSet.addObjects([object3]);
+
+// Adjust the opacity of the transparent Objects
+
+object2.opacity = 0.2;
+object4.opacity = 0.2;
 </code></pre>
 
 </div>
@@ -204,7 +251,7 @@ objectSet.removeObjectTypes(["IfcWall"]);
                                 <code class="optional">[cfg]</code>
                         </li>
                         <li class="arg">
-                                <code class="optional">[selection]</code>
+                                <code class="optional">[objectSet]</code>
                         </li>
                     </ul><span class="paren">)</span>
                 </div>
@@ -283,13 +330,13 @@ objectSet.removeObjectTypes(["IfcWall"]);
                                 </ul>
                         </li>
                         <li class="param">
-                                <code class="param-name optional">[selection]</code>
-                                <span class="type">Selection</span>
+                                <code class="param-name optional">[objectSet]</code>
+                                <span class="type"><a href="../classes/ObjectSet.html" class="crosslink">ObjectSet</a></span>
                                 <span class="flag optional" title="This parameter is optional.">optional</span>
         
         
                             <div class="param-description">
-                                <p>The Selection to update.</p>
+                                <p>The <a href="../classes/ObjectSet.html" class="crosslink">ObjectSet</a> to apply this XRayEffect to.</p>
         
                             </div>
         
@@ -980,7 +1027,7 @@ any subsequent notifications on that location as they are made.</p>
                                     Component
                                 </a>
                                 but overwritten in
-                            <a href="../files/src_core_effect_xrayEffect.js.html#l82"><code>src&#x2F;core&#x2F;effect&#x2F;xrayEffect.js:82</code></a>
+                            <a href="../files/src_core_effect_xrayEffect.js.html#l128"><code>src&#x2F;core&#x2F;effect&#x2F;xrayEffect.js:128</code></a>
                             </p>
                     
                     

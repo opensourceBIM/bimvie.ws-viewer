@@ -17,7 +17,7 @@
  @param [cfg] {*} Configs
  @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
  @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Effect.
- @param [objectSet] {ObjectSet} The {{#crossLink "Objectset"}}{{/crossLink}} to update.
+ @param [objectSet] {ObjectSet} The {{#crossLink "ObjectSet"}}{{/crossLink}} to apply this Effect to.
  @extends Component
  */
 (function () {
