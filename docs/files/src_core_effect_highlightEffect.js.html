@@ -138,49 +138,87 @@
 
  // Create a Camera
  var camera = new BIMSURFER.Camera(viewer, {
-    eye: [0, 0, -10]
- });
+        eye: [30, 20, -30]
+    });
 
- // Create a CameraControl to interact with the Camera
+ // Spin the camera
+ viewer.on(&quot;tick&quot;, function () {
+        camera.rotateEyeY(0.2);
+    });
+
+ // Create a CameraControl so we can move the Camera
  var cameraControl = new BIMSURFER.CameraControl(viewer, {
-    camera: camera
- });
+        camera: camera
+    });
 
- // Create some BoxObjects
+ // Create an AmbientLight
+ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
+        color: [0.7, 0.7, 0.7]
+    });
 
- new BIMSURFER.BoxObject(viewer, {
-    objectId: &quot;foo&quot;,
-    ifcType: &quot;IfcWall&quot;,
-    matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])
- });
+ // Create a DirLight
+ var dirLight1 = new BIMSURFER.DirLight(viewer, {
+        color: [0.6, 0.9, 0.9],
+        dir: [1.0, 0.0, 0.0],
+        space: &quot;view&quot;
+    });
 
- new BIMSURFER.BoxObject(viewer, {
-    objectId: &quot;bar&quot;,
-    ifcType: &quot;IfcWall&quot;,
-    matrix: BIMSURFER.math.translationMat4v([4, 0, -4])
- });
+ // Create a DirLight
+ var dirLight2 = new BIMSURFER.DirLight(viewer, {
+        color: [0.6, 0.9, 0.9],
+        dir: [-0.5, 0.0, -1.0],
+        space: &quot;view&quot;
+    });
 
- new BIMSURFER.BoxObject(viewer, {
-    objectId: &quot;baz&quot;,
-    ifcType: &quot;IfcBeam&quot;,
-    matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])
- });
+ // Create a BoxGeometry
+ var geometry = new BIMSURFER.BoxGeometry(viewer, {
+        id: &quot;myGeometry&quot;
+    });
 
- // Create an ObjectSet
- var objectSet = new BIMSURFER.ObjectSet(viewer);
+ // Create some Objects
+ // Share the BoxGeometry among them
 
- // Apply a highlight effect to the ObjectSet
- var highlightEffect = new BIMSURFER.HighlightEffect(viewer, {
+ var object1 = new BIMSURFER.Object(viewer, {
+        ifcType: &quot;IfcRoof&quot;,
+        geometries: [ geometry ],
+        matrix: BIMSURFER.math.translationMat4v([-8, 0, -8])
+    });
+
+ var object2 = new BIMSURFER.Object(viewer, {
+        ifcType: &quot;IfcDistributionFlowElement&quot;,
+        geometries: [ geometry ],
+        matrix: BIMSURFER.math.translationMat4v([8, 0, -8])
+    });
+
+ var object3 = new BIMSURFER.Object(viewer, {
+        ifcType: &quot;IfcDistributionFlowElement&quot;,
+        geometries: [ geometry ],
+        matrix: BIMSURFER.math.translationMat4v([-8, 0, 8])
+    });
+
+ var object4 = new BIMSURFER.Object(viewer, {
+        ifcType: &quot;IfcRoof&quot;,
+        geometries: [ geometry ],
+        matrix: BIMSURFER.math.translationMat4v([8, 0, 8])
+    });
+
+ // Create an ObjectSet that initially contains one of our Objects
+
+ var objectSet = new BIMSURFER.ObjectSet(viewer, {
+        objects: [object1 ]
+    });
+
+ // Apply a Highlight effect to the ObjectSet, which causes the
+ // Object in the ObjectSet to become highlighted.
+
+ var highlight = new BIMSURFER.HighlightEffect(viewer, {
         objectSet: objectSet
     });
 
- // Add Objects to the ObjectSet by ID
- // These Objects become highlighted
- objectSet.addObjectIds([&quot;foo&quot;, &quot;bar&quot;, &quot;baz&quot;]);
+ // Add a second Object to the ObjectSet, causing the Highlight to now render
+ // that Object as highlighted also
 
- // Remove an Object from the ObjectSet by ID
- // That Object becomes non-highlighted again
- objectSet.removeObjectIds([&quot;baz&quot;]);
+ objectSet.addObjects([object3]);
 
  &#x60;&#x60;&#x60;&#x60;
 
