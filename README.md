@@ -1,5 +1,7 @@
 # bimvie.ws-viewer
 
+An extensible and modular WebGL-based BIM viewer.  
+
  * [API Documentation](http://opensourcebim.github.io/bimvie.ws-viewer/docs/)
  * [Live Examples](http://opensourcebim.github.io/bimvie.ws-viewer/examples/)
  * [Issues](https://github.com/opensourceBIM/bimvie.ws-viewer/issues)
