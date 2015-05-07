@@ -127,7 +127,9 @@
 
  ## Example
 
- Highlight objects that match given IDs, using an {{#crossLink &quot;ObjectSet&quot;}}{{/crossLink}} and a HighlightEffect
+ In this example we create four {{#crossLink &quot;Object&quot;}}Objects{{/crossLink}}, then add two of them to an {{#crossLink &quot;ObjectSet&quot;}}{{/crossLink}}.
+&lt;br&gt; Then we apply a {{#crossLink &quot;HighlightEffect&quot;}}{{/crossLink}} to the {{#crossLink &quot;ObjectSet&quot;}}{{/crossLink}}, causing
+ it&#x27;s {{#crossLink &quot;Object&quot;}}Objects{{/crossLink}} to become highlighted while the other two {{#crossLink &quot;Object&quot;}}Objects{{/crossLink}} remain un-highlighted.
 
  &lt;iframe style=&quot;width: 600px; height: 400px&quot; src=&quot;../../examples/effect_HighlightEffect.html&quot;&gt;&lt;/iframe&gt;
 
@@ -191,7 +193,7 @@
     });
 
  var object3 = new BIMSURFER.Object(viewer, {
-        ifcType: &quot;IfcDistributionFlowElement&quot;,
+        ifcType: &quot;IfcRailing&quot;,
         geometries: [ geometry ],
         matrix: BIMSURFER.math.translationMat4v([-8, 0, 8])
     });

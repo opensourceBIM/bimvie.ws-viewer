@@ -110,23 +110,23 @@
         matrix: BIMSURFER.math.translationMat4v([8, 0, 8])
     });
 
-    // Create an ObjectSet that initially contains one of our Objects
+    // Create an ObjectSet that initially contains one of our types
 
     var objectSet = new BIMSURFER.ObjectSet(viewer, {
-        objects: [object1 ]
+        types: ["IfcRoof"]
     });
 
-    // Apply a Highlight effect to the ObjectSet, which causes the
-    // Object in the ObjectSet to become highlighted.
+    // Apply a Highlight effect to the ObjectSet, which causes
+    // Objects of the type in the ObjectSet to become highlighted.
 
     var highlight = new BIMSURFER.HighlightEffect(viewer, {
         objectSet: objectSet
     });
 
-    // Add a second Object to the ObjectSet, causing the Highlight to now render
-    // that Object as highlighted also
+    // Add a second type to the ObjectSet, causing the Highlight to now render
+    // Objects of that type as highlighted also
 
-    objectSet.addObjects([object3]);
+    objectSet.addTypes(["IfcRailing"]);
 
 </script>
 

@@ -145,8 +145,10 @@ and <a href="../classes/ObjectSet.html#property_center" class="crosslink">center
 
 <h2 id="examples">Examples</h2>
 <h4 id="adding-and-removing-objects-by-id">Adding and removing Objects by ID</h4>
-<p>Isolate objects that match given IDs, using an ObjectSet and an <a href="../classes/IsolateEffect.html" class="crosslink">IsolateEffect</a>.</p>
-<iframe style="width: 600px; height: 400px" src="../../examples/object_ObjectSet.html"></iframe>
+<p>In this example we create four Object, then add two of them to an <a href="../classes/ObjectSet.html" class="crosslink">ObjectSet</a>.
+<br> Then we apply a <a href="../classes/HighlightEffect.html" class="crosslink">HighlightEffect</a> to the <a href="../classes/ObjectSet.html" class="crosslink">ObjectSet</a>, causing
+it&#39;s Object to become highlighted while the other two Object remain un-highlighted.</p>
+<iframe style="width: 600px; height: 400px" src="../../examples/effect_HighlightEffect.html"></iframe>
 
 <pre class="code prettyprint"><code class="lang-javascript">
 // Create a Viewer
@@ -154,49 +156,87 @@ var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
 
 // Create a Camera
 var camera = new BIMSURFER.Camera(viewer, {
-   eye: [0, 0, -10]
-});
+       eye: [30, 20, -30]
+   });
 
-// Create a CameraControl to interact with the Camera
+// Spin the camera
+viewer.on("tick", function () {
+       camera.rotateEyeY(0.2);
+   });
+
+// Create a CameraControl so we can move the Camera
 var cameraControl = new BIMSURFER.CameraControl(viewer, {
-   camera: camera
-});
+       camera: camera
+   });
 
-// Create some BoxObjects
+// Create an AmbientLight
+var ambientLight = new BIMSURFER.AmbientLight(viewer, {
+       color: [0.7, 0.7, 0.7]
+   });
 
-new BIMSURFER.BoxObject(viewer, {
-   objectId: "foo",
-   ifcType: "IfcWall",
-   matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])
-});
+// Create a DirLight
+var dirLight1 = new BIMSURFER.DirLight(viewer, {
+       color: [0.6, 0.9, 0.9],
+       dir: [1.0, 0.0, 0.0],
+       space: "view"
+   });
 
-new BIMSURFER.BoxObject(viewer, {
-   objectId: "bar",
-   ifcType: "IfcWall",
-   matrix: BIMSURFER.math.translationMat4v([4, 0, -4])
-});
+// Create a DirLight
+var dirLight2 = new BIMSURFER.DirLight(viewer, {
+       color: [0.6, 0.9, 0.9],
+       dir: [-0.5, 0.0, -1.0],
+       space: "view"
+   });
 
-new BIMSURFER.BoxObject(viewer, {
-   objectId: "baz",
-   ifcType: "IfcBeam",
-   matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])
-});
+// Create a BoxGeometry
+var geometry = new BIMSURFER.BoxGeometry(viewer, {
+       id: "myGeometry"
+   });
 
-// Create an ObjectSet
-var objectSet = new BIMSURFER.ObjectSet(viewer);
+// Create some Objects
+// Share the BoxGeometry among them
 
-// Apply an Isolate effect to the ObjectSet
-var isolateEffect = new BIMSURFER.IsolateEffect(viewer, {
+var object1 = new BIMSURFER.Object(viewer, {
+       ifcType: "IfcRoof",
+       geometries: [ geometry ],
+       matrix: BIMSURFER.math.translationMat4v([-8, 0, -8])
+   });
+
+var object2 = new BIMSURFER.Object(viewer, {
+       ifcType: "IfcDistributionFlowElement",
+       geometries: [ geometry ],
+       matrix: BIMSURFER.math.translationMat4v([8, 0, -8])
+   });
+
+var object3 = new BIMSURFER.Object(viewer, {
+       ifcType: "IfcDistributionFlowElement",
+       geometries: [ geometry ],
+       matrix: BIMSURFER.math.translationMat4v([-8, 0, 8])
+   });
+
+var object4 = new BIMSURFER.Object(viewer, {
+       ifcType: "IfcRoof",
+       geometries: [ geometry ],
+       matrix: BIMSURFER.math.translationMat4v([8, 0, 8])
+   });
+
+// Create an ObjectSet that initially contains one of our Objects
+
+var objectSet = new BIMSURFER.ObjectSet(viewer, {
+       objects: [object1 ]
+   });
+
+// Apply a Highlight effect to the ObjectSet, which causes the
+// Object in the ObjectSet to become highlighted.
+
+var highlight = new BIMSURFER.HighlightEffect(viewer, {
        objectSet: objectSet
-});
+   });
 
-// Add Objects to the ObjectSet by ID
-// These Objects become visible
-objectSet.addObjectIds(["foo", "bar", "baz"]);
+// Add a second Object to the ObjectSet, causing the Highlight to now render
+// that Object as highlighted also
 
-// Remove an Object from the ObjectSet by ID
-// That Object becomes invisible again
-objectSet.removeObjectIds(["baz"]);
+objectSet.addObjects([object3]);
 </code></pre>
 <h4 id="adding-and-removing-objects-by-ifc-type">Adding and removing Objects by IFC type</h4>
 <p>X-ray and highlight objects that match given IFC types, using an ObjectSet, <a href="../classes/XRayEffect.html" class="crosslink">XRayEffect</a> and <a href="../classes/HighlightEffect.html" class="crosslink">HighlightEffect</a>:</p>
@@ -586,7 +626,7 @@ var clickSelect = new BIMSURFER.ClickSelectObjects(viewer, {
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_core_object_objectSet.js.html#l404"><code>src&#x2F;core&#x2F;object&#x2F;objectSet.js:404</code></a>
+        <a href="../files/src_core_object_objectSet.js.html#l444"><code>src&#x2F;core&#x2F;object&#x2F;objectSet.js:444</code></a>
         </p>
 
 
@@ -642,7 +682,7 @@ var clickSelect = new BIMSURFER.ClickSelectObjects(viewer, {
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_core_object_objectSet.js.html#l318"><code>src&#x2F;core&#x2F;object&#x2F;objectSet.js:318</code></a>
+        <a href="../files/src_core_object_objectSet.js.html#l358"><code>src&#x2F;core&#x2F;object&#x2F;objectSet.js:358</code></a>
         </p>
 
 
@@ -698,7 +738,7 @@ var clickSelect = new BIMSURFER.ClickSelectObjects(viewer, {
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_core_object_objectSet.js.html#l474"><code>src&#x2F;core&#x2F;object&#x2F;objectSet.js:474</code></a>
+        <a href="../files/src_core_object_objectSet.js.html#l514"><code>src&#x2F;core&#x2F;object&#x2F;objectSet.js:514</code></a>
         </p>
 
 
@@ -748,7 +788,7 @@ var clickSelect = new BIMSURFER.ClickSelectObjects(viewer, {
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_core_object_objectSet.js.html#l299"><code>src&#x2F;core&#x2F;object&#x2F;objectSet.js:299</code></a>
+        <a href="../files/src_core_object_objectSet.js.html#l339"><code>src&#x2F;core&#x2F;object&#x2F;objectSet.js:339</code></a>
         </p>
 
 
@@ -1248,7 +1288,7 @@ any subsequent notifications on that location as they are made.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_core_object_objectSet.js.html#l439"><code>src&#x2F;core&#x2F;object&#x2F;objectSet.js:439</code></a>
+        <a href="../files/src_core_object_objectSet.js.html#l479"><code>src&#x2F;core&#x2F;object&#x2F;objectSet.js:479</code></a>
         </p>
 
 
@@ -1304,7 +1344,7 @@ any subsequent notifications on that location as they are made.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_core_object_objectSet.js.html#l381"><code>src&#x2F;core&#x2F;object&#x2F;objectSet.js:381</code></a>
+        <a href="../files/src_core_object_objectSet.js.html#l421"><code>src&#x2F;core&#x2F;object&#x2F;objectSet.js:421</code></a>
         </p>
 
 
@@ -1360,7 +1400,7 @@ any subsequent notifications on that location as they are made.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_core_object_objectSet.js.html#l515"><code>src&#x2F;core&#x2F;object&#x2F;objectSet.js:515</code></a>
+        <a href="../files/src_core_object_objectSet.js.html#l555"><code>src&#x2F;core&#x2F;object&#x2F;objectSet.js:555</code></a>
         </p>
 
 
@@ -1471,7 +1511,7 @@ any subsequent notifications on that location as they are made.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_core_object_objectSet.js.html#l555"><code>src&#x2F;core&#x2F;object&#x2F;objectSet.js:555</code></a>
+        <a href="../files/src_core_object_objectSet.js.html#l595"><code>src&#x2F;core&#x2F;object&#x2F;objectSet.js:595</code></a>
         </p>
 
 
@@ -1520,7 +1560,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_object_objectSet.js.html#l637"><code>src&#x2F;core&#x2F;object&#x2F;objectSet.js:637</code></a>
+                            <a href="../files/src_core_object_objectSet.js.html#l677"><code>src&#x2F;core&#x2F;object&#x2F;objectSet.js:677</code></a>
                             </p>
                     
                     
@@ -1545,7 +1585,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_object_objectSet.js.html#l657"><code>src&#x2F;core&#x2F;object&#x2F;objectSet.js:657</code></a>
+                            <a href="../files/src_core_object_objectSet.js.html#l697"><code>src&#x2F;core&#x2F;object&#x2F;objectSet.js:697</code></a>
                             </p>
                     
                     
@@ -1574,7 +1614,7 @@ any subsequent notifications on that location as they are made.</p>
                                     Component
                                 </a>
                                 but overwritten in
-                            <a href="../files/src_core_object_objectSet.js.html#l213"><code>src&#x2F;core&#x2F;object&#x2F;objectSet.js:213</code></a>
+                            <a href="../files/src_core_object_objectSet.js.html#l253"><code>src&#x2F;core&#x2F;object&#x2F;objectSet.js:253</code></a>
                             </p>
                     
                     
@@ -1675,7 +1715,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_object_objectSet.js.html#l240"><code>src&#x2F;core&#x2F;object&#x2F;objectSet.js:240</code></a>
+                            <a href="../files/src_core_object_objectSet.js.html#l280"><code>src&#x2F;core&#x2F;object&#x2F;objectSet.js:280</code></a>
                             </p>
                     
                     
@@ -1700,7 +1740,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_object_objectSet.js.html#l226"><code>src&#x2F;core&#x2F;object&#x2F;objectSet.js:226</code></a>
+                            <a href="../files/src_core_object_objectSet.js.html#l266"><code>src&#x2F;core&#x2F;object&#x2F;objectSet.js:266</code></a>
                             </p>
                     
                     
@@ -1783,7 +1823,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_object_objectSet.js.html#l262"><code>src&#x2F;core&#x2F;object&#x2F;objectSet.js:262</code></a>
+                            <a href="../files/src_core_object_objectSet.js.html#l302"><code>src&#x2F;core&#x2F;object&#x2F;objectSet.js:302</code></a>
                             </p>
                     
                     
