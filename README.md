@@ -1,9 +1,19 @@
 # bimvie.ws-viewer
 
- * [API Docs](http://opensourcebim.github.io/bimvie.ws-viewer/docs/)
+ * [API Documentation](http://opensourcebim.github.io/bimvie.ws-viewer/docs/)
  * [Live Examples](http://opensourcebim.github.io/bimvie.ws-viewer/examples/)
+ * [Issues](https://github.com/opensourceBIM/bimvie.ws-viewer/issues)
+
+## Dev Tasks
+
+ * Create viewer core in this repository
+ * Finish API docs
+ * Finish examples
+ * Integrate viewer into [bimvie.ws](https://github.com/opensourceBIM/bimvie.ws)
  
-## Install
+## Installation
+
+(in progress)
 
 ````
 npm install grunt --save-dev
