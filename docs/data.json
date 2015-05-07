@@ -431,7 +431,7 @@
             "namespaces": {},
             "module": "BIMSURFER",
             "namespace": "",
-            "description": "A **CameraControl** allows you to pan, rotate and zoom a {{#crossLink \"Camera\"}}{{/crossLink}} using the mouse and keyboard,\nas well as switch it between preset left, right, anterior, posterior, superior and inferior views.\n\n## Overview\n\n<ul>\n<li>You can have multiple CameraControls within the same {{#crossLink \"Viewer\"}}{{/crossLink}}.</li>\n<li>Multiple CameraControls can drive the same {{#crossLink \"Camera\"}}{{/crossLink}}, or can each drive their own separate {{#crossLink \"Camera\"}}Cameras{{/crossLink}}.</li>\n<li>At any instant, the CameraControl we're driving is the one whose {{#crossLink \"Camera/active:property\"}}active{{/crossLink}} property is true.</li>\n<li>You can switch a CameraControl to a different {{#crossLink \"Camera\"}}{{/crossLink}} at any time.</li>\n</ul>\n\n## Example\n\nIn this example we have a {{#crossLink \"Viewer\"}}{{/crossLink}} with a\n{{#crossLink \"Camera\"}}{{/crossLink}} that's controlled by a CameraControl.\n\n<iframe style=\"width: 600px; height: 400px\" src=\"../../examples/camera_control.html\"></iframe>\n\n````Javascript\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n   eye: [0, 0, -10]\n});\n\n// Create a CameraControl\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n   camera: camera\n});\n\n// Create a BoxObject\nnew BIMSURFER.BoxObject(viewer);\n\n````",
+            "description": "A **CameraControl** allows you to pan, rotate and zoom a {{#crossLink \"Camera\"}}{{/crossLink}} using the mouse and keyboard,\nas well as switch it between preset left, right, anterior, posterior, superior and inferior views.\n\n## Overview\n\n<ul>\n<li>You can have multiple CameraControls within the same {{#crossLink \"Viewer\"}}{{/crossLink}}.</li>\n<li>Multiple CameraControls can drive the same {{#crossLink \"Camera\"}}{{/crossLink}}, or can each drive their own separate {{#crossLink \"Camera\"}}Cameras{{/crossLink}}.</li>\n<li>At any instant, the CameraControl we're driving is the one whose {{#crossLink \"Camera/active:property\"}}active{{/crossLink}} property is true.</li>\n<li>You can switch a CameraControl to a different {{#crossLink \"Camera\"}}{{/crossLink}} at any time.</li>\n</ul>\n\n## Example\n\nIn this example we're viewing a {{#crossLink \"TeapotObject\"}}{{/crossLink}} with a {{#crossLink \"Camera\"}}{{/crossLink}} that's controlled by a CameraControl.\n\n<iframe style=\"width: 600px; height: 400px\" src=\"../../examples/control_CameraControl.html\"></iframe>\n\n````Javascript\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\nvar camera = new BIMSURFER.Camera(viewer, {\n       eye: [5, 5, -5]\n   });\n\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n       camera: camera\n   });\n\nvar teapot = new BIMSURFER.TeapotObject(viewer);\n\n\n````",
             "file": "src/core/control/mouseZoomCamera.js",
             "line": 1
         },
@@ -638,7 +638,7 @@
             "namespace": "",
             "file": "src/core/control/cameraControl.js",
             "line": 1,
-            "description": "A **CameraControl** allows you to pan, rotate and zoom a {{#crossLink \"Camera\"}}{{/crossLink}} using the mouse and keyboard,\nas well as switch it between preset left, right, anterior, posterior, superior and inferior views.\n\n## Overview\n\n<ul>\n<li>You can have multiple CameraControls within the same {{#crossLink \"Viewer\"}}{{/crossLink}}.</li>\n<li>Multiple CameraControls can drive the same {{#crossLink \"Camera\"}}{{/crossLink}}, or can each drive their own separate {{#crossLink \"Camera\"}}Cameras{{/crossLink}}.</li>\n<li>At any instant, the CameraControl we're driving is the one whose {{#crossLink \"Camera/active:property\"}}active{{/crossLink}} property is true.</li>\n<li>You can switch a CameraControl to a different {{#crossLink \"Camera\"}}{{/crossLink}} at any time.</li>\n</ul>\n\n## Example\n\nIn this example we have a {{#crossLink \"Viewer\"}}{{/crossLink}} with a\n{{#crossLink \"Camera\"}}{{/crossLink}} that's controlled by a CameraControl.\n\n<iframe style=\"width: 600px; height: 400px\" src=\"../../examples/camera_control.html\"></iframe>\n\n````Javascript\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n   eye: [0, 0, -10]\n});\n\n// Create a CameraControl\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n   camera: camera\n});\n\n// Create a BoxObject\nnew BIMSURFER.BoxObject(viewer);\n\n````",
+            "description": "A **CameraControl** allows you to pan, rotate and zoom a {{#crossLink \"Camera\"}}{{/crossLink}} using the mouse and keyboard,\nas well as switch it between preset left, right, anterior, posterior, superior and inferior views.\n\n## Overview\n\n<ul>\n<li>You can have multiple CameraControls within the same {{#crossLink \"Viewer\"}}{{/crossLink}}.</li>\n<li>Multiple CameraControls can drive the same {{#crossLink \"Camera\"}}{{/crossLink}}, or can each drive their own separate {{#crossLink \"Camera\"}}Cameras{{/crossLink}}.</li>\n<li>At any instant, the CameraControl we're driving is the one whose {{#crossLink \"Camera/active:property\"}}active{{/crossLink}} property is true.</li>\n<li>You can switch a CameraControl to a different {{#crossLink \"Camera\"}}{{/crossLink}} at any time.</li>\n</ul>\n\n## Example\n\nIn this example we're viewing a {{#crossLink \"TeapotObject\"}}{{/crossLink}} with a {{#crossLink \"Camera\"}}{{/crossLink}} that's controlled by a CameraControl.\n\n<iframe style=\"width: 600px; height: 400px\" src=\"../../examples/control_CameraControl.html\"></iframe>\n\n````Javascript\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\nvar camera = new BIMSURFER.Camera(viewer, {\n       eye: [5, 5, -5]\n   });\n\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n       camera: camera\n   });\n\nvar teapot = new BIMSURFER.TeapotObject(viewer);\n\n\n````",
             "submodule": "control",
             "is_constructor": 1,
             "params": [
@@ -689,7 +689,7 @@
             "namespace": "",
             "file": "src/core/control/clickSelectObjects.js",
             "line": 1,
-            "description": "A **ClickSelectObjects** lets you add or remove {{#crossLink \"Object\"}}Objects{{/crossLink}} to and from an {{#crossLink \"ObjectSet\"}}ObjectSet{{/crossLink}} by clicking them with the mouse.\n\n## Overview\n\n<ul>\n<li>A ClickSelectObjects adds {{#crossLink \"Object\"}}Objects{{/crossLink}} to the {{#crossLink \"ObjectSet\"}}{{/crossLink}} as you\nclick them with the mouse, removing them again when you click them a second time.</li>\n<li>Typically a ClickSelectObjects will share an {{#crossLink \"ObjectSet\"}}{{/crossLink}} with one or\nmore {{#crossLink \"Effect\"}}Effects{{/crossLink}}, in order to select which {{#crossLink \"Object\"}}Objects{{/crossLink}} are influenced by the {{#crossLink \"Effect\"}}Effects{{/crossLink}}.</li>\n<li>A ClickSelectObjects will provide its own {{#crossLink \"ObjectSet\"}}{{/crossLink}} by default.</li>\n<li>Hold down SHIFT while clicking to multi-select.</li>\n</ul>\n\n## Overview\n\nTODO\n\n## Example\n\nIn this example we have a {{#crossLink \"Viewer\"}}{{/crossLink}} with a\n{{#crossLink \"Camera\"}}{{/crossLink}} that's controlled by a CameraControl.\n\n<iframe style=\"width: 600px; height: 400px\" src=\"../../examples/control_clickSelectObjects.html\"></iframe>\n\n````Javascript\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n   eye: [10, 10, -10]\n});\n\n// Create a CameraControl\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n   camera: camera\n});\n\n// Create a Geometry\nvar geometry = new BIMSURFER.TeapotGeometry(viewer);\n\n// Create some Objects\n// Share the Geometry among them\n\nvar object1 = new BIMSURFER.Object(viewer, {\n   objectId: \"object1\",\n   ifcType: \"IfcRoof\",\n   geometries: [ geometry ],\n   matrix: BIMSURFER.math.translationMat4v([-3, 0, -3])\n});\n\nvar object2 = new BIMSURFER.Object(viewer, {\n   objectId: \"object2\",\n   ifcType: \"IfcDistributionFlowElement\",\n   geometries: [ geometry ],\n   matrix: BIMSURFER.math.translationMat4v([3, 0, -3])\n});\n\nvar object3 = new BIMSURFER.Object(viewer, {\n   objectId: \"object3\",\n   ifcType: \"IfcDistributionFlowElement\",\n   geometries: [ geometry ],\n   matrix: BIMSURFER.math.translationMat4v([-3, 0, 3])\n});\n\nvar object4 = new BIMSURFER.Object(viewer, {\n   objectId: \"object4\",\n   ifcType: \"IfcRoof\",\n   geometries: [ geometry ],\n   matrix: BIMSURFER.math.translationMat4v([3, 0, 3])\n});\n\n// Create an ObjectSet\nvar objectSet = new BIMSURFER.ObjectSet(viewer);\n\n// Apply a highlight effect to the ObjectSet\nvar highlightEffect = new BIMSURFER.HighlightEffect(viewer, {\n   objectSet: objectSet\n});\n\n// Create a ClickSelectObjects\nvar clickSelectObjects = new BIMSURFER.ClickSelectObjects(viewer, {\n   objectSet: objectSet\n});\n\n````",
+            "description": "A **ClickSelectObjects** lets you add or remove {{#crossLink \"Object\"}}Objects{{/crossLink}} to and from an {{#crossLink \"ObjectSet\"}}ObjectSet{{/crossLink}} by clicking them with the mouse.\n\n## Overview\n\n<ul>\n<li>A ClickSelectObjects adds {{#crossLink \"Object\"}}Objects{{/crossLink}} to the {{#crossLink \"ObjectSet\"}}{{/crossLink}} as you\nclick them with the mouse, removing them again when you click them a second time.</li>\n<li>Typically a ClickSelectObjects will share an {{#crossLink \"ObjectSet\"}}{{/crossLink}} with one or\nmore {{#crossLink \"Effect\"}}Effects{{/crossLink}}, in order to select which {{#crossLink \"Object\"}}Objects{{/crossLink}} are influenced by the {{#crossLink \"Effect\"}}Effects{{/crossLink}}.</li>\n<li>A ClickSelectObjects will provide its own {{#crossLink \"ObjectSet\"}}{{/crossLink}} by default.</li>\n<li>Hold down SHIFT while clicking to multi-select.</li>\n</ul>\n\n## Example\n\nIn this example, we view four {{#crossLink \"Objects\"}}Objects{{/crossLink}} with a {{#crossLink \"Camera\"}}{{/crossLink}}, which we manipulate with a {{#crossLink \"CameraControl\"}}{{/crossLink}}.\n<br>We also use a {{#crossLink \"ClickSelectObjects\"}}{{/crossLink}} to add and remove\nthe {{#crossLink \"Objects\"}}Objects{{/crossLink}} to an {{#crossLink \"ObjectSet\"}}{{/crossLink}}, to which we're applying\na {{#crossLink \"HighlightEffect\"}}{{/crossLink}}.\n<br><br>\nClick on the {{#crossLink \"Objects\"}}Objects{{/crossLink}} to select and highlight them - hold down SHIFT to multi-select.\n\n<iframe style=\"width: 600px; height: 400px\" src=\"../../examples/control_ClickSelectObjects_HighlightEffect.html\"></iframe>\n\n````Javascript\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n   eye: [10, 10, -10]\n});\n\n// Create a CameraControl\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n   camera: camera\n});\n\n// Create a Geometry\nvar geometry = new BIMSURFER.TeapotGeometry(viewer);\n\n// Create some Objects\n// Share the Geometry among them\n\nvar object1 = new BIMSURFER.Object(viewer, {\n   objectId: \"object1\",\n   ifcType: \"IfcRoof\",\n   geometries: [ geometry ],\n   matrix: BIMSURFER.math.translationMat4v([-3, 0, -3])\n});\n\nvar object2 = new BIMSURFER.Object(viewer, {\n   objectId: \"object2\",\n   ifcType: \"IfcDistributionFlowElement\",\n   geometries: [ geometry ],\n   matrix: BIMSURFER.math.translationMat4v([3, 0, -3])\n});\n\nvar object3 = new BIMSURFER.Object(viewer, {\n   objectId: \"object3\",\n   ifcType: \"IfcDistributionFlowElement\",\n   geometries: [ geometry ],\n   matrix: BIMSURFER.math.translationMat4v([-3, 0, 3])\n});\n\nvar object4 = new BIMSURFER.Object(viewer, {\n   objectId: \"object4\",\n   ifcType: \"IfcRoof\",\n   geometries: [ geometry ],\n   matrix: BIMSURFER.math.translationMat4v([3, 0, 3])\n});\n\n// Create an ObjectSet\nvar objectSet = new BIMSURFER.ObjectSet(viewer);\n\n// Apply a highlight effect to the ObjectSet\nvar highlightEffect = new BIMSURFER.HighlightEffect(viewer, {\n   objectSet: objectSet\n});\n\n// Create a ClickSelectObjects\nvar clickSelectObjects = new BIMSURFER.ClickSelectObjects(viewer, {\n   objectSet: objectSet\n});\n````",
             "submodule": "control",
             "is_constructor": 1,
             "params": [
@@ -2512,7 +2512,7 @@
         },
         {
             "file": "src/core/control/cameraControl.js",
-            "line": 57,
+            "line": 53,
             "description": "JavaScript class name for this Component.",
             "itemtype": "property",
             "name": "className",
@@ -2524,7 +2524,7 @@
         },
         {
             "file": "src/core/control/cameraControl.js",
-            "line": 116,
+            "line": 112,
             "description": "The {{#crossLink \"Camera\"}}{{/crossLink}} being controlled.",
             "itemtype": "property",
             "name": "camera",
@@ -2535,7 +2535,7 @@
         },
         {
             "file": "src/core/control/cameraControl.js",
-            "line": 163,
+            "line": 159,
             "description": "Flag which indicates whether this CameraControl is active or not.\n\nFires an {{#crossLink \"CameraControl/active:event\"}}{{/crossLink}} event on change.",
             "itemtype": "property",
             "name": "active",
@@ -2546,7 +2546,7 @@
         },
         {
             "file": "src/core/control/cameraControl.js",
-            "line": 184,
+            "line": 180,
             "description": "Fired whenever this CameraControl's {{#crossLink \"CameraControl/active:property\"}}{{/crossLink}} property changes.",
             "itemtype": "event",
             "name": "active",
@@ -2562,7 +2562,7 @@
         },
         {
             "file": "src/core/control/clickSelectObjects.js",
-            "line": 108,
+            "line": 107,
             "description": "JavaScript class name for this Component.",
             "itemtype": "property",
             "name": "className",
@@ -2574,7 +2574,7 @@
         },
         {
             "file": "src/core/control/clickSelectObjects.js",
-            "line": 128,
+            "line": 127,
             "description": "Flag which indicates whether this ClickSelectObjects is active or not.\n\nFires a {{#crossLink \"ClickSelectObjects/active:event\"}}{{/crossLink}} event on change.",
             "itemtype": "property",
             "name": "active",
@@ -2585,7 +2585,7 @@
         },
         {
             "file": "src/core/control/clickSelectObjects.js",
-            "line": 205,
+            "line": 204,
             "description": "Fired whenever this ClickSelectObjects's {{#crossLink \"ClickSelectObjects/active:property\"}}{{/crossLink}} property changes.",
             "itemtype": "event",
             "name": "active",

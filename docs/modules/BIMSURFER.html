@@ -535,27 +535,23 @@ as well as switch it between preset left, right, anterior, posterior, superior a
 
 ## Example
 
-In this example we have a {{#crossLink "Viewer"}}{{/crossLink}} with a
-{{#crossLink "Camera"}}{{/crossLink}} that's controlled by a CameraControl.
+In this example we're viewing a {{#crossLink "TeapotObject"}}{{/crossLink}} with a {{#crossLink "Camera"}}{{/crossLink}} that's controlled by a CameraControl.
 
-<iframe style="width: 600px; height: 400px" src="../../examples/camera_control.html"></iframe>
+<iframe style="width: 600px; height: 400px" src="../../examples/control_CameraControl.html"></iframe>
 
 <code>&#x60;</code>`Javascript
-// Create a Viewer
 var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
 
-// Create a Camera
 var camera = new BIMSURFER.Camera(viewer, {
-   eye: [0, 0, -10]
-});
+       eye: [5, 5, -5]
+   });
 
-// Create a CameraControl
 var cameraControl = new BIMSURFER.CameraControl(viewer, {
-   camera: camera
-});
+       camera: camera
+   });
 
-// Create a BoxObject
-new BIMSURFER.BoxObject(viewer);
+var teapot = new BIMSURFER.TeapotObject(viewer);
+
 
 <code>&#x60;</code>`
                     </div>

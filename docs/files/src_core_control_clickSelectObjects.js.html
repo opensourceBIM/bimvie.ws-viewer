@@ -132,16 +132,16 @@
  &lt;li&gt;Hold down SHIFT while clicking to multi-select.&lt;/li&gt;
  &lt;/ul&gt;
 
- ## Overview
-
- TODO
-
  ## Example
 
- In this example we have a {{#crossLink &quot;Viewer&quot;}}{{/crossLink}} with a
- {{#crossLink &quot;Camera&quot;}}{{/crossLink}} that&#x27;s controlled by a CameraControl.
+ In this example, we view four {{#crossLink &quot;Objects&quot;}}Objects{{/crossLink}} with a {{#crossLink &quot;Camera&quot;}}{{/crossLink}}, which we manipulate with a {{#crossLink &quot;CameraControl&quot;}}{{/crossLink}}.
+ &lt;br&gt;We also use a {{#crossLink &quot;ClickSelectObjects&quot;}}{{/crossLink}} to add and remove
+ the {{#crossLink &quot;Objects&quot;}}Objects{{/crossLink}} to an {{#crossLink &quot;ObjectSet&quot;}}{{/crossLink}}, to which we&#x27;re applying
+ a {{#crossLink &quot;HighlightEffect&quot;}}{{/crossLink}}.
+ &lt;br&gt;&lt;br&gt;
+ Click on the {{#crossLink &quot;Objects&quot;}}Objects{{/crossLink}} to select and highlight them - hold down SHIFT to multi-select.
 
- &lt;iframe style=&quot;width: 600px; height: 400px&quot; src=&quot;../../examples/control_clickSelectObjects.html&quot;&gt;&lt;/iframe&gt;
+ &lt;iframe style=&quot;width: 600px; height: 400px&quot; src=&quot;../../examples/control_ClickSelectObjects_HighlightEffect.html&quot;&gt;&lt;/iframe&gt;
 
  &#x60;&#x60;&#x60;&#x60;Javascript
  // Create a Viewer
@@ -203,7 +203,6 @@
  var clickSelectObjects = new BIMSURFER.ClickSelectObjects(viewer, {
     objectSet: objectSet
  });
-
  &#x60;&#x60;&#x60;&#x60;
 
  @class ClickSelectObjects
@@ -236,7 +235,7 @@
 
         _init: function (cfg) {
 
-            this.selection = cfg.selection || new BIMSURFER.ObjectSet(this.viewer);
+            this.objectSet = cfg.objectSet || new BIMSURFER.ObjectSet(this.viewer);
 
             this._multi = false;
 
@@ -291,26 +290,26 @@
 
                                         var object = hit.object;
 
-                                        if (!self.selection.objects[object.id]) {
+                                        if (!self.objectSet.objects[object.id]) {
 
                                             // Select
 
                                             if (!multiSelect) {
-                                                self.selection.clear();
+                                                self.objectSet.clear();
                                             }
 
-                                            self.selection.addObjects([object]);
+                                            self.objectSet.addObjects([object]);
 
                                         } else {
 
                                             // Deselect
 
-                                            self.selection.removeObjects([object]);
+                                            self.objectSet.removeObjects([object]);
                                         }
                                     } else {
 
                                         if (!multiSelect) {
-                                            self.selection.clear();
+                                            self.objectSet.clear();
                                         }
                                     }
                                 }

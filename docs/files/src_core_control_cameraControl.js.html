@@ -133,27 +133,23 @@
 
  ## Example
 
- In this example we have a {{#crossLink &quot;Viewer&quot;}}{{/crossLink}} with a
- {{#crossLink &quot;Camera&quot;}}{{/crossLink}} that&#x27;s controlled by a CameraControl.
+ In this example we&#x27;re viewing a {{#crossLink &quot;TeapotObject&quot;}}{{/crossLink}} with a {{#crossLink &quot;Camera&quot;}}{{/crossLink}} that&#x27;s controlled by a CameraControl.
 
- &lt;iframe style=&quot;width: 600px; height: 400px&quot; src=&quot;../../examples/camera_control.html&quot;&gt;&lt;/iframe&gt;
+ &lt;iframe style=&quot;width: 600px; height: 400px&quot; src=&quot;../../examples/control_CameraControl.html&quot;&gt;&lt;/iframe&gt;
 
  &#x60;&#x60;&#x60;&#x60;Javascript
- // Create a Viewer
  var viewer = new BIMSURFER.Viewer(null, &quot;myDiv&quot;, {}, false);
 
- // Create a Camera
  var camera = new BIMSURFER.Camera(viewer, {
-    eye: [0, 0, -10]
- });
+        eye: [5, 5, -5]
+    });
 
- // Create a CameraControl
  var cameraControl = new BIMSURFER.CameraControl(viewer, {
-    camera: camera
- });
+        camera: camera
+    });
 
- // Create a BoxObject
- new BIMSURFER.BoxObject(viewer);
+ var teapot = new BIMSURFER.TeapotObject(viewer);
+
 
  &#x60;&#x60;&#x60;&#x60;
 

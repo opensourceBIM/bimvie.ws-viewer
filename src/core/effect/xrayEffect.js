@@ -93,7 +93,7 @@
         },
 
         _apply: function (object) {
-            var selected = this.selection.objects[object.id];
+            var selected = this.objectSet.objects[object.id];
             object.xray = this.invert ? !!selected : !selected;
         }
     });

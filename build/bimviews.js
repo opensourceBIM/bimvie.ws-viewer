@@ -4,7 +4,7 @@
  * A WebGL-based IFC Viewer for BIMSurfer
  * http://bimwiews.org/
  *
- * Built on 2015-05-01
+ * Built on 2015-05-07
  *
  * todo
  * Copyright 2015, todo
@@ -12,6 +12,15 @@
  *
  */
 
+/**
+ The BIMSURFER namespace.
+
+
+ @class BIMSURFER
+ @main SIMSURFER
+ @static
+ @author xeolabs / http://xeolabs.com/
+ */
 var BIMSURFER = {
 
     CLASS: "BIMSURFER",
@@ -276,7 +285,13 @@ BIMSURFER.utils.removeA  = function(arr) {
         };
     };
 
-})();;(function () {
+})();;/**
+ * Math functions, used within BIMSURFER, but also available for you to use in your application code.
+ * @module BIMSURFER
+ * @class math
+ * @static
+ */
+(function () {
 
     "use strict";
 
@@ -308,12 +323,7 @@ BIMSURFER.utils.removeA  = function(arr) {
      */
 
 
-    /**
-     * Math functions, used within BIMSURFER, but also available for you to use in your application code.
-     * @module BIMSURFER
-     * @class math
-     * @static
-     */
+
     BIMSURFER.math = {
 
         /**
@@ -1976,41 +1986,14 @@ BIMSURFER.constants.clamp = function (s, min, max) {
 
  ## <a name="ids">Component IDs</a>
 
- Every Component has an ID that's unique within the parent {{#crossLink "Viewer"}}{{/crossLink}}. BIMViewer generates
+ Every Component has an ID that's unique within the parent {{#crossLink "Viewer"}}{{/crossLink}}. the {{#crossLink "Viewer"}}{{/crossLink}} generates
  the IDs automatically by default, however you can also specify them yourself. In the example below, we're creating a
  viewer comprised of {{#crossLink "Viewer"}}{{/crossLink}}, {{#crossLink "Material"}}{{/crossLink}}, {{#crossLink "Geometry"}}{{/crossLink}} and
  {{#crossLink "GameObject"}}{{/crossLink}} components, while letting xeoEngine generate its own ID for
  the {{#crossLink "Geometry"}}{{/crossLink}}:
 
  ````javascript
- // The Viewer is a Component too
- var viewer = new BIMSURFER.Viewer({
-    id: "myViewer"
-});
 
- var material = new BIMSURFER.Material(viewer, {
-    id: "myMaterial"
-});
-
- var geometry = new BIMSURFER.Geometry(viewer, {
-    id: "myGeometry"
-});
-
- // Let xeoEngine automatically generated the ID for our GameObject
- var object = new BIMSURFER.GameObject(viewer, {
-    material: material,
-    geometry: geometry
-});
- ````
-
- We can then find those components like this:
-
- ````javascript
- // Find the Viewer
- var theViewer = BIMSURFER.viewers["myViewer"];
-
- // Find the Material
- var theMaterial = theViewer.components["myMaterial"];
  ````
 
  ## <a name="componentProps">Properties</a>
@@ -2151,7 +2134,7 @@ BIMSURFER.constants.clamp = function (s, min, max) {
  @param [cfg] {*} Component configuration
  @param [cfg.id] {String} Optional ID, unique among all components in the parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}, generated automatically when omitted.
  @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Component.
- @extends Object
+
  */
 (function () {
 
@@ -2181,15 +2164,6 @@ BIMSURFER.constants.clamp = function (s, min, max) {
              @final
              */
             this.viewer = viewer;
-
-            /**
-             The IFC type of this Component.
-
-             @property type
-             @type {String}
-             @final
-             */
-            this.type = cfg.type;
 
             /**
              Metadata on this component.
@@ -2225,8 +2199,6 @@ BIMSURFER.constants.clamp = function (s, min, max) {
             // Add this component to the Viewer
             // Assigns this component an automatic ID if not yet assigned
             this.viewer._addComponent(this);
-
-            this._onTick = null;
 
             // Initialize
             this._init(cfg);
@@ -2370,7 +2342,7 @@ BIMSURFER.constants.clamp = function (s, min, max) {
             window.console.warn("[WARN] " + this.id + ": " + message);
         },
 
-        /**
+       /**
          * Destroys this component.
          *
          * Removes this Component from its {{#crossLink "Viewer"}}{{/crossLink}}.
@@ -2400,15 +2372,13 @@ BIMSURFER.constants.clamp = function (s, min, max) {
 
 })();
 ;/**
- Publishes key and mouse events that occur on the parent {{#crossLink "Scene"}}Scene{{/crossLink}}'s {{#crossLink "Canvas"}}Canvas{{/crossLink}}.
+ Publishes key and mouse events that occur on the parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}'s {{#crossLink "Canvas"}}Canvas{{/crossLink}}.
 
  ## Overview
 
  <ul>
- <li>Each {{#crossLink "Scene"}}{{/crossLink}} provides an Input on itself as a read-only property.</li>
+ <li>Each {{#crossLink "Viewer"}}{{/crossLink}} provides an Input on itself as a read-only property.</li>
  </ul>
-
- <img src="http://www.gliffy.com/go/publish/image/7123123/L.png"></img>
 
  ## Example
 
@@ -2493,6 +2463,7 @@ var viewer = new BIMSURFER.Viewer(...);
 
  @class Input
  @module BIMSURFER
+ @submodule input
  @extends Component
  */
 (function () {
@@ -3594,17 +3565,28 @@ var viewer = new BIMSURFER.Viewer(...);
 
 })();
 
-;(function () {
+;/**
+ The 3D viewer
+
+ ## Overview
+
+ TODO
+
+ ## Example
+
+ TODO
+
+ @class Viewer
+ @module BIMSURFER
+ @constructor
+ @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
+ @param [cfg] {*} Configs
+ @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Object.
+ */
+(function () {
     "use strict";
 
-
-    /**
-     * @constructor
-     * @param {Object} bimServerApi A BIMSurfer API
-     * @param {String|DOMelement} div The viewport div within which the canvas will be inserted in the DOM
-     * @param {Object} [options] Options
-     * @param {Boolean} [autoStart=false] Starts this Viewer automatically when true
-     */
     BIMSURFER.Viewer = function (bimServerApi, div, options, autoStart) {
 
         var self = this;
@@ -4306,13 +4288,96 @@ var viewer = new BIMSURFER.Viewer(...);
         window.console.warn("[WARN] BIMSERVER.Viewer: " + message);
     };
 
-})();;(function () {
+})();;/**
+ An **Object** is a visible 3D element within a {{#crossLink "Viewer"}}{{/crossLink}}.
+
+ ## Overview
+
+ TODO
+
+ ## Example
+
+ In the example below we'll create three Objects, each with a unique ID and a modelling transform:
+ ````Javascript
+ // Create a Viewer
+ var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+
+ // Create a Camera
+ var camera = new BIMSURFER.Camera(viewer, {
+    eye: [0, 0, -10]
+ });
+
+ // Create a CameraControl to interact with the Camera
+ var cameraControl = new BIMSURFER.CameraControl(viewer, {
+    camera: camera
+ });
+
+ // Create a BoxGeometry
+ var boxGeometry = new BIMSURFER.BoxGeometry(viewer);
+
+ // Create some Objects that use our BoxGeometry
+
+ new BIMSURFER.Object(viewer, {
+    objectId: "foo",
+    ifcType: "IfcWall",
+    geometries: [boxGeometry],
+    matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])
+ });
+
+ new BIMSURFER.BoxObject(viewer, {
+    objectId: "bar",
+    ifcType: "IfcWall",
+    geometries: [boxGeometry],
+    matrix: BIMSURFER.math.translationMat4v([4, 0, -4])
+ });
+
+ new BIMSURFER.Object(viewer, {
+    objectId: "baz",
+    ifcType: "IfcBeam",
+    geometries: [boxGeometry],
+    matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])
+ });
+ ````
+
+ We can then find the objects in the {{#crossLink "Viewer"}}{{/crossLink}} by ID:
+ ````javascript
+ var foo = viewer.components["foo"];
+ ````
+ or by IFC type:
+ ````javascript
+
+ // Get all Objects of the given IFC type
+ var wallObjects = viewer.components["IfcWall"];
+
+ // Get our "foo" object from those
+ var foo = wallObjects["foo"];
+ ````
+
+
+
+ @class Object
+ @module BIMSURFER
+ @constructor
+ @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
+ @param [cfg] {*} Configs
+ @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Object.
+ @param [cfg.ifcType] {String} The IFC type of this Object.
+ @param [cfg.color] {Array of Number} The color of this Object, defaults to the color of the specified IFC type.
+ @param [cfg.geometries] {Array of Geometry} The {{#crossLink "Geometry"}}{{/crossLink}} to render for this Object.
+ @param [cfg.clipping=true] {Boolean} Whether this Object is clipped by {{#crossLink "Clips"}}{{/crossLink}}.
+ @param [cfg.transparent=false] {Boolean} Whether this Object is transparent or not.
+ @param [cfg.opacity=1] {Number} Scalar in range 0-1 that controls opacity, where 0 is completely transparent and 1 is completely opaque.
+ Only applies while this Object's {{#crossLink "Object/transparent:property"}}transparent{{/crossLink}} equals ````true````.
+ @param [cfg.highlight=false] {Boolean} Whether this Object is highlighted or not.
+ @param [cfg.xray=false] {Boolean} Whether this Object is highlighted or not.
+ @param [cfg.matrix=[1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]] {Array of Number} Transform matrix - a one-dimensional, sixteen element array of elements, an identity matrix by default.
+ @extends Component
+ */
+(function () {
 
     "use strict";
 
-    /**
-     * Defines an object within a {@link BIMSURFER.Viewer}.
-     */
     BIMSURFER.Object = BIMSURFER.Component.extend({
 
         /**
@@ -4590,6 +4655,14 @@ var viewer = new BIMSURFER.Viewer(...);
 
         _props: {
 
+            /**
+             * Whether this Object is active or not.
+             *
+             * Fires an {{#crossLink "Object/active:event"}}{{/crossLink}} event on change.
+             *
+             * @property active
+             * @type Boolean
+             */
             active: {
 
                 set: function (value) {
@@ -4602,6 +4675,11 @@ var viewer = new BIMSURFER.Viewer(...);
 
                     this._enableNode.setEnabled(value);
 
+                    /**
+                     * Fired whenever this Object's {{#crossLink "Object/active:property"}}{{/crossLink}} property changes.
+                     * @event active
+                     * @param value The property's new value
+                     */
                     this.fire('active', this._active = value);
                 },
 
@@ -4610,6 +4688,13 @@ var viewer = new BIMSURFER.Viewer(...);
                 }
             },
 
+            /**
+             Whether this Object is transparent.
+
+             @property transparent
+             @default false
+             @type Boolean
+             */
             transparent: {
 
                 set: function (value) {
@@ -4632,6 +4717,13 @@ var viewer = new BIMSURFER.Viewer(...);
                 }
             },
 
+            /**
+             Whether this Object is highlighted.
+
+             @property highlighted
+             @default false
+             @type Boolean
+             */
             highlight: {
 
                 set: function (value) {
@@ -4653,6 +4745,13 @@ var viewer = new BIMSURFER.Viewer(...);
                 }
             },
 
+            /**
+             Whether this Object is X-rayed
+
+             @property xray
+             @default false
+             @type Boolean
+             */
             xray: {
 
                 set: function (value) {
@@ -4675,6 +4774,13 @@ var viewer = new BIMSURFER.Viewer(...);
                 }
             },
 
+            /**
+             The color of this Object.
+
+             @property color
+             @default [1.0, 1.0, 1.0]
+             @type Array(Number)
+             */
             color: {
 
                 set: function (value) {
@@ -4701,6 +4807,18 @@ var viewer = new BIMSURFER.Viewer(...);
                 }
             },
 
+            /**
+             Factor in the range [0..1] indicating how transparent this Object is.
+
+             A value of 0.0 indicates fully transparent, 1.0 is fully opaque.
+
+             This Object will appear transparent only if {{#crossLink "Object/transparent:property"}}{{/crossLink}} is also
+             set to **true**.
+
+             @property opacity
+             @default 1.0
+             @type Number
+             */
             opacity: {
 
                 set: function (value) {
@@ -4715,6 +4833,13 @@ var viewer = new BIMSURFER.Viewer(...);
                 }
             },
 
+            /**
+             * This Object's transformation matrix.
+             *
+             * @property matrix
+             * @default [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
+             * @type {Array of Number}
+             */
             matrix: {
 
                 set: function (value) {
@@ -4733,6 +4858,12 @@ var viewer = new BIMSURFER.Viewer(...);
                 }
             },
 
+            /**
+             * The World-space boundary of this Object.
+             *
+             * @property boundary
+             * @type {*}
+             */
             boundary: {
 
                 get: function () {
@@ -4751,6 +4882,12 @@ var viewer = new BIMSURFER.Viewer(...);
                 }
             },
 
+            /**
+             * The World-space center of this Object.
+             *
+             * @property center
+             * @type {Array of Number}
+             */
             center: {
 
                 get: function () {
@@ -4775,7 +4912,48 @@ var viewer = new BIMSURFER.Viewer(...);
         }
     });
 
-})();;(function () {
+})();;/**
+ An **BoxObject** is a box-shaped {{#crossLink "Object"}}{{/crossLink}}.
+
+ ## Overview
+
+ TODO
+
+ ## Example
+
+ ````Javascript
+ // Create a Viewer
+ var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+
+ // Create a Camera
+ var camera = new BIMSURFER.Camera(viewer, {
+    eye: [0, 0, -10]
+ });
+
+ // Create a CameraControl to interact with the Camera
+ var cameraControl = new BIMSURFER.CameraControl(viewer, {
+    camera: camera
+ });
+
+ // Create a BoxObject
+ new BIMSURFER.BoxObject(viewer, {
+    objectId: "foo",
+    ifcType: "IfcWall",
+    matrix: BIMSURFER.math.scaleMat4v([1.5, 1.5, 1.5])
+ });
+
+ ````
+
+ @class BoxObject
+ @module BIMSURFER
+ @constructor
+ @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
+ @param [cfg] {*} Configs
+ @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this BoxObject.
+ @extends Object
+ */
+(function () {
 
     "use strict";
 
@@ -4807,7 +4985,48 @@ var viewer = new BIMSURFER.Viewer(...);
             this._super();
         }
     });
-})();;(function () {
+})();;/**
+ An **TeapotObject** is a teapot-shaped {{#crossLink "Object"}}{{/crossLink}}.
+
+ ## Overview
+
+ TODO
+
+ ## Example
+
+ ````Javascript
+ // Create a Viewer
+ var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+
+ // Create a Camera
+ var camera = new BIMSURFER.Camera(viewer, {
+    eye: [0, 0, -10]
+ });
+
+ // Create a CameraControl to interact with the Camera
+ var cameraControl = new BIMSURFER.CameraControl(viewer, {
+    camera: camera
+ });
+
+ // Create a TeapotObject
+ new BIMSURFER.TeapotObject(viewer, {
+    objectId: "foo",
+    ifcType: "IfcWall",
+    matrix: BIMSURFER.math.scaleMat4v([ 1.5, 1.5, 1.5 ])
+ });
+
+ ````
+
+ @class TeapotObject
+ @module BIMSURFER
+ @constructor
+ @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
+ @param [cfg] {*} Configs
+ @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this BoxObject.
+ @extends Object
+ */
+(function () {
 
     "use strict";
 
@@ -4838,7 +5057,780 @@ var viewer = new BIMSURFER.Viewer(...);
             this._super();
         }
     });
-})();;(function () {
+})();;/**
+ An **ObjectSet** is a set of {{#crossLink "Object"}}Objects{{/crossLink}}.
+
+ ## Overview
+
+ <ul>
+ <li>Supports addition and removal of {{#crossLink "Object"}}Objects{{/crossLink}} by instance, ID or IFC type.</li>
+ <li>Can be queried for the {{#crossLink "ObjectSet/boundary:property"}}{{/crossLink}}
+ and {{#crossLink "ObjectSet/center:property"}}{{/crossLink}} of its {{#crossLink "Object"}}Objects{{/crossLink}}.</li>
+ <li>Use with a {{#crossLink "ClickSelectObjects"}}{{/crossLink}} to add and remove {{#crossLink "Object"}}Objects{{/crossLink}} with mouse clicks.</li>
+ <li>Can be used to mask {{#crossLink "Object"}}Objects{{/crossLink}} for Effects such as {{#crossLink "HighlightEffect"}}{{/crossLink}}, {{#crossLink "XRayEffect"}}{{/crossLink}} and
+ {{#crossLink "IsolateEffect"}}{{/crossLink}}.</li>
+
+ </ul>
+
+ ## Examples
+
+ #### Adding and removing Objects by ID
+
+ Isolate objects that match given IDs, using an ObjectSet and an {{#crossLink "IsolateEffect"}}{{/crossLink}}:
+
+ ````javascript
+
+ // Create a Viewer
+ var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+
+ // Create a Camera
+ var camera = new BIMSURFER.Camera(viewer, {
+    eye: [0, 0, -10]
+ });
+
+ // Create a CameraControl to interact with the Camera
+ var cameraControl = new BIMSURFER.CameraControl(viewer, {
+    camera: camera
+ });
+
+ // Create some BoxObjects
+
+ new BIMSURFER.BoxObject(viewer, {
+    objectId: "foo",
+    ifcType: "IfcWall",
+    matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])
+ });
+
+ new BIMSURFER.BoxObject(viewer, {
+    objectId: "bar",
+    ifcType: "IfcWall",
+    matrix: BIMSURFER.math.translationMat4v([4, 0, -4])
+ });
+
+ new BIMSURFER.BoxObject(viewer, {
+    objectId: "baz",
+    ifcType: "IfcBeam",
+    matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])
+ });
+
+ // Create an ObjectSet
+ var objectSet = new BIMSURFER.ObjectSet(viewer);
+
+ // Apply an Isolate effect to the ObjectSet
+ var isolateEffect = new BIMSURFER.IsolateEffect(viewer, {
+        objectSet: objectSet
+ });
+
+ // Add Objects to the ObjectSet by ID
+ // These Objects become visible
+ objectSet.addObjectIds(["foo", "bar", "baz"]);
+
+ // Remove an Object from the ObjectSet by ID
+ // That Object becomes invisible again
+ objectSet.removeObjectIds(["baz"]);
+
+ ````
+
+ #### Adding and removing Objects by IFC type
+
+ X-ray and highlight objects that match given IFC types, using an ObjectSet, {{#crossLink "XRayEffect"}}{{/crossLink}} and {{#crossLink "HighlightEffect"}}{{/crossLink}}:
+
+ ````javascript
+
+ // Create a Viewer
+ var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+
+ // Create a Camera
+ var camera = new BIMSURFER.Camera(viewer, {
+    eye: [0, 0, -10]
+ });
+
+ // Create a CameraControl to interact with the Camera
+ var cameraControl = new BIMSURFER.CameraControl(viewer, {
+    camera: camera
+ });
+
+ // Create some BoxObjects
+
+ new BIMSURFER.BoxObject(viewer, {
+    objectId: "foo",
+    ifcType: "IfcWall",
+    matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])
+ });
+
+ new BIMSURFER.BoxObject(viewer, {
+    objectId: "bar",
+    ifcType: "IfcWall",
+    matrix: BIMSURFER.math.translationMat4v([4, 0, -4])
+ });
+
+ new BIMSURFER.Object(viewer, {
+    objectId: "baz",
+    ifcType: "IfcBeam",
+    matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])
+ });
+
+ // Create an ObjectSet
+ var objectSet = new BIMSURFER.ObjectSet(viewer);
+
+ // Apply an X-Ray effect to the ObjectSet
+ var xrayEffect = new BIMSURFER.XRayEffect(viewer, {
+    objectSet: objectSet
+ });
+
+ // Apply a Highlight effect to the ObjectSet
+ var highlightEffect = new BIMSURFER.HighlightEffect(viewer, {
+    objectSet: objectSet
+ });
+
+ // Add Objects to the ObjectSet by IFC type
+ // These Objects become opaque and highlighted
+ objectSet.addTypes(["IfcWall", "IfcBeam"]);
+
+ // Remove an Object from the ObjectSet by IFC type
+ // That Object becomes transparent and non-highlighted
+ objectSet.removeTypes(["IfcWall"]);
+
+ ````
+
+ #### Using with a ClickSelectObjects
+
+ Highlighting clicked objects, using an ObjectSet, {{#crossLink "HighlightEffect"}}{{/crossLink}} and {{#crossLink "ClickSelectObjects"}}{{/crossLink}}:
+
+ ````javascript
+
+ // Create a Viewer
+ var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+
+ // Create a Camera
+ var camera = new BIMSURFER.Camera(viewer, {
+    eye: [0, 0, -10]
+ });
+
+ // Create a CameraControl to interact with the Camera
+ var cameraControl = new BIMSURFER.CameraControl(viewer, {
+    camera: camera
+ });
+
+ // Create some BoxObjects
+
+ new BIMSURFER.BoxObject(viewer, {
+    objectId: "foo",
+    ifcType: "IfcWall",
+    matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])
+ });
+
+ new BIMSURFER.BoxObject(viewer, {
+    objectId: "bar",
+    ifcType: "IfcWall",
+    matrix: BIMSURFER.math.translationMat4v([4, 0, -4])
+ });
+
+ new BIMSURFER.Object(viewer, {
+    objectId: "baz",
+    ifcType: "IfcBeam",
+    matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])
+ });
+
+ // Create an ObjectSet
+ var objectSet = new BIMSURFER.ObjectSet(viewer);
+
+ // Apply a Highlight effect to the ObjectSet
+ var highlightEffect = new BIMSURFER.HighlightEffect(viewer, {
+        objectSet: objectSet
+    });
+
+ // Create a ClickSelectObjects control, which will add and remove objects to and from the ObjectSet
+ // to and from the ObjectSet as we click them
+ var clickSelect = new BIMSURFER.ClickSelectObjects(viewer, {
+        objectSet: objectSet
+    });
+ ````
+
+ #### Boundaries
+
+ TODO
+
+ @class ObjectSet
+ @module BIMSURFER
+ @constructor
+ @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
+ @param [cfg] {*} Configs
+ @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Selection.
+ @param [cfg.objects] {{Array of String|Object}} Array of {{#crossLink "Object"}}{{/crossLink}} IDs or instances.
+ @extends Component
+ */
+(function () {
+
+    "use strict";
+
+    BIMSURFER.ObjectSet = BIMSURFER.Component.extend({
+
+        /**
+         JavaScript class name for this Component.
+
+         @property className
+         @type String
+         @final
+         */
+        className: "BIMSURFER.ObjectSet",
+
+        _init: function (cfg) {
+
+            var self = this;
+
+            /**
+             * The {{#crossLink "Objects"}}{{/crossLink}} within this ObjectSet, mapped to their IDs.
+             *
+             * Fires an {{#crossLink "ObjectSet/updated:event"}}{{/crossLink}} event on change.
+             *
+             * @property objects
+             * @type {{String:Object}}
+             */
+            this.objects = {};
+
+            // Subscribe to each Object's transform matrix
+            // so we can mark selection boundary dirty
+            this._onObjectMatrix = {};
+
+            /**
+             * The number of {{#crossLink "Objects"}}{{/crossLink}} within this ObjectSet.
+             *
+             * @property numObjects
+             * @type Number
+             */
+            this.numObjects = 0;
+
+            this._boundary = {xmin: 0.0, ymin: 0.0, zmin: 0.0, xmax: 0.0, ymax: 0.0, zmax: 0.0 };
+            this._center = [0, 0, 0];
+
+            this._boundaryDirty = true;
+
+            this._onComponentDestroyed = this.viewer.on("componentDestroyed",
+                function (component) {
+
+                    if (self.objects[component.id]) {
+
+                        delete self.objects[component.id];
+
+                        self._boundaryDirty = true;
+
+                        /**
+                         * Fired whenever {{#crossLink "Object"}}Objects{{/crossLink}} are added or removed from this ObjectSet.
+                         *
+                         * Note that this event also indicates that the ObjectSet's {{#crossLink "ObjectSet/boundary:property"}}{{/crossLink}}
+                         * and {{#crossLink "ObjectSet/center:property"}}{{/crossLink}} will have updated, accordingly.
+                         *
+                         * @event updated
+                         * @param e The event
+                         * @param Boolean [cleared
+                         * @param [e.removed] Info on removed Objects
+                         * @param {Array of String} [e.removed.objectIds] IDs of removed Objects, when they were removed by ID
+                         * @param {{Array of String} [e.removed.ifcTypes] IFC types of removed Objects, when they were removed by IFC type
+                         * @param {} [e.added] Info on added Objects
+                         * @param {Array of String} [e.added.objectIds] IDs of added Objects, when they were added by ID
+                         * @param {Array of String} [e.added.ifcTypes] IFC types of added Objects, when they were added by IFC type
+                         */
+                        self.fire("updated", {
+                            removed: {
+                                objectIds: [component.id]
+                            }
+                        });
+                    }
+                });
+
+            if (cfg.objects) {
+                this.addObjects(cfg.objects);
+            }
+
+            if (cfg.objectIds) {
+                this.addObjectIds(cfg.objectIds);
+            }
+
+            if (cfg.types) {
+                this.addTypes(cfg.types);
+            }
+        },
+
+        /**
+         * Removes all {{#crossLink "Object"}}Objects{{/crossLink}} from this ObjectSet.
+         *
+         * Fires an {{#crossLink "ObjectSet/updated:event"}}{{/crossLink}} event.
+         *
+         * @method clear
+         */
+        clear: function () {
+            for (var objectId in this.objects) {
+                if (this.objects.hasOwnProperty(objectId)) {
+                    this._removeObject(this.objects[objectId]);
+                }
+            }
+
+            this.fire("updated", {
+                cleared: true
+            });
+        },
+
+        /**
+         * Adds {{#crossLink "Object"}}Objects{{/crossLink}} instances to this ObjectSet.
+         *
+         * The {{#crossLink "Object"}}Objects{{/crossLink}} must be in the same {{#crossLink "Viewer"}}{{/crossLink}} as this ObjectSet.
+         *
+         * Fires an {{#crossLink "ObjectSet/updated:event"}}{{/crossLink}} event.
+         *
+         * @method addObjects
+         * @param {Array of Objects} objects Array of {{#crossLink "Object"}}Objects{{/crossLink}} instances.
+         */
+        addObjects: function (objects) {
+
+            for (var i = 0, len = objects.length; i < len; i++) {
+                this._addObject(objects[i]);
+            }
+
+            this.fire("updated", {
+                added: {
+                    objects: objects
+                }
+            });
+        },
+
+        _addObject: function (object) {
+
+            var objectId = object.id;
+
+            // Ensure Object is in same Viewer as this Selection
+            if (object.viewer != this.viewer) {
+                this.warn("Attempted to add object that's not in same BIMSURFER.Viewer: '" + objectId + "'");
+                return;
+            }
+
+            // Subscribe to each Object's transform matrix
+            // so we can mark selection boundary dirty
+            this._onObjectMatrix[objectId] = object.on("matrix",
+                function () {
+                    self._boundaryDirty = true;
+                });
+
+            this.objects[objectId] = object;
+            this.numObjects++;
+
+            this._boundaryDirty = true;
+        },
+
+        _removeObject: function (object) {
+
+            var objectId = object.id;
+
+            if (object.viewer != this.viewer) {
+                this.warn("Attempted to remove object that's not in same BIMSURFER.Viewer: '" + objectId + "'");
+                return;
+            }
+
+            object.off(this._onObjectMatrix[objectId]);
+
+            delete this.objects[objectId];
+            this.numObjects--;
+
+            this._boundaryDirty = true;
+        },
+
+        /**
+         * Removes {{#crossLink "Object"}}Objects{{/crossLink}} instances from this ObjectSet.
+         *
+         * The {{#crossLink "Object"}}Objects{{/crossLink}} must be in the same {{#crossLink "Viewer"}}{{/crossLink}} as this ObjectSet.
+         *
+         * Fires an {{#crossLink "ObjectSet/updated:event"}}{{/crossLink}} event.
+         *
+         * @method removeObjects
+         * @param {Array of Objects} objects Array of {{#crossLink "Object"}}Objects{{/crossLink}} instances.
+         */
+        removeObjects: function (objects) {
+
+            for (var i = 0, len = objects.length; i < len; i++) {
+                this._removeObject(objects[i]);
+            }
+
+            this.fire("updated", {
+                removed: {
+                    objects: objects
+                }
+            });
+        },
+
+        /**
+         * Adds {{#crossLink "Object"}}Objects{{/crossLink}} by ID to this ObjectSet.
+         *
+         * The {{#crossLink "Object"}}Objects{{/crossLink}} must be in the same {{#crossLink "Viewer"}}{{/crossLink}} as this ObjectSet.
+         *
+         * Fires an {{#crossLink "ObjectSet/updated:event"}}{{/crossLink}} event.
+         *
+         * @method addObjectIds
+         * @param {Array of String} objects Array of {{#crossLink "Object"}}Object{{/crossLink}} IDs.
+         */
+        addObjectIds: function (objectIds) {
+
+            var objectId;
+            var object;
+
+            for (var i = 0, len = objectIds.length; i < len; i++) {
+
+                objectId = objectIds[i];
+                object = this.viewer.components[objectId];
+
+                if (!object) {
+                    this.warn("addObjectIds - object not found: '" + objectId + "'");
+                    continue;
+                }
+
+                this._addObject(object);
+            }
+
+            this.fire("updated", {
+                added: {
+                    objectIds: objectIds
+                }
+            });
+        },
+
+        /**
+         * Removes {{#crossLink "Object"}}Objects{{/crossLink}} by ID from this ObjectSet.
+         *
+         * The {{#crossLink "Object"}}Objects{{/crossLink}} must be in the same {{#crossLink "Viewer"}}{{/crossLink}} as this ObjectSet.
+         *
+         * Fires an {{#crossLink "ObjectSet/updated:event"}}{{/crossLink}} event.
+         *
+         * @method removeObjectIds
+         * @param {Array of String} objects Array of {{#crossLink "Object"}}Object{{/crossLink}} IDs.
+         */
+        removeObjectIds: function (objectIds) {
+
+            var objectId;
+            var object;
+
+            for (var i = 0, len = objectIds.length; i < len; i++) {
+
+                objectId = objectIds[i];
+                object = this.viewer.components[objectId];
+
+                if (!object) {
+                    this.warn("removeObjectIds - object not found: '" + objectId + "'");
+                    continue;
+                }
+
+                this._removeObject(object);
+            }
+
+            this.fire("updated", {
+                removed: {
+                    objectIds: objectIds
+                }
+            });
+        },
+
+        /**
+         * Adds {{#crossLink "Object"}}Objects{{/crossLink}} by IFC type to this ObjectSet.
+         *
+         * The {{#crossLink "Object"}}Objects{{/crossLink}} must be in the same {{#crossLink "Viewer"}}{{/crossLink}} as this ObjectSet.
+         *
+         * Fires an {{#crossLink "ObjectSet/updated:event"}}{{/crossLink}} event.
+         *
+         * @method addTypes
+         * @param {Array of String} objects Array of IFC types.
+         */
+        addTypes: function (types) {
+
+            var type;
+            var t;
+            var objectId;
+            var object;
+
+            for (var i = 0, len = types.length; i < len; i++) {
+
+                type = types[i];
+                t = this.viewer.types[type];
+
+                if (!t) {
+                    this.warn("addTypes - type not found: '" + t + "'");
+                    continue;
+                }
+
+                for (objectId in t) {
+                    if (t.hasOwnProperty(objectId)) {
+                        this._addObject(t[objectId]);
+                    }
+                }
+            }
+
+            this.fire("updated", {
+                added: {
+                    types: types
+                }
+            });
+        },
+
+        /**
+         * Removes {{#crossLink "Object"}}Objects{{/crossLink}} by IFC type from this ObjectSet.
+         *
+         * The {{#crossLink "Object"}}Objects{{/crossLink}} must be in the same {{#crossLink "Viewer"}}{{/crossLink}} as this ObjectSet.
+         *
+         * Fires an {{#crossLink "ObjectSet/updated:event"}}{{/crossLink}} event.
+         *
+         * @method removeTypes
+         * @param {Array of String} objects Array of IFC types.
+         */
+        removeTypes: function (types) {
+
+            var type;
+            var t;
+            var objectId;
+
+            for (var i = 0, len = types.length; i < len; i++) {
+
+                type = types[i];
+                t = this.viewer.types[type];
+
+                if (!t) {
+                    this.warn("removeTypes - type not found: '" + type + "'");
+                    continue;
+                }
+
+                for (objectId in t) {
+                    if (t.hasOwnProperty(objectId)) {
+                        this._removeObject(this.objects[objectId]);
+                    }
+                }
+            }
+
+            this.fire("updated", {
+                removed: {
+                    types: types
+                }
+            });
+        },
+
+        /**
+         * Iterates with a callback over the {{#crossLink "Object"}}Objects{{/crossLink}} in this ObjectSet.
+         *
+         * @method withObjects
+         * @param {Function} callback Callback called for each {{#crossLink "Object"}}{{/crossLink}}.
+         */
+        withObjects: function (callback) {
+            for (var objectId in this.objects) {
+                if (this.objects.hasOwnProperty(objectId)) {
+                    callback(this.objects[objectId]);
+                }
+            }
+        },
+
+        _rebuildBoundary: function () {
+
+            if (!this._boundaryDirty) {
+                return;
+            }
+
+            // For an empty selection, boundary is zero volume and centered at the origin
+
+            if (this.numObjects === 0) {
+                this._boundary.xmin = 0.0;
+                this._boundary.ymin = 0.0;
+                this._boundary.zmin = 0.0;
+                this._boundary.xmax = 0.0;
+                this._boundary.ymax = 0.0;
+                this._boundary.zmax = 0.0;
+
+            } else {
+
+                // Set boundary inside-out, ready to expand by each selected object
+
+                this._boundary.xmin = 1000000.0;
+                this._boundary.ymin = 1000000.0;
+                this._boundary.zmin = 1000000.0;
+                this._boundary.xmax = -1000000.0;
+                this._boundary.ymax = -1000000.0;
+                this._boundary.zmax = -1000000.0;
+
+                var object;
+                var boundary;
+
+                for (var objectId in this.objects) {
+                    if (this.objects.hasOwnProperty(objectId)) {
+
+                        object = this.objects[objectId];
+
+                        boundary = object.boundary;
+
+                        if (boundary.xmin < this._boundary.xmin) {
+                            this._boundary.xmin = boundary.xmin;
+                        }
+                        if (boundary.ymin < this._boundary.ymin) {
+                            this._boundary.ymin = boundary.ymin;
+                        }
+                        if (boundary.zmin < this._boundary.zmin) {
+                            this._boundary.zmin = boundary.zmin;
+                        }
+                        if (boundary.xmax > this._boundary.xmax) {
+                            this._boundary.xmax = boundary.xmax;
+                        }
+                        if (boundary.ymax > this._boundary.ymax) {
+                            this._boundary.ymax = boundary.ymax;
+                        }
+                        if (boundary.zmax > this._boundary.zmax) {
+                            this._boundary.zmax = boundary.zmax;
+                        }
+                    }
+                }
+            }
+
+            this._center[0] = (this._boundary.xmax + this._boundary.xmin) * 0.5;
+            this._center[1] = (this._boundary.ymax + this._boundary.ymin) * 0.5;
+            this._center[2] = (this._boundary.zmax + this._boundary.zmin) * 0.5;
+
+            this._boundaryDirty = false;
+        },
+
+        _props: {
+
+            /**
+             * The axis-aligned World-space boundary of the {{#crossLink "Object"}}Objects{{/crossLink}} within this ObjectSet.
+             *
+             * @property boundary
+             * @readonly
+             * @type {{}}
+             */
+            boundary: {
+
+                get: function () {
+
+                    if (this._boundaryDirty) {
+
+                        this._rebuildBoundary();
+
+                        return this._boundary;
+                    }
+                }
+            },
+
+            /**
+             * The World-space center of the {{#crossLink "Object"}}Objects{{/crossLink}} within this ObjectSet.
+             *
+             * @property center
+             * @readonly
+             * @type {{}}
+             */
+            center: {
+
+                get: function () {
+
+                    if (this._boundaryDirty) {
+
+                        this._rebuildBoundary();
+
+                        return this._center;
+                    }
+                }
+            }
+        },
+
+        _destroy: function () {
+
+            this.clear();
+
+            this.viewer.off(this._onComponentDestroyed);
+
+            this.active = false;
+        }
+    });
+
+})();;/**
+ A **Camera** defines a viewpoint within a {{#crossLink "Viewer"}}Viewer{{/crossLink}}.
+
+ ## Overview
+
+ <ul>
+ <li>You can have an unlimited number of Cameras in a {{#crossLink "Viewer"}}{{/crossLink}}.</li>
+ <li>At any instant, the Camera we're looking through is the one whose {{#crossLink "Camera/active:property"}}active{{/crossLink}} property is true.</li>
+ <li>Cameras can be controlled with controls such as {{#crossLink "CameraControl"}}{{/crossLink}}, {{#crossLink "KeyboardAxisCamera"}}{{/crossLink}},
+ {{#crossLink "KeyboardOrbitCamera"}}{{/crossLink}}, {{#crossLink "KeyboardPanCamera"}}{{/crossLink}}, {{#crossLink "KeyboardZoomCamera"}}{{/crossLink}},
+ {{#crossLink "MouseOrbitCamera"}}{{/crossLink}}, {{#crossLink "MousePanCamera"}}{{/crossLink}} and {{#crossLink "MouseZoomCamera"}}{{/crossLink}}.</li>
+ </ul>
+
+ ## Example
+
+ In this example we define multiple Cameras looking at a {{#crossLink "TeapotObject"}}{{/crossLink}}, then periodically switch between the Cameras.
+
+ <iframe style="width: 600px; height: 400px" src="../../examples/camera_Camera_multiple.html"></iframe>
+
+ ````Javascript
+ // Create a Viewer
+ var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+
+ // Create an object
+ var box = new BIMSURFER.TeapotObject(viewer);
+
+ // Create some Cameras
+ var cameras = [
+
+ new BIMSURFER.Camera(viewer, {
+            eye: [5, 5, 5],
+            active: false
+        }),
+
+ new BIMSURFER.Camera(viewer, {
+            eye: [-5, 5, 5],
+            active: false
+        }),
+
+ new BIMSURFER.Camera(viewer, {
+            eye: [5, -5, 5],
+            active: false
+        }),
+
+ new BIMSURFER.Camera(viewer, {
+            eye: [5, 5, -5],
+            active: false
+        }),
+
+ new BIMSURFER.Camera(viewer, {
+            eye: [-5, -5, 5],
+            active: false
+        })
+ ];
+
+ // Periodically switch between the Cameras
+
+ var i = -1;
+ var last = -1;
+
+ setInterval(function () {
+
+        if (last > -1) {
+            cameras[last].active = false
+        }
+
+        i = (i + 1) % (cameras.length - 1);
+
+        cameras[i].active = true;
+
+        last = i;
+
+    }, 1000);
+ ````
+
+ @class Camera
+ @module BIMSURFER
+ @submodule camera
+ @constructor
+ @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
+ @param [cfg] {*} Configs
+ @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Camera.
+ @param [cfg.eye=[0,0,-10]] {Array of Number} Eye position.
+ @param [cfg.look=[0,0,0]] {Array of Number} The position of the point-of-interest we're looking at.
+ @param [cfg.up=[0,1,0]] {Array of Number} The "up" vector.
+ @extends Component
+ */
+(function () {
 
     "use strict";
 
@@ -4858,7 +5850,7 @@ var viewer = new BIMSURFER.Viewer(...);
 
         _init: function (cfg) {
 
-            // The SceneJS nodes that this Camera controls
+            // The ViewerJS nodes that this Camera controls
             this._lookatNode = this.viewer.scene.getNode('theLookat');
             this._cameraNode = this.viewer.scene.getNode('theCamera');
 
@@ -5049,6 +6041,14 @@ var viewer = new BIMSURFER.Viewer(...);
 
         _props: {
 
+            /**
+             * Flag which indicates whether this Camera is active or not.
+             *
+             * Fires an {{#crossLink "Camera/active:event"}}{{/crossLink}} event on change.
+             *
+             * @property active
+             * @type Boolean
+             */
             active: {
 
                 set: function (value) {
@@ -5069,7 +6069,7 @@ var viewer = new BIMSURFER.Viewer(...);
 
                                 if (self._lookatNodeDirty) {
 
-                                    // View transform update scheduled for scene graph
+                                    // View transform update scheduled for viewer graph
 
                                     self._lookatNode.setEye(BIMSURFER.math.vec3ArrayToObj(self._eye));
                                     self._lookatNode.setLook(BIMSURFER.math.vec3ArrayToObj(self._look));
@@ -5078,7 +6078,7 @@ var viewer = new BIMSURFER.Viewer(...);
                                     // Camera not at rest now
                                     self._rested = false;
 
-                                    // Scene camera position now up to date
+                                    // Viewer camera position now up to date
                                     self._lookatNodeDirty = false;
 
                                 } else {
@@ -5092,9 +6092,9 @@ var viewer = new BIMSURFER.Viewer(...);
 
                                 if (self._cameraNodeDirty) {
 
-                                    // Projection update scheduled for scene graph
+                                    // Projection update scheduled for viewer graph
 
-                                    // Update the scene graph
+                                    // Update the viewer graph
 
                                     self._cameraNode.set({
                                         optics: {
@@ -5106,19 +6106,22 @@ var viewer = new BIMSURFER.Viewer(...);
                                         }
                                     });
 
-                                    // Scene projection now up to date
+                                    // Viewer projection now up to date
                                     self._cameraNodeDirty = false;
                                 }
                             });
 
-                        this.fire('active', this._active = true);
-
                     } else {
 
                         this.viewer.off(this._tickSub);
-
-                        this.fire('active', this._active = false);
                     }
+
+                    /**
+                     * Fired whenever this Camera's {{#crossLink "Camera/active:property"}}{{/crossLink}} property changes.
+                     * @event active
+                     * @param value The property's new value
+                     */
+                    this.fire('active', this._active = value);
                 },
 
                 get: function () {
@@ -5138,6 +6141,13 @@ var viewer = new BIMSURFER.Viewer(...);
                 }
             },
 
+            /**
+             * Position of the eye.
+             * Fires an {{#crossLink "Camera/eye:event"}}{{/crossLink}} event on change.
+             * @property eye
+             * @default [0,0,-10]
+             * @type Array(Number)
+             */
             eye: {
 
                 set: function (value) {
@@ -5150,6 +6160,13 @@ var viewer = new BIMSURFER.Viewer(...);
                 }
             },
 
+            /**
+             * Position of the point-of-interest.
+             * Fires a {{#crossLink "Camera/look:event"}}{{/crossLink}} event on change.
+             * @property look
+             * @default [0,0,0]
+             * @type Array(Number)
+             */
             look: {
 
                 set: function (value) {
@@ -5162,6 +6179,13 @@ var viewer = new BIMSURFER.Viewer(...);
                 }
             },
 
+            /**
+             * Direction of the "up" vector.
+             * Fires an {{#crossLink "Camera/up:event"}}{{/crossLink}} event on change.
+             * @property up
+             * @default [0,1,0]
+             * @type Array(Number)
+             */
             up: {
 
                 set: function (value) {
@@ -5235,13 +6259,10 @@ var viewer = new BIMSURFER.Viewer(...);
 
  ## Overview
 
- ## Example
-
- TODO
-
- ````javascript
- TODO
- ````
+ <ul>
+ <li>Light is subclassed by {{#crossLink "AmbientLight"}}{{/crossLink}}, {{#crossLink "DirLight"}}{{/crossLink}} and {{#crossLink "PointLight"}}{{/crossLink}}.</li>
+ <li>The number of Lights allowed is governed by the number of ````varying```` types supported in your WebGL.</li>
+ </ul>
  @class Light
  @module BIMSURFER
  @constructor
@@ -5272,18 +6293,53 @@ var viewer = new BIMSURFER.Viewer(...);
             this._lightsManager = getLightsManager(this.viewer);
 
             this._lightsManager.createLight(this.id, cfg);
-        },
 
-        _activate: function () {
-            this._lightsManager.activateLight(this.id);
-        },
-
-        _deactivate: function () {
-            this._lightsManager.deactivateLight(this.id);
+            this.active = cfg.active !== false;
         },
 
         _update: function (params) {
             this._lightsManager.updateLight(this.id, params);
+        },
+
+        _props: {
+
+            /**
+             * Flag which indicates whether this Light is active or not.
+             *
+             * Fires an {{#crossLink "Light/active:event"}}{{/crossLink}} event on change.
+             *
+             * @property active
+             * @type Boolean
+             */
+            active: {
+
+                set: function (value) {
+
+                    if (this._active === value) {
+                        return;
+                    }
+
+                    if (value) {
+
+                        this._lightsManager.activateLight(this.id);
+
+                    } else {
+
+                        this._lightsManager.deactivateLight(this.id);
+                    }
+
+                    /**
+                     * Fired whenever this Light's {{#crossLink "Light/active:property"}}{{/crossLink}} property changes.
+                     * @event active
+                     * @param value The property's new value
+                     */
+                    this.fire('active', this._active = value);
+                },
+
+                get: function () {
+                    return this._active;
+                }
+            }
         },
 
         _destroy: function () {
@@ -5463,58 +6519,52 @@ var viewer = new BIMSURFER.Viewer(...);
     }
 })();
 ;/**
- A **AmbientLight** defines a directional light source that originates from a single point and spreads outward in all directions.
+
+ An **AmbientLight** is a {{#crossLink "Light"}}{{/crossLink}} that defines an ambient light source of fixed intensity and color that affects all attached {{#crossLink "Object"}}Objects{{/crossLink}}
+ equally.
 
  ## Overview
 
- <ul>
-
- <li>AmbientLights have a position, but no direction.</li>
-
- <li>AmbientLights may be defined in either **World** or **View** coordinate space. When in World-space, their position
- is relative to the World coordinate system, and will appear to move as the {{#crossLink "Camera"}}{{/crossLink}} moves.
- When in View-space, their position is relative to the View coordinate system, and will behave as if fixed to the viewer's
- head as the {{#crossLink "Camera"}}{{/crossLink}} moves.</li>
-
- <li>Within bIMSurfer's's Phong lighting calculations, AmbientLight {{#crossLink "AmbientLight/diffuse:property"}}{{/crossLink}} and
- {{#crossLink "AmbientLight/specular:property"}}{{/crossLink}}.</li>
-
- <li>AmbientLights have {{#crossLink "AmbientLight/constantAttenuation:property"}}{{/crossLink}}, {{#crossLink "AmbientLight/linearAttenuation:property"}}{{/crossLink}} and
- {{#crossLink "AmbientLight/quadraticAttenuation:property"}}{{/crossLink}} factors, which indicate how their intensity attenuates over distance.</li>
-
-
- </ul>
-
+TODO
 
  ## Example
 
+ <iframe style="width: 600px; height: 400px" src="../../examples/light_ambient.html"></iframe>
 
  ```` javascript
- TODO
- ````
+// Create a Viewer
+var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
 
- As with all components, we can <a href="BIMSURFER.Component.html#changeEvents" class="crosslink">observe and change properties</a> on AmbientLights like so:
+// Create a Camera
+var camera = new BIMSURFER.Camera(viewer, {
+    eye: [5, 5, -5]
+});
 
- ````Javascript
- var handle = ambientLight.on("diffuse", // Attach a change listener to a property
- function(value) {
-        // Property value has changed
-    });
+// Create a camera orbit control
+var control = new BIMSURFER.CameraControl(viewer, {
+     camera: camera
+});
 
- ambientLight.diffuse = [0.4, 0.6, 0.4]; // Fires the change listener
+// Create a TeapotObject
+var teapot = new BIMSURFER.TeapotObject(viewer);
 
- ambientLight.off(handle); // Detach the change listener
+// Create an AmbientLight
+var ambientLight = new BIMSURFER.AmbientLight(viewer, {
+     color: [0.4, 0.4, 0.4]
+});
+
  ````
 
  @class AmbientLight
  @module BIMSURFER
  @constructor
- @extends Component
- @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}.
- @param [cfg] {*} The AmbientLight configuration
+ @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}, creates this AmbientLight within the
+ default {{#crossLink "Viewer"}}Viewer{{/crossLink}} when omitted
+ @param [cfg] {*} AmbientLight configuration
  @param [cfg.id] {String} Optional ID, unique among all components in the parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}, generated automatically when omitted.
  @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this AmbientLight.
- @param [cfg.color=[0.7, 0.7, 0.8 ]] {Array(Number)} Diffuse color of this AmbientLight.
+ @param [cfg.ambient=[0.7, 0.7, 0.8]] {Array(Number)} The color of this AmbientLight.
+ @extends Light
  */
 (function () {
 
@@ -5552,13 +6602,13 @@ var viewer = new BIMSURFER.Viewer(...);
                 get: function () {
                     return this._color;
                 }
-            },
+            }
         }
     });
 
 })();
 ;/**
- A **PointLight** defines a positional light source that originates from a single point and spreads outward in all directions.
+ A **PointLight** is a {{#crossLink "Light"}}{{/crossLink}} that defines a positional light source that originates from a single point and spreads outward in all directions.
 
  ## Overview
 
@@ -5571,40 +6621,49 @@ var viewer = new BIMSURFER.Viewer(...);
  When in View-space, their position is relative to the View coordinate system, and will behave as if fixed to the viewer's
  head as the {{#crossLink "Camera"}}{{/crossLink}} moves.</li>
 
- <li>Within bIMSurfer's's Phong lighting calculations, PointLight {{#crossLink "PointLight/diffuse:property"}}{{/crossLink}} and
- {{#crossLink "PointLight/specular:property"}}{{/crossLink}}.</li>
-
  <li>PointLights have {{#crossLink "PointLight/constantAttenuation:property"}}{{/crossLink}}, {{#crossLink "PointLight/linearAttenuation:property"}}{{/crossLink}} and
  {{#crossLink "PointLight/quadraticAttenuation:property"}}{{/crossLink}} factors, which indicate how their intensity attenuates over distance.</li>
-
 
  </ul>
 
 
  ## Example
 
+ <iframe style="width: 600px; height: 400px" src="../../examples/light_point.html"></iframe>
 
  ```` javascript
- TODO
- ````
+ // Create a Viewer
+ var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
 
- As with all components, we can <a href="BIMSURFER.Component.html#changeEvents" class="crosslink">observe and change properties</a> on PointLights like so:
+ // Create a Camera
+ var camera = new BIMSURFER.Camera(viewer, {
+    eye: [5, 5, -5]
+ });
 
- ````Javascript
- var handle = pointLight.on("diffuse", // Attach a change listener to a property
- function(value) {
-        // Property value has changed
+ // Create a camera orbit control
+ var control = new BIMSURFER.CameraControl(viewer, {
+        camera: camera
     });
 
- pointLight.diffuse = [0.4, 0.6, 0.4]; // Fires the change listener
+ // Create a TeapotObject
+ var teapot = new BIMSURFER.TeapotObject(viewer);
 
- pointLight.off(handle); // Detach the change listener
+ // Create a PointLight
+ var pointLight = new BIMSURFER.PointLight(viewer, {
+        color: [0.9, 0.9, 0.9],
+        pos: [-10.0, 10.0, 10.0],
+        constantAttenuation: 0.0,
+        linearAttenuation: 0.0,
+        quadraticAttenuation: 0.0,
+        space: "view"
+    });
+
  ````
 
  @class PointLight
  @module BIMSURFER
  @constructor
- @extends Component
+ @extends Light
  @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}.
  @param [cfg] {*} The PointLight configuration
  @param [cfg.id] {String} Optional ID, unique among all components in the parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}, generated automatically when omitted.
@@ -5773,7 +6832,7 @@ var viewer = new BIMSURFER.Viewer(...);
 
 })();
 ;/**
- A **DirLight** defines a directional light source that originates from a single point and spreads outward in all directions.
+ A **DirLight** is a {{#crossLink "Light"}}{{/crossLink}} that defines a directional light source that originates from a single point and spreads outward in all directions.
 
  ## Overview
 
@@ -5798,28 +6857,37 @@ var viewer = new BIMSURFER.Viewer(...);
 
  ## Example
 
+ <iframe style="width: 600px; height: 400px" src="../../examples/light_directional.html"></iframe>
 
  ```` javascript
- TODO
- ````
+ // Create a Viewer
+ var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
 
- As with all components, we can <a href="BIMSURFER.Component.html#changeEvents" class="crosslink">observe and change properties</a> on DirLights like so:
+ // Create a Camera
+ var camera = new BIMSURFER.Camera(viewer, {
+      eye: [5, 5, -5]
+ });
 
- ````Javascript
- var handle = dirLight.on("diffuse", // Attach a change listener to a property
- function(value) {
-        // Property value has changed
+ // Create a camera orbit control
+ var control = new BIMSURFER.CameraControl(viewer, {
+        camera: camera
     });
 
- dirLight.diffuse = [0.4, 0.6, 0.4]; // Fires the change listener
+ // Create a TeapotObject
+ var teapot = new BIMSURFER.TeapotObject(viewer);
 
- dirLight.off(handle); // Detach the change listener
+ // Create a DirLight
+ var dirLight = new BIMSURFER.DirLight(viewer, {
+        color: [0.9, 0.9, 0.9],
+        dir: [1.0, 0.0, -.5],
+        space: "view"
+    });
  ````
 
  @class DirLight
  @module BIMSURFER
  @constructor
- @extends Component
+ @extends Light
  @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}.
  @param [cfg] {*} The DirLight configuration
  @param [cfg.id] {String} Optional ID, unique among all components in the parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}, generated automatically when omitted.
@@ -5921,13 +6989,100 @@ var viewer = new BIMSURFER.Viewer(...);
     });
 
 })();
-;(function () {
+;/**
+ TODO
+
+ ## Overview
+
+ TODO
+
+ ## Example
+
+ #### Creating a triangle mesh Geometry
+
+ <iframe style="width: 600px; height: 400px" src="../../examples/geometry_custom.html">Run this example</iframe>
+
+ ````javascript
+
+ // Create a Viewer
+ var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+
+ // Create a Camera
+ var camera = new BIMSURFER.Camera(viewer, {
+    eye: [0, 0, -10]
+ });
+
+ // Create a CameraControl to interact with the Camera
+ var cameraControl = new BIMSURFER.CameraControl(viewer, {
+    camera: camera
+ });
+
+ // Create a triangle mesh Geometry
+
+ var geometry = new BIMSURFER.Geometry(viewer, {
+
+    primitive: "triangles",
+
+    positions: [
+        5, 5, 5, -5, 5, 5, -5, -5, 5, 5, -5, 5, // v0-v1-v2-v3 front
+        5, 5, 5, 5, -5, 5, 5, -5, -5, 5, 5, -5, // v0-v3-v4-v5 right
+        5, 5, 5, 5, 5, -5, -5, 5, -5, -5, 5, 5, // v0-v5-v6-v1 top
+        -5, 5, 5, -5, 5, -5, -5, -5, -5, -5, -5, 5, // v1-v6-v7-v2 left
+        -5, -5, -5, 5, -5, -5, 5, -5, 5, -5, -5, 5, // v7-v4-v3-v2 bottom
+        5, -5, -5, -5, -5, -5, -5, 5, -5, 5, 5, -5 // v4-v7-v6-v5 back
+    ],
+
+    normals: [
+        0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, // v0-v1-v2-v3 front
+        1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, // v0-v3-v4-v5 right
+        0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, // v0-v5-v6-v1 top
+       -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, // v1-v6-v7-v2 left
+        0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, // v7-v4-v3-v2 bottom
+        0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1 // v4-v7-v6-v5 back
+    ],
+
+    indices: [
+        0, 1, 2, 0, 2, 3, // back
+        4, 5, 6, 4, 6, 7,  // front
+        8, 9, 10, 8, 10, 11, // right
+        12, 13, 14, 12, 14, 15, // top
+        16, 17, 18, 16, 18, 19, // left
+        20, 21, 22, 20, 22, 23 // bottom
+    ]
+ });
+
+ // Create an Object that uses our Geometry
+ // Note that an Object can have multiple Geometries
+
+ new BIMSURFER.BoxObject(viewer, {
+    objectId: "foo",
+    ifcType: "IfcWall",
+    geometries: [ geometry ]
+ });
+
+ ````
+
+ @class Geometry
+ @module BIMSURFER
+ @submodule geometry
+ @constructor
+ @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
+ @param [cfg] {*} Configs
+ @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this BoxGeometry.
+ @param [cfg.primitive="triangles"] {String} The primitive type. Accepted values are 'points', 'lines', 'line-loop', 'line-strip', 'triangles', 'triangle-strip' and 'triangle-fan'.
+ @param [cfg.positions] {Array of Number} Positions array.
+ @param [cfg.normals] {Array of Number} Normals array.
+ @param [cfg.uv] {Array of Number} UVs array.
+ @param [cfg.uv2] {Array of Number} Second UVs array, for a second UV level.
+ @param [cfg.colors] {Array of Number} Vertex colors.
+ @param [cfg.indices] {Array of Number} Indices array.
+ @extends Component
+ */
+(function () {
 
     "use strict";
 
-    /**
-     * Defines a geometry within a {@link BIMSURFER.Viewer}.
-     */
     BIMSURFER.Geometry = BIMSURFER.Component.extend({
 
         /**
@@ -6012,13 +7167,58 @@ var viewer = new BIMSURFER.Viewer(...);
         }
     });
 
-})();;(function () {
+})();;/**
+ An **BoxGeometry** is a box-shaped {{#crossLink "Geometry"}}{{/crossLink}}.
+
+ ## Overview
+
+ TODO
+
+ ## Example
+
+ <iframe style="width: 600px; height: 400px" src="../../examples/geometry_box.html"></iframe>
+
+ ````javascript
+ // Create a Viewer
+ var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+
+ // Create a Camera
+ var camera = new BIMSURFER.Camera(viewer, {
+    eye: [0, 0, -10]
+ });
+
+ // Create a CameraControl to interact with the Camera
+ var cameraControl = new BIMSURFER.CameraControl(viewer, {
+    camera: camera
+ });
+
+ // Create a BoxGeometry
+ var boxGeometry = new BIMSURFER.BoxGeometry(viewer);
+
+ // Create an Object that uses our BoxGeometry
+ // Note that an Object can have multiple Geometries
+
+ new BIMSURFER.Object(viewer, {
+    objectId: "foo",
+    ifcType: "IfcWall",
+    geometries: [ boxGeometry ]
+ });
+````
+
+ @class BoxGeometry
+ @module BIMSURFER
+ @submodule geometry
+ @constructor
+ @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
+ @param [cfg] {*} Configs
+ @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this BoxGeometry.
+ @extends Geometry
+ */
+(function () {
 
     "use strict";
 
-    /**
-     *
-     */
     BIMSURFER.BoxGeometry = BIMSURFER.Geometry.extend({
 
         /**
@@ -6077,13 +7277,59 @@ var viewer = new BIMSURFER.Viewer(...);
                 cfg));
         }
     });
-})();;(function () {
+})();;/**
+ An **TeapotGeometry** is a teapot-shaped {{#crossLink "Geometry"}}{{/crossLink}}.
+
+ ## Overview
+
+ TODO
+
+ ## Example
+
+ <iframe style="width: 600px; height: 400px" src="../../examples/geometry_teapot.html"></iframe>
+
+ ````javascript
+ // Create a Viewer
+ var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+
+ // Create a Camera
+ var camera = new BIMSURFER.Camera(viewer, {
+    eye: [0, 0, -10]
+ });
+
+ // Create a CameraControl to interact with the Camera
+ var cameraControl = new BIMSURFER.CameraControl(viewer, {
+    camera: camera
+ });
+
+ // Create a TeapotGeometry
+ var teapotGeometry = new BIMSURFER.TeapotGeometry(viewer);
+
+ // Create an Object that uses our TeapotGeometry
+ // Note that an Object can have multiple Geometries
+
+ new BIMSURFER.Object(viewer, {
+    objectId: "foo",
+    ifcType: "IfcWall",
+    geometries: [ teapotGeometry ]
+ });
+ ````
+
+
+ @class TeapotGeometry
+ @module BIMSURFER
+ @submodule geometry
+ @constructor
+ @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
+ @param [cfg] {*} Configs
+ @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this BoxGeometry.
+ @extends Geometry
+ */
+(function () {
 
     "use strict";
 
-    /**
-     *
-     */
     BIMSURFER.TeapotGeometry = BIMSURFER.Geometry.extend({
 
         /**
@@ -11930,386 +13176,32 @@ var viewer = new BIMSURFER.Viewer(...);
         return result;
     }
 
-})();;(function () {
+})();;/**
+ An **Effect** is a the base class for visual effects that are applied to {{#crossLink "ObjectSet"}}ObjectSets{{/crossLink}}.
+
+ ## Overview
+
+ <ul>
+ <li>Effect is subclassed by {{#crossLink "HighlightEffect"}}{{/crossLink}}, {{#crossLink "IsolateEffect"}}{{/crossLink}} and {{#crossLink "XRayEffect"}}{{/crossLink}}.</li>
+ <li>Multiple Effects can share the same {{#crossLink "ObjectSet"}}{{/crossLink}} if required.</li>
+ <li>An Effect will provide its own default {{#crossLink "ObjectSet"}}{{/crossLink}} when you don't configure it with one.</li>
+ </ul>
+
+ @class Effect
+ @module BIMSURFER
+ @submodule effect
+ @constructor
+ @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
+ @param [cfg] {*} Configs
+ @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Effect.
+ @param [objectSet] {ObjectSet} The {{#crossLink "Objectset"}}{{/crossLink}} to update.
+ @extends Component
+ */
+(function () {
 
     "use strict";
 
-    /**
-     * A selection of {@link BIMSURFER.Object}s within a {@link BIMSURFER.Viewer}.
-     */
-    BIMSURFER.ObjectSet = BIMSURFER.Component.extend({
-
-        /**
-         JavaScript class name for this Component.
-
-         @property className
-         @type String
-         @final
-         */
-        className: "BIMSURFER.ObjectSet",
-
-        _init: function (cfg) {
-
-            var self = this;
-
-            this.objects = {};
-
-            // Subscribe to each Object's transform matrix
-            // so we can mark selection boundary dirty
-            this._onObjectMatrix = {};
-
-            this.numObjects = 0;
-
-            this._boundary = {xmin: 0.0, ymin: 0.0, zmin: 0.0, xmax: 0.0, ymax: 0.0, zmax: 0.0 };
-            this._center = [0, 0, 0];
-
-            this._boundaryDirty = true;
-
-            this._onComponentDestroyed = this.viewer.on("componentDestroyed",
-                function (component) {
-
-                    if (self.objects[component.id]) {
-
-                        delete self.objects[component.id];
-
-                        self._boundaryDirty = true;
-
-                        self.fire("updated", {
-                            removed: {
-                                objectIds: [component.id]
-                            }
-                        });
-                    }
-                });
-
-            if (cfg.objects) {
-                this.addObjects(cfg.objects);
-            }
-
-            if (cfg.objectIds) {
-                this.addObjectIds(cfg.objectIds);
-            }
-
-            if (cfg.types) {
-                this.addTypes(cfg.types);
-            }
-        },
-
-        clear: function () {
-            for (var objectId in this.objects) {
-                if (this.objects.hasOwnProperty(objectId)) {
-                    this._removeObject(this.objects[objectId]);
-                }
-            }
-
-            this.fire("updated", {
-                cleared: true
-            });
-        },
-
-        addObjects: function (objects) {
-
-            for (var i = 0, len = objects.length; i < len; i++) {
-                this._addObject(objects[i]);
-            }
-
-            this.fire("updated", {
-                added: {
-                    objects: objects
-                }
-            });
-        },
-
-        _addObject: function (object) {
-
-            var objectId = object.id;
-
-            // Ensure Object is in same Viewer as this Selection
-            if (object.viewer != this.viewer) {
-                this.warn("Attempted to add object that's not in same BIMSURFER.Viewer: '" + objectId + "'");
-                return;
-            }
-
-            // Subscribe to each Object's transform matrix
-            // so we can mark selection boundary dirty
-            this._onObjectMatrix[objectId] = object.on("matrix",
-                function () {
-                    self._boundaryDirty = true;
-                });
-
-            this.objects[objectId] = object;
-            this.numObjects++;
-
-            this._boundaryDirty = true;
-        },
-
-        _removeObject: function (object) {
-
-            var objectId = object.id;
-
-            if (object.viewer != this.viewer) {
-                this.warn("Attempted to remove object that's not in same BIMSURFER.Viewer: '" + objectId + "'");
-                return;
-            }
-
-            object.off(this._onObjectMatrix[objectId]);
-
-            delete this.objects[objectId];
-            this.numObjects--;
-
-            this._boundaryDirty = true;
-        },
-
-        removeObjects: function (objects) {
-
-            for (var i = 0, len = objects.length; i < len; i++) {
-                this._removeObject(objects[i]);
-            }
-
-            this.fire("updated", {
-                removed: {
-                    objects: objects
-                }
-            });
-        },
-
-        addObjectIds: function (objectIds) {
-
-            var objectId;
-            var object;
-
-            for (var i = 0, len = objectIds.length; i < len; i++) {
-
-                objectId = objectIds[i];
-                object = this.viewer.components[objectId];
-
-                if (!object) {
-                    this.warn("addObjectIds - object not found: '" + objectId + "'");
-                    continue;
-                }
-
-                this._addObject(object);
-            }
-
-            this.fire("updated", {
-                added: {
-                    objectIds: objectIds
-                }
-            });
-        },
-
-        removeObjectIds: function (objectIds) {
-
-            var objectId;
-            var object;
-
-            for (var i = 0, len = objectIds.length; i < len; i++) {
-
-                objectId = objectIds[i];
-                object = this.viewer.components[objectId];
-
-                if (!object) {
-                    this.warn("removeObjectIds - object not found: '" + objectId + "'");
-                    continue;
-                }
-
-                this._removeObject(object);
-            }
-
-            this.fire("updated", {
-                removed: {
-                    objectIds: objectIds
-                }
-            });
-        },
-
-        addTypes: function (types) {
-
-            var type;
-            var t;
-            var objectId;
-            var object;
-
-            for (var i = 0, len = types.length; i < len; i++) {
-
-                type = types[i];
-                t = this.viewer.types[type];
-
-                if (!t) {
-                    this.warn("addTypes - type not found: '" + t + "'");
-                    continue;
-                }
-
-                for (objectId in t) {
-                    if (t.hasOwnProperty(objectId)) {
-                        this._addObject(t[objectId]);
-                    }
-                }
-            }
-
-            this.fire("updated", {
-                added: {
-                    types: types
-                }
-            });
-        },
-
-        removeTypes: function (types) {
-
-            var type;
-            var t;
-            var objectId;
-
-            for (var i = 0, len = types.length; i < len; i++) {
-
-                type = types[i];
-                t = this.viewer.types[type];
-
-                if (!t) {
-                    this.warn("removeTypes - type not found: '" + type + "'");
-                    continue;
-                }
-
-                for (objectId in t) {
-                    if (t.hasOwnProperty(objectId)) {
-                        this._removeObject(this.objects[objectId]);
-                    }
-                }
-            }
-
-            this.fire("updated", {
-                removed: {
-                    types: types
-                }
-            });
-        },
-
-        /**
-         * Iterates with a callback over the objects in this selection
-         *
-         * @param {String} typeNames List of type names
-         * @param {Function} callback Callback called for each Component of the given types
-         */
-        withObjects: function (callback) {
-            for (var objectId in this.objects) {
-                if (this.objects.hasOwnProperty(objectId)) {
-                    callback(this.objects[objectId]);
-                }
-            }
-        },
-
-        _rebuildBoundary: function () {
-
-            if (!this._boundaryDirty) {
-                return;
-            }
-
-            // For an empty selection, boundary is zero volume and centered at the origin
-
-            if (this.numObjects === 0) {
-                this._boundary.xmin = 0.0;
-                this._boundary.ymin = 0.0;
-                this._boundary.zmin = 0.0;
-                this._boundary.xmax = 0.0;
-                this._boundary.ymax = 0.0;
-                this._boundary.zmax = 0.0;
-
-            } else {
-
-                // Set boundary inside-out, ready to expand by each selected object
-
-                this._boundary.xmin = 1000000.0;
-                this._boundary.ymin = 1000000.0;
-                this._boundary.zmin = 1000000.0;
-                this._boundary.xmax = -1000000.0;
-                this._boundary.ymax = -1000000.0;
-                this._boundary.zmax = -1000000.0;
-
-                var object;
-                var boundary;
-
-                for (var objectId in this.objects) {
-                    if (this.objects.hasOwnProperty(objectId)) {
-
-                        object = this.objects[objectId];
-
-                        boundary = object.boundary;
-
-                        if (boundary.xmin < this._boundary.xmin) {
-                            this._boundary.xmin = boundary.xmin;
-                        }
-                        if (boundary.ymin < this._boundary.ymin) {
-                            this._boundary.ymin = boundary.ymin;
-                        }
-                        if (boundary.zmin < this._boundary.zmin) {
-                            this._boundary.zmin = boundary.zmin;
-                        }
-                        if (boundary.xmax > this._boundary.xmax) {
-                            this._boundary.xmax = boundary.xmax;
-                        }
-                        if (boundary.ymax > this._boundary.ymax) {
-                            this._boundary.ymax = boundary.ymax;
-                        }
-                        if (boundary.zmax > this._boundary.zmax) {
-                            this._boundary.zmax = boundary.zmax;
-                        }
-                    }
-                }
-            }
-
-            this._center[0] = (this._boundary.xmax + this._boundary.xmin) * 0.5;
-            this._center[1] = (this._boundary.ymax + this._boundary.ymin) * 0.5;
-            this._center[2] = (this._boundary.zmax + this._boundary.zmin) * 0.5;
-
-            this._boundaryDirty = false;
-        },
-
-        _props: {
-
-            boundary: {
-
-                get: function () {
-
-                    if (this._boundaryDirty) {
-
-                        this._rebuildBoundary();
-
-                        return this._boundary;
-                    }
-                }
-            },
-
-            center: {
-
-                get: function () {
-
-                    if (this._boundaryDirty) {
-
-                        this._rebuildBoundary();
-
-                        return this._center;
-                    }
-                }
-            }
-        },
-
-        _destroy: function () {
-
-            this.clear();
-
-            this.viewer.off(this._onComponentDestroyed);
-
-            this.active = false;
-        }
-    });
-
-})();;(function () {
-
-    "use strict";
-
-    /**
-     * Applies an effect to the {@link BIMSURFER.Object}s within a {@link BIMSURFER.ObjectSet}.
-     */
     BIMSURFER.Effect = BIMSURFER.Component.extend({
 
         /**
@@ -12323,13 +13215,19 @@ var viewer = new BIMSURFER.Viewer(...);
 
         _init: function (cfg) {
 
-            this.selection = cfg.selection || new BIMSURFER.ObjectSet(this.viewer);
+            /**
+             * The {{#crossLink "ObjectSet"}}{{/crossLink}} that this Effect applies to.
+             *
+             * @property objectSet
+             * @type ObjectSet
+             */
+            this.objectSet = cfg.objectSet || new BIMSURFER.ObjectSet(this.viewer);
 
             this._dirty = true;
 
             var self = this;
 
-            this._onSelectionUpdated = this.selection.on("updated",
+            this._onObjectSetUpdated = this.objectSet.on("updated",
                 function () {
                     self._dirty = true;
                 });
@@ -12339,6 +13237,14 @@ var viewer = new BIMSURFER.Viewer(...);
 
         _props: {
 
+            /**
+             * Flag which indicates whether this Effect is active or not.
+             *
+             * Fires an {{#crossLink "Effect/active:event"}}{{/crossLink}} event on change.
+             *
+             * @property active
+             * @type Boolean
+             */
             active: {
 
                 set: function (value) {
@@ -12369,14 +13275,17 @@ var viewer = new BIMSURFER.Viewer(...);
                                 }
                             });
 
-                        this.fire('active', this._active = true);
-
                     } else {
 
                         this.viewer.off(this._tickSub);
-
-                        this.fire('active', this._active = false);
                     }
+
+                    /**
+                     * Fired whenever this Effect's {{#crossLink "Effect/active:property"}}{{/crossLink}} property changes.
+                     * @event active
+                     * @param value The property's new value
+                     */
+                    this.fire('active', this._active = value);
 
                     this._dirty = true;
                 },
@@ -12386,6 +13295,22 @@ var viewer = new BIMSURFER.Viewer(...);
                 }
             },
 
+            /**
+             * Flag which inverts the {{#crossLink "Object"}}Objects{{/crossLink}} that this Effect applies to.
+             *
+             * <ul>
+             *     <li>When true, this Effect applies to {{#crossLink "Object"}}Objects{{/crossLink}} that are in
+             *     the {{#crossLink "Component/viewer:property"}}{{/crossLink}} but **not** in the {{#crossLink "Effect/objectSet:property"}}{{/crossLink}}.</li>
+             *
+             *     <li>When false, this Effect applies to {{#crossLink "Object"}}Objects{{/crossLink}} that are in
+             *     the {{#crossLink "Component/viewer:property"}}{{/crossLink}} and **also** in the {{#crossLink "Effect/objectSet:property"}}{{/crossLink}}.</li>
+             * </ul>
+             *
+             * Fires an {{#crossLink "Effect/invert:event"}}{{/crossLink}} event on change.
+             *
+             * @property invert
+             * @type Boolean
+             */
             invert: {
 
                 set: function (value) {
@@ -12396,6 +13321,11 @@ var viewer = new BIMSURFER.Viewer(...);
 
                     self._dirty = false;
 
+                    /**
+                     * Fired whenever this Effect's {{#crossLink "Effect/invert:property"}}{{/crossLink}} property changes.
+                     * @event invert
+                     * @param value The property's new value
+                     */
                     this.fire('invert', this._invert = true);
                 },
 
@@ -12407,20 +13337,92 @@ var viewer = new BIMSURFER.Viewer(...);
 
         _destroy: function () {
 
-            this.selection.off(this._onSelectionUpdated);
+            this.objectSet.off(this._onObjectSetUpdated);
 
             this.active = false;
         }
 
     });
 
-})();;(function () {
+})();;/**
+ A **HighlightEffect** is an {{#crossLink "Effect"}}{{/crossLink}} that highlights the {{#crossLink "Object"}}Objects{{/crossLink}} within an {{#crossLink "ObjectSet"}}{{/crossLink}}.
+
+ ## Overview
+
+ TODO
+
+ ## Example
+
+ Highlight objects that match given IDs, using an {{#crossLink "ObjectSet"}}{{/crossLink}} and a HighlightEffect:
+
+ ````javascript
+
+ // Create a Viewer
+ var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+
+ // Create a Camera
+ var camera = new BIMSURFER.Camera(viewer, {
+    eye: [0, 0, -10]
+ });
+
+ // Create a CameraControl to interact with the Camera
+ var cameraControl = new BIMSURFER.CameraControl(viewer, {
+    camera: camera
+ });
+
+ // Create some BoxObjects
+
+ new BIMSURFER.BoxObject(viewer, {
+    objectId: "foo",
+    ifcType: "IfcWall",
+    matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])
+ });
+
+ new BIMSURFER.BoxObject(viewer, {
+    objectId: "bar",
+    ifcType: "IfcWall",
+    matrix: BIMSURFER.math.translationMat4v([4, 0, -4])
+ });
+
+ new BIMSURFER.BoxObject(viewer, {
+    objectId: "baz",
+    ifcType: "IfcBeam",
+    matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])
+ });
+
+ // Create an ObjectSet
+ var objectSet = new BIMSURFER.ObjectSet(viewer);
+
+ // Apply a highlight effect to the ObjectSet
+ var highlightEffect = new BIMSURFER.HighlightEffect(viewer, {
+        objectSet: objectSet
+    });
+
+ // Add Objects to the ObjectSet by ID
+ // These Objects become highlighted
+ objectSet.addObjectIds(["foo", "bar", "baz"]);
+
+ // Remove an Object from the ObjectSet by ID
+ // That Object becomes non-highlighted again
+ objectSet.removeObjectIds(["baz"]);
+
+ ````
+
+ @class HighlightEffect
+ @module BIMSURFER
+ @submodule effect
+ @constructor
+ @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
+ @param [cfg] {*} Configs
+ @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this HighlightEffect.
+ @param [selection] {Selection} The {{#crossLink "Selection"}}{{/crossLink}} to update.
+ @extends Effect
+ */
+(function () {
 
     "use strict";
 
-    /**
-     * Applies a highlight effect to the {@link BIMSURFER.Object}s within a {@link BIMSURFER.ObjectSet}.
-     */
     BIMSURFER.HighlightEffect = BIMSURFER.Effect.extend({
 
         /**
@@ -12437,18 +13439,90 @@ var viewer = new BIMSURFER.Viewer(...);
         },
 
         _apply: function (object) {
-            var selected = this.selection.objects[object.id];
+            var selected = this.objectSet.objects[object.id];
             object.highlight = this.invert ? !selected : !!selected;
         }
     });
 
-})();;(function () {
+})();;/**
+ A **IsolateEffect** is an {{#crossLink "Effect"}}{{/crossLink}} that exclusively shows the {{#crossLink "Object"}}Objects{{/crossLink}} within an {{#crossLink "ObjectSet"}}{{/crossLink}}.
+
+ ## Overview
+
+ TODO
+
+ ## Example
+
+ Isolate objects that match given IDs, using an {{#crossLink "ObjectSet"}}{{/crossLink}} and an IsolateEffect:
+
+ ````javascript
+
+ // Create a Viewer
+ var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+
+ // Create a Camera
+ var camera = new BIMSURFER.Camera(viewer, {
+    eye: [0, 0, -10]
+ });
+
+ // Create a CameraControl to interact with the Camera
+ var cameraControl = new BIMSURFER.CameraControl(viewer, {
+    camera: camera
+ });
+
+ // Create some BoxObjects
+
+ new BIMSURFER.BoxObject(viewer, {
+    objectId: "foo",
+    ifcType: "IfcWall",
+    matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])
+ });
+
+ new BIMSURFER.BoxObject(viewer, {
+    objectId: "bar",
+    ifcType: "IfcWall",
+    matrix: BIMSURFER.math.translationMat4v([4, 0, -4])
+ });
+
+ new BIMSURFER.BoxObject(viewer, {
+    objectId: "baz",
+    ifcType: "IfcBeam",
+    matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])
+ });
+
+ // Create an ObjectSet
+ var objectSet = new BIMSURFER.ObjectSet(viewer);
+
+ // Apply an Isolate effect to the ObjectSet
+ var isolateEffect = new BIMSURFER.IsolateEffect(viewer, {
+    objectSet: objectSet
+ });
+
+ // Add Objects to the ObjectSet by ID
+ // These Objects become visible
+ objectSet.addObjectIds(["foo", "bar", "baz"]);
+
+ // Remove an Object from the ObjectSet by ID
+ // That Object becomes invisible again
+ objectSet.removeObjectIds(["baz"]);
+
+ ````
+
+ @class IsolateEffect
+ @module BIMSURFER
+ @submodule effect
+ @constructor
+ @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
+ @param [cfg] {*} Configs
+ @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this IsolateEffect.
+ @param [selection] {Selection} The {{#crossLink "Selection"}}{{/crossLink}} to update.
+ @extends Effect
+ */
+(function () {
 
     "use strict";
 
-    /**
-     * Sets the selected {@link BIMSURFER.Object}s in a  {@link BIMSURFER.ObjectSet} as visible.
-     */
     BIMSURFER.IsolateEffect = BIMSURFER.Effect.extend({
 
         /**
@@ -12465,18 +13539,90 @@ var viewer = new BIMSURFER.Viewer(...);
         },
 
         _apply: function (object) {
-            var selected = this.selection.objects[object.id];
+            var selected = this.objectSet.objects[object.id];
             object.active = this.invert ? !selected : !!selected;
         }
     });
 
-})();;(function () {
+})();;/**
+ An **XRayEffect** is an {{#crossLink "Effect"}}{{/crossLink}} that creates an X-ray view of the {{#crossLink "Object"}}Objects{{/crossLink}} within an {{#crossLink "ObjectSet"}}{{/crossLink}}.
+
+ ## Overview
+
+ TODO
+
+ ## Example
+
+ X-ray objects that match given IFC types, using an {{#crossLink "ObjectSet"}}{{/crossLink}} and an XRayEffect:
+
+ ````javascript
+
+ // Create a Viewer
+ var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+
+ // Create a Camera
+ var camera = new BIMSURFER.Camera(viewer, {
+    eye: [0, 0, -10]
+ });
+
+ // Create a CameraControl to interact with the Camera
+ var cameraControl = new BIMSURFER.CameraControl(viewer, {
+    camera: camera
+ });
+
+ // Create some BoxObjects
+
+ new BIMSURFER.BoxObject(viewer, {
+    objectId: "foo",
+    ifcType: "IfcWall",
+    matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])
+ });
+
+ new BIMSURFER.BoxObject(viewer, {
+    objectId: "bar",
+    ifcType: "IfcWall",
+    matrix: BIMSURFER.math.translationMat4v([4, 0, -4])
+ });
+
+ new BIMSURFER.BoxObject(viewer, {
+    objectId: "baz",
+    ifcType: "IfcBeam",
+    matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])
+ });
+
+ // Create an ObjectSet
+ var objectSet = new BIMSURFER.ObjectSet(viewer);
+
+ // Apply an X-Ray effect to the ObjectSet
+ var xrayEffect = new BIMSURFER.XRayEffect(viewer, {
+    objectSet: objectSet
+ });
+
+ // Add Objects to the ObjectSet by IFC type
+ // These Objects become opaque
+ objectSet.addObjectTypes(["IfcWall", "IfcBeam"]);
+
+ // Remove an Object from the ObjectSet by IFC type
+ // That Object becomes transparent
+ objectSet.removeObjectTypes(["IfcWall"]);
+
+ ````
+
+ @class XRayEffect
+ @module BIMSURFER
+ @submodule effect
+ @constructor
+ @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
+ @param [cfg] {*} Configs
+ @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this XRayEffect.
+ @param [selection] {Selection} The {{#crossLink "Selection"}}{{/crossLink}} to update.
+ @extends Effect
+ */
+(function () {
 
     "use strict";
 
-    /**
-     * Applies an X-Ray effect to the {@link BIMSURFER.Object}s within a {@link BIMSURFER.ObjectSet}.
-     */
     BIMSURFER.XRayEffect = BIMSURFER.Effect.extend({
 
         /**
@@ -12493,32 +13639,55 @@ var viewer = new BIMSURFER.Viewer(...);
         },
 
         _apply: function (object) {
-            var selected = this.selection.objects[object.id];
+            var selected = this.objectSet.objects[object.id];
             object.xray = this.invert ? !!selected : !selected;
         }
     });
 
 })();;/**
-
- **Zooms** orbits a {{#crossLink "Camera"}}{{/crossLink}}
+ A **CameraControl** allows you to pan, rotate and zoom a {{#crossLink "Camera"}}{{/crossLink}} using the mouse and keyboard,
+ as well as switch it between preset left, right, anterior, posterior, superior and inferior views.
 
  ## Overview
 
+ <ul>
+ <li>You can have multiple CameraControls within the same {{#crossLink "Viewer"}}{{/crossLink}}.</li>
+ <li>Multiple CameraControls can drive the same {{#crossLink "Camera"}}{{/crossLink}}, or can each drive their own separate {{#crossLink "Camera"}}Cameras{{/crossLink}}.</li>
+ <li>At any instant, the CameraControl we're driving is the one whose {{#crossLink "Camera/active:property"}}active{{/crossLink}} property is true.</li>
+ <li>You can switch a CameraControl to a different {{#crossLink "Camera"}}{{/crossLink}} at any time.</li>
+ </ul>
+
  ## Example
 
- TODO
+ In this example we're viewing a {{#crossLink "TeapotObject"}}{{/crossLink}} with a {{#crossLink "Camera"}}{{/crossLink}} that's controlled by a CameraControl.
 
- ````javascript
- TODO
+ <iframe style="width: 600px; height: 400px" src="../../examples/control_CameraControl.html"></iframe>
+
+ ````Javascript
+ var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+
+ var camera = new BIMSURFER.Camera(viewer, {
+        eye: [5, 5, -5]
+    });
+
+ var cameraControl = new BIMSURFER.CameraControl(viewer, {
+        camera: camera
+    });
+
+ var teapot = new BIMSURFER.TeapotObject(viewer);
+
+
  ````
- @class Zoom
+
+ @class CameraControl
  @module BIMSURFER
+ @submodule control
  @constructor
- @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}.
- @param [cfg] {*} Zoom configuration
- @param [cfg.id] {String} Optional ID, unique among all components in the parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}, generated automatically when omitted.
- @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Zoom.
- @param [cfg.camera] {Camera} Camera to control
+ @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
+ @param [cfg] {*} Configs
+ @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Camera.
+ @param [camera] {Camera} The Camera to control.
  @extends Component
  */
 (function () {
@@ -12586,6 +13755,12 @@ var viewer = new BIMSURFER.Viewer(...);
                 }
             },
 
+            /**
+             * The {{#crossLink "Camera"}}{{/crossLink}} being controlled.
+             *
+             * @property camera
+             * @type Camera
+             */
             camera: {
 
                 set: function (value) {
@@ -12627,6 +13802,14 @@ var viewer = new BIMSURFER.Viewer(...);
                 }
             },
 
+            /**
+             * Flag which indicates whether this CameraControl is active or not.
+             *
+             * Fires an {{#crossLink "CameraControl/active:event"}}{{/crossLink}} event on change.
+             *
+             * @property active
+             * @type Boolean
+             */
             active: {
 
                 set: function (value) {
@@ -12640,6 +13823,11 @@ var viewer = new BIMSURFER.Viewer(...);
                     this._keyboardPan.active = value;
                     this._mousePan.active = value;
 
+                    /**
+                     * Fired whenever this CameraControl's {{#crossLink "CameraControl/active:property"}}{{/crossLink}} property changes.
+                     * @event active
+                     * @param value The property's new value
+                     */
                     this.fire('active', this._active = value);
                 },
 
@@ -12665,27 +13853,35 @@ var viewer = new BIMSURFER.Viewer(...);
 
 })();
 ;/**
-
- **Orbit** orbits a {{#crossLink "Camera"}}{{/crossLink}}
+ A **MouseOrbitCamera** lets you orbit a {{#crossLink "Camera"}}{{/crossLink}} about its point-of-interest using the mouse.
 
  ## Overview
+
+ <ul>
+ <li>Orbiting involves rotating the {{#crossLink "Camera"}}Camera's{{/crossLink}} {{#crossLink "Camera/eye:property"}}{{/crossLink}}
+ position about its current {{#crossLink "Camera/look:property"}}{{/crossLink}} position.</li>
+ <li>The orbit is freely rotating, without gimbal-lock.</li>
+ <li>If desired, you can have multiple MouseOrbitCameras within the same {{#crossLink "Viewer"}}{{/crossLink}}.</li>
+ <li>Multiple MouseOrbitCameras can drive the same {{#crossLink "Camera"}}{{/crossLink}}, or can each drive their own separate {{#crossLink "Camera"}}Cameras{{/crossLink}}.</li>
+ <li>At any instant, the MouseOrbitCameras we're driving is the one whose {{#crossLink "MouseOrbitCamera/active:property"}}active{{/crossLink}} property is true.</li>
+ <li>You can switch a MouseOrbitCameras to a different {{#crossLink "Camera"}}{{/crossLink}} at any time.</li>
+ </ul>
+
+ TODO
 
  ## Example
 
  TODO
 
- ````javascript
- TODO
- ````
- @class Orbit
+ @class MouseOrbitCamera
  @module BIMSURFER
+ @submodule control
  @constructor
- @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}.
- @param [cfg] {*} Orbit configuration
-
- @param [cfg.id] {String} Optional ID, unique among all components in the parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}, generated automatically when omitted.
- @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Orbit.
- @param [cfg.camera] {Camera} Camera to control
+ @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
+ @param [cfg] {*} Configs
+ @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this MouseOrbitCamera.
+ @param [camera] {Camera} The {{#crossLink "Camera"}}{{/crossLink}} to control.
  @extends Component
  */
 (function () {
@@ -12701,7 +13897,7 @@ var viewer = new BIMSURFER.Viewer(...);
          @type String
          @final
          */
-        className: "BIMSURFER.KeyboardOrbitCamera",
+        className: "BIMSURFER.MouseOrbitCamera",
 
         _init: function (cfg) {
 
@@ -12718,6 +13914,14 @@ var viewer = new BIMSURFER.Viewer(...);
 
         _props: {
 
+            /**
+             * Flag which indicates whether this MouseOrbitCamera is active or not.
+             *
+             * Fires an {{#crossLink "MouseOrbitCamera/active:event"}}{{/crossLink}} event on change.
+             *
+             * @property active
+             * @type Boolean
+             */
             active: {
 
                 set: function (value) {
@@ -12790,8 +13994,6 @@ var viewer = new BIMSURFER.Viewer(...);
                                 }
                             });
 
-                        this.fire('active', this._active = true);
-
                     } else {
 
                         input.off(this._onTick);
@@ -12799,9 +14001,14 @@ var viewer = new BIMSURFER.Viewer(...);
                         input.off(this._onMouseDown);
                         input.off(this._onMouseUp);
                         input.off(this._onMouseMove);
-
-                        this.fire('active', this._active = false);
                     }
+
+                    /**
+                     * Fired whenever this MouseOrbitCamera's {{#crossLink "MouseOrbitCamera/active:property"}}{{/crossLink}} property changes.
+                     * @event active
+                     * @param value The property's new value
+                     */
+                    this.fire('active', this._active = value);
                 },
 
                 get: function () {
@@ -12843,27 +14050,33 @@ var viewer = new BIMSURFER.Viewer(...);
 
 })();
 ;/**
-
- **Orbit** orbits a {{#crossLink "Camera"}}{{/crossLink}}
+ A **KeyboardOrbitCamera** lets you orbit a {{#crossLink "Camera"}}{{/crossLink}} about its point-of-interest using the keyboard's arrow keys.
 
  ## Overview
+
+ <ul>
+ <li>Orbiting involves rotating the {{#crossLink "Camera"}}Camera's{{/crossLink}} {{#crossLink "Camera/eye:property"}}{{/crossLink}}
+ position about its current {{#crossLink "Camera/look:property"}}{{/crossLink}} position.</li>
+ <li>The orbit is freely rotating, without gimbal-lock.</li>
+ <li>If desired, you can have multiple KeyboardOrbitCameras within the same {{#crossLink "Viewer"}}{{/crossLink}}.</li>
+ <li>Multiple KeyboardOrbitCameras can drive the same {{#crossLink "Camera"}}{{/crossLink}}, or can each drive their own separate {{#crossLink "Camera"}}Cameras{{/crossLink}}.</li>
+ <li>At any instant, the KeyboardOrbitCameras we're driving is the one whose {{#crossLink "KeyboardOrbitCamera/active:property"}}active{{/crossLink}} property is true.</li>
+ <li>You can switch a KeyboardOrbitCameras to a different {{#crossLink "Camera"}}{{/crossLink}} at any time.</li>
+ </ul>
 
  ## Example
 
  TODO
 
- ````javascript
- TODO
- ````
- @class Orbit
+ @class KeyboardOrbitCamera
  @module BIMSURFER
+ @submodule control
  @constructor
- @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}.
- @param [cfg] {*} Orbit configuration
-
- @param [cfg.id] {String} Optional ID, unique among all components in the parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}, generated automatically when omitted.
- @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Orbit.
- @param [cfg.camera] {Camera} Camera to control
+ @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
+ @param [cfg] {*} Configs
+ @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this KeyboardAxisCamera.
+ @param [camera] {Camera} The {{#crossLink "Camera"}}{{/crossLink}} to control.
  @extends Component
  */
 (function () {
@@ -12892,6 +14105,14 @@ var viewer = new BIMSURFER.Viewer(...);
 
         _props: {
 
+            /**
+             * Flag which indicates whether this KeyboardOrbitCamera is active or not.
+             *
+             * Fires an {{#crossLink "KeyboardOrbitCamera/active:event"}}{{/crossLink}} event on change.
+             *
+             * @property active
+             * @type Boolean
+             */
             active: {
 
                 set: function (value) {
@@ -12961,14 +14182,17 @@ var viewer = new BIMSURFER.Viewer(...);
                                 }
                             });
 
-                        this.fire('active', this._active = true);
-
                     } else {
 
                         this.viewer.off(this._onTick);
-
-                        this.fire('active', this._active = false);
                     }
+
+                    /**
+                     * Fired whenever this KeyboardOrbitCamera's {{#crossLink "KeyboardOrbitCamera/active:property"}}{{/crossLink}} property changes.
+                     * @event active
+                     * @param value The property's new value
+                     */
+                    this.fire('active', this._active = value);
                 },
 
                 get: function () {
@@ -13009,26 +14233,33 @@ var viewer = new BIMSURFER.Viewer(...);
 
 })();
 ;/**
-
- **Zooms** orbits a {{#crossLink "Camera"}}{{/crossLink}}
+ A **MouseZoomCamera** lets you zoom a {{#crossLink "Camera"}}{{/crossLink}} using the mouse wheel.
 
  ## Overview
+
+ <ul>
+ <li>Zooming involves moving the {{#crossLink "Camera"}}Camera's{{/crossLink}} {{#crossLink "Camera/eye:property"}}{{/crossLink}} closer and farther to its {{#crossLink "Camera/look:property"}}{{/crossLink}} position.</li>
+ <li>If desired, you can have multiple MouseZoomCameras within the same {{#crossLink "Viewer"}}{{/crossLink}}.</li>
+ <li>Multiple MouseZoomCameras can drive the same {{#crossLink "Camera"}}{{/crossLink}}, or can each drive their own separate {{#crossLink "Camera"}}{{/crossLink}}.</li>
+ <li>At any instant, the MouseZoomCameras we're driving is the one whose {{#crossLink "MouseZoomCamera/active:property"}}active{{/crossLink}} property is true.</li>
+ <li>You can switch a MouseZoomCameras to a different {{#crossLink "Camera"}}{{/crossLink}} at any time.</li>
+ </ul>
+
+ TODO
 
  ## Example
 
  TODO
 
- ````javascript
- TODO
- ````
- @class Zoom
+ @class MouseZoomCamera
  @module BIMSURFER
+ @submodule control
  @constructor
- @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}.
- @param [cfg] {*} Zoom configuration
- @param [cfg.id] {String} Optional ID, unique among all components in the parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}, generated automatically when omitted.
- @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Zoom.
- @param [cfg.camera] {Camera} Camera to control
+ @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
+ @param [cfg] {*} Configs
+ @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this MouseZoomCamera.
+ @param [camera] {Camera} The {{#crossLink "Camera"}}{{/crossLink}} to control.
  @extends Component
  */
 (function () {
@@ -13064,6 +14295,14 @@ var viewer = new BIMSURFER.Viewer(...);
 
         _props: {
 
+            /**
+             * Flag which indicates whether this MouseZoomCamera is active or not.
+             *
+             * Fires an {{#crossLink "MouseZoomCamera/active:event"}}{{/crossLink}} event on change.
+             *
+             * @property active
+             * @type Boolean
+             */
             active: {
 
                 set: function (value) {
@@ -13156,16 +14395,18 @@ var viewer = new BIMSURFER.Viewer(...);
                                 }
                             });
 
-
-                        this.fire('active', this._active = true);
-
                     } else {
 
                         input.off(this._onTick);
                         input.off(this._onMouseWheel);
-
-                        this.fire('active', this._active = false);
                     }
+
+                    /**
+                     * Fired whenever this MouseZoomCamera's {{#crossLink "MouseZoomCamera/active:property"}}{{/crossLink}} property changes.
+                     * @event active
+                     * @param value The property's new value
+                     */
+                    this.fire('active', this._active = value);
                 },
 
                 get: function () {
@@ -13207,27 +14448,33 @@ var viewer = new BIMSURFER.Viewer(...);
 
 })();
 ;/**
-
- **KeyboardZoomCamera** pans a {{#crossLink "Camera"}}{{/crossLink}} with the keyboard.
+ A **KeyboardZoomCamera** lets you zoom a {{#crossLink "Camera"}}{{/crossLink}} using the + and - keys.
 
  ## Overview
+
+ <ul>
+ <li>Zooming involves moving the {{#crossLink "Camera"}}Camera's{{/crossLink}} {{#crossLink "Camera/eye:property"}}{{/crossLink}} closer and farther to its {{#crossLink "Camera/look:property"}}{{/crossLink}} position.</li>
+ <li>If desired, you can have multiple KeyboardZoomCameras within the same {{#crossLink "Viewer"}}{{/crossLink}}.</li>
+ <li>Multiple KeyboardZoomCameras can drive the same {{#crossLink "Camera"}}{{/crossLink}}, or can each drive their own separate {{#crossLink "Camera"}}{{/crossLink}}.</li>
+ <li>At any instant, the KeyboardZoomCameras we're driving is the one whose {{#crossLink "KeyboardZoomCamera/active:property"}}active{{/crossLink}} property is true.</li>
+ <li>You can switch a KeyboardZoomCameras to a different {{#crossLink "Camera"}}{{/crossLink}} at any time.</li>
+ </ul>
+
+ TODO
 
  ## Example
 
  TODO
 
- ````javascript
- TODO
- ````
- @class Orbit
+ @class KeyboardZoomCamera
  @module BIMSURFER
+ @submodule control
  @constructor
- @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}.
- @param [cfg] {*} Orbit configuration
-
- @param [cfg.id] {String} Optional ID, unique among all components in the parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}, generated automatically when omitted.
+ @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
+ @param [cfg] {*} Configs
+ @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
  @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this KeyboardZoomCamera.
- @param [cfg.camera] {Camera} Camera to control
+ @param [camera] {Camera} The {{#crossLink "Camera"}}{{/crossLink}} to control.
  @extends Component
  */
 (function () {
@@ -13260,6 +14507,14 @@ var viewer = new BIMSURFER.Viewer(...);
 
         _props: {
 
+            /**
+             * Flag which indicates whether this KeyboardZoomCamera is active or not.
+             *
+             * Fires an {{#crossLink "KeyboardZoomCamera/active:event"}}{{/crossLink}} event on change.
+             *
+             * @property active
+             * @type Boolean
+             */
             active: {
 
                 set: function (value) {
@@ -13306,14 +14561,17 @@ var viewer = new BIMSURFER.Viewer(...);
                                 }
                             });
 
-                        this.fire('active', this._active = true);
-
                     } else {
 
                         this.viewer.off(this._onTick);
-
-                        this.fire('active', this._active = false);
                     }
+
+                    /**
+                     * Fired whenever this KeyboardZoomCamera's {{#crossLink "KeyboardZoomCamera/active:property"}}{{/crossLink}} property changes.
+                     * @event active
+                     * @param value The property's new value
+                     */
+                    this.fire('active', this._active = value);
                 },
 
                 get: function () {
@@ -13354,27 +14612,36 @@ var viewer = new BIMSURFER.Viewer(...);
 
 })();
 ;/**
-
- **Orbit** orbits a {{#crossLink "Camera"}}{{/crossLink}}
+ A **MousePanCamera** lets you pan a {{#crossLink "Camera"}}{{/crossLink}} using the mouse.
 
  ## Overview
+
+ <ul>
+ <li>Panning is done by dragging the mouse with the left and right buttons down.</li>
+ <li>Panning up and down involves moving the {{#crossLink "Camera"}}Camera's{{/crossLink}} {{#crossLink "Camera/eye:property"}}{{/crossLink}} and {{#crossLink "Camera/look:property"}}{{/crossLink}} positions along the direction of its {{#crossLink "Camera/up:property"}}{{/crossLink}} vector.</li>
+ <li>Panning left and right involves moving the {{#crossLink "Camera"}}Camera's{{/crossLink}} {{#crossLink "Camera/eye:property"}}{{/crossLink}} and {{#crossLink "Camera/look:property"}}{{/crossLink}} positions along the the vector that is perpendicular to its {{#crossLink "Camera/up:property"}}{{/crossLink}} and {{#crossLink "Camera/eye:property"}}{{/crossLink}}-{{#crossLink "Camera/look:property"}}{{/crossLink}} vector.</li>
+ <li>If desired, you can have multiple MousePanCameras within the same {{#crossLink "Viewer"}}{{/crossLink}}.</li>
+ <li>Multiple MousePanCameras can drive the same {{#crossLink "Camera"}}{{/crossLink}}, or can each drive their own separate {{#crossLink "Camera"}}{{/crossLink}}.</li>
+ <li>At any instant, the MousePanCameras we're driving is the one whose {{#crossLink "MousePanCamera/active:property"}}active{{/crossLink}} property is true.</li>
+ <li>You can switch a MousePanCameras to a different {{#crossLink "Camera"}}{{/crossLink}} at any time.</li>
+ </ul>
+
+
+ TODO
 
  ## Example
 
  TODO
 
- ````javascript
- TODO
- ````
- @class Orbit
+ @class MousePanCamera
  @module BIMSURFER
+ @submodule control
  @constructor
- @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}.
- @param [cfg] {*} Orbit configuration
-
- @param [cfg.id] {String} Optional ID, unique among all components in the parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}, generated automatically when omitted.
- @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Pan.
- @param [cfg.camera] {Camera} Camera to control
+ @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
+ @param [cfg] {*} Configs
+ @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this MousePanCamera.
+ @param [camera] {Camera} The {{#crossLink "Camera"}}{{/crossLink}} to control.
  @extends Component
  */
 (function () {
@@ -13390,7 +14657,7 @@ var viewer = new BIMSURFER.Viewer(...);
          @type String
          @final
          */
-        className: "BIMSURFER.KeyboardPanCamera",
+        className: "BIMSURFER.MousePanCamera",
 
         _init: function (cfg) {
 
@@ -13411,6 +14678,15 @@ var viewer = new BIMSURFER.Viewer(...);
 
         _props: {
 
+
+            /**
+             * Flag which indicates whether this MousePanCamera is active or not.
+             *
+             * Fires an {{#crossLink "MousePanCamera/active:event"}}{{/crossLink}} event on change.
+             *
+             * @property active
+             * @type Boolean
+             */
             active: {
 
                 set: function (value) {
@@ -13479,8 +14755,6 @@ var viewer = new BIMSURFER.Viewer(...);
                                 }
                             });
 
-                        this.fire('active', this._active = true);
-
                     } else {
 
                         input.off(this._onTick);
@@ -13488,9 +14762,14 @@ var viewer = new BIMSURFER.Viewer(...);
                         input.off(this._onMouseDown);
                         input.off(this._onMouseUp);
                         input.off(this._onMouseMove);
-
-                        this.fire('active', this._active = false);
                     }
+
+                    /**
+                     * Fired whenever this MousePanCamera's {{#crossLink "MousePanCamera/active:property"}}{{/crossLink}} property changes.
+                     * @event active
+                     * @param value The property's new value
+                     */
+                    this.fire('active', this._active = value);
                 },
 
                 get: function () {
@@ -13531,27 +14810,33 @@ var viewer = new BIMSURFER.Viewer(...);
 
 })();
 ;/**
-
- **KeyboardPanCamera** pans a {{#crossLink "Camera"}}{{/crossLink}} with the keyboard.
+ A **KeyboardPanCamera** lets you pan a {{#crossLink "Camera"}}{{/crossLink}} using the W, S, A and D keys.
 
  ## Overview
+
+ <ul>
+ <li>Panning up and down involves moving the {{#crossLink "Camera"}}Camera's{{/crossLink}} {{#crossLink "Camera/eye:property"}}{{/crossLink}} and {{#crossLink "Camera/look:property"}}{{/crossLink}} positions along the direction of its {{#crossLink "Camera/up:property"}}{{/crossLink}} vector.</li>
+ <li>Panning backwards and forwards involves moving the {{#crossLink "Camera"}}Camera's{{/crossLink}} {{#crossLink "Camera/eye:property"}}{{/crossLink}} and {{#crossLink "Camera/look:property"}}{{/crossLink}} positions along the direction of its {{#crossLink "Camera/eye:property"}}{{/crossLink}} - {{#crossLink "Camera/look:property"}}{{/crossLink}} vector.</li>
+ <li>Panning left and right involves moving the {{#crossLink "Camera"}}Camera's{{/crossLink}} {{#crossLink "Camera/eye:property"}}{{/crossLink}} and {{#crossLink "Camera/look:property"}}{{/crossLink}} positions along the the vector that is perpendicular to its {{#crossLink "Camera/up:property"}}{{/crossLink}} and {{#crossLink "Camera/eye:property"}}{{/crossLink}}-{{#crossLink "Camera/look:property"}}{{/crossLink}} vector.</li>
+ <li>If desired, you can have multiple KeyboardPanCameras within the same {{#crossLink "Viewer"}}{{/crossLink}}.</li>
+ <li>Multiple KeyboardPanCameras can drive the same {{#crossLink "Camera"}}{{/crossLink}}, or can each drive their own separate {{#crossLink "Camera"}}{{/crossLink}}.</li>
+ <li>At any instant, the KeyboardPanCameras we're driving is the one whose {{#crossLink "KeyboardPanCamera/active:property"}}active{{/crossLink}} property is true.</li>
+ <li>You can switch a KeyboardPanCameras to a different {{#crossLink "Camera"}}{{/crossLink}} at any time.</li>
+ </ul>
 
  ## Example
 
  TODO
 
- ````javascript
- TODO
- ````
- @class Orbit
+ @class KeyboardPanCamera
  @module BIMSURFER
+ @submodule control
  @constructor
- @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}.
- @param [cfg] {*} Orbit configuration
-
- @param [cfg.id] {String} Optional ID, unique among all components in the parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}, generated automatically when omitted.
- @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this KeyboardPanCamera.
- @param [cfg.camera] {Camera} Camera to control
+ @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
+ @param [cfg] {*} Configs
+ @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this KeyboardOrbitCamera.
+ @param [camera] {Camera} The {{#crossLink "Camera"}}{{/crossLink}} to control.
  @extends Component
  */
 (function () {
@@ -13584,6 +14869,14 @@ var viewer = new BIMSURFER.Viewer(...);
 
         _props: {
 
+            /**
+             * Flag which indicates whether this KeyboardPanCamera is active or not.
+             *
+             * Fires an {{#crossLink "KeyboardPanCamera/active:event"}}{{/crossLink}} event on change.
+             *
+             * @property active
+             * @type Boolean
+             */
             active: {
 
                 set: function (value) {
@@ -13650,14 +14943,17 @@ var viewer = new BIMSURFER.Viewer(...);
                                 }
                             });
 
-                        this.fire('active', this._active = true);
-
                     } else {
 
                         this.viewer.off(this._onTick);
-
-                        this.fire('active', this._active = false);
                     }
+
+                    /**
+                     * Fired whenever this KeyboardPanCamera's {{#crossLink "KeyboardPanCamera/active:property"}}{{/crossLink}} property changes.
+                     * @event active
+                     * @param value The property's new value
+                     */
+                    this.fire('active', this._active = value);
                 },
 
                 get: function () {
@@ -13698,27 +14994,30 @@ var viewer = new BIMSURFER.Viewer(...);
 
 })();
 ;/**
-
- **KeyboardAxisCameras** pans a {{#crossLink "Camera"}}{{/crossLink}} with the keyboard.
+ A **KeyboardAxisCamera** lets you switch a {{#crossLink "Camera"}}{{/crossLink}} between preset left, right, anterior, posterior, superior and inferior views using the keyboard.
 
  ## Overview
+
+ <ul>
+ <li>If desired, you can have multiple KeyboardAxisCameras within the same {{#crossLink "Viewer"}}{{/crossLink}}.</li>
+ <li>Multiple KeyboardAxisCameras can drive the same {{#crossLink "Camera"}}{{/crossLink}}, or can each drive their own separate {{#crossLink "Camera"}}Cameras{{/crossLink}}.</li>
+ <li>At any instant, the KeyboardAxisCamera we're driving is the one whose {{#crossLink "Camera/active:property"}}active{{/crossLink}} property is true.</li>
+ <li>You can switch a KeyboardAxisCamera to a different {{#crossLink "Camera"}}{{/crossLink}} at any time.</li>
+ </ul>
 
  ## Example
 
  TODO
 
- ````javascript
- TODO
- ````
- @class Orbit
+ @class KeyboardAxisCamera
  @module BIMSURFER
+ @submodule control
  @constructor
- @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}.
- @param [cfg] {*} Orbit configuration
-
- @param [cfg.id] {String} Optional ID, unique among all components in the parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}, generated automatically when omitted.
- @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this KeyboardAxisCameras.
- @param [cfg.camera] {Camera} Camera to control
+ @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
+ @param [cfg] {*} Configs
+ @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this KeyboardAxisCamera.
+ @param [camera] {Camera} The {{#crossLink "Camera"}}{{/crossLink}} to control.
  @extends Component
  */
 (function () {
@@ -13747,6 +15046,14 @@ var viewer = new BIMSURFER.Viewer(...);
 
         _props: {
 
+            /**
+             * Flag which indicates whether this KeyboardAxisCamera is active or not.
+             *
+             * Fires an {{#crossLink "KeyboardAxisCamera/active:event"}}{{/crossLink}} event on change.
+             *
+             * @property active
+             * @type Boolean
+             */
             active: {
 
                 set: function (value) {
@@ -13854,14 +15161,17 @@ var viewer = new BIMSURFER.Viewer(...);
                                 }
                             });
 
-                        this.fire('active', this._active = true);
-
                     } else {
 
                         this.viewer.off(this._onKeyDown);
-
-                        this.fire('active', this._active = false);
                     }
+
+                    /**
+                     * Fired whenever this KeyboardAxisCamera's {{#crossLink "KeyboardAxisCamera/active:property"}}{{/crossLink}} property changes.
+                     * @event active
+                     * @param value The property's new value
+                     */
+                    this.fire('active', this._active = value);
                 },
 
                 get: function () {
@@ -13901,13 +15211,108 @@ var viewer = new BIMSURFER.Viewer(...);
     });
 
 })();
-;(function () {
+;/**
+ A **ClickSelectObjects** lets you add or remove {{#crossLink "Object"}}Objects{{/crossLink}} to and from an {{#crossLink "ObjectSet"}}ObjectSet{{/crossLink}} by clicking them with the mouse.
+
+ ## Overview
+
+ <ul>
+ <li>A ClickSelectObjects adds {{#crossLink "Object"}}Objects{{/crossLink}} to the {{#crossLink "ObjectSet"}}{{/crossLink}} as you
+ click them with the mouse, removing them again when you click them a second time.</li>
+ <li>Typically a ClickSelectObjects will share an {{#crossLink "ObjectSet"}}{{/crossLink}} with one or
+ more {{#crossLink "Effect"}}Effects{{/crossLink}}, in order to select which {{#crossLink "Object"}}Objects{{/crossLink}} are influenced by the {{#crossLink "Effect"}}Effects{{/crossLink}}.</li>
+ <li>A ClickSelectObjects will provide its own {{#crossLink "ObjectSet"}}{{/crossLink}} by default.</li>
+ <li>Hold down SHIFT while clicking to multi-select.</li>
+ </ul>
+
+ ## Example
+
+ In this example, we view four {{#crossLink "Objects"}}Objects{{/crossLink}} with a {{#crossLink "Camera"}}{{/crossLink}}, which we manipulate with a {{#crossLink "CameraControl"}}{{/crossLink}}.
+ <br>We also use a {{#crossLink "ClickSelectObjects"}}{{/crossLink}} to add and remove
+ the {{#crossLink "Objects"}}Objects{{/crossLink}} to an {{#crossLink "ObjectSet"}}{{/crossLink}}, to which we're applying
+ a {{#crossLink "HighlightEffect"}}{{/crossLink}}.
+
+ <iframe style="width: 600px; height: 400px" src="../../examples/control_ClickSelectObjects_HighlightEffect.html"></iframe>
+
+ ````Javascript
+ // Create a Viewer
+ var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+
+ // Create a Camera
+ var camera = new BIMSURFER.Camera(viewer, {
+    eye: [10, 10, -10]
+ });
+
+ // Create a CameraControl
+ var cameraControl = new BIMSURFER.CameraControl(viewer, {
+    camera: camera
+ });
+
+ // Create a Geometry
+ var geometry = new BIMSURFER.TeapotGeometry(viewer);
+
+ // Create some Objects
+ // Share the Geometry among them
+
+ var object1 = new BIMSURFER.Object(viewer, {
+    objectId: "object1",
+    ifcType: "IfcRoof",
+    geometries: [ geometry ],
+    matrix: BIMSURFER.math.translationMat4v([-3, 0, -3])
+ });
+
+ var object2 = new BIMSURFER.Object(viewer, {
+    objectId: "object2",
+    ifcType: "IfcDistributionFlowElement",
+    geometries: [ geometry ],
+    matrix: BIMSURFER.math.translationMat4v([3, 0, -3])
+ });
+
+ var object3 = new BIMSURFER.Object(viewer, {
+    objectId: "object3",
+    ifcType: "IfcDistributionFlowElement",
+    geometries: [ geometry ],
+    matrix: BIMSURFER.math.translationMat4v([-3, 0, 3])
+ });
+
+ var object4 = new BIMSURFER.Object(viewer, {
+    objectId: "object4",
+    ifcType: "IfcRoof",
+    geometries: [ geometry ],
+    matrix: BIMSURFER.math.translationMat4v([3, 0, 3])
+ });
+
+ // Create an ObjectSet
+ var objectSet = new BIMSURFER.ObjectSet(viewer);
+
+ // Apply a highlight effect to the ObjectSet
+ var highlightEffect = new BIMSURFER.HighlightEffect(viewer, {
+    objectSet: objectSet
+ });
+
+ // Create a ClickSelectObjects
+ var clickSelectObjects = new BIMSURFER.ClickSelectObjects(viewer, {
+    objectSet: objectSet
+ });
+ ````
+
+ @class ClickSelectObjects
+ @module BIMSURFER
+ @submodule control
+ @constructor
+ @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
+ @param [cfg] {*} Configs
+ @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Camera.
+ @param [selection] {Selection} The Selection to update.
+ @see {Object}
+ @see {ObjectSet}
+ @extends Component
+ */
+(function () {
 
     "use strict";
 
-    /**
-     * Selects {@link BIMSURFER.Object}s within a {@link BIMSURFER.ObjectSet}.
-     */
     BIMSURFER.ClickSelectObjects = BIMSURFER.Component.extend({
 
         /**
@@ -13921,7 +15326,7 @@ var viewer = new BIMSURFER.Viewer(...);
 
         _init: function (cfg) {
 
-            this.selection = cfg.selection || new BIMSURFER.ObjectSet(this.viewer);
+            this.objectSet = cfg.objectSet || new BIMSURFER.ObjectSet(this.viewer);
 
             this._multi = false;
 
@@ -13930,6 +15335,14 @@ var viewer = new BIMSURFER.Viewer(...);
 
         _props: {
 
+            /**
+             * Flag which indicates whether this ClickSelectObjects is active or not.
+             *
+             * Fires a {{#crossLink "ClickSelectObjects/active:event"}}{{/crossLink}} event on change.
+             *
+             * @property active
+             * @type Boolean
+             */
             active: {
 
                 set: function (value) {
@@ -13968,41 +15381,43 @@ var viewer = new BIMSURFER.Viewer(...);
 
                                         var object = hit.object;
 
-                                        if (!self.selection.objects[object.id]) {
+                                        if (!self.objectSet.objects[object.id]) {
 
                                             // Select
 
                                             if (!multiSelect) {
-                                                self.selection.clear();
+                                                self.objectSet.clear();
                                             }
 
-                                            self.selection.addObjects([object]);
+                                            self.objectSet.addObjects([object]);
 
                                         } else {
 
                                             // Deselect
 
-                                            self.selection.removeObjects([object]);
+                                            self.objectSet.removeObjects([object]);
                                         }
                                     } else {
 
                                         if (!multiSelect) {
-                                            self.selection.clear();
+                                            self.objectSet.clear();
                                         }
                                     }
                                 }
                             });
 
-
-                        this.fire('active', this._active = true);
-
                     } else {
 
                         input.off(this._onMouseDown);
                         input.off(this._onMouseUp);
-
-                        this.fire('active', this._active = false);
                     }
+
+                    /**
+                     * Fired whenever this ClickSelectObjects's {{#crossLink "ClickSelectObjects/active:property"}}{{/crossLink}} property changes.
+                     * @event active
+                     * @param value The property's new value
+                     */
+                    this.fire('active', this._active = value);
                 },
 
                 get: function () {

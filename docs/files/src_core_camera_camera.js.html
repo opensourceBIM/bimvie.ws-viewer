@@ -227,8 +227,8 @@
         _init: function (cfg) {
 
             // The ViewerJS nodes that this Camera controls
-            this._lookatNode = this.viewer.viewer.getNode(&#x27;theLookat&#x27;);
-            this._cameraNode = this.viewer.viewer.getNode(&#x27;theCamera&#x27;);
+            this._lookatNode = this.viewer.scene.getNode(&#x27;theLookat&#x27;);
+            this._cameraNode = this.viewer.scene.getNode(&#x27;theCamera&#x27;);
 
             // Schedule update of view and projection transforms for next tick
             this._lookatNodeDirty = true;

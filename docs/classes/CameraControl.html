@@ -143,25 +143,20 @@ as well as switch it between preset left, right, anterior, posterior, superior a
 </ul>
 
 <h2 id="example">Example</h2>
-<p>In this example we have a <a href="../classes/Viewer.html" class="crosslink">Viewer</a> with a
-<a href="../classes/Camera.html" class="crosslink">Camera</a> that&#39;s controlled by a CameraControl.</p>
-<iframe style="width: 600px; height: 400px" src="../../examples/camera_control.html"></iframe>
+<p>In this example we&#39;re viewing a <a href="../classes/TeapotObject.html" class="crosslink">TeapotObject</a> with a <a href="../classes/Camera.html" class="crosslink">Camera</a> that&#39;s controlled by a CameraControl.</p>
+<iframe style="width: 600px; height: 400px" src="../../examples/control_CameraControl.html"></iframe>
 
-<pre class="code prettyprint"><code class="lang-Javascript">// Create a Viewer
-var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+<pre class="code prettyprint"><code class="lang-Javascript">var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
 
-// Create a Camera
 var camera = new BIMSURFER.Camera(viewer, {
-   eye: [0, 0, -10]
-});
+       eye: [5, 5, -5]
+   });
 
-// Create a CameraControl
 var cameraControl = new BIMSURFER.CameraControl(viewer, {
-   camera: camera
-});
+       camera: camera
+   });
 
-// Create a BoxObject
-new BIMSURFER.BoxObject(viewer);
+var teapot = new BIMSURFER.TeapotObject(viewer);
 </code></pre>
 
 </div>
@@ -918,7 +913,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_control_cameraControl.js.html#l163"><code>src&#x2F;core&#x2F;control&#x2F;cameraControl.js:163</code></a>
+                            <a href="../files/src_core_control_cameraControl.js.html#l159"><code>src&#x2F;core&#x2F;control&#x2F;cameraControl.js:159</code></a>
                             </p>
                     
                     
@@ -944,7 +939,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_control_cameraControl.js.html#l116"><code>src&#x2F;core&#x2F;control&#x2F;cameraControl.js:116</code></a>
+                            <a href="../files/src_core_control_cameraControl.js.html#l112"><code>src&#x2F;core&#x2F;control&#x2F;cameraControl.js:112</code></a>
                             </p>
                     
                     
@@ -973,7 +968,7 @@ any subsequent notifications on that location as they are made.</p>
                                     Component
                                 </a>
                                 but overwritten in
-                            <a href="../files/src_core_control_cameraControl.js.html#l57"><code>src&#x2F;core&#x2F;control&#x2F;cameraControl.js:57</code></a>
+                            <a href="../files/src_core_control_cameraControl.js.html#l53"><code>src&#x2F;core&#x2F;control&#x2F;cameraControl.js:53</code></a>
                             </p>
                     
                     
@@ -1106,7 +1101,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_control_cameraControl.js.html#l184"><code>src&#x2F;core&#x2F;control&#x2F;cameraControl.js:184</code></a>
+                            <a href="../files/src_core_control_cameraControl.js.html#l180"><code>src&#x2F;core&#x2F;control&#x2F;cameraControl.js:180</code></a>
                             </p>
                     
                     
