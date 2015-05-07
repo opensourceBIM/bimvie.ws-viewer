@@ -27,30 +27,30 @@
  // Create some Cameras
  var cameras = [
 
- new BIMSURFER.Camera(viewer, {
-            eye: [5, 5, 5],
-            active: false
-        }),
+    new BIMSURFER.Camera(viewer, {
+        eye: [5, 5, 5],
+        active: false
+    }),
 
- new BIMSURFER.Camera(viewer, {
-            eye: [-5, 5, 5],
-            active: false
-        }),
+    new BIMSURFER.Camera(viewer, {
+        eye: [-5, 5, 5],
+        active: false
+    }),
 
- new BIMSURFER.Camera(viewer, {
-            eye: [5, -5, 5],
-            active: false
-        }),
+    new BIMSURFER.Camera(viewer, {
+        eye: [5, -5, 5],
+        active: false
+    }),
 
- new BIMSURFER.Camera(viewer, {
-            eye: [5, 5, -5],
-            active: false
-        }),
+    new BIMSURFER.Camera(viewer, {
+        eye: [5, 5, -5],
+        active: false
+    }),
 
- new BIMSURFER.Camera(viewer, {
-            eye: [-5, -5, 5],
-            active: false
-        })
+    new BIMSURFER.Camera(viewer, {
+        eye: [-5, -5, 5],
+        active: false
+    })
  ];
 
  // Periodically switch between the Cameras
