@@ -48,6 +48,7 @@
                                 <li><a href="../classes/ClickSelectObjects.html">ClickSelectObjects</a></li>
                                 <li><a href="../classes/Component.html">Component</a></li>
                                 <li><a href="../classes/Configs.html">Configs</a></li>
+                                <li><a href="../classes/Debug.html">Debug</a></li>
                                 <li><a href="../classes/DirLight.html">DirLight</a></li>
                                 <li><a href="../classes/Effect.html">Effect</a></li>
                                 <li><a href="../classes/Fly.html">Fly</a></li>
@@ -78,6 +79,7 @@
                                 <li><a href="../modules/BIMSURFER.html">BIMSURFER</a></li>
                                 <li><a href="../modules/camera.html">camera</a></li>
                                 <li><a href="../modules/control.html">control</a></li>
+                                <li><a href="../modules/debug.html">debug</a></li>
                                 <li><a href="../modules/effect.html">effect</a></li>
                                 <li><a href="../modules/geometry.html">geometry</a></li>
                                 <li><a href="../modules/input.html">input</a></li>
@@ -133,15 +135,15 @@
 
  &lt;/ul&gt;
 
- ## Examples
+ ## Example
 
- #### Adding and removing Objects by ID
+ #### Highlighting an ObjectSet
 
  In this example we create four {{#crossLink &quot;Object&quot;}}Objects{{/crossLink}}, then add two of them to an {{#crossLink &quot;ObjectSet&quot;}}{{/crossLink}}.
  &lt;br&gt; Then we apply a {{#crossLink &quot;HighlightEffect&quot;}}{{/crossLink}} to the {{#crossLink &quot;ObjectSet&quot;}}{{/crossLink}}, causing
  it&#x27;s {{#crossLink &quot;Object&quot;}}Objects{{/crossLink}} to become highlighted while the other two {{#crossLink &quot;Object&quot;}}Objects{{/crossLink}} remain un-highlighted.
 
- &lt;iframe style=&quot;width: 600px; height: 400px&quot; src=&quot;../../examples/effect_HighlightEffect.html&quot;&gt;&lt;/iframe&gt;
+ &lt;iframe style=&quot;width: 600px; height: 400px&quot; src=&quot;../../examples/object_ObjectSet_addObjects.html&quot;&gt;&lt;/iframe&gt;
 
  &#x60;&#x60;&#x60;&#x60;javascript
 
@@ -232,122 +234,6 @@
 
  objectSet.addObjects([object3]);
 
- &#x60;&#x60;&#x60;&#x60;
-
- #### Adding and removing Objects by IFC type
-
- X-ray and highlight objects that match given IFC types, using an ObjectSet, {{#crossLink &quot;XRayEffect&quot;}}{{/crossLink}} and {{#crossLink &quot;HighlightEffect&quot;}}{{/crossLink}}:
-
- &#x60;&#x60;&#x60;&#x60;javascript
-
- // Create a Viewer
- var viewer = new BIMSURFER.Viewer(null, &quot;myDiv&quot;, {}, false);
-
- // Create a Camera
- var camera = new BIMSURFER.Camera(viewer, {
-    eye: [0, 0, -10]
- });
-
- // Create a CameraControl to interact with the Camera
- var cameraControl = new BIMSURFER.CameraControl(viewer, {
-    camera: camera
- });
-
- // Create some BoxObjects
-
- new BIMSURFER.BoxObject(viewer, {
-    objectId: &quot;foo&quot;,
-    ifcType: &quot;IfcWall&quot;,
-    matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])
- });
-
- new BIMSURFER.BoxObject(viewer, {
-    objectId: &quot;bar&quot;,
-    ifcType: &quot;IfcWall&quot;,
-    matrix: BIMSURFER.math.translationMat4v([4, 0, -4])
- });
-
- new BIMSURFER.Object(viewer, {
-    objectId: &quot;baz&quot;,
-    ifcType: &quot;IfcBeam&quot;,
-    matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])
- });
-
- // Create an ObjectSet
- var objectSet = new BIMSURFER.ObjectSet(viewer);
-
- // Apply an X-Ray effect to the ObjectSet
- var xrayEffect = new BIMSURFER.XRayEffect(viewer, {
-    objectSet: objectSet
- });
-
- // Apply a Highlight effect to the ObjectSet
- var highlightEffect = new BIMSURFER.HighlightEffect(viewer, {
-    objectSet: objectSet
- });
-
- // Add Objects to the ObjectSet by IFC type
- // These Objects become opaque and highlighted
- objectSet.addTypes([&quot;IfcWall&quot;, &quot;IfcBeam&quot;]);
-
- // Remove an Object from the ObjectSet by IFC type
- // That Object becomes transparent and non-highlighted
- objectSet.removeTypes([&quot;IfcWall&quot;]);
-
- &#x60;&#x60;&#x60;&#x60;
-
- #### Using with a ClickSelectObjects
-
- Highlighting clicked objects, using an ObjectSet, {{#crossLink &quot;HighlightEffect&quot;}}{{/crossLink}} and {{#crossLink &quot;ClickSelectObjects&quot;}}{{/crossLink}}:
-
- &#x60;&#x60;&#x60;&#x60;javascript
-
- // Create a Viewer
- var viewer = new BIMSURFER.Viewer(null, &quot;myDiv&quot;, {}, false);
-
- // Create a Camera
- var camera = new BIMSURFER.Camera(viewer, {
-    eye: [0, 0, -10]
- });
-
- // Create a CameraControl to interact with the Camera
- var cameraControl = new BIMSURFER.CameraControl(viewer, {
-    camera: camera
- });
-
- // Create some BoxObjects
-
- new BIMSURFER.BoxObject(viewer, {
-    objectId: &quot;foo&quot;,
-    ifcType: &quot;IfcWall&quot;,
-    matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])
- });
-
- new BIMSURFER.BoxObject(viewer, {
-    objectId: &quot;bar&quot;,
-    ifcType: &quot;IfcWall&quot;,
-    matrix: BIMSURFER.math.translationMat4v([4, 0, -4])
- });
-
- new BIMSURFER.Object(viewer, {
-    objectId: &quot;baz&quot;,
-    ifcType: &quot;IfcBeam&quot;,
-    matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])
- });
-
- // Create an ObjectSet
- var objectSet = new BIMSURFER.ObjectSet(viewer);
-
- // Apply a Highlight effect to the ObjectSet
- var highlightEffect = new BIMSURFER.HighlightEffect(viewer, {
-        objectSet: objectSet
-    });
-
- // Create a ClickSelectObjects control, which will add and remove objects to and from the ObjectSet
- // to and from the ObjectSet as we click them
- var clickSelect = new BIMSURFER.ClickSelectObjects(viewer, {
-        objectSet: objectSet
-    });
  &#x60;&#x60;&#x60;&#x60;
 
  #### Boundaries

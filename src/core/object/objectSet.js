@@ -13,15 +13,15 @@
 
  </ul>
 
- ## Examples
+ ## Example
 
- #### Adding and removing Objects by ID
+ #### Highlighting an ObjectSet
 
  In this example we create four {{#crossLink "Object"}}Objects{{/crossLink}}, then add two of them to an {{#crossLink "ObjectSet"}}{{/crossLink}}.
  <br> Then we apply a {{#crossLink "HighlightEffect"}}{{/crossLink}} to the {{#crossLink "ObjectSet"}}{{/crossLink}}, causing
  it's {{#crossLink "Object"}}Objects{{/crossLink}} to become highlighted while the other two {{#crossLink "Object"}}Objects{{/crossLink}} remain un-highlighted.
 
- <iframe style="width: 600px; height: 400px" src="../../examples/effect_HighlightEffect.html"></iframe>
+ <iframe style="width: 600px; height: 400px" src="../../examples/object_ObjectSet_addObjects.html"></iframe>
 
  ````javascript
 
@@ -112,122 +112,6 @@
 
  objectSet.addObjects([object3]);
 
- ````
-
- #### Adding and removing Objects by IFC type
-
- X-ray and highlight objects that match given IFC types, using an ObjectSet, {{#crossLink "XRayEffect"}}{{/crossLink}} and {{#crossLink "HighlightEffect"}}{{/crossLink}}:
-
- ````javascript
-
- // Create a Viewer
- var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
-
- // Create a Camera
- var camera = new BIMSURFER.Camera(viewer, {
-    eye: [0, 0, -10]
- });
-
- // Create a CameraControl to interact with the Camera
- var cameraControl = new BIMSURFER.CameraControl(viewer, {
-    camera: camera
- });
-
- // Create some BoxObjects
-
- new BIMSURFER.BoxObject(viewer, {
-    objectId: "foo",
-    ifcType: "IfcWall",
-    matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])
- });
-
- new BIMSURFER.BoxObject(viewer, {
-    objectId: "bar",
-    ifcType: "IfcWall",
-    matrix: BIMSURFER.math.translationMat4v([4, 0, -4])
- });
-
- new BIMSURFER.Object(viewer, {
-    objectId: "baz",
-    ifcType: "IfcBeam",
-    matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])
- });
-
- // Create an ObjectSet
- var objectSet = new BIMSURFER.ObjectSet(viewer);
-
- // Apply an X-Ray effect to the ObjectSet
- var xrayEffect = new BIMSURFER.XRayEffect(viewer, {
-    objectSet: objectSet
- });
-
- // Apply a Highlight effect to the ObjectSet
- var highlightEffect = new BIMSURFER.HighlightEffect(viewer, {
-    objectSet: objectSet
- });
-
- // Add Objects to the ObjectSet by IFC type
- // These Objects become opaque and highlighted
- objectSet.addTypes(["IfcWall", "IfcBeam"]);
-
- // Remove an Object from the ObjectSet by IFC type
- // That Object becomes transparent and non-highlighted
- objectSet.removeTypes(["IfcWall"]);
-
- ````
-
- #### Using with a ClickSelectObjects
-
- Highlighting clicked objects, using an ObjectSet, {{#crossLink "HighlightEffect"}}{{/crossLink}} and {{#crossLink "ClickSelectObjects"}}{{/crossLink}}:
-
- ````javascript
-
- // Create a Viewer
- var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
-
- // Create a Camera
- var camera = new BIMSURFER.Camera(viewer, {
-    eye: [0, 0, -10]
- });
-
- // Create a CameraControl to interact with the Camera
- var cameraControl = new BIMSURFER.CameraControl(viewer, {
-    camera: camera
- });
-
- // Create some BoxObjects
-
- new BIMSURFER.BoxObject(viewer, {
-    objectId: "foo",
-    ifcType: "IfcWall",
-    matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])
- });
-
- new BIMSURFER.BoxObject(viewer, {
-    objectId: "bar",
-    ifcType: "IfcWall",
-    matrix: BIMSURFER.math.translationMat4v([4, 0, -4])
- });
-
- new BIMSURFER.Object(viewer, {
-    objectId: "baz",
-    ifcType: "IfcBeam",
-    matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])
- });
-
- // Create an ObjectSet
- var objectSet = new BIMSURFER.ObjectSet(viewer);
-
- // Apply a Highlight effect to the ObjectSet
- var highlightEffect = new BIMSURFER.HighlightEffect(viewer, {
-        objectSet: objectSet
-    });
-
- // Create a ClickSelectObjects control, which will add and remove objects to and from the ObjectSet
- // to and from the ObjectSet as we click them
- var clickSelect = new BIMSURFER.ClickSelectObjects(viewer, {
-        objectSet: objectSet
-    });
  ````
 
  #### Boundaries

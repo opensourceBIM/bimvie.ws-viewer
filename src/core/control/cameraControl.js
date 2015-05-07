@@ -13,6 +13,8 @@
 
  ## Example
 
+ #### Controlling a Camera
+
  In this example we're viewing a {{#crossLink "TeapotObject"}}{{/crossLink}} with a {{#crossLink "Camera"}}{{/crossLink}} that's controlled by a CameraControl.
 
  <iframe style="width: 600px; height: 400px" src="../../examples/control_CameraControl.html"></iframe>

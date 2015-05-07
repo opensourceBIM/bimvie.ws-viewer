@@ -7,6 +7,8 @@
 
  ## Example
 
+ #### Isolating an ObjectSet
+
  Isolate objects that match given IDs, using an {{#crossLink "ObjectSet"}}{{/crossLink}} and an IsolateEffect
 
  <iframe style="width: 600px; height: 400px" src="../../examples/effect_IsolateEffect.html"></iframe>

@@ -48,6 +48,7 @@
                                 <li><a href="../classes/ClickSelectObjects.html">ClickSelectObjects</a></li>
                                 <li><a href="../classes/Component.html">Component</a></li>
                                 <li><a href="../classes/Configs.html">Configs</a></li>
+                                <li><a href="../classes/Debug.html">Debug</a></li>
                                 <li><a href="../classes/DirLight.html">DirLight</a></li>
                                 <li><a href="../classes/Effect.html">Effect</a></li>
                                 <li><a href="../classes/Fly.html">Fly</a></li>
@@ -78,6 +79,7 @@
                                 <li><a href="../modules/BIMSURFER.html">BIMSURFER</a></li>
                                 <li><a href="../modules/camera.html">camera</a></li>
                                 <li><a href="../modules/control.html">control</a></li>
+                                <li><a href="../modules/debug.html">debug</a></li>
                                 <li><a href="../modules/effect.html">effect</a></li>
                                 <li><a href="../modules/geometry.html">geometry</a></li>
                                 <li><a href="../modules/input.html">input</a></li>
@@ -295,6 +297,11 @@ Almost every property on a xeoEngine Component fires a change event when you upd
                 <li class="module-class">
                     <a href="../classes/Configs.html">
                         Configs
+                    </a>
+                </li>
+                <li class="module-class">
+                    <a href="../classes/Debug.html">
+                        Debug
                     </a>
                 </li>
                 <li class="module-class">
@@ -535,6 +542,8 @@ as well as switch it between preset left, right, anterior, posterior, superior a
 
 ## Example
 
+#### Controlling a Camera
+
 In this example we're viewing a {{#crossLink "TeapotObject"}}{{/crossLink}} with a {{#crossLink "Camera"}}{{/crossLink}} that's controlled by a CameraControl.
 
 <iframe style="width: 600px; height: 400px" src="../../examples/control_CameraControl.html"></iframe>
@@ -554,6 +563,20 @@ var teapot = new BIMSURFER.TeapotObject(viewer);
 
 
 <code>&#x60;</code>`
+                    </div>
+                </li>
+                <li class="module-submodule">
+                    <a href="../modules/debug.html">
+                        debug
+                    </a>
+
+                    <div class="module-submodule-description">
+                        var debug = viewer.debug;
+
+ debug.color = [1,0,0];
+ debug.addPoint(1,2,3);
+ debug.addPoint(2,3,4);
+ debug.line();
                     </div>
                 </li>
                 <li class="module-submodule">

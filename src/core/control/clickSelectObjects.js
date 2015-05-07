@@ -14,6 +14,8 @@
 
  ## Example
 
+ #### Clicking Objects to add them to a highlighted ObjectSet
+
  In this example, we view four {{#crossLink "Objects"}}Objects{{/crossLink}} with a {{#crossLink "Camera"}}{{/crossLink}}, which we manipulate with a {{#crossLink "CameraControl"}}{{/crossLink}}.
  <br>We also use a {{#crossLink "ClickSelectObjects"}}{{/crossLink}} to add and remove
  the {{#crossLink "Objects"}}Objects{{/crossLink}} to an {{#crossLink "ObjectSet"}}{{/crossLink}}, to which we're applying
