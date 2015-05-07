@@ -28,6 +28,7 @@
     <script src="../lib/scenejs.js"></script>
     <script src="../build/bimviews.js"></script>
 
+
 </head>
 <body>
 
@@ -39,14 +40,10 @@
     // Create a Viewer
     var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
 
-    // -------------- Camera -------------------------
-
     // Create a Camera
     var camera = new BIMSURFER.Camera(viewer, {
-        eye: [0, 0, -10]
+        eye: [10, 10, -10]
     });
-
-    // -------------- Controls -------------------------
 
     var cameraControl = new BIMSURFER.CameraControl(viewer, {
         camera: camera
@@ -90,47 +87,47 @@
         objectId: "object1",
         ifcType: "IfcRoof",
         geometries: [ geometry ],
-        matrix: BIMSURFER.math.translationMat4v([-8, 0, -8])
+        matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])
     });
 
     var object2 = new BIMSURFER.Object(viewer, {
         objectId: "object2",
         ifcType: "IfcDistributionFlowElement",
         geometries: [ geometry ],
-        matrix: BIMSURFER.math.translationMat4v([8, 0, -8])
+        matrix: BIMSURFER.math.translationMat4v([4, 0, -4])
     });
 
     var object3 = new BIMSURFER.Object(viewer, {
         objectId: "object3",
         ifcType: "IfcDistributionFlowElement",
         geometries: [ geometry ],
-        matrix: BIMSURFER.math.translationMat4v([-8, 0, 8])
+        matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])
     });
 
     var object4 = new BIMSURFER.Object(viewer, {
         objectId: "object4",
         ifcType: "IfcRoof",
         geometries: [ geometry ],
-        matrix: BIMSURFER.math.translationMat4v([8, 0, 8])
+        matrix: BIMSURFER.math.translationMat4v([4, 0, 4])
     });
 
-    // Create a Selection that initially selects two of our Objects
+    // Create a Selection
 
-    var objectSet = new BIMSURFER.ObjectSet(viewer, {
-        objects: [object1, object2 ]
+    var objectSet = new BIMSURFER.ObjectSet(viewer);
+
+    // Apply a X-Ray effect to the Selection, which will cause the selected
+    // objects to appear transparent and all other Objects opaque
+
+    new BIMSURFER.XRayEffect(viewer, {
+        objectSet: objectSet,
+        invert: true
     });
 
-    // Apply a Highlight effect to the Selection, which will cause the selected
-    // objects to appear highlighted and all other Objects normal
+    // Create a objectSet control
 
-    var highlight = new BIMSURFER.HighlightEffect(viewer, {
+    new BIMSURFER.ClickSelectObjects(viewer, {
         objectSet: objectSet
     });
-
-    // Add a third Object to the Selection, causing the Highlight to now render
-    // that Object as highlighted also
-
-    objectSet.addObjects([object3]);
 
 </script>
 

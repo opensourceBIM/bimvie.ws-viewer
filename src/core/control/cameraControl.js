@@ -16,6 +16,8 @@
  In this example we have a {{#crossLink "Viewer"}}{{/crossLink}} with a
  {{#crossLink "Camera"}}{{/crossLink}} that's controlled by a CameraControl.
 
+ <iframe style="width: 600px; height: 400px" src="../../examples/camera_control.html"></iframe>
+
  ````Javascript
  // Create a Viewer
  var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);

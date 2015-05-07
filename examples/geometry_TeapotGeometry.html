@@ -35,6 +35,10 @@
 <div id="myDiv" style="position: absolute; top: 0; left: 0; height: 100%; width: 100%;">
 </div>
 
+<div id="infoDark">
+    Creating a <a href="../docs/classes/TeapotGeometry.html" target="_other">BIMSURFER.TeapotGeometry</a>
+</div>
+
 <script>
 
     // Create a Viewer
@@ -42,15 +46,13 @@
 
     // Create a Camera
     var camera = new BIMSURFER.Camera(viewer, {
-        eye: [0, 0, -10]
+        eye: [-5, 5, -5]
     });
 
-    // Create a Camera Orbit control
-    var orbit = new BIMSURFER.KeyboardOrbitCamera(viewer, { camera: camera });
+    // Create a CameraControl
+    var control = new BIMSURFER.CameraControl(viewer, { camera: camera });
 
-    // Create a box Geometry
-    // Geometry defaults to a 2x2x2 box when no vertex
-    // or index arrays are specified
+    // Create a teapot Geometry
     var geometry = new BIMSURFER.TeapotGeometry(viewer, {
         id: "myGeometry"
     });

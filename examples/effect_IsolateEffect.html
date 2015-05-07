@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head lang="en">
-    <meta charset="UTF-8">
+    <meta charset="UTF-3">
     <title></title>
 
     <style>
@@ -35,6 +35,11 @@
 <div id="myDiv" style="position: absolute; top: 0; left: 0; height: 100%; width: 100%;">
 </div>
 
+<div id="infoDark">
+    Applying a <a href="../docs/classes/IsolateEffect.html" target="_other">BIMSURFER.IsolateEffect</a> to
+    an <a href="../docs/classes/ObjectSet.html" target="_other">BIMSURFER.ObjectSet</a>
+</div>
+
 <script>
 
     // Create a Viewer
@@ -44,7 +49,7 @@
 
     // Create a Camera
     var camera = new BIMSURFER.Camera(viewer, {
-        eye: [0, 0, -10]
+        eye: [10, 10, -10]
     });
 
     // -------------- Controls -------------------------
@@ -78,9 +83,7 @@
 
     // Create a box Geometry
     // Geometry defaults to a 2x2x2 box when no vertex or index arrays are specified
-    var geometry = new BIMSURFER.TeapotGeometry(viewer, {
-        id: "myGeometry"
-    });
+    var geometry = new BIMSURFER.TeapotGeometry(viewer);
 
     // -------------- Objects -------------------------
 
@@ -88,31 +91,27 @@
     // Share the box Geometry among them
 
     var object1 = new BIMSURFER.Object(viewer, {
-        objectId: "object1",
         ifcType: "IfcRoof",
         geometries: [ geometry ],
-        matrix: BIMSURFER.math.translationMat4v([-8, 0, -8])
+        matrix: BIMSURFER.math.translationMat4v([-3, 0, -3])
     });
 
     var object2 = new BIMSURFER.Object(viewer, {
-        objectId: "object2",
         ifcType: "IfcDistributionFlowElement",
         geometries: [ geometry ],
-        matrix: BIMSURFER.math.translationMat4v([8, 0, -8])
+        matrix: BIMSURFER.math.translationMat4v([3, 0, -3])
     });
 
     var object3 = new BIMSURFER.Object(viewer, {
-        objectId: "object3",
         ifcType: "IfcDistributionFlowElement",
         geometries: [ geometry ],
-        matrix: BIMSURFER.math.translationMat4v([-8, 0, 8])
+        matrix: BIMSURFER.math.translationMat4v([-3, 0, 3])
     });
 
     var object4 = new BIMSURFER.Object(viewer, {
-        objectId: "object4",
         ifcType: "IfcRoof",
         geometries: [ geometry ],
-        matrix: BIMSURFER.math.translationMat4v([8, 0, 8])
+        matrix: BIMSURFER.math.translationMat4v([3, 0, 3])
     });
 
     // Create a Selection that initially selects two of our Objects
@@ -121,22 +120,15 @@
         objects: [object1, object2 ]
     });
 
-    // Apply a Highlight effect to the Selection, which will cause the selected
-    // objects to appear highlighted and all other Objects normal
+    // Apply an Isolate effect to the Selection, which will cause the selected
+    // objects to be visible and all other Objects invisible
 
-    var highlight = new BIMSURFER.HighlightEffect(viewer, {
+    var activate = new BIMSURFER.IsolateEffect(viewer, {
         objectSet: objectSet
     });
 
-    // Apply an XRay effect to the Selection, which will cause the selected
-    // objects to appear opaque and all other Objects transparent
-
-    var xray = new BIMSURFER.XRayEffect(viewer, {
-        objectSet: objectSet
-    });
-
-    // Add a third Object to the Selection, causing the Highlight to now render
-    // that Object as highlighted also
+    // Add a third Object to the Selection, causing the Isolate to now render
+    // that Object as opaque also
 
     objectSet.addObjects([object3]);
 

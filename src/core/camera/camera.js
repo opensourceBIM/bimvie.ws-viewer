@@ -13,46 +13,64 @@
 
  ## Example
 
- Let's create a {{#crossLink "Viewer"}}{{/crossLink}} with a Camera that's controlled by a {{#crossLink "CameraControl"}}{{/crossLink}}:
+ In this example we define multiple Cameras looking at a {{#crossLink "TeapotObject"}}{{/crossLink}}, then periodically switch between the Cameras.
+
+ <iframe style="width: 600px; height: 400px" src="../../examples/camera_Camera_multiple.html"></iframe>
 
  ````Javascript
  // Create a Viewer
  var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
 
- // Create a Camera
- var camera = new BIMSURFER.Camera(viewer, {
-    eye: [0, 0, -10]
- });
+ // Create an object
+ var box = new BIMSURFER.TeapotObject(viewer);
 
- // Create a CameraControl to interact with the Camera
- var cameraControl = new BIMSURFER.CameraControl(viewer, {
-    camera: camera
- });
+ // Create some Cameras
+ var cameras = [
 
- // Create a BoxObject
- new BIMSURFER.BoxObject(viewer, {
-    objectId: "foo",
-    ifcType: "IfcWall",
-    matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])
- });
- ````
+ new BIMSURFER.Camera(viewer, {
+            eye: [5, 5, 5],
+            active: false
+        }),
 
- Now let's create a second Camera and switch the {{#crossLink "CameraControl"}}{{/crossLink}} over to it:
+ new BIMSURFER.Camera(viewer, {
+            eye: [-5, 5, 5],
+            active: false
+        }),
 
- ````Javascript
+ new BIMSURFER.Camera(viewer, {
+            eye: [5, -5, 5],
+            active: false
+        }),
 
- // Deactivate our Camera
- camera.active = false;
+ new BIMSURFER.Camera(viewer, {
+            eye: [5, 5, -5],
+            active: false
+        }),
 
- // Create a second Camera
- // Camera is active by default
- var camera2 = new BIMSURFER.Camera(viewer, {
-        eye: [-10, 0, 0]
-    });
+ new BIMSURFER.Camera(viewer, {
+            eye: [-5, -5, 5],
+            active: false
+        })
+ ];
 
- // Switch our CameraControl to the second Camera
- // Now we're controlling that Camera
- cameraControl.camera = camera2;
+ // Periodically switch between the Cameras
+
+ var i = -1;
+ var last = -1;
+
+ setInterval(function () {
+
+        if (last > -1) {
+            cameras[last].active = false
+        }
+
+        i = (i + 1) % (cameras.length - 1);
+
+        cameras[i].active = true;
+
+        last = i;
+
+    }, 1000);
  ````
 
  @class Camera

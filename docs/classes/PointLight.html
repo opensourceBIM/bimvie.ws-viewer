@@ -149,25 +149,33 @@ head as the <a href="../classes/Camera.html" class="crosslink">Camera</a> moves.
 
 
 <h2 id="example">Example</h2>
-<pre class="code prettyprint"><code class="lang-javascript">var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+<iframe style="width: 600px; height: 400px" src="../../examples/light_point.html"></iframe>
 
+<pre class="code prettyprint"><code class="lang-javascript">// Create a Viewer
+var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+
+// Create a Camera
 var camera = new BIMSURFER.Camera(viewer, {
-   eye: [0, 0, -10]
+   eye: [5, 5, -5]
 });
 
-var cameraControl = new BIMSURFER.CameraControl(viewer, {
-   camera: camera
-});
+// Create a camera orbit control
+var control = new BIMSURFER.CameraControl(viewer, {
+       camera: camera
+   });
 
-var box = new BIMSURFER.BoxObject(viewer);
+// Create a TeapotObject
+var teapot = new BIMSURFER.TeapotObject(viewer);
 
+// Create a PointLight
 var pointLight = new BIMSURFER.PointLight(viewer, {
-   color: [1.0, 0.5, 0.5],
-   pos: [1.0, 1.0, -1.0],
-   constantAttenuation: 0.0,
-   linearAttenuation: 0.0,
-   quadraticAttenuation: 0.0
-});
+       color: [0.9, 0.9, 0.9],
+       pos: [-10.0, 10.0, 10.0],
+       constantAttenuation: 0.0,
+       linearAttenuation: 0.0,
+       quadraticAttenuation: 0.0,
+       space: "view"
+   });
 </code></pre>
 
 </div>
@@ -1050,7 +1058,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_light_pointLight.js.html#l105"><code>src&#x2F;core&#x2F;light&#x2F;pointLight.js:105</code></a>
+                            <a href="../files/src_core_light_pointLight.js.html#l114"><code>src&#x2F;core&#x2F;light&#x2F;pointLight.js:114</code></a>
                             </p>
                     
                     
@@ -1076,7 +1084,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_light_pointLight.js.html#l126"><code>src&#x2F;core&#x2F;light&#x2F;pointLight.js:126</code></a>
+                            <a href="../files/src_core_light_pointLight.js.html#l135"><code>src&#x2F;core&#x2F;light&#x2F;pointLight.js:135</code></a>
                             </p>
                     
                     
@@ -1153,7 +1161,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_light_pointLight.js.html#l146"><code>src&#x2F;core&#x2F;light&#x2F;pointLight.js:146</code></a>
+                            <a href="../files/src_core_light_pointLight.js.html#l155"><code>src&#x2F;core&#x2F;light&#x2F;pointLight.js:155</code></a>
                             </p>
                     
                     
@@ -1204,7 +1212,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_light_pointLight.js.html#l82"><code>src&#x2F;core&#x2F;light&#x2F;pointLight.js:82</code></a>
+                            <a href="../files/src_core_light_pointLight.js.html#l91"><code>src&#x2F;core&#x2F;light&#x2F;pointLight.js:91</code></a>
                             </p>
                     
                     
@@ -1231,7 +1239,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_light_pointLight.js.html#l166"><code>src&#x2F;core&#x2F;light&#x2F;pointLight.js:166</code></a>
+                            <a href="../files/src_core_light_pointLight.js.html#l175"><code>src&#x2F;core&#x2F;light&#x2F;pointLight.js:175</code></a>
                             </p>
                     
                     
@@ -1257,7 +1265,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_light_pointLight.js.html#l186"><code>src&#x2F;core&#x2F;light&#x2F;pointLight.js:186</code></a>
+                            <a href="../files/src_core_light_pointLight.js.html#l195"><code>src&#x2F;core&#x2F;light&#x2F;pointLight.js:195</code></a>
                             </p>
                     
                     

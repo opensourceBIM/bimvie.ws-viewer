@@ -408,7 +408,7 @@
             "namespaces": {},
             "module": "BIMSURFER",
             "namespace": "",
-            "description": "A **Camera** defines a viewpoint within a {{#crossLink \"Viewer\"}}Viewer{{/crossLink}}.\n\n## Overview\n\n<ul>\n<li>You can have an unlimited number of Cameras in a {{#crossLink \"Viewer\"}}{{/crossLink}}.</li>\n<li>At any instant, the Camera we're looking through is the one whose {{#crossLink \"Camera/active:property\"}}active{{/crossLink}} property is true.</li>\n<li>Cameras can be controlled with controls such as {{#crossLink \"CameraControl\"}}{{/crossLink}}, {{#crossLink \"KeyboardAxisCamera\"}}{{/crossLink}},\n{{#crossLink \"KeyboardOrbitCamera\"}}{{/crossLink}}, {{#crossLink \"KeyboardPanCamera\"}}{{/crossLink}}, {{#crossLink \"KeyboardZoomCamera\"}}{{/crossLink}},\n{{#crossLink \"MouseOrbitCamera\"}}{{/crossLink}}, {{#crossLink \"MousePanCamera\"}}{{/crossLink}} and {{#crossLink \"MouseZoomCamera\"}}{{/crossLink}}.</li>\n</ul>\n\n## Example\n\nLet's create a {{#crossLink \"Viewer\"}}{{/crossLink}} with a Camera that's controlled by a {{#crossLink \"CameraControl\"}}{{/crossLink}}:\n\n````Javascript\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n   eye: [0, 0, -10]\n});\n\n// Create a CameraControl to interact with the Camera\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n   camera: camera\n});\n\n// Create a BoxObject\nnew BIMSURFER.BoxObject(viewer, {\n   objectId: \"foo\",\n   ifcType: \"IfcWall\",\n   matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])\n});\n````\n\nNow let's create a second Camera and switch the {{#crossLink \"CameraControl\"}}{{/crossLink}} over to it:\n\n````Javascript\n\n// Deactivate our Camera\ncamera.active = false;\n\n// Create a second Camera\n// Camera is active by default\nvar camera2 = new BIMSURFER.Camera(viewer, {\n       eye: [-10, 0, 0]\n   });\n\n// Switch our CameraControl to the second Camera\n// Now we're controlling that Camera\ncameraControl.camera = camera2;\n````",
+            "description": "A **Camera** defines a viewpoint within a {{#crossLink \"Viewer\"}}Viewer{{/crossLink}}.\n\n## Overview\n\n<ul>\n<li>You can have an unlimited number of Cameras in a {{#crossLink \"Viewer\"}}{{/crossLink}}.</li>\n<li>At any instant, the Camera we're looking through is the one whose {{#crossLink \"Camera/active:property\"}}active{{/crossLink}} property is true.</li>\n<li>Cameras can be controlled with controls such as {{#crossLink \"CameraControl\"}}{{/crossLink}}, {{#crossLink \"KeyboardAxisCamera\"}}{{/crossLink}},\n{{#crossLink \"KeyboardOrbitCamera\"}}{{/crossLink}}, {{#crossLink \"KeyboardPanCamera\"}}{{/crossLink}}, {{#crossLink \"KeyboardZoomCamera\"}}{{/crossLink}},\n{{#crossLink \"MouseOrbitCamera\"}}{{/crossLink}}, {{#crossLink \"MousePanCamera\"}}{{/crossLink}} and {{#crossLink \"MouseZoomCamera\"}}{{/crossLink}}.</li>\n</ul>\n\n## Example\n\nIn this example we define multiple Cameras looking at a {{#crossLink \"TeapotObject\"}}{{/crossLink}}, then periodically switch between the Cameras.\n\n<iframe style=\"width: 600px; height: 400px\" src=\"../../examples/camera_Camera_multiple.html\"></iframe>\n\n````Javascript\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create an object\nvar box = new BIMSURFER.TeapotObject(viewer);\n\n// Create some Cameras\nvar cameras = [\n\nnew BIMSURFER.Camera(viewer, {\n           eye: [5, 5, 5],\n           active: false\n       }),\n\nnew BIMSURFER.Camera(viewer, {\n           eye: [-5, 5, 5],\n           active: false\n       }),\n\nnew BIMSURFER.Camera(viewer, {\n           eye: [5, -5, 5],\n           active: false\n       }),\n\nnew BIMSURFER.Camera(viewer, {\n           eye: [5, 5, -5],\n           active: false\n       }),\n\nnew BIMSURFER.Camera(viewer, {\n           eye: [-5, -5, 5],\n           active: false\n       })\n];\n\n// Periodically switch between the Cameras\n\nvar i = -1;\nvar last = -1;\n\nsetInterval(function () {\n\n       if (last > -1) {\n           cameras[last].active = false\n       }\n\n       i = (i + 1) % (cameras.length - 1);\n\n       cameras[i].active = true;\n\n       last = i;\n\n   }, 1000);\n````",
             "file": "src/core/camera/camera.js",
             "line": 1
         },
@@ -431,7 +431,7 @@
             "namespaces": {},
             "module": "BIMSURFER",
             "namespace": "",
-            "description": "A **CameraControl** allows you to pan, rotate and zoom a {{#crossLink \"Camera\"}}{{/crossLink}} using the mouse and keyboard,\nas well as switch it between preset left, right, anterior, posterior, superior and inferior views.\n\n## Overview\n\n<ul>\n<li>You can have multiple CameraControls within the same {{#crossLink \"Viewer\"}}{{/crossLink}}.</li>\n<li>Multiple CameraControls can drive the same {{#crossLink \"Camera\"}}{{/crossLink}}, or can each drive their own separate {{#crossLink \"Camera\"}}Cameras{{/crossLink}}.</li>\n<li>At any instant, the CameraControl we're driving is the one whose {{#crossLink \"Camera/active:property\"}}active{{/crossLink}} property is true.</li>\n<li>You can switch a CameraControl to a different {{#crossLink \"Camera\"}}{{/crossLink}} at any time.</li>\n</ul>\n\n## Example\n\nIn this example we have a {{#crossLink \"Viewer\"}}{{/crossLink}} with a\n{{#crossLink \"Camera\"}}{{/crossLink}} that's controlled by a CameraControl.\n\n````Javascript\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n   eye: [0, 0, -10]\n});\n\n// Create a CameraControl\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n   camera: camera\n});\n\n// Create a BoxObject\nnew BIMSURFER.BoxObject(viewer);\n\n````",
+            "description": "A **CameraControl** allows you to pan, rotate and zoom a {{#crossLink \"Camera\"}}{{/crossLink}} using the mouse and keyboard,\nas well as switch it between preset left, right, anterior, posterior, superior and inferior views.\n\n## Overview\n\n<ul>\n<li>You can have multiple CameraControls within the same {{#crossLink \"Viewer\"}}{{/crossLink}}.</li>\n<li>Multiple CameraControls can drive the same {{#crossLink \"Camera\"}}{{/crossLink}}, or can each drive their own separate {{#crossLink \"Camera\"}}Cameras{{/crossLink}}.</li>\n<li>At any instant, the CameraControl we're driving is the one whose {{#crossLink \"Camera/active:property\"}}active{{/crossLink}} property is true.</li>\n<li>You can switch a CameraControl to a different {{#crossLink \"Camera\"}}{{/crossLink}} at any time.</li>\n</ul>\n\n## Example\n\nIn this example we have a {{#crossLink \"Viewer\"}}{{/crossLink}} with a\n{{#crossLink \"Camera\"}}{{/crossLink}} that's controlled by a CameraControl.\n\n<iframe style=\"width: 600px; height: 400px\" src=\"../../examples/camera_control.html\"></iframe>\n\n````Javascript\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n   eye: [0, 0, -10]\n});\n\n// Create a CameraControl\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n   camera: camera\n});\n\n// Create a BoxObject\nnew BIMSURFER.BoxObject(viewer);\n\n````",
             "file": "src/core/control/mouseZoomCamera.js",
             "line": 1
         },
@@ -466,7 +466,7 @@
             "namespaces": {},
             "module": "BIMSURFER",
             "namespace": "",
-            "description": "An **BoxGeometry** is a box-shaped {{#crossLink \"Geometry\"}}{{/crossLink}}.\n\n## Overview\n\nTODO\n\n## Example\n\n````javascript\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n   eye: [0, 0, -10]\n});\n\n// Create a CameraControl to interact with the Camera\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n   camera: camera\n});\n\n// Create a BoxGeometry\nvar boxGeometry = new BIMSURFER.BoxGeometry(viewer);\n\n// Create an Object that uses our BoxGeometry\n// Note that an Object can have multiple Geometries\n\nnew BIMSURFER.Object(viewer, {\n   objectId: \"foo\",\n   ifcType: \"IfcWall\",\n   geometries: [ boxGeometry ]\n});\n````",
+            "description": "An **BoxGeometry** is a box-shaped {{#crossLink \"Geometry\"}}{{/crossLink}}.\n\n## Overview\n\nTODO\n\n## Example\n\n<iframe style=\"width: 600px; height: 400px\" src=\"../../examples/geometry_box.html\"></iframe>\n\n````javascript\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n   eye: [0, 0, -10]\n});\n\n// Create a CameraControl to interact with the Camera\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n   camera: camera\n});\n\n// Create a BoxGeometry\nvar boxGeometry = new BIMSURFER.BoxGeometry(viewer);\n\n// Create an Object that uses our BoxGeometry\n// Note that an Object can have multiple Geometries\n\nnew BIMSURFER.Object(viewer, {\n   objectId: \"foo\",\n   ifcType: \"IfcWall\",\n   geometries: [ boxGeometry ]\n});\n````",
             "file": "src/core/geometry/teapotGeometry.js",
             "line": 1
         },
@@ -549,7 +549,7 @@
             "namespace": "",
             "file": "src/core/camera/camera.js",
             "line": 1,
-            "description": "A **Camera** defines a viewpoint within a {{#crossLink \"Viewer\"}}Viewer{{/crossLink}}.\n\n## Overview\n\n<ul>\n<li>You can have an unlimited number of Cameras in a {{#crossLink \"Viewer\"}}{{/crossLink}}.</li>\n<li>At any instant, the Camera we're looking through is the one whose {{#crossLink \"Camera/active:property\"}}active{{/crossLink}} property is true.</li>\n<li>Cameras can be controlled with controls such as {{#crossLink \"CameraControl\"}}{{/crossLink}}, {{#crossLink \"KeyboardAxisCamera\"}}{{/crossLink}},\n{{#crossLink \"KeyboardOrbitCamera\"}}{{/crossLink}}, {{#crossLink \"KeyboardPanCamera\"}}{{/crossLink}}, {{#crossLink \"KeyboardZoomCamera\"}}{{/crossLink}},\n{{#crossLink \"MouseOrbitCamera\"}}{{/crossLink}}, {{#crossLink \"MousePanCamera\"}}{{/crossLink}} and {{#crossLink \"MouseZoomCamera\"}}{{/crossLink}}.</li>\n</ul>\n\n## Example\n\nLet's create a {{#crossLink \"Viewer\"}}{{/crossLink}} with a Camera that's controlled by a {{#crossLink \"CameraControl\"}}{{/crossLink}}:\n\n````Javascript\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n   eye: [0, 0, -10]\n});\n\n// Create a CameraControl to interact with the Camera\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n   camera: camera\n});\n\n// Create a BoxObject\nnew BIMSURFER.BoxObject(viewer, {\n   objectId: \"foo\",\n   ifcType: \"IfcWall\",\n   matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])\n});\n````\n\nNow let's create a second Camera and switch the {{#crossLink \"CameraControl\"}}{{/crossLink}} over to it:\n\n````Javascript\n\n// Deactivate our Camera\ncamera.active = false;\n\n// Create a second Camera\n// Camera is active by default\nvar camera2 = new BIMSURFER.Camera(viewer, {\n       eye: [-10, 0, 0]\n   });\n\n// Switch our CameraControl to the second Camera\n// Now we're controlling that Camera\ncameraControl.camera = camera2;\n````",
+            "description": "A **Camera** defines a viewpoint within a {{#crossLink \"Viewer\"}}Viewer{{/crossLink}}.\n\n## Overview\n\n<ul>\n<li>You can have an unlimited number of Cameras in a {{#crossLink \"Viewer\"}}{{/crossLink}}.</li>\n<li>At any instant, the Camera we're looking through is the one whose {{#crossLink \"Camera/active:property\"}}active{{/crossLink}} property is true.</li>\n<li>Cameras can be controlled with controls such as {{#crossLink \"CameraControl\"}}{{/crossLink}}, {{#crossLink \"KeyboardAxisCamera\"}}{{/crossLink}},\n{{#crossLink \"KeyboardOrbitCamera\"}}{{/crossLink}}, {{#crossLink \"KeyboardPanCamera\"}}{{/crossLink}}, {{#crossLink \"KeyboardZoomCamera\"}}{{/crossLink}},\n{{#crossLink \"MouseOrbitCamera\"}}{{/crossLink}}, {{#crossLink \"MousePanCamera\"}}{{/crossLink}} and {{#crossLink \"MouseZoomCamera\"}}{{/crossLink}}.</li>\n</ul>\n\n## Example\n\nIn this example we define multiple Cameras looking at a {{#crossLink \"TeapotObject\"}}{{/crossLink}}, then periodically switch between the Cameras.\n\n<iframe style=\"width: 600px; height: 400px\" src=\"../../examples/camera_Camera_multiple.html\"></iframe>\n\n````Javascript\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create an object\nvar box = new BIMSURFER.TeapotObject(viewer);\n\n// Create some Cameras\nvar cameras = [\n\nnew BIMSURFER.Camera(viewer, {\n           eye: [5, 5, 5],\n           active: false\n       }),\n\nnew BIMSURFER.Camera(viewer, {\n           eye: [-5, 5, 5],\n           active: false\n       }),\n\nnew BIMSURFER.Camera(viewer, {\n           eye: [5, -5, 5],\n           active: false\n       }),\n\nnew BIMSURFER.Camera(viewer, {\n           eye: [5, 5, -5],\n           active: false\n       }),\n\nnew BIMSURFER.Camera(viewer, {\n           eye: [-5, -5, 5],\n           active: false\n       })\n];\n\n// Periodically switch between the Cameras\n\nvar i = -1;\nvar last = -1;\n\nsetInterval(function () {\n\n       if (last > -1) {\n           cameras[last].active = false\n       }\n\n       i = (i + 1) % (cameras.length - 1);\n\n       cameras[i].active = true;\n\n       last = i;\n\n   }, 1000);\n````",
             "submodule": "camera",
             "is_constructor": 1,
             "params": [
@@ -638,7 +638,7 @@
             "namespace": "",
             "file": "src/core/control/cameraControl.js",
             "line": 1,
-            "description": "A **CameraControl** allows you to pan, rotate and zoom a {{#crossLink \"Camera\"}}{{/crossLink}} using the mouse and keyboard,\nas well as switch it between preset left, right, anterior, posterior, superior and inferior views.\n\n## Overview\n\n<ul>\n<li>You can have multiple CameraControls within the same {{#crossLink \"Viewer\"}}{{/crossLink}}.</li>\n<li>Multiple CameraControls can drive the same {{#crossLink \"Camera\"}}{{/crossLink}}, or can each drive their own separate {{#crossLink \"Camera\"}}Cameras{{/crossLink}}.</li>\n<li>At any instant, the CameraControl we're driving is the one whose {{#crossLink \"Camera/active:property\"}}active{{/crossLink}} property is true.</li>\n<li>You can switch a CameraControl to a different {{#crossLink \"Camera\"}}{{/crossLink}} at any time.</li>\n</ul>\n\n## Example\n\nIn this example we have a {{#crossLink \"Viewer\"}}{{/crossLink}} with a\n{{#crossLink \"Camera\"}}{{/crossLink}} that's controlled by a CameraControl.\n\n````Javascript\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n   eye: [0, 0, -10]\n});\n\n// Create a CameraControl\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n   camera: camera\n});\n\n// Create a BoxObject\nnew BIMSURFER.BoxObject(viewer);\n\n````",
+            "description": "A **CameraControl** allows you to pan, rotate and zoom a {{#crossLink \"Camera\"}}{{/crossLink}} using the mouse and keyboard,\nas well as switch it between preset left, right, anterior, posterior, superior and inferior views.\n\n## Overview\n\n<ul>\n<li>You can have multiple CameraControls within the same {{#crossLink \"Viewer\"}}{{/crossLink}}.</li>\n<li>Multiple CameraControls can drive the same {{#crossLink \"Camera\"}}{{/crossLink}}, or can each drive their own separate {{#crossLink \"Camera\"}}Cameras{{/crossLink}}.</li>\n<li>At any instant, the CameraControl we're driving is the one whose {{#crossLink \"Camera/active:property\"}}active{{/crossLink}} property is true.</li>\n<li>You can switch a CameraControl to a different {{#crossLink \"Camera\"}}{{/crossLink}} at any time.</li>\n</ul>\n\n## Example\n\nIn this example we have a {{#crossLink \"Viewer\"}}{{/crossLink}} with a\n{{#crossLink \"Camera\"}}{{/crossLink}} that's controlled by a CameraControl.\n\n<iframe style=\"width: 600px; height: 400px\" src=\"../../examples/camera_control.html\"></iframe>\n\n````Javascript\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n   eye: [0, 0, -10]\n});\n\n// Create a CameraControl\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n   camera: camera\n});\n\n// Create a BoxObject\nnew BIMSURFER.BoxObject(viewer);\n\n````",
             "submodule": "control",
             "is_constructor": 1,
             "params": [
@@ -689,7 +689,7 @@
             "namespace": "",
             "file": "src/core/control/clickSelectObjects.js",
             "line": 1,
-            "description": "A **ClickSelectObjects** lets you add or remove {{#crossLink \"Object\"}}Objects{{/crossLink}} to and from an {{#crossLink \"ObjectSet\"}}ObjectSet{{/crossLink}} by clicking them with the mouse.\n\n## Overview\n\n<ul>\n<li>A ClickSelectObjects adds {{#crossLink \"Object\"}}Objects{{/crossLink}} to the {{#crossLink \"ObjectSet\"}}{{/crossLink}} as you\nclick them with the mouse, removing them again when you click them a second time.</li>\n<li>Typically a ClickSelectObjects will share an {{#crossLink \"ObjectSet\"}}{{/crossLink}} with one or\nmore {{#crossLink \"Effect\"}}Effects{{/crossLink}}, in order to select which {{#crossLink \"Object\"}}Objects{{/crossLink}} are influenced by the {{#crossLink \"Effect\"}}Effects{{/crossLink}}.</li>\n<li>A ClickSelectObjects will provide its own {{#crossLink \"ObjectSet\"}}{{/crossLink}} by default.</li>\n<li>Hold down SHIFT while clicking to multi-select.</li>\n</ul>\n\n## Overview\n\nTODO\n\n## Example\n\nIn this example we have a {{#crossLink \"Viewer\"}}{{/crossLink}} with a\n{{#crossLink \"Camera\"}}{{/crossLink}} that's controlled by a CameraControl.\n\n````Javascript\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n   eye: [0, 0, -10]\n});\n\n// Create a CameraControl\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n   camera: camera\n});\n\n// Create some BoxObjects\n\nnew BIMSURFER.BoxObject(viewer, {\n   objectId: \"foo\",\n   ifcType: \"IfcWall\",\n   matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])\n});\n\nnew BIMSURFER.BoxObject(viewer, {\n   objectId: \"bar\",\n   ifcType: \"IfcWall\",\n   matrix: BIMSURFER.math.translationMat4v([4, 0, -4])\n});\n\nnew BIMSURFER.BoxObject(viewer, {\n   objectId: \"baz\",\n   ifcType: \"IfcBeam\",\n   matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])\n});\n\n// Create an ObjectSet\nvar objectSet = new BIMSURFER.ObjectSet(viewer);\n\n// Apply a highlight effect to the ObjectSet\nvar highlightEffect = new BIMSURFER.HighlightEffect(viewer, {\n   objectSet: objectSet\n});\n\n// Create a ClickSelectObjects\nvar clickSelectObjects = new BIMSURFER.ClickSelectObjects(viewer, {\n   objectSet: objectSet\n});\n\n````",
+            "description": "A **ClickSelectObjects** lets you add or remove {{#crossLink \"Object\"}}Objects{{/crossLink}} to and from an {{#crossLink \"ObjectSet\"}}ObjectSet{{/crossLink}} by clicking them with the mouse.\n\n## Overview\n\n<ul>\n<li>A ClickSelectObjects adds {{#crossLink \"Object\"}}Objects{{/crossLink}} to the {{#crossLink \"ObjectSet\"}}{{/crossLink}} as you\nclick them with the mouse, removing them again when you click them a second time.</li>\n<li>Typically a ClickSelectObjects will share an {{#crossLink \"ObjectSet\"}}{{/crossLink}} with one or\nmore {{#crossLink \"Effect\"}}Effects{{/crossLink}}, in order to select which {{#crossLink \"Object\"}}Objects{{/crossLink}} are influenced by the {{#crossLink \"Effect\"}}Effects{{/crossLink}}.</li>\n<li>A ClickSelectObjects will provide its own {{#crossLink \"ObjectSet\"}}{{/crossLink}} by default.</li>\n<li>Hold down SHIFT while clicking to multi-select.</li>\n</ul>\n\n## Overview\n\nTODO\n\n## Example\n\nIn this example we have a {{#crossLink \"Viewer\"}}{{/crossLink}} with a\n{{#crossLink \"Camera\"}}{{/crossLink}} that's controlled by a CameraControl.\n\n<iframe style=\"width: 600px; height: 400px\" src=\"../../examples/control_clickSelectObjects.html\"></iframe>\n\n````Javascript\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n   eye: [10, 10, -10]\n});\n\n// Create a CameraControl\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n   camera: camera\n});\n\n// Create a Geometry\nvar geometry = new BIMSURFER.TeapotGeometry(viewer);\n\n// Create some Objects\n// Share the Geometry among them\n\nvar object1 = new BIMSURFER.Object(viewer, {\n   objectId: \"object1\",\n   ifcType: \"IfcRoof\",\n   geometries: [ geometry ],\n   matrix: BIMSURFER.math.translationMat4v([-3, 0, -3])\n});\n\nvar object2 = new BIMSURFER.Object(viewer, {\n   objectId: \"object2\",\n   ifcType: \"IfcDistributionFlowElement\",\n   geometries: [ geometry ],\n   matrix: BIMSURFER.math.translationMat4v([3, 0, -3])\n});\n\nvar object3 = new BIMSURFER.Object(viewer, {\n   objectId: \"object3\",\n   ifcType: \"IfcDistributionFlowElement\",\n   geometries: [ geometry ],\n   matrix: BIMSURFER.math.translationMat4v([-3, 0, 3])\n});\n\nvar object4 = new BIMSURFER.Object(viewer, {\n   objectId: \"object4\",\n   ifcType: \"IfcRoof\",\n   geometries: [ geometry ],\n   matrix: BIMSURFER.math.translationMat4v([3, 0, 3])\n});\n\n// Create an ObjectSet\nvar objectSet = new BIMSURFER.ObjectSet(viewer);\n\n// Apply a highlight effect to the ObjectSet\nvar highlightEffect = new BIMSURFER.HighlightEffect(viewer, {\n   objectSet: objectSet\n});\n\n// Create a ClickSelectObjects\nvar clickSelectObjects = new BIMSURFER.ClickSelectObjects(viewer, {\n   objectSet: objectSet\n});\n\n````",
             "submodule": "control",
             "is_constructor": 1,
             "params": [
@@ -1305,7 +1305,7 @@
             "namespace": "",
             "file": "src/core/geometry/boxGeometry.js",
             "line": 1,
-            "description": "An **BoxGeometry** is a box-shaped {{#crossLink \"Geometry\"}}{{/crossLink}}.\n\n## Overview\n\nTODO\n\n## Example\n\n````javascript\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n   eye: [0, 0, -10]\n});\n\n// Create a CameraControl to interact with the Camera\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n   camera: camera\n});\n\n// Create a BoxGeometry\nvar boxGeometry = new BIMSURFER.BoxGeometry(viewer);\n\n// Create an Object that uses our BoxGeometry\n// Note that an Object can have multiple Geometries\n\nnew BIMSURFER.Object(viewer, {\n   objectId: \"foo\",\n   ifcType: \"IfcWall\",\n   geometries: [ boxGeometry ]\n});\n````",
+            "description": "An **BoxGeometry** is a box-shaped {{#crossLink \"Geometry\"}}{{/crossLink}}.\n\n## Overview\n\nTODO\n\n## Example\n\n<iframe style=\"width: 600px; height: 400px\" src=\"../../examples/geometry_box.html\"></iframe>\n\n````javascript\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n   eye: [0, 0, -10]\n});\n\n// Create a CameraControl to interact with the Camera\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n   camera: camera\n});\n\n// Create a BoxGeometry\nvar boxGeometry = new BIMSURFER.BoxGeometry(viewer);\n\n// Create an Object that uses our BoxGeometry\n// Note that an Object can have multiple Geometries\n\nnew BIMSURFER.Object(viewer, {\n   objectId: \"foo\",\n   ifcType: \"IfcWall\",\n   geometries: [ boxGeometry ]\n});\n````",
             "submodule": "geometry",
             "is_constructor": 1,
             "params": [
@@ -1350,7 +1350,7 @@
             "namespace": "",
             "file": "src/core/geometry/geometry.js",
             "line": 1,
-            "description": "TODO\n\n## Overview\n\nTODO\n\n## Example\n\n#### Creating a triangle mesh Geometry\n\n````javascript\n\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n   eye: [0, 0, -10]\n});\n\n// Create a CameraControl to interact with the Camera\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n   camera: camera\n});\n\n// Create a triangle mesh Geometry\n\nvar geometry = new BIMSURFER.Geometry(viewer, {\n\n   primitive: \"triangles\",\n\n   positions: [\n       5, 5, 5, -5, 5, 5, -5, -5, 5, 5, -5, 5, // v0-v1-v2-v3 front\n       5, 5, 5, 5, -5, 5, 5, -5, -5, 5, 5, -5, // v0-v3-v4-v5 right\n       5, 5, 5, 5, 5, -5, -5, 5, -5, -5, 5, 5, // v0-v5-v6-v1 top\n       -5, 5, 5, -5, 5, -5, -5, -5, -5, -5, -5, 5, // v1-v6-v7-v2 left\n       -5, -5, -5, 5, -5, -5, 5, -5, 5, -5, -5, 5, // v7-v4-v3-v2 bottom\n       5, -5, -5, -5, -5, -5, -5, 5, -5, 5, 5, -5 // v4-v7-v6-v5 back\n   ],\n\n   normals: [\n       0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, // v0-v1-v2-v3 front\n       1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, // v0-v3-v4-v5 right\n       0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, // v0-v5-v6-v1 top\n      -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, // v1-v6-v7-v2 left\n       0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, // v7-v4-v3-v2 bottom\n       0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1 // v4-v7-v6-v5 back\n   ],\n\n   indices: [\n       0, 1, 2, 0, 2, 3, // back\n       4, 5, 6, 4, 6, 7,  // front\n       8, 9, 10, 8, 10, 11, // right\n       12, 13, 14, 12, 14, 15, // top\n       16, 17, 18, 16, 18, 19, // left\n       20, 21, 22, 20, 22, 23 // bottom\n   ]\n});\n\n// Create an Object that uses our Geometry\n// Note that an Object can have multiple Geometries\n\nnew BIMSURFER.BoxObject(viewer, {\n   objectId: \"foo\",\n   ifcType: \"IfcWall\",\n   geometries: [ geometry ]\n});\n\n````",
+            "description": "TODO\n\n## Overview\n\nTODO\n\n## Example\n\n#### Creating a triangle mesh Geometry\n\n<iframe style=\"width: 600px; height: 400px\" src=\"../../examples/geometry_custom.html\">Run this example</iframe>\n\n````javascript\n\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n   eye: [0, 0, -10]\n});\n\n// Create a CameraControl to interact with the Camera\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n   camera: camera\n});\n\n// Create a triangle mesh Geometry\n\nvar geometry = new BIMSURFER.Geometry(viewer, {\n\n   primitive: \"triangles\",\n\n   positions: [\n       5, 5, 5, -5, 5, 5, -5, -5, 5, 5, -5, 5, // v0-v1-v2-v3 front\n       5, 5, 5, 5, -5, 5, 5, -5, -5, 5, 5, -5, // v0-v3-v4-v5 right\n       5, 5, 5, 5, 5, -5, -5, 5, -5, -5, 5, 5, // v0-v5-v6-v1 top\n       -5, 5, 5, -5, 5, -5, -5, -5, -5, -5, -5, 5, // v1-v6-v7-v2 left\n       -5, -5, -5, 5, -5, -5, 5, -5, 5, -5, -5, 5, // v7-v4-v3-v2 bottom\n       5, -5, -5, -5, -5, -5, -5, 5, -5, 5, 5, -5 // v4-v7-v6-v5 back\n   ],\n\n   normals: [\n       0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, // v0-v1-v2-v3 front\n       1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, // v0-v3-v4-v5 right\n       0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, // v0-v5-v6-v1 top\n      -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, // v1-v6-v7-v2 left\n       0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, // v7-v4-v3-v2 bottom\n       0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1 // v4-v7-v6-v5 back\n   ],\n\n   indices: [\n       0, 1, 2, 0, 2, 3, // back\n       4, 5, 6, 4, 6, 7,  // front\n       8, 9, 10, 8, 10, 11, // right\n       12, 13, 14, 12, 14, 15, // top\n       16, 17, 18, 16, 18, 19, // left\n       20, 21, 22, 20, 22, 23 // bottom\n   ]\n});\n\n// Create an Object that uses our Geometry\n// Note that an Object can have multiple Geometries\n\nnew BIMSURFER.BoxObject(viewer, {\n   objectId: \"foo\",\n   ifcType: \"IfcWall\",\n   geometries: [ geometry ]\n});\n\n````",
             "submodule": "geometry",
             "is_constructor": 1,
             "params": [
@@ -1438,7 +1438,7 @@
             "namespace": "",
             "file": "src/core/geometry/teapotGeometry.js",
             "line": 1,
-            "description": "An **TeapotGeometry** is a teapot-shaped {{#crossLink \"Geometry\"}}{{/crossLink}}.\n\n## Overview\n\nTODO\n\n## Example\n\n````javascript\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n   eye: [0, 0, -10]\n});\n\n// Create a CameraControl to interact with the Camera\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n   camera: camera\n});\n\n// Create a TeapotGeometry\nvar teapotGeometry = new BIMSURFER.TeapotGeometry(viewer);\n\n// Create an Object that uses our TeapotGeometry\n// Note that an Object can have multiple Geometries\n\nnew BIMSURFER.Object(viewer, {\n   objectId: \"foo\",\n   ifcType: \"IfcWall\",\n   geometries: [ teapotGeometry ]\n});\n````",
+            "description": "An **TeapotGeometry** is a teapot-shaped {{#crossLink \"Geometry\"}}{{/crossLink}}.\n\n## Overview\n\nTODO\n\n## Example\n\n<iframe style=\"width: 600px; height: 400px\" src=\"../../examples/geometry_teapot.html\"></iframe>\n\n````javascript\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n   eye: [0, 0, -10]\n});\n\n// Create a CameraControl to interact with the Camera\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n   camera: camera\n});\n\n// Create a TeapotGeometry\nvar teapotGeometry = new BIMSURFER.TeapotGeometry(viewer);\n\n// Create an Object that uses our TeapotGeometry\n// Note that an Object can have multiple Geometries\n\nnew BIMSURFER.Object(viewer, {\n   objectId: \"foo\",\n   ifcType: \"IfcWall\",\n   geometries: [ teapotGeometry ]\n});\n````",
             "submodule": "geometry",
             "is_constructor": 1,
             "params": [
@@ -1499,7 +1499,7 @@
             "namespace": "",
             "file": "src/core/light/ambientLight.js",
             "line": 1,
-            "description": "An **AmbientLight** is a {{#crossLink \"Light\"}}{{/crossLink}} that defines an ambient light source of fixed intensity and color that affects all attached {{#crossLink \"Object\"}}Objects{{/crossLink}}\n equally.\n## Overview\n\nTODO\n## Example\n```` javascript\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\nvar camera = new BIMSURFER.Camera(viewer, {\n    eye: [0, 0, -10]\n});\n\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n    camera: camera\n});\n\nvar box = new BIMSURFER.BoxObject(viewer);\n\nvar ambientLight = new BIMSURFER.AmbientLight(viewer, {\n    color: [0.4, 0.4, 0.4]\n});\n ````",
+            "description": "An **AmbientLight** is a {{#crossLink \"Light\"}}{{/crossLink}} that defines an ambient light source of fixed intensity and color that affects all attached {{#crossLink \"Object\"}}Objects{{/crossLink}}\n equally.\n## Overview\n\nTODO\n## Example\n<iframe style=\"width: 600px; height: 400px\" src=\"../../examples/light_ambient.html\"></iframe>\n```` javascript\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n    eye: [5, 5, -5]\n});\n\n// Create a camera orbit control\nvar control = new BIMSURFER.CameraControl(viewer, {\n     camera: camera\n});\n\n// Create a TeapotObject\nvar teapot = new BIMSURFER.TeapotObject(viewer);\n\n// Create an AmbientLight\nvar ambientLight = new BIMSURFER.AmbientLight(viewer, {\n     color: [0.4, 0.4, 0.4]\n});\n````",
             "is_constructor": 1,
             "params": [
                 {
@@ -1550,7 +1550,7 @@
             "namespace": "",
             "file": "src/core/light/dirLight.js",
             "line": 1,
-            "description": "A **DirLight** is a {{#crossLink \"Light\"}}{{/crossLink}} that defines a directional light source that originates from a single point and spreads outward in all directions.\n\n## Overview\n\n<ul>\n\n<li>DirLights have a position, but no direction.</li>\n\n<li>DirLights may be defined in either **World** or **View** coordinate space. When in World-space, their position\nis relative to the World coordinate system, and will appear to move as the {{#crossLink \"Camera\"}}{{/crossLink}} moves.\nWhen in View-space, their position is relative to the View coordinate system, and will behave as if fixed to the viewer's\nhead as the {{#crossLink \"Camera\"}}{{/crossLink}} moves.</li>\n\n<li>Within bIMSurfer's's Phong lighting calculations, DirLight {{#crossLink \"DirLight/diffuse:property\"}}{{/crossLink}} and\n{{#crossLink \"DirLight/specular:property\"}}{{/crossLink}}.</li>\n\n<li>DirLights have {{#crossLink \"DirLight/constantAttenuation:property\"}}{{/crossLink}}, {{#crossLink \"DirLight/linearAttenuation:property\"}}{{/crossLink}} and\n{{#crossLink \"DirLight/quadraticAttenuation:property\"}}{{/crossLink}} factors, which indicate how their intensity attenuates over distance.</li>\n\n\n</ul>\n\n\n## Example\n\n```` javascript\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\nvar camera = new BIMSURFER.Camera(viewer, {\n   eye: [0, 0, -10]\n});\n\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n   camera: camera\n});\n\nvar box = new BIMSURFER.BoxObject(viewer);\n\nvar dirLight = new BIMSURFER.DirLight(viewer, {\n   color: [0.6, 0.9, 0.9],\n   dir: [1.0, 0.0, 0.0],\n   space: \"view\"\n});\n````",
+            "description": "A **DirLight** is a {{#crossLink \"Light\"}}{{/crossLink}} that defines a directional light source that originates from a single point and spreads outward in all directions.\n\n## Overview\n\n<ul>\n\n<li>DirLights have a position, but no direction.</li>\n\n<li>DirLights may be defined in either **World** or **View** coordinate space. When in World-space, their position\nis relative to the World coordinate system, and will appear to move as the {{#crossLink \"Camera\"}}{{/crossLink}} moves.\nWhen in View-space, their position is relative to the View coordinate system, and will behave as if fixed to the viewer's\nhead as the {{#crossLink \"Camera\"}}{{/crossLink}} moves.</li>\n\n<li>Within bIMSurfer's's Phong lighting calculations, DirLight {{#crossLink \"DirLight/diffuse:property\"}}{{/crossLink}} and\n{{#crossLink \"DirLight/specular:property\"}}{{/crossLink}}.</li>\n\n<li>DirLights have {{#crossLink \"DirLight/constantAttenuation:property\"}}{{/crossLink}}, {{#crossLink \"DirLight/linearAttenuation:property\"}}{{/crossLink}} and\n{{#crossLink \"DirLight/quadraticAttenuation:property\"}}{{/crossLink}} factors, which indicate how their intensity attenuates over distance.</li>\n\n\n</ul>\n\n\n## Example\n\n<iframe style=\"width: 600px; height: 400px\" src=\"../../examples/light_directional.html\"></iframe>\n\n```` javascript\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n     eye: [5, 5, -5]\n});\n\n// Create a camera orbit control\nvar control = new BIMSURFER.CameraControl(viewer, {\n       camera: camera\n   });\n\n// Create a TeapotObject\nvar teapot = new BIMSURFER.TeapotObject(viewer);\n\n// Create a DirLight\nvar dirLight = new BIMSURFER.DirLight(viewer, {\n       color: [0.9, 0.9, 0.9],\n       dir: [1.0, 0.0, -.5],\n       space: \"view\"\n   });\n````",
             "is_constructor": 1,
             "extends": "Light",
             "params": [
@@ -1665,7 +1665,7 @@
             "namespace": "",
             "file": "src/core/light/pointLight.js",
             "line": 1,
-            "description": "A **PointLight** is a {{#crossLink \"Light\"}}{{/crossLink}} that defines a positional light source that originates from a single point and spreads outward in all directions.\n\n## Overview\n\n<ul>\n\n<li>PointLights have a position, but no direction.</li>\n\n<li>PointLights may be defined in either **World** or **View** coordinate space. When in World-space, their position\nis relative to the World coordinate system, and will appear to move as the {{#crossLink \"Camera\"}}{{/crossLink}} moves.\nWhen in View-space, their position is relative to the View coordinate system, and will behave as if fixed to the viewer's\nhead as the {{#crossLink \"Camera\"}}{{/crossLink}} moves.</li>\n\n<li>PointLights have {{#crossLink \"PointLight/constantAttenuation:property\"}}{{/crossLink}}, {{#crossLink \"PointLight/linearAttenuation:property\"}}{{/crossLink}} and\n{{#crossLink \"PointLight/quadraticAttenuation:property\"}}{{/crossLink}} factors, which indicate how their intensity attenuates over distance.</li>\n\n</ul>\n\n\n## Example\n\n```` javascript\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\nvar camera = new BIMSURFER.Camera(viewer, {\n   eye: [0, 0, -10]\n});\n\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n   camera: camera\n});\n\nvar box = new BIMSURFER.BoxObject(viewer);\n\nvar pointLight = new BIMSURFER.PointLight(viewer, {\n   color: [1.0, 0.5, 0.5],\n   pos: [1.0, 1.0, -1.0],\n   constantAttenuation: 0.0,\n   linearAttenuation: 0.0,\n   quadraticAttenuation: 0.0\n});\n````",
+            "description": "A **PointLight** is a {{#crossLink \"Light\"}}{{/crossLink}} that defines a positional light source that originates from a single point and spreads outward in all directions.\n\n## Overview\n\n<ul>\n\n<li>PointLights have a position, but no direction.</li>\n\n<li>PointLights may be defined in either **World** or **View** coordinate space. When in World-space, their position\nis relative to the World coordinate system, and will appear to move as the {{#crossLink \"Camera\"}}{{/crossLink}} moves.\nWhen in View-space, their position is relative to the View coordinate system, and will behave as if fixed to the viewer's\nhead as the {{#crossLink \"Camera\"}}{{/crossLink}} moves.</li>\n\n<li>PointLights have {{#crossLink \"PointLight/constantAttenuation:property\"}}{{/crossLink}}, {{#crossLink \"PointLight/linearAttenuation:property\"}}{{/crossLink}} and\n{{#crossLink \"PointLight/quadraticAttenuation:property\"}}{{/crossLink}} factors, which indicate how their intensity attenuates over distance.</li>\n\n</ul>\n\n\n## Example\n\n<iframe style=\"width: 600px; height: 400px\" src=\"../../examples/light_point.html\"></iframe>\n\n```` javascript\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n   eye: [5, 5, -5]\n});\n\n// Create a camera orbit control\nvar control = new BIMSURFER.CameraControl(viewer, {\n       camera: camera\n   });\n\n// Create a TeapotObject\nvar teapot = new BIMSURFER.TeapotObject(viewer);\n\n// Create a PointLight\nvar pointLight = new BIMSURFER.PointLight(viewer, {\n       color: [0.9, 0.9, 0.9],\n       pos: [-10.0, 10.0, 10.0],\n       constantAttenuation: 0.0,\n       linearAttenuation: 0.0,\n       quadraticAttenuation: 0.0,\n       space: \"view\"\n   });\n\n````",
             "is_constructor": 1,
             "extends": "Light",
             "params": [
@@ -2193,7 +2193,7 @@
         },
         {
             "file": "src/core/camera/camera.js",
-            "line": 75,
+            "line": 93,
             "description": "Defines a viewpoint within a {@link BIMSURFER.Viewer}.",
             "class": "Camera",
             "module": "BIMSURFER",
@@ -2201,7 +2201,7 @@
         },
         {
             "file": "src/core/camera/camera.js",
-            "line": 80,
+            "line": 98,
             "description": "JavaScript class name for this Component.",
             "itemtype": "property",
             "name": "className",
@@ -2213,7 +2213,7 @@
         },
         {
             "file": "src/core/camera/camera.js",
-            "line": 116,
+            "line": 134,
             "description": "Rotate 'eye' about 'look', around the 'up' vector",
             "params": [
                 {
@@ -2228,7 +2228,7 @@
         },
         {
             "file": "src/core/camera/camera.js",
-            "line": 136,
+            "line": 154,
             "description": "Rotate 'eye' about 'look' around the X-axis",
             "params": [
                 {
@@ -2243,7 +2243,7 @@
         },
         {
             "file": "src/core/camera/camera.js",
-            "line": 162,
+            "line": 180,
             "description": "Rotate 'look' about 'eye', around the 'up' vector\n\n<p>Applies constraints added with {@link #addConstraint}.</p>",
             "params": [
                 {
@@ -2258,7 +2258,7 @@
         },
         {
             "file": "src/core/camera/camera.js",
-            "line": 184,
+            "line": 202,
             "description": "Rotate 'eye' about 'look' around the X-axis",
             "params": [
                 {
@@ -2273,7 +2273,7 @@
         },
         {
             "file": "src/core/camera/camera.js",
-            "line": 210,
+            "line": 228,
             "description": "Pans the camera along X and Y axis.",
             "params": [
                 {
@@ -2287,7 +2287,7 @@
         },
         {
             "file": "src/core/camera/camera.js",
-            "line": 264,
+            "line": 282,
             "description": "Increments/decrements zoom factor, ie. distance between eye and look.",
             "params": [
                 {
@@ -2301,7 +2301,7 @@
         },
         {
             "file": "src/core/camera/camera.js",
-            "line": 282,
+            "line": 300,
             "description": "Flag which indicates whether this Camera is active or not.\n\nFires an {{#crossLink \"Camera/active:event\"}}{{/crossLink}} event on change.",
             "itemtype": "property",
             "name": "active",
@@ -2312,7 +2312,7 @@
         },
         {
             "file": "src/core/camera/camera.js",
-            "line": 357,
+            "line": 375,
             "description": "Fired whenever this Camera's {{#crossLink \"Camera/active:property\"}}{{/crossLink}} property changes.",
             "itemtype": "event",
             "name": "active",
@@ -2328,7 +2328,7 @@
         },
         {
             "file": "src/core/camera/camera.js",
-            "line": 382,
+            "line": 400,
             "description": "Position of the eye.\nFires an {{#crossLink \"Camera/eye:event\"}}{{/crossLink}} event on change.",
             "itemtype": "property",
             "name": "eye",
@@ -2340,7 +2340,7 @@
         },
         {
             "file": "src/core/camera/camera.js",
-            "line": 401,
+            "line": 419,
             "description": "Position of the point-of-interest.\nFires a {{#crossLink \"Camera/look:event\"}}{{/crossLink}} event on change.",
             "itemtype": "property",
             "name": "look",
@@ -2352,7 +2352,7 @@
         },
         {
             "file": "src/core/camera/camera.js",
-            "line": 420,
+            "line": 438,
             "description": "Direction of the \"up\" vector.\nFires an {{#crossLink \"Camera/up:event\"}}{{/crossLink}} event on change.",
             "itemtype": "property",
             "name": "up",
@@ -2512,7 +2512,7 @@
         },
         {
             "file": "src/core/control/cameraControl.js",
-            "line": 55,
+            "line": 57,
             "description": "JavaScript class name for this Component.",
             "itemtype": "property",
             "name": "className",
@@ -2524,7 +2524,7 @@
         },
         {
             "file": "src/core/control/cameraControl.js",
-            "line": 114,
+            "line": 116,
             "description": "The {{#crossLink \"Camera\"}}{{/crossLink}} being controlled.",
             "itemtype": "property",
             "name": "camera",
@@ -2535,7 +2535,7 @@
         },
         {
             "file": "src/core/control/cameraControl.js",
-            "line": 161,
+            "line": 163,
             "description": "Flag which indicates whether this CameraControl is active or not.\n\nFires an {{#crossLink \"CameraControl/active:event\"}}{{/crossLink}} event on change.",
             "itemtype": "property",
             "name": "active",
@@ -2546,7 +2546,7 @@
         },
         {
             "file": "src/core/control/cameraControl.js",
-            "line": 182,
+            "line": 184,
             "description": "Fired whenever this CameraControl's {{#crossLink \"CameraControl/active:property\"}}{{/crossLink}} property changes.",
             "itemtype": "event",
             "name": "active",
@@ -2562,7 +2562,7 @@
         },
         {
             "file": "src/core/control/clickSelectObjects.js",
-            "line": 92,
+            "line": 108,
             "description": "JavaScript class name for this Component.",
             "itemtype": "property",
             "name": "className",
@@ -2574,7 +2574,7 @@
         },
         {
             "file": "src/core/control/clickSelectObjects.js",
-            "line": 112,
+            "line": 128,
             "description": "Flag which indicates whether this ClickSelectObjects is active or not.\n\nFires a {{#crossLink \"ClickSelectObjects/active:event\"}}{{/crossLink}} event on change.",
             "itemtype": "property",
             "name": "active",
@@ -2585,7 +2585,7 @@
         },
         {
             "file": "src/core/control/clickSelectObjects.js",
-            "line": 189,
+            "line": 205,
             "description": "Fired whenever this ClickSelectObjects's {{#crossLink \"ClickSelectObjects/active:property\"}}{{/crossLink}} property changes.",
             "itemtype": "event",
             "name": "active",
@@ -2987,7 +2987,7 @@
         },
         {
             "file": "src/core/geometry/boxGeometry.js",
-            "line": 53,
+            "line": 55,
             "description": "JavaScript class name for this Component.",
             "itemtype": "property",
             "name": "className",
@@ -2999,7 +2999,7 @@
         },
         {
             "file": "src/core/geometry/geometry.js",
-            "line": 95,
+            "line": 97,
             "description": "JavaScript class name for this Component.",
             "itemtype": "property",
             "name": "className",
@@ -3011,7 +3011,7 @@
         },
         {
             "file": "src/core/geometry/teapotGeometry.js",
-            "line": 54,
+            "line": 56,
             "description": "JavaScript class name for this Component.",
             "itemtype": "property",
             "name": "className",
@@ -4409,7 +4409,7 @@
         },
         {
             "file": "src/core/light/ambientLight.js",
-            "line": 58,
+            "line": 66,
             "description": "The color of this AmbientLight.",
             "itemtype": "property",
             "name": "color",
@@ -4420,7 +4420,7 @@
         },
         {
             "file": "src/core/light/dirLight.js",
-            "line": 78,
+            "line": 85,
             "description": "The direction of this DirLight.\n\nThis will be either World- or View-space, depending on the value of {{#crossLink \"DirLight/space:property\"}}{{/crossLink}}.",
             "itemtype": "property",
             "name": "dir",
@@ -4431,7 +4431,7 @@
         },
         {
             "file": "src/core/light/dirLight.js",
-            "line": 101,
+            "line": 108,
             "description": "The color of this DirLight.",
             "itemtype": "property",
             "name": "color",
@@ -4442,7 +4442,7 @@
         },
         {
             "file": "src/core/light/dirLight.js",
-            "line": 122,
+            "line": 129,
             "description": "Indicates which coordinate space this DirLight is in.\n\nSupported values are:\n\n<ul>\n<li>\"view\" - View space, aligned within the view volume as if fixed to the viewer's head</li>\n<li>\"world\" - World space, fixed within the world, moving within the view volume with respect to camera</li>\n</ul>",
             "itemtype": "property",
             "name": "space",
@@ -4489,7 +4489,7 @@
         },
         {
             "file": "src/core/light/pointLight.js",
-            "line": 82,
+            "line": 91,
             "description": "The position of this PointLight.\n\nThis will be either World- or View-space, depending on the value of {{#crossLink \"PointLight/space:property\"}}{{/crossLink}}.",
             "itemtype": "property",
             "name": "pos",
@@ -4500,7 +4500,7 @@
         },
         {
             "file": "src/core/light/pointLight.js",
-            "line": 105,
+            "line": 114,
             "description": "The color of this PointLight.",
             "itemtype": "property",
             "name": "color",
@@ -4511,7 +4511,7 @@
         },
         {
             "file": "src/core/light/pointLight.js",
-            "line": 126,
+            "line": 135,
             "description": "The constant attenuation factor for this PointLight.",
             "itemtype": "property",
             "name": "constantAttenuation",
@@ -4522,7 +4522,7 @@
         },
         {
             "file": "src/core/light/pointLight.js",
-            "line": 146,
+            "line": 155,
             "description": "The linear attenuation factor for this PointLight.",
             "itemtype": "property",
             "name": "linearAttenuation",
@@ -4533,7 +4533,7 @@
         },
         {
             "file": "src/core/light/pointLight.js",
-            "line": 166,
+            "line": 175,
             "description": "The quadratic attenuation factor for this Pointlight.",
             "itemtype": "property",
             "name": "quadraticAttenuation",
@@ -4544,7 +4544,7 @@
         },
         {
             "file": "src/core/light/pointLight.js",
-            "line": 186,
+            "line": 195,
             "description": "Indicates which coordinate space this PointLight is in.\n\nSupported values are:\n\n<ul>\n<li>\"view\" - View space, aligned within the view volume as if fixed to the viewer's head</li>\n<li>\"world\" - World space, fixed within the world, moving within the view volume with respect to camera</li>\n</ul>",
             "itemtype": "property",
             "name": "space",
@@ -7170,31 +7170,31 @@
         },
         {
             "message": "Missing item type\nDefines a viewpoint within a {@link BIMSURFER.Viewer}.",
-            "line": " src/core/camera/camera.js:75"
+            "line": " src/core/camera/camera.js:93"
         },
         {
             "message": "Missing item type\nRotate 'eye' about 'look', around the 'up' vector",
-            "line": " src/core/camera/camera.js:116"
+            "line": " src/core/camera/camera.js:134"
         },
         {
             "message": "Missing item type\nRotate 'eye' about 'look' around the X-axis",
-            "line": " src/core/camera/camera.js:136"
+            "line": " src/core/camera/camera.js:154"
         },
         {
             "message": "Missing item type\nRotate 'look' about 'eye', around the 'up' vector\n\n<p>Applies constraints added with {@link #addConstraint}.</p>",
-            "line": " src/core/camera/camera.js:162"
+            "line": " src/core/camera/camera.js:180"
         },
         {
             "message": "Missing item type\nRotate 'eye' about 'look' around the X-axis",
-            "line": " src/core/camera/camera.js:184"
+            "line": " src/core/camera/camera.js:202"
         },
         {
             "message": "Missing item type\nPans the camera along X and Y axis.",
-            "line": " src/core/camera/camera.js:210"
+            "line": " src/core/camera/camera.js:228"
         },
         {
             "message": "Missing item type\nIncrements/decrements zoom factor, ie. distance between eye and look.",
-            "line": " src/core/camera/camera.js:264"
+            "line": " src/core/camera/camera.js:282"
         },
         {
             "message": "Missing item type\nCreates a canvas",

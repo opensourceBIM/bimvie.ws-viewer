@@ -148,12 +148,14 @@ more <a href="../classes/Effect.html" class="crosslink">Effects</a>, in order to
 <h2 id="example">Example</h2>
 <p>In this example we have a <a href="../classes/Viewer.html" class="crosslink">Viewer</a> with a
 <a href="../classes/Camera.html" class="crosslink">Camera</a> that&#39;s controlled by a CameraControl.</p>
+<iframe style="width: 600px; height: 400px" src="../../examples/control_clickSelectObjects.html"></iframe>
+
 <pre class="code prettyprint"><code class="lang-Javascript">// Create a Viewer
 var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
 
 // Create a Camera
 var camera = new BIMSURFER.Camera(viewer, {
-   eye: [0, 0, -10]
+   eye: [10, 10, -10]
 });
 
 // Create a CameraControl
@@ -161,24 +163,38 @@ var cameraControl = new BIMSURFER.CameraControl(viewer, {
    camera: camera
 });
 
-// Create some BoxObjects
+// Create a Geometry
+var geometry = new BIMSURFER.TeapotGeometry(viewer);
 
-new BIMSURFER.BoxObject(viewer, {
-   objectId: "foo",
-   ifcType: "IfcWall",
-   matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])
+// Create some Objects
+// Share the Geometry among them
+
+var object1 = new BIMSURFER.Object(viewer, {
+   objectId: "object1",
+   ifcType: "IfcRoof",
+   geometries: [ geometry ],
+   matrix: BIMSURFER.math.translationMat4v([-3, 0, -3])
 });
 
-new BIMSURFER.BoxObject(viewer, {
-   objectId: "bar",
-   ifcType: "IfcWall",
-   matrix: BIMSURFER.math.translationMat4v([4, 0, -4])
+var object2 = new BIMSURFER.Object(viewer, {
+   objectId: "object2",
+   ifcType: "IfcDistributionFlowElement",
+   geometries: [ geometry ],
+   matrix: BIMSURFER.math.translationMat4v([3, 0, -3])
 });
 
-new BIMSURFER.BoxObject(viewer, {
-   objectId: "baz",
-   ifcType: "IfcBeam",
-   matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])
+var object3 = new BIMSURFER.Object(viewer, {
+   objectId: "object3",
+   ifcType: "IfcDistributionFlowElement",
+   geometries: [ geometry ],
+   matrix: BIMSURFER.math.translationMat4v([-3, 0, 3])
+});
+
+var object4 = new BIMSURFER.Object(viewer, {
+   objectId: "object4",
+   ifcType: "IfcRoof",
+   geometries: [ geometry ],
+   matrix: BIMSURFER.math.translationMat4v([3, 0, 3])
 });
 
 // Create an ObjectSet
@@ -945,7 +961,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_control_clickSelectObjects.js.html#l112"><code>src&#x2F;core&#x2F;control&#x2F;clickSelectObjects.js:112</code></a>
+                            <a href="../files/src_core_control_clickSelectObjects.js.html#l128"><code>src&#x2F;core&#x2F;control&#x2F;clickSelectObjects.js:128</code></a>
                             </p>
                     
                     
@@ -975,7 +991,7 @@ any subsequent notifications on that location as they are made.</p>
                                     Component
                                 </a>
                                 but overwritten in
-                            <a href="../files/src_core_control_clickSelectObjects.js.html#l92"><code>src&#x2F;core&#x2F;control&#x2F;clickSelectObjects.js:92</code></a>
+                            <a href="../files/src_core_control_clickSelectObjects.js.html#l108"><code>src&#x2F;core&#x2F;control&#x2F;clickSelectObjects.js:108</code></a>
                             </p>
                     
                     
@@ -1108,7 +1124,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_control_clickSelectObjects.js.html#l189"><code>src&#x2F;core&#x2F;control&#x2F;clickSelectObjects.js:189</code></a>
+                            <a href="../files/src_core_control_clickSelectObjects.js.html#l205"><code>src&#x2F;core&#x2F;control&#x2F;clickSelectObjects.js:205</code></a>
                             </p>
                     
                     

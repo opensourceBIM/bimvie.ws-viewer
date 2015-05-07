@@ -35,6 +35,11 @@
 <div id="myDiv" style="position: absolute; top: 0; left: 0; height: 100%; width: 100%;">
 </div>
 
+<div id="infoDark">
+    Applying an <a href="../docs/classes/XRayEffect.html" target="_other">BIMSURFER.XRayEffect</a> to
+    an <a href="../docs/classes/ObjectSet.html" target="_other">BIMSURFER.ObjectSet</a>
+</div>
+
 <script>
 
     // Create a Viewer
@@ -44,7 +49,7 @@
 
     // Create a Camera
     var camera = new BIMSURFER.Camera(viewer, {
-        eye: [0, 0, -10]
+        eye: [10, 10, -10]
     });
 
     // -------------- Controls -------------------------
@@ -90,25 +95,25 @@
     var object1 = new BIMSURFER.Object(viewer, {
         ifcType: "IfcRoof",
         geometries: [ geometry ],
-        matrix: BIMSURFER.math.translationMat4v([-8, 0, -8])
+        matrix: BIMSURFER.math.translationMat4v([-3, 0, -3])
     });
 
     var object2 = new BIMSURFER.Object(viewer, {
         ifcType: "IfcDistributionFlowElement",
         geometries: [ geometry ],
-        matrix: BIMSURFER.math.translationMat4v([8, 0, -8])
+        matrix: BIMSURFER.math.translationMat4v([3, 0, -3])
     });
 
     var object3 = new BIMSURFER.Object(viewer, {
         ifcType: "IfcDistributionFlowElement",
         geometries: [ geometry ],
-        matrix: BIMSURFER.math.translationMat4v([-8, 0, 8])
+        matrix: BIMSURFER.math.translationMat4v([-3, 0, 3])
     });
 
     var object4 = new BIMSURFER.Object(viewer, {
         ifcType: "IfcRoof",
         geometries: [ geometry ],
-        matrix: BIMSURFER.math.translationMat4v([8, 0, 8])
+        matrix: BIMSURFER.math.translationMat4v([3, 0, 3])
     });
 
     // Create a Selection that initially selects two of our Objects
@@ -117,14 +122,14 @@
         objects: [object1, object2 ]
     });
 
-    // Apply an Isolate effect to the Selection, which will cause the selected
-    // objects to be visible and all other Objects invisible
+    // Apply an XRay effect to the Selection, which will cause the selected
+    // objects to appear opaque and all other Objects transparent
 
-    var activate = new BIMSURFER.IsolateEffect(viewer, {
+    var xray = new BIMSURFER.XRayEffect(viewer, {
         objectSet: objectSet
     });
 
-    // Add a third Object to the Selection, causing the Isolate to now render
+    // Add a third Object to the Selection, causing the XRay to now render
     // that Object as opaque also
 
     objectSet.addObjects([object3]);

@@ -9,22 +9,30 @@ TODO
 
  ## Example
 
+ <iframe style="width: 600px; height: 400px" src="../../examples/light_ambient.html"></iframe>
+
  ```` javascript
+// Create a Viewer
 var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
 
+// Create a Camera
 var camera = new BIMSURFER.Camera(viewer, {
-    eye: [0, 0, -10]
+    eye: [5, 5, -5]
 });
 
-var cameraControl = new BIMSURFER.CameraControl(viewer, {
-    camera: camera
+// Create a camera orbit control
+var control = new BIMSURFER.CameraControl(viewer, {
+     camera: camera
 });
 
-var box = new BIMSURFER.BoxObject(viewer);
+// Create a TeapotObject
+var teapot = new BIMSURFER.TeapotObject(viewer);
 
+// Create an AmbientLight
 var ambientLight = new BIMSURFER.AmbientLight(viewer, {
-    color: [0.4, 0.4, 0.4]
+     color: [0.4, 0.4, 0.4]
 });
+
  ````
 
  @class AmbientLight

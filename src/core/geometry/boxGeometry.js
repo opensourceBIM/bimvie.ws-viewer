@@ -7,6 +7,8 @@
 
  ## Example
 
+ <iframe style="width: 600px; height: 400px" src="../../examples/geometry_box.html"></iframe>
+
  ````javascript
  // Create a Viewer
  var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);

@@ -29,14 +29,15 @@
     <script src="../build/bimviews.js"></script>
 
 
+
 </head>
 <body>
 
-<div id="infoDark">
-    <a href="http://http://bimvie.ws/">bimvie.ws</a> - controlling a <a href="" target="_other">BIMSURFER.Camera</a> with a <a href="" target="_other">BIMSURFER.MouseZoomCamera</a>
+<div id="myDiv" style="position: absolute; top: 0; left: 0; height: 100%; width: 100%;">
 </div>
 
-<div id="myDiv" style="position: absolute; top: 0; left: 0; height: 100%; width: 100%;">
+<div id="infoDark">
+    <a href="http://http://bimvie.ws/">bimvie.ws</a> - defining an <a href="../docs/classes/AmbientLight.html" target="_other">BIMSURFER.AmbientLight</a>
 </div>
 
 <script>
@@ -46,14 +47,21 @@
 
     // Create a Camera
     var camera = new BIMSURFER.Camera(viewer, {
-        eye: [0, 0, -10]
+        eye: [5, 5, -5]
     });
 
-    // Create an object
-    var box = new BIMSURFER.TeapotObject(viewer);
+    // Create a camera orbit control
+    var control = new BIMSURFER.CameraControl(viewer, {
+        camera: camera
+    });
 
-    // Create mouse zoom control
-    var mouseZoom = new BIMSURFER.MouseZoomCamera(viewer, { camera: camera });
+   // Create a TeapotObject
+    var teapot = new BIMSURFER.TeapotObject(viewer);
+
+    // Create an AmbientLight
+    var ambientLight = new BIMSURFER.AmbientLight(viewer, {
+        color: [0.4, 0.4, 0.4]
+    });
 
 </script>
 

@@ -35,6 +35,10 @@
 <div id="myDiv" style="position: absolute; top: 0; left: 0; height: 100%; width: 100%;">
 </div>
 
+<div id="infoDark">
+    Creating a custom mesh <a href="../docs/classes/Geometry.html" target="_other">BIMSURFER.Geometry</a>
+</div>
+
 <script>
 
     // Create a Viewer
@@ -42,14 +46,14 @@
 
     // Create a Camera
     var camera = new BIMSURFER.Camera(viewer, {
-        eye: [0, 0, -10]
+        eye: [-20, 15, -30]
     });
 
-    // Create a Camera Orbit control
-    var orbit = new BIMSURFER.KeyboardOrbitCamera(viewer, { camera: camera });
+    // Create a CameraControl
+    var control = new BIMSURFER.CameraControl(viewer, { camera: camera });
 
     // Create a Geometry
-    var geometry = new BIMSURFER.TeapotGeometry(viewer, {
+    var geometry = new BIMSURFER.Geometry(viewer, {
 
         id: "myGeometry",
 
@@ -194,7 +198,7 @@
     });
 
     // Create box Object
-    // Use the box Geometry
+    // Use the custom Geometry
     var box1 = new BIMSURFER.Object(viewer, {
         id: "myObject1",
         ifcType: "IfcDuctFitting",

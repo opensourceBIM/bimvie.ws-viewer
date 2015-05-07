@@ -158,45 +158,19 @@
 
 
         "Cameras": [
-
-            "#defining and updating",
-            "camera_activate",
-            "camera_pan",
-            "camera_rotate",
-
-            "#animating",
-            "camera_animate_flyTo",
-            "camera_animate_path",
-
-            "#controlling with user input",
-
-            "camera_control",
-
-            "camera_control_keyboard_axis",
-
-            "camera_control_mouse_orbit",
-            "camera_control_keyboard_orbit",
-
-            "camera_control_mouse_zoom",
-            "camera_control_keyboard_zoom",
-
-            "camera_control_mouse_pan",
-            "camera_control_keyboard_pan"
+            "camera_Camera_multiple"
         ],
 
         "Lights": [
-
-            "#defining light sources",
-            "light_ambient",
-            "light_directional",
-            "light_point"
+            "light_AmbientLight",
+            "light_DirLight",
+            "light_PointLight"
         ],
 
         "Geometry": [
-
-            "#defining geometries",
-            "geometry_custom",
-            "geometry_default"
+            "geometry_Geometry",
+            "geometry_BoxGeometry",
+            "geometry_TeapotGeometry"
         ],
 
         "Objects": [
@@ -212,22 +186,30 @@
             "object_transparent"
         ],
 
-        "Effects": [
+        "Controls": [
 
-            "#operations on selected Objects",
-            "effect_isolate",
-            "effect_highlight",
-            "effect_xray",
-            "effect_highlight_xray",
-            "effect_flyToBoundary"
+            "#Camera controls",
+            "control_CameraControl",
+            "control_KeyboardAxisCamera",
+            "control_KeyboardOrbitCamera",
+            "control_KeyboardPanCamera",
+            "control_KeyboardZoomCamera",
+            "control_MouseOrbitCamera",
+            "control_MousePanCamera",
+            "control_KeyboardZoomCamera",
+
+            "#Applying effects to selected objects",
+            "control_ClickSelectObjects_HighlightEffect",
+            "control_ClickSelectObjects_XRayEffect"
         ],
 
-        "Picking": [
+        "Effects": [
 
-            "#operations on picked Objects",
-            "pick_flyTo",
-            "pick_highlight",
-            "pick_xray"
+            "#Non-interactive",
+            "effect_IsolateEffect",
+            "effect_HighlightEffect",
+            "effect_XRayEffect",
+            "effect_HighlightEffect_XRayEffect"
         ]
     };
 

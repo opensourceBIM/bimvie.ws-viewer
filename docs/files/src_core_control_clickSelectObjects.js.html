@@ -141,13 +141,15 @@
  In this example we have a {{#crossLink &quot;Viewer&quot;}}{{/crossLink}} with a
  {{#crossLink &quot;Camera&quot;}}{{/crossLink}} that&#x27;s controlled by a CameraControl.
 
+ &lt;iframe style=&quot;width: 600px; height: 400px&quot; src=&quot;../../examples/control_clickSelectObjects.html&quot;&gt;&lt;/iframe&gt;
+
  &#x60;&#x60;&#x60;&#x60;Javascript
  // Create a Viewer
  var viewer = new BIMSURFER.Viewer(null, &quot;myDiv&quot;, {}, false);
 
  // Create a Camera
  var camera = new BIMSURFER.Camera(viewer, {
-    eye: [0, 0, -10]
+    eye: [10, 10, -10]
  });
 
  // Create a CameraControl
@@ -155,24 +157,38 @@
     camera: camera
  });
 
- // Create some BoxObjects
+ // Create a Geometry
+ var geometry = new BIMSURFER.TeapotGeometry(viewer);
 
- new BIMSURFER.BoxObject(viewer, {
-    objectId: &quot;foo&quot;,
-    ifcType: &quot;IfcWall&quot;,
-    matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])
+ // Create some Objects
+ // Share the Geometry among them
+
+ var object1 = new BIMSURFER.Object(viewer, {
+    objectId: &quot;object1&quot;,
+    ifcType: &quot;IfcRoof&quot;,
+    geometries: [ geometry ],
+    matrix: BIMSURFER.math.translationMat4v([-3, 0, -3])
  });
 
- new BIMSURFER.BoxObject(viewer, {
-    objectId: &quot;bar&quot;,
-    ifcType: &quot;IfcWall&quot;,
-    matrix: BIMSURFER.math.translationMat4v([4, 0, -4])
+ var object2 = new BIMSURFER.Object(viewer, {
+    objectId: &quot;object2&quot;,
+    ifcType: &quot;IfcDistributionFlowElement&quot;,
+    geometries: [ geometry ],
+    matrix: BIMSURFER.math.translationMat4v([3, 0, -3])
  });
 
- new BIMSURFER.BoxObject(viewer, {
-    objectId: &quot;baz&quot;,
-    ifcType: &quot;IfcBeam&quot;,
-    matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])
+ var object3 = new BIMSURFER.Object(viewer, {
+    objectId: &quot;object3&quot;,
+    ifcType: &quot;IfcDistributionFlowElement&quot;,
+    geometries: [ geometry ],
+    matrix: BIMSURFER.math.translationMat4v([-3, 0, 3])
+ });
+
+ var object4 = new BIMSURFER.Object(viewer, {
+    objectId: &quot;object4&quot;,
+    ifcType: &quot;IfcRoof&quot;,
+    geometries: [ geometry ],
+    matrix: BIMSURFER.math.translationMat4v([3, 0, 3])
  });
 
  // Create an ObjectSet

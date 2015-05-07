@@ -33,7 +33,18 @@
 <body>
 
 <div id="infoDark">
-    <a href="http://http://bimvie.ws/">bimvie.ws</a> - controlling a <a href="" target="_other">BIMSURFER.Camera</a> with a <a href="" target="_other">BIMSURFER.KeyboardOrbitCamera</a>
+    Example: Controlling a <a href="../docs/classes/Camera.html" target="_other">BIMSURFER.Camera</a>
+    with a <a href="../docs/classes/CameraControl.html" target="_other">BIMSURFER.CameraControl</a>
+    <br><br>
+    <ul>
+        <li>Drag mouse to rotate</li>
+        <li>Drag mouse with left and right buttons down to pan</li>
+        <li>Mouse wheel to zoom</li>
+        <li>Arrow keys to rotate</li>
+        <li>WSAD keys to pan</li>
+        <li>+ and - keys to zoom</li>
+        <li>1,2,3,4,5,6 keys to select axis-aligned preset views</li>
+    </ul>
 </div>
 
 <div id="myDiv" style="position: absolute; top: 0; left: 0; height: 100%; width: 100%;">
@@ -41,21 +52,17 @@
 
 <script>
 
-    // Create a Viewer
     var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
 
-    // Create a Camera
     var camera = new BIMSURFER.Camera(viewer, {
         eye: [0, 0, -10]
     });
 
-    // Create an object
-    var box = new BIMSURFER.TeapotObject(viewer);
-
-    // Create keyboard orbit control
-    var keyboardOrbit = new BIMSURFER.KeyboardOrbitCamera(viewer, {
+    var cameraControl = new BIMSURFER.CameraControl(viewer, {
         camera: camera
     });
+
+    var teapot = new BIMSURFER.TeapotObject(viewer);
 
 </script>
 

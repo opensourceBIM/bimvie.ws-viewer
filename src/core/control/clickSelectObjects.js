@@ -21,13 +21,15 @@
  In this example we have a {{#crossLink "Viewer"}}{{/crossLink}} with a
  {{#crossLink "Camera"}}{{/crossLink}} that's controlled by a CameraControl.
 
+ <iframe style="width: 600px; height: 400px" src="../../examples/control_clickSelectObjects.html"></iframe>
+
  ````Javascript
  // Create a Viewer
  var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
 
  // Create a Camera
  var camera = new BIMSURFER.Camera(viewer, {
-    eye: [0, 0, -10]
+    eye: [10, 10, -10]
  });
 
  // Create a CameraControl
@@ -35,24 +37,38 @@
     camera: camera
  });
 
- // Create some BoxObjects
+ // Create a Geometry
+ var geometry = new BIMSURFER.TeapotGeometry(viewer);
 
- new BIMSURFER.BoxObject(viewer, {
-    objectId: "foo",
-    ifcType: "IfcWall",
-    matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])
+ // Create some Objects
+ // Share the Geometry among them
+
+ var object1 = new BIMSURFER.Object(viewer, {
+    objectId: "object1",
+    ifcType: "IfcRoof",
+    geometries: [ geometry ],
+    matrix: BIMSURFER.math.translationMat4v([-3, 0, -3])
  });
 
- new BIMSURFER.BoxObject(viewer, {
-    objectId: "bar",
-    ifcType: "IfcWall",
-    matrix: BIMSURFER.math.translationMat4v([4, 0, -4])
+ var object2 = new BIMSURFER.Object(viewer, {
+    objectId: "object2",
+    ifcType: "IfcDistributionFlowElement",
+    geometries: [ geometry ],
+    matrix: BIMSURFER.math.translationMat4v([3, 0, -3])
  });
 
- new BIMSURFER.BoxObject(viewer, {
-    objectId: "baz",
-    ifcType: "IfcBeam",
-    matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])
+ var object3 = new BIMSURFER.Object(viewer, {
+    objectId: "object3",
+    ifcType: "IfcDistributionFlowElement",
+    geometries: [ geometry ],
+    matrix: BIMSURFER.math.translationMat4v([-3, 0, 3])
+ });
+
+ var object4 = new BIMSURFER.Object(viewer, {
+    objectId: "object4",
+    ifcType: "IfcRoof",
+    geometries: [ geometry ],
+    matrix: BIMSURFER.math.translationMat4v([3, 0, 3])
  });
 
  // Create an ObjectSet

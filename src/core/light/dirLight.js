@@ -24,24 +24,31 @@
 
  ## Example
 
+ <iframe style="width: 600px; height: 400px" src="../../examples/light_directional.html"></iframe>
+
  ```` javascript
+ // Create a Viewer
  var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
 
+ // Create a Camera
  var camera = new BIMSURFER.Camera(viewer, {
-    eye: [0, 0, -10]
+      eye: [5, 5, -5]
  });
 
- var cameraControl = new BIMSURFER.CameraControl(viewer, {
-    camera: camera
- });
+ // Create a camera orbit control
+ var control = new BIMSURFER.CameraControl(viewer, {
+        camera: camera
+    });
 
- var box = new BIMSURFER.BoxObject(viewer);
+ // Create a TeapotObject
+ var teapot = new BIMSURFER.TeapotObject(viewer);
 
+ // Create a DirLight
  var dirLight = new BIMSURFER.DirLight(viewer, {
-    color: [0.6, 0.9, 0.9],
-    dir: [1.0, 0.0, 0.0],
-    space: "view"
- });
+        color: [0.9, 0.9, 0.9],
+        dir: [1.0, 0.0, -.5],
+        space: "view"
+    });
  ````
 
  @class DirLight

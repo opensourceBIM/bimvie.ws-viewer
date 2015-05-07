@@ -137,41 +137,62 @@
 </ul>
 
 <h2 id="example">Example</h2>
-<p>Let&#39;s create a <a href="../classes/Viewer.html" class="crosslink">Viewer</a> with a Camera that&#39;s controlled by a <a href="../classes/CameraControl.html" class="crosslink">CameraControl</a>:</p>
+<p>In this example we define multiple Cameras looking at a <a href="../classes/TeapotObject.html" class="crosslink">TeapotObject</a>, then periodically switch between the Cameras.</p>
+<iframe style="width: 600px; height: 400px" src="../../examples/camera_Camera_multiple.html"></iframe>
+
 <pre class="code prettyprint"><code class="lang-Javascript">// Create a Viewer
 var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
 
-// Create a Camera
-var camera = new BIMSURFER.Camera(viewer, {
-   eye: [0, 0, -10]
-});
+// Create an object
+var box = new BIMSURFER.TeapotObject(viewer);
 
-// Create a CameraControl to interact with the Camera
-var cameraControl = new BIMSURFER.CameraControl(viewer, {
-   camera: camera
-});
+// Create some Cameras
+var cameras = [
 
-// Create a BoxObject
-new BIMSURFER.BoxObject(viewer, {
-   objectId: "foo",
-   ifcType: "IfcWall",
-   matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])
-});
-</code></pre>
-<p>Now let&#39;s create a second Camera and switch the <a href="../classes/CameraControl.html" class="crosslink">CameraControl</a> over to it:</p>
-<pre class="code prettyprint"><code class="lang-Javascript">
-// Deactivate our Camera
-camera.active = false;
+new BIMSURFER.Camera(viewer, {
+           eye: [5, 5, 5],
+           active: false
+       }),
 
-// Create a second Camera
-// Camera is active by default
-var camera2 = new BIMSURFER.Camera(viewer, {
-       eye: [-10, 0, 0]
-   });
+new BIMSURFER.Camera(viewer, {
+           eye: [-5, 5, 5],
+           active: false
+       }),
 
-// Switch our CameraControl to the second Camera
-// Now we&#39;re controlling that Camera
-cameraControl.camera = camera2;
+new BIMSURFER.Camera(viewer, {
+           eye: [5, -5, 5],
+           active: false
+       }),
+
+new BIMSURFER.Camera(viewer, {
+           eye: [5, 5, -5],
+           active: false
+       }),
+
+new BIMSURFER.Camera(viewer, {
+           eye: [-5, -5, 5],
+           active: false
+       })
+];
+
+// Periodically switch between the Cameras
+
+var i = -1;
+var last = -1;
+
+setInterval(function () {
+
+       if (last &gt; -1) {
+           cameras[last].active = false
+       }
+
+       i = (i + 1) % (cameras.length - 1);
+
+       cameras[i].active = true;
+
+       last = i;
+
+   }, 1000);
 </code></pre>
 
 </div>

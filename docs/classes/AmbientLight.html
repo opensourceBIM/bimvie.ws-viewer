@@ -136,20 +136,26 @@
 <h2 id="overview">Overview</h2>
 <p>TODO</p>
 <h2 id="example">Example</h2>
-<pre class="code prettyprint"><code class="lang-javascript">var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+<p><iframe style="width: 600px; height: 400px" src="../../examples/light_ambient.html"></iframe></p>
+<pre class="code prettyprint"><code class="lang-javascript">// Create a Viewer
+var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
 
+// Create a Camera
 var camera = new BIMSURFER.Camera(viewer, {
-    eye: [0, 0, -10]
+    eye: [5, 5, -5]
 });
 
-var cameraControl = new BIMSURFER.CameraControl(viewer, {
-    camera: camera
+// Create a camera orbit control
+var control = new BIMSURFER.CameraControl(viewer, {
+     camera: camera
 });
 
-var box = new BIMSURFER.BoxObject(viewer);
+// Create a TeapotObject
+var teapot = new BIMSURFER.TeapotObject(viewer);
 
+// Create an AmbientLight
 var ambientLight = new BIMSURFER.AmbientLight(viewer, {
-    color: [0.4, 0.4, 0.4]
+     color: [0.4, 0.4, 0.4]
 });
 </code></pre>
 
@@ -959,7 +965,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_light_ambientLight.js.html#l58"><code>src&#x2F;core&#x2F;light&#x2F;ambientLight.js:58</code></a>
+                            <a href="../files/src_core_light_ambientLight.js.html#l66"><code>src&#x2F;core&#x2F;light&#x2F;ambientLight.js:66</code></a>
                             </p>
                     
                     

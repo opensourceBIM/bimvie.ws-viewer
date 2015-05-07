@@ -35,6 +35,10 @@
 <div id="myDiv" style="position: absolute; top: 0; left: 0; height: 100%; width: 100%;">
 </div>
 
+<div id="infoDark">
+    <a href="http://http://bimvie.ws/">bimvie.ws</a> - defining a <a href="../docs/classes/DirLight.html" target="_other">BIMSURFER.DirLight</a>
+</div>
+
 <script>
 
 
@@ -45,46 +49,21 @@
 
     // Create a Camera
     var camera = new BIMSURFER.Camera(viewer, {
-        eye: [0, 0, -10]
+        eye: [5, 5, -5]
     });
 
     // Create a camera orbit control
-    var orbit = new BIMSURFER.KeyboardOrbitCamera(viewer, { camera: camera });
-
-    // Create a box Geometry
-    // Geometry defaults to a 2x2x2 box when no vertex
-    // or index arrays are specified
-    var geometry = new BIMSURFER.TeapotGeometry(viewer, {
-        id: "myGeometry"
+    var control = new BIMSURFER.CameraControl(viewer, {
+        camera: camera
     });
 
-    // Create first box Object
-    // Use the box Geometry
-    var box1 = new BIMSURFER.Object(viewer, {
-        id: "myObject1",
-        ifcType: "IfcCovering",
-        geometries: [ geometry ],
-        matrix: BIMSURFER.math.translationMat4v([-8, 0,0])
-    });
-
-    // Create second box Object
-    // Reuse the box Geometry
-    var box2 = new BIMSURFER.Object(viewer, {
-        id: "myObject2",
-        ifcType: "IfcFlowTerminal",
-        geometries: [ geometry ],
-        matrix: BIMSURFER.math.translationMat4v([8, 0,0])
-    });
-
-    // Create an AmbientLight
-    var ambientLight = new BIMSURFER.AmbientLight(viewer, {
-        color: [0.4, 0.4, 0.4]
-    });
+    // Create a TeapotObject
+    var teapot = new BIMSURFER.TeapotObject(viewer);
 
     // Create a DirLight
     var dirLight = new BIMSURFER.DirLight(viewer, {
-        color: [0.6, 0.9, 0.9],
-        dir: [1.0, 0.0, 0.0],
+        color: [0.9, 0.9, 0.9],
+        dir: [1.0, 0.0, -.5],
         space: "view"
     });
 
