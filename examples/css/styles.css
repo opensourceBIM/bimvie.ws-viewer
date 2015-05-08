@@ -23,33 +23,24 @@ body {
     overflow: hidden;
 }
 
-.xeolabsLogo {
-    background-image: url("./images/a-xeolabs-project.png");
-    position: absolute;
-    left: 0;
-    top: 0;
-    z-index: 900;
-    height: auto;
-    width: auto;
-}
 
-#info {
+.info {
     position: relative;
     top: 0px;
     padding: 5px;
     padding-top:20px;
     z-index: 100;
     font-size:16px;
-    text-align:center;
+    text-align:left;
 }
 
-#info a {
+.info a {
     font-size:16px;
     color: #ffffff;
     text-decoration: underline;
 }
 
-#infoLight {
+.infoLight {
     position: relative;
     top: 0px;
     padding: 5px;
@@ -60,19 +51,19 @@ body {
     color: #ffffff;
 }
 
-#infoLight a {
+.infoLight a {
     font-size:16px;
     color: #ffffff;
     text-decoration: underline !important;
 }
 
 
-#infoDark {
+.infoDark {
     position: relative;
     top: 0px;
-    padding: 5px;
+    padding: 10px;
     padding-top:20px;
-    padding-left: 20px;
+
     z-index: 10000;
     font-size:16px;
     text-align:left;
@@ -80,13 +71,13 @@ body {
 
 }
 
-#infoDark a {
+.infoDark a {
     font-size:16px;
     color: #000000;
     text-decoration: underline !important;
 }
 
-#infoTxt {
+.infoTxt {
     position: relative;
     top: 0px;
     padding: 5px;

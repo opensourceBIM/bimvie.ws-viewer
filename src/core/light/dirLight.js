@@ -24,6 +24,8 @@
 
  ## Example
 
+ In the example below we're illuminating a {{#crossLink "TeapotObject"}}{{/crossLink}} with a single DirLight.
+
  <iframe style="width: 600px; height: 400px" src="../../examples/light_DirLight.html"></iframe>
 
  ```` javascript

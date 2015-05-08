@@ -101,6 +101,11 @@
 
             canvasId: canvasId,
 
+            // Transparent canvas
+            // Less work for the GPU rendering all those background fragments.
+            // Let CSS do that work.
+            transparent: true,
+
             nodes: [
 
                 // Node library, where we keep sharable

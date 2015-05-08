@@ -136,8 +136,13 @@
     <p>An <strong>AmbientLight</strong> is a <a href="../classes/Light.html" class="crosslink">Light</a> that defines an ambient light source of fixed intensity and color that affects all attached Object
  equally.</p>
 <h2 id="overview">Overview</h2>
-<p>TODO</p>
+<p><ul></p>
+<p><li>You only need one AmbientLight in your <a href="../classes/Viewer.html" class="crosslink">Viewer</a>.</li>
+ <li>Normally you would combine AmbientLights with <a href="../classes/DirLight.html" class="crosslink">DirLights</a> and/or
+ <a href="../classes/PointLight.html" class="crosslink">PointLights</a>.</li>
+</ul></p>
 <h2 id="example">Example</h2>
+<p>In the example below we&#39;re illuminating a <a href="../classes/TeapotObject.html" class="crosslink">TeapotObject</a> with a single AmbientLight.</p>
 <p><iframe style="width: 600px; height: 400px" src="../../examples/light_AmbientLight.html"></iframe></p>
 <pre class="code prettyprint"><code class="lang-javascript">// Create a Viewer
 var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
@@ -967,7 +972,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_light_ambientLight.js.html#l66"><code>src&#x2F;core&#x2F;light&#x2F;ambientLight.js:66</code></a>
+                            <a href="../files/src_core_light_ambientLight.js.html#l74"><code>src&#x2F;core&#x2F;light&#x2F;ambientLight.js:74</code></a>
                             </p>
                     
                     

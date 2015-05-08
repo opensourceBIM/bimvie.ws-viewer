@@ -38,9 +38,6 @@
         "src/core/effect/isolateEffect.js",
         "src/core/effect/xrayEffect.js",
 
-        "src/core/animate/cameraFlyTo.js",
-        "src/core/animate/cameraPath.js",
-
         "src/core/control/cameraControl.js",
         "src/core/control/mouseOrbitCamera.js",
         "src/core/control/keyboardOrbitCamera.js",

@@ -715,7 +715,7 @@
             "namespace": "",
             "file": "src/core/control/clickSelectObjects.js",
             "line": 1,
-            "description": "A **ClickSelectObjects** lets you add or remove {{#crossLink \"Object\"}}Objects{{/crossLink}} to and from an {{#crossLink \"ObjectSet\"}}ObjectSet{{/crossLink}} by clicking them with the mouse.\n\n## Overview\n\n<ul>\n<li>A ClickSelectObjects adds {{#crossLink \"Object\"}}Objects{{/crossLink}} to the {{#crossLink \"ObjectSet\"}}{{/crossLink}} as you\nclick them with the mouse, removing them again when you click them a second time.</li>\n<li>Typically a ClickSelectObjects will share an {{#crossLink \"ObjectSet\"}}{{/crossLink}} with one or\nmore {{#crossLink \"Effect\"}}Effects{{/crossLink}}, in order to select which {{#crossLink \"Object\"}}Objects{{/crossLink}} are influenced by the {{#crossLink \"Effect\"}}Effects{{/crossLink}}.</li>\n<li>A ClickSelectObjects will provide its own {{#crossLink \"ObjectSet\"}}{{/crossLink}} by default.</li>\n<li>Hold down SHIFT while clicking to multi-select.</li>\n</ul>\n\n## Example\n\n#### Click Objects to add them to a highlighted ObjectSet\n\nIn this example, we view four {{#crossLink \"Objects\"}}Objects{{/crossLink}} with a {{#crossLink \"Camera\"}}{{/crossLink}}, which we manipulate with a {{#crossLink \"CameraControl\"}}{{/crossLink}}.\n<br>We also use a {{#crossLink \"ClickSelectObjects\"}}{{/crossLink}} to add and remove\nthe {{#crossLink \"Objects\"}}Objects{{/crossLink}} to an {{#crossLink \"ObjectSet\"}}{{/crossLink}}, to which we're applying\na {{#crossLink \"HighlightEffect\"}}{{/crossLink}}.\n<br><br>\nClick on the {{#crossLink \"Objects\"}}Objects{{/crossLink}} to select and highlight them - hold down SHIFT to multi-select.\n\n<iframe style=\"width: 600px; height: 400px\" src=\"../../examples/control_ClickSelectObjects_HighlightEffect.html\"></iframe>\n\n````Javascript\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n   eye: [10, 10, -10]\n});\n\n// Create a CameraControl\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n   camera: camera\n});\n\n// Create a Geometry\nvar geometry = new BIMSURFER.TeapotGeometry(viewer);\n\n// Create some Objects\n// Share the Geometry among them\n\nvar object1 = new BIMSURFER.Object(viewer, {\n   objectId: \"object1\",\n   ifcType: \"IfcRoof\",\n   geometries: [ geometry ],\n   matrix: BIMSURFER.math.translationMat4v([-3, 0, -3])\n});\n\nvar object2 = new BIMSURFER.Object(viewer, {\n   objectId: \"object2\",\n   ifcType: \"IfcDistributionFlowElement\",\n   geometries: [ geometry ],\n   matrix: BIMSURFER.math.translationMat4v([3, 0, -3])\n});\n\nvar object3 = new BIMSURFER.Object(viewer, {\n   objectId: \"object3\",\n   ifcType: \"IfcDistributionFlowElement\",\n   geometries: [ geometry ],\n   matrix: BIMSURFER.math.translationMat4v([-3, 0, 3])\n});\n\nvar object4 = new BIMSURFER.Object(viewer, {\n   objectId: \"object4\",\n   ifcType: \"IfcRoof\",\n   geometries: [ geometry ],\n   matrix: BIMSURFER.math.translationMat4v([3, 0, 3])\n});\n\n// Create an ObjectSet\nvar objectSet = new BIMSURFER.ObjectSet(viewer);\n\n// Apply a highlight effect to the ObjectSet\nvar highlightEffect = new BIMSURFER.HighlightEffect(viewer, {\n   objectSet: objectSet\n});\n\n// Create a ClickSelectObjects\nvar clickSelectObjects = new BIMSURFER.ClickSelectObjects(viewer, {\n   objectSet: objectSet\n});\n````",
+            "description": "A **ClickSelectObjects** lets you add or remove {{#crossLink \"Object\"}}Objects{{/crossLink}} to and from an {{#crossLink \"ObjectSet\"}}ObjectSet{{/crossLink}} by clicking them with the mouse.\n\n## Overview\n\n<ul>\n<li>A ClickSelectObjects adds {{#crossLink \"Object\"}}Objects{{/crossLink}} to the {{#crossLink \"ObjectSet\"}}{{/crossLink}} as you\nclick them with the mouse, removing them again when you click them a second time.</li>\n<li>Typically a ClickSelectObjects will share an {{#crossLink \"ObjectSet\"}}{{/crossLink}} with one or\nmore {{#crossLink \"Effect\"}}Effects{{/crossLink}}, in order to select which {{#crossLink \"Object\"}}Objects{{/crossLink}} are influenced by the {{#crossLink \"Effect\"}}Effects{{/crossLink}}.</li>\n<li>A ClickSelectObjects will provide its own {{#crossLink \"ObjectSet\"}}{{/crossLink}} by default.</li>\n<li>Hold down SHIFT while clicking to multi-select.</li>\n</ul>\n\n## Example\n\n#### Clicking Objects to add them to a highlighted ObjectSet\n\nIn this example, we view four {{#crossLink \"Objects\"}}Objects{{/crossLink}} with a {{#crossLink \"Camera\"}}{{/crossLink}}, which we manipulate with a {{#crossLink \"CameraControl\"}}{{/crossLink}}.\n<br>We also use a {{#crossLink \"ClickSelectObjects\"}}{{/crossLink}} to add and remove\nthe {{#crossLink \"Objects\"}}Objects{{/crossLink}} to an {{#crossLink \"ObjectSet\"}}{{/crossLink}}, to which we're applying\na {{#crossLink \"HighlightEffect\"}}{{/crossLink}}.\n<br><br>\nClick on the {{#crossLink \"Objects\"}}Objects{{/crossLink}} to select and highlight them - hold down SHIFT to multi-select.\n\n<iframe style=\"width: 600px; height: 400px\" src=\"../../examples/control_ClickSelectObjects_HighlightEffect.html\"></iframe>\n\n````Javascript\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n   eye: [10, 10, -10]\n});\n\n// Create a CameraControl\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n   camera: camera\n});\n\n// Create a Geometry\nvar geometry = new BIMSURFER.TeapotGeometry(viewer);\n\n// Create some Objects\n// Share the Geometry among them\n\nvar object1 = new BIMSURFER.Object(viewer, {\n   objectId: \"object1\",\n   ifcType: \"IfcRoof\",\n   geometries: [ geometry ],\n   matrix: BIMSURFER.math.translationMat4v([-3, 0, -3])\n});\n\nvar object2 = new BIMSURFER.Object(viewer, {\n   objectId: \"object2\",\n   ifcType: \"IfcDistributionFlowElement\",\n   geometries: [ geometry ],\n   matrix: BIMSURFER.math.translationMat4v([3, 0, -3])\n});\n\nvar object3 = new BIMSURFER.Object(viewer, {\n   objectId: \"object3\",\n   ifcType: \"IfcDistributionFlowElement\",\n   geometries: [ geometry ],\n   matrix: BIMSURFER.math.translationMat4v([-3, 0, 3])\n});\n\nvar object4 = new BIMSURFER.Object(viewer, {\n   objectId: \"object4\",\n   ifcType: \"IfcRoof\",\n   geometries: [ geometry ],\n   matrix: BIMSURFER.math.translationMat4v([3, 0, 3])\n});\n\n// Create an ObjectSet\nvar objectSet = new BIMSURFER.ObjectSet(viewer);\n\n// Apply a highlight effect to the ObjectSet\nvar highlightEffect = new BIMSURFER.HighlightEffect(viewer, {\n   objectSet: objectSet\n});\n\n// Create a ClickSelectObjects\nvar clickSelectObjects = new BIMSURFER.ClickSelectObjects(viewer, {\n   objectSet: objectSet\n});\n````",
             "submodule": "control",
             "is_constructor": 1,
             "params": [
@@ -1591,7 +1591,7 @@
             "namespace": "",
             "file": "src/core/light/ambientLight.js",
             "line": 1,
-            "description": "An **AmbientLight** is a {{#crossLink \"Light\"}}{{/crossLink}} that defines an ambient light source of fixed intensity and color that affects all attached {{#crossLink \"Object\"}}Objects{{/crossLink}}\n equally.\n## Overview\n\nTODO\n## Example\n<iframe style=\"width: 600px; height: 400px\" src=\"../../examples/light_AmbientLight.html\"></iframe>\n```` javascript\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n    eye: [5, 5, -5]\n});\n\n// Create a camera orbit control\nvar control = new BIMSURFER.CameraControl(viewer, {\n     camera: camera\n});\n\n// Create a TeapotObject\nvar teapot = new BIMSURFER.TeapotObject(viewer);\n\n// Create an AmbientLight\nvar ambientLight = new BIMSURFER.AmbientLight(viewer, {\n     color: [0.4, 0.4, 0.4]\n});\n````",
+            "description": "An **AmbientLight** is a {{#crossLink \"Light\"}}{{/crossLink}} that defines an ambient light source of fixed intensity and color that affects all attached {{#crossLink \"Object\"}}Objects{{/crossLink}}\n equally.\n## Overview\n<ul>\n<li>You only need one AmbientLight in your {{#crossLink \"Viewer\"}}{{/crossLink}}.</li>\n <li>Normally you would combine AmbientLights with {{#crossLink \"DirLight\"}}DirLights{{/crossLink}} and/or\n {{#crossLink \"PointLight\"}}PointLights{{/crossLink}}.</li>\n</ul>\n## Example\nIn the example below we're illuminating a {{#crossLink \"TeapotObject\"}}{{/crossLink}} with a single AmbientLight.\n<iframe style=\"width: 600px; height: 400px\" src=\"../../examples/light_AmbientLight.html\"></iframe>\n```` javascript\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n    eye: [5, 5, -5]\n});\n\n// Create a camera orbit control\nvar control = new BIMSURFER.CameraControl(viewer, {\n     camera: camera\n});\n\n// Create a TeapotObject\nvar teapot = new BIMSURFER.TeapotObject(viewer);\n\n// Create an AmbientLight\nvar ambientLight = new BIMSURFER.AmbientLight(viewer, {\n     color: [0.4, 0.4, 0.4]\n});\n````",
             "is_constructor": 1,
             "params": [
                 {
@@ -1642,7 +1642,7 @@
             "namespace": "",
             "file": "src/core/light/dirLight.js",
             "line": 1,
-            "description": "A **DirLight** is a {{#crossLink \"Light\"}}{{/crossLink}} that defines a directional light source that originates from a single point and spreads outward in all directions.\n\n## Overview\n\n<ul>\n\n<li>DirLights have a position, but no direction.</li>\n\n<li>DirLights may be defined in either **World** or **View** coordinate space. When in World-space, their position\nis relative to the World coordinate system, and will appear to move as the {{#crossLink \"Camera\"}}{{/crossLink}} moves.\nWhen in View-space, their position is relative to the View coordinate system, and will behave as if fixed to the viewer's\nhead as the {{#crossLink \"Camera\"}}{{/crossLink}} moves.</li>\n\n<li>Within bIMSurfer's's Phong lighting calculations, DirLight {{#crossLink \"DirLight/diffuse:property\"}}{{/crossLink}} and\n{{#crossLink \"DirLight/specular:property\"}}{{/crossLink}}.</li>\n\n<li>DirLights have {{#crossLink \"DirLight/constantAttenuation:property\"}}{{/crossLink}}, {{#crossLink \"DirLight/linearAttenuation:property\"}}{{/crossLink}} and\n{{#crossLink \"DirLight/quadraticAttenuation:property\"}}{{/crossLink}} factors, which indicate how their intensity attenuates over distance.</li>\n\n\n</ul>\n\n\n## Example\n\n<iframe style=\"width: 600px; height: 400px\" src=\"../../examples/light_DirLight.html\"></iframe>\n\n```` javascript\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n     eye: [5, 5, -5]\n});\n\n// Create a camera orbit control\nvar control = new BIMSURFER.CameraControl(viewer, {\n       camera: camera\n   });\n\n// Create a TeapotObject\nvar teapot = new BIMSURFER.TeapotObject(viewer);\n\n// Create a DirLight\nvar dirLight = new BIMSURFER.DirLight(viewer, {\n       color: [0.9, 0.9, 0.9],\n       dir: [1.0, 0.0, -.5],\n       space: \"view\"\n   });\n````",
+            "description": "A **DirLight** is a {{#crossLink \"Light\"}}{{/crossLink}} that defines a directional light source that originates from a single point and spreads outward in all directions.\n\n## Overview\n\n<ul>\n\n<li>DirLights have a position, but no direction.</li>\n\n<li>DirLights may be defined in either **World** or **View** coordinate space. When in World-space, their position\nis relative to the World coordinate system, and will appear to move as the {{#crossLink \"Camera\"}}{{/crossLink}} moves.\nWhen in View-space, their position is relative to the View coordinate system, and will behave as if fixed to the viewer's\nhead as the {{#crossLink \"Camera\"}}{{/crossLink}} moves.</li>\n\n<li>Within bIMSurfer's's Phong lighting calculations, DirLight {{#crossLink \"DirLight/diffuse:property\"}}{{/crossLink}} and\n{{#crossLink \"DirLight/specular:property\"}}{{/crossLink}}.</li>\n\n<li>DirLights have {{#crossLink \"DirLight/constantAttenuation:property\"}}{{/crossLink}}, {{#crossLink \"DirLight/linearAttenuation:property\"}}{{/crossLink}} and\n{{#crossLink \"DirLight/quadraticAttenuation:property\"}}{{/crossLink}} factors, which indicate how their intensity attenuates over distance.</li>\n\n\n</ul>\n\n\n## Example\n\nIn the example below we're illuminating a {{#crossLink \"TeapotObject\"}}{{/crossLink}} with a single DirLight.\n\n<iframe style=\"width: 600px; height: 400px\" src=\"../../examples/light_DirLight.html\"></iframe>\n\n```` javascript\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n     eye: [5, 5, -5]\n});\n\n// Create a camera orbit control\nvar control = new BIMSURFER.CameraControl(viewer, {\n       camera: camera\n   });\n\n// Create a TeapotObject\nvar teapot = new BIMSURFER.TeapotObject(viewer);\n\n// Create a DirLight\nvar dirLight = new BIMSURFER.DirLight(viewer, {\n       color: [0.9, 0.9, 0.9],\n       dir: [1.0, 0.0, -.5],\n       space: \"view\"\n   });\n````",
             "is_constructor": 1,
             "extends": "Light",
             "params": [
@@ -1757,7 +1757,7 @@
             "namespace": "",
             "file": "src/core/light/pointLight.js",
             "line": 1,
-            "description": "A **PointLight** is a {{#crossLink \"Light\"}}{{/crossLink}} that defines a positional light source that originates from a single point and spreads outward in all directions.\n\n## Overview\n\n<ul>\n\n<li>PointLights have a position, but no direction.</li>\n\n<li>PointLights may be defined in either **World** or **View** coordinate space. When in World-space, their position\nis relative to the World coordinate system, and will appear to move as the {{#crossLink \"Camera\"}}{{/crossLink}} moves.\nWhen in View-space, their position is relative to the View coordinate system, and will behave as if fixed to the viewer's\nhead as the {{#crossLink \"Camera\"}}{{/crossLink}} moves.</li>\n\n<li>PointLights have {{#crossLink \"PointLight/constantAttenuation:property\"}}{{/crossLink}}, {{#crossLink \"PointLight/linearAttenuation:property\"}}{{/crossLink}} and\n{{#crossLink \"PointLight/quadraticAttenuation:property\"}}{{/crossLink}} factors, which indicate how their intensity attenuates over distance.</li>\n\n</ul>\n\n\n## Example\n\n<iframe style=\"width: 600px; height: 400px\" src=\"../../examples/light_PointLight.html\"></iframe>\n\n```` javascript\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n   eye: [5, 5, -5]\n});\n\n// Create a camera orbit control\nvar control = new BIMSURFER.CameraControl(viewer, {\n       camera: camera\n   });\n\n// Create a TeapotObject\nvar teapot = new BIMSURFER.TeapotObject(viewer);\n\n// Create a PointLight\nvar pointLight = new BIMSURFER.PointLight(viewer, {\n       color: [0.9, 0.9, 0.9],\n       pos: [-10.0, 10.0, 10.0],\n       constantAttenuation: 0.0,\n       linearAttenuation: 0.0,\n       quadraticAttenuation: 0.0,\n       space: \"view\"\n   });\n\n````",
+            "description": "A **PointLight** is a {{#crossLink \"Light\"}}{{/crossLink}} that defines a positional light source that originates from a single point and spreads outward in all directions.\n\n## Overview\n\n<ul>\n\n<li>PointLights have a position, but no direction.</li>\n\n<li>PointLights may be defined in either **World** or **View** coordinate space. When in World-space, their position\nis relative to the World coordinate system, and will appear to move as the {{#crossLink \"Camera\"}}{{/crossLink}} moves.\nWhen in View-space, their position is relative to the View coordinate system, and will behave as if fixed to the viewer's\nhead as the {{#crossLink \"Camera\"}}{{/crossLink}} moves.</li>\n\n<li>PointLights have {{#crossLink \"PointLight/constantAttenuation:property\"}}{{/crossLink}}, {{#crossLink \"PointLight/linearAttenuation:property\"}}{{/crossLink}} and\n{{#crossLink \"PointLight/quadraticAttenuation:property\"}}{{/crossLink}} factors, which indicate how their intensity attenuates over distance.</li>\n\n</ul>\n\n\n## Example\n\nIn the example below we're illuminating a {{#crossLink \"TeapotObject\"}}{{/crossLink}} with a single PointLight.\n\n<iframe style=\"width: 600px; height: 400px\" src=\"../../examples/light_PointLight.html\"></iframe>\n\n```` javascript\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer(null, \"myDiv\", {}, false);\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n   eye: [5, 5, -5]\n});\n\n// Create a camera orbit control\nvar control = new BIMSURFER.CameraControl(viewer, {\n       camera: camera\n   });\n\n// Create a TeapotObject\nvar teapot = new BIMSURFER.TeapotObject(viewer);\n\n// Create a PointLight\nvar pointLight = new BIMSURFER.PointLight(viewer, {\n       color: [0.9, 0.9, 0.9],\n       pos: [-10.0, 10.0, 10.0],\n       constantAttenuation: 0.0,\n       linearAttenuation: 0.0,\n       quadraticAttenuation: 0.0,\n       space: \"view\"\n   });\n\n````",
             "is_constructor": 1,
             "extends": "Light",
             "params": [
@@ -2404,7 +2404,7 @@
         },
         {
             "file": "src/core/camera/camera.js",
-            "line": 375,
+            "line": 374,
             "description": "Fired whenever this Camera's {{#crossLink \"Camera/active:property\"}}{{/crossLink}} property changes.",
             "itemtype": "event",
             "name": "active",
@@ -2420,7 +2420,7 @@
         },
         {
             "file": "src/core/camera/camera.js",
-            "line": 400,
+            "line": 399,
             "description": "Position of the eye.\nFires an {{#crossLink \"Camera/eye:event\"}}{{/crossLink}} event on change.",
             "itemtype": "property",
             "name": "eye",
@@ -2432,7 +2432,7 @@
         },
         {
             "file": "src/core/camera/camera.js",
-            "line": 419,
+            "line": 418,
             "description": "Position of the point-of-interest.\nFires a {{#crossLink \"Camera/look:event\"}}{{/crossLink}} event on change.",
             "itemtype": "property",
             "name": "look",
@@ -2444,7 +2444,7 @@
         },
         {
             "file": "src/core/camera/camera.js",
-            "line": 438,
+            "line": 437,
             "description": "Direction of the \"up\" vector.\nFires an {{#crossLink \"Camera/up:event\"}}{{/crossLink}} event on change.",
             "itemtype": "property",
             "name": "up",
@@ -4672,7 +4672,7 @@
         },
         {
             "file": "src/core/light/ambientLight.js",
-            "line": 66,
+            "line": 74,
             "description": "The color of this AmbientLight.",
             "itemtype": "property",
             "name": "color",
@@ -4683,7 +4683,7 @@
         },
         {
             "file": "src/core/light/dirLight.js",
-            "line": 85,
+            "line": 87,
             "description": "The direction of this DirLight.\n\nThis will be either World- or View-space, depending on the value of {{#crossLink \"DirLight/space:property\"}}{{/crossLink}}.",
             "itemtype": "property",
             "name": "dir",
@@ -4694,7 +4694,7 @@
         },
         {
             "file": "src/core/light/dirLight.js",
-            "line": 108,
+            "line": 110,
             "description": "The color of this DirLight.",
             "itemtype": "property",
             "name": "color",
@@ -4705,7 +4705,7 @@
         },
         {
             "file": "src/core/light/dirLight.js",
-            "line": 129,
+            "line": 131,
             "description": "Indicates which coordinate space this DirLight is in.\n\nSupported values are:\n\n<ul>\n<li>\"view\" - View space, aligned within the view volume as if fixed to the viewer's head</li>\n<li>\"world\" - World space, fixed within the world, moving within the view volume with respect to camera</li>\n</ul>",
             "itemtype": "property",
             "name": "space",
@@ -4752,7 +4752,7 @@
         },
         {
             "file": "src/core/light/pointLight.js",
-            "line": 91,
+            "line": 94,
             "description": "The position of this PointLight.\n\nThis will be either World- or View-space, depending on the value of {{#crossLink \"PointLight/space:property\"}}{{/crossLink}}.",
             "itemtype": "property",
             "name": "pos",
@@ -4763,7 +4763,7 @@
         },
         {
             "file": "src/core/light/pointLight.js",
-            "line": 114,
+            "line": 117,
             "description": "The color of this PointLight.",
             "itemtype": "property",
             "name": "color",
@@ -4774,7 +4774,7 @@
         },
         {
             "file": "src/core/light/pointLight.js",
-            "line": 135,
+            "line": 139,
             "description": "The constant attenuation factor for this PointLight.",
             "itemtype": "property",
             "name": "constantAttenuation",
@@ -4785,7 +4785,7 @@
         },
         {
             "file": "src/core/light/pointLight.js",
-            "line": 155,
+            "line": 159,
             "description": "The linear attenuation factor for this PointLight.",
             "itemtype": "property",
             "name": "linearAttenuation",
@@ -4796,7 +4796,7 @@
         },
         {
             "file": "src/core/light/pointLight.js",
-            "line": 175,
+            "line": 179,
             "description": "The quadratic attenuation factor for this Pointlight.",
             "itemtype": "property",
             "name": "quadraticAttenuation",
@@ -4807,7 +4807,7 @@
         },
         {
             "file": "src/core/light/pointLight.js",
-            "line": 195,
+            "line": 199,
             "description": "Indicates which coordinate space this PointLight is in.\n\nSupported values are:\n\n<ul>\n<li>\"view\" - View space, aligned within the view volume as if fixed to the viewer's head</li>\n<li>\"world\" - World space, fixed within the world, moving within the view volume with respect to camera</li>\n</ul>",
             "itemtype": "property",
             "name": "space",
@@ -6973,7 +6973,7 @@
         },
         {
             "file": "src/core/viewer.js",
-            "line": 147,
+            "line": 152,
             "description": "ID of this Viewer",
             "itemtype": "property",
             "name": "id",
@@ -6983,7 +6983,7 @@
         },
         {
             "file": "src/core/viewer.js",
-            "line": 216,
+            "line": 221,
             "description": "The {{#crossLink \"Component\"}}Components{{/crossLink}} within this Viewer, mapped to their IDs.",
             "itemtype": "property",
             "name": "components",
@@ -6993,7 +6993,7 @@
         },
         {
             "file": "src/core/viewer.js",
-            "line": 224,
+            "line": 229,
             "description": "The {{#crossLink \"Component\"}}Components{{/crossLink}} within this Viewer, mapped to their class names.",
             "itemtype": "property",
             "name": "classes",
@@ -7003,7 +7003,7 @@
         },
         {
             "file": "src/core/viewer.js",
-            "line": 232,
+            "line": 237,
             "description": "The {{#crossLink \"Component\"}}Components{{/crossLink}} within this Viewer, mapped to their IFC type names.",
             "itemtype": "property",
             "name": "types",
@@ -7013,7 +7013,7 @@
         },
         {
             "file": "src/core/viewer.js",
-            "line": 284,
+            "line": 289,
             "description": "Geometry loaders",
             "itemtype": "property",
             "name": "geometryLoaders",
@@ -7024,14 +7024,14 @@
         },
         {
             "file": "src/core/viewer.js",
-            "line": 303,
+            "line": 308,
             "description": "Input handling",
             "class": "Viewer",
             "module": "BIMSURFER"
         },
         {
             "file": "src/core/viewer.js",
-            "line": 309,
+            "line": 314,
             "description": "Adds a {{#crossLink \"Component\"}}{{/crossLink}} to this viewer.\n\nThis is called within the constructors of {{#crossLink \"Component\"}}{{/crossLink}} subclasses.\n\nThe {{#crossLink \"Component\"}}{{/crossLink}} is assigned a\nunique {{#crossLink \"Component/id:property\"}}{{/crossLink}} if it does not yet have one.",
             "access": "private",
             "tagname": "",
@@ -7047,7 +7047,7 @@
         },
         {
             "file": "src/core/viewer.js",
-            "line": 360,
+            "line": 365,
             "description": "Fired whenever a Component has been created within this Viewer.",
             "itemtype": "event",
             "name": "componentCreated",
@@ -7063,7 +7063,7 @@
         },
         {
             "file": "src/core/viewer.js",
-            "line": 368,
+            "line": 373,
             "description": "Removes a {{#crossLink \"Component\"}}{{/crossLink}} from this Viewer.\n\nThis is called within the destructors of {{#crossLink \"Component\"}}{{/crossLink}} subclasses.",
             "access": "private",
             "tagname": "",
@@ -7079,7 +7079,7 @@
         },
         {
             "file": "src/core/viewer.js",
-            "line": 395,
+            "line": 400,
             "description": "Fired whenever a component within this Viewer has been destroyed.",
             "itemtype": "event",
             "name": "componentDestroyed",
@@ -7095,13 +7095,13 @@
         },
         {
             "file": "src/core/viewer.js",
-            "line": 403,
+            "line": 408,
             "class": "Viewer",
             "module": "BIMSURFER"
         },
         {
             "file": "src/core/viewer.js",
-            "line": 425,
+            "line": 430,
             "description": "Stores a connection to a server for later use.",
             "params": [
                 {
@@ -7115,7 +7115,7 @@
         },
         {
             "file": "src/core/viewer.js",
-            "line": 436,
+            "line": 441,
             "description": "Resizes the viewport and updates the aspect ratio",
             "params": [
                 {
@@ -7134,14 +7134,14 @@
         },
         {
             "file": "src/core/viewer.js",
-            "line": 462,
+            "line": 467,
             "description": "Loads and shows the geometry of the revisions that are in the load queue",
             "class": "Viewer",
             "module": "BIMSURFER"
         },
         {
             "file": "src/core/viewer.js",
-            "line": 484,
+            "line": 489,
             "description": "Iterates with a callback over Components of the given classes",
             "params": [
                 {
@@ -7160,7 +7160,7 @@
         },
         {
             "file": "src/core/viewer.js",
-            "line": 505,
+            "line": 510,
             "description": "Iterates with a callback over Components of the given IFC types",
             "params": [
                 {
@@ -7179,7 +7179,7 @@
         },
         {
             "file": "src/core/viewer.js",
-            "line": 526,
+            "line": 531,
             "description": "Shows an IFC type of a revision.",
             "params": [
                 {
@@ -7198,7 +7198,7 @@
         },
         {
             "file": "src/core/viewer.js",
-            "line": 540,
+            "line": 545,
             "description": "Hides an IFC type of a revision.",
             "params": [
                 {
@@ -7217,7 +7217,7 @@
         },
         {
             "file": "src/core/viewer.js",
-            "line": 553,
+            "line": 558,
             "description": "Hides all the types of a revision",
             "params": [
                 {
@@ -7231,7 +7231,7 @@
         },
         {
             "file": "src/core/viewer.js",
-            "line": 565,
+            "line": 570,
             "description": "Shows a revision",
             "params": [
                 {
@@ -7251,7 +7251,7 @@
         },
         {
             "file": "src/core/viewer.js",
-            "line": 594,
+            "line": 599,
             "description": "Fires an event on this Viewer.\n\nNotifies existing subscribers to the event, retains the event to give to\nany subsequent notifications on that location as they are made.",
             "itemtype": "method",
             "name": "fire",
@@ -7279,7 +7279,7 @@
         },
         {
             "file": "src/core/viewer.js",
-            "line": 621,
+            "line": 626,
             "description": "Subscribes to an event on this Viewer.\n\nThe callback is be called with this Viewer as scope.",
             "itemtype": "method",
             "name": "on",
@@ -7311,7 +7311,7 @@
         },
         {
             "file": "src/core/viewer.js",
-            "line": 651,
+            "line": 656,
             "description": "Cancels an event subscription that was previously made with {{#crossLink \"Viewer/on:method\"}}{{/crossLink}} or\n{{#crossLink \"Viewer/once:method\"}}{{/crossLink}}.",
             "itemtype": "method",
             "name": "off",
@@ -7327,7 +7327,7 @@
         },
         {
             "file": "src/core/viewer.js",
-            "line": 670,
+            "line": 675,
             "description": "Subscribes to the next occurrence of the given event on this Viewer, then un-subscribes as soon as the event is handled.",
             "itemtype": "method",
             "name": "once",
@@ -7355,7 +7355,7 @@
         },
         {
             "file": "src/core/viewer.js",
-            "line": 688,
+            "line": 693,
             "description": "Logs a console debugging message for this View.\n\nThe console message will have this format: *````[LOG] BIMSERVER.Viewer: <message>````*",
             "itemtype": "method",
             "name": "log",
@@ -7371,7 +7371,7 @@
         },
         {
             "file": "src/core/viewer.js",
-            "line": 700,
+            "line": 705,
             "description": "Logs an error for this View to the JavaScript console.\n\nThe console message will have this format: *````[ERROR] BIMSERVER.Viewer: <message>````*",
             "itemtype": "method",
             "name": "error",
@@ -7387,7 +7387,7 @@
         },
         {
             "file": "src/core/viewer.js",
-            "line": 712,
+            "line": 717,
             "description": "Logs a warning for this View to the JavaScript console.\n\nThe console message will have this format: *````[WARN] BIMSERVER.Viewer: <message>````*",
             "itemtype": "method",
             "name": "warn",
@@ -7845,55 +7845,55 @@
         },
         {
             "message": "Missing item type\nInput handling",
-            "line": " src/core/viewer.js:303"
+            "line": " src/core/viewer.js:308"
         },
         {
             "message": "Missing item type\nAdds a {{#crossLink \"Component\"}}{{/crossLink}} to this viewer.\n\nThis is called within the constructors of {{#crossLink \"Component\"}}{{/crossLink}} subclasses.\n\nThe {{#crossLink \"Component\"}}{{/crossLink}} is assigned a\nunique {{#crossLink \"Component/id:property\"}}{{/crossLink}} if it does not yet have one.",
-            "line": " src/core/viewer.js:309"
+            "line": " src/core/viewer.js:314"
         },
         {
             "message": "Missing item type\nRemoves a {{#crossLink \"Component\"}}{{/crossLink}} from this Viewer.\n\nThis is called within the destructors of {{#crossLink \"Component\"}}{{/crossLink}} subclasses.",
-            "line": " src/core/viewer.js:368"
+            "line": " src/core/viewer.js:373"
         },
         {
             "message": "Missing item type",
-            "line": " src/core/viewer.js:403"
+            "line": " src/core/viewer.js:408"
         },
         {
             "message": "Missing item type\nStores a connection to a server for later use.",
-            "line": " src/core/viewer.js:425"
+            "line": " src/core/viewer.js:430"
         },
         {
             "message": "Missing item type\nResizes the viewport and updates the aspect ratio",
-            "line": " src/core/viewer.js:436"
+            "line": " src/core/viewer.js:441"
         },
         {
             "message": "Missing item type\nLoads and shows the geometry of the revisions that are in the load queue",
-            "line": " src/core/viewer.js:462"
+            "line": " src/core/viewer.js:467"
         },
         {
             "message": "Missing item type\nIterates with a callback over Components of the given classes",
-            "line": " src/core/viewer.js:484"
+            "line": " src/core/viewer.js:489"
         },
         {
             "message": "Missing item type\nIterates with a callback over Components of the given IFC types",
-            "line": " src/core/viewer.js:505"
+            "line": " src/core/viewer.js:510"
         },
         {
             "message": "Missing item type\nShows an IFC type of a revision.",
-            "line": " src/core/viewer.js:526"
+            "line": " src/core/viewer.js:531"
         },
         {
             "message": "Missing item type\nHides an IFC type of a revision.",
-            "line": " src/core/viewer.js:540"
+            "line": " src/core/viewer.js:545"
         },
         {
             "message": "Missing item type\nHides all the types of a revision",
-            "line": " src/core/viewer.js:553"
+            "line": " src/core/viewer.js:558"
         },
         {
             "message": "Missing item type\nShows a revision",
-            "line": " src/core/viewer.js:565"
+            "line": " src/core/viewer.js:570"
         }
     ]
 }

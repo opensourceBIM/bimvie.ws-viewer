@@ -4,7 +4,7 @@
  * A WebGL-based IFC Viewer for BIMSurfer
  * http://bimwiews.org/
  *
- * Built on 2015-05-07
+ * Built on 2015-05-08
  *
  * todo
  * Copyright 2015, todo
@@ -3668,6 +3668,11 @@ var viewer = new BIMSURFER.Viewer(...);
 
             canvasId: canvasId,
 
+            // Transparent canvas
+            // Less work for the GPU rendering all those background fragments.
+            // Let CSS do that work.
+            transparent: true,
+
             nodes: [
 
                 // Node library, where we keep sharable
@@ -4297,14 +4302,17 @@ var viewer = new BIMSURFER.Viewer(...);
 
  ## Example
 
- In the example below we'll create three Objects, each with a unique ID and a modelling transform:
+ In the example below we'll create three Objects, each with a unique ID and a modelling transform.
+
+ <iframe style="width: 600px; height: 400px" src="../../examples/object_Object.html"></iframe>
+
  ````Javascript
  // Create a Viewer
  var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
 
  // Create a Camera
  var camera = new BIMSURFER.Camera(viewer, {
-    eye: [0, 0, -10]
+    eye: [10, 10, -10]
  });
 
  // Create a CameraControl to interact with the Camera
@@ -4409,7 +4417,7 @@ var viewer = new BIMSURFER.Viewer(...);
 
             this._materialNode = this._flagsNode.addNode({
                 type: "material",
-                specularColor: { r: 0, g: 0, b: 0 }
+                specularColor: { r: 1, g: 1, b: 1 }
             });
 
             this._matrixNode = this._materialNode.addNode({
@@ -4921,13 +4929,15 @@ var viewer = new BIMSURFER.Viewer(...);
 
  ## Example
 
+ <iframe style="width: 600px; height: 400px" src="../../examples/object_BoxObject.html"></iframe>
+
  ````Javascript
  // Create a Viewer
  var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
 
  // Create a Camera
  var camera = new BIMSURFER.Camera(viewer, {
-    eye: [0, 0, -10]
+     eye: [20, 20, -20]
  });
 
  // Create a CameraControl to interact with the Camera
@@ -4993,6 +5003,8 @@ var viewer = new BIMSURFER.Viewer(...);
  TODO
 
  ## Example
+
+ <iframe style="width: 600px; height: 400px" src="../../examples/object_TeapotObject.html"></iframe>
 
  ````Javascript
  // Create a Viewer
@@ -5072,68 +5084,15 @@ var viewer = new BIMSURFER.Viewer(...);
 
  </ul>
 
- ## Examples
+ ## Example
 
- #### Adding and removing Objects by ID
+ #### Highlighting an ObjectSet
 
- Isolate objects that match given IDs, using an ObjectSet and an {{#crossLink "IsolateEffect"}}{{/crossLink}}:
+ In this example we create four {{#crossLink "Object"}}Objects{{/crossLink}}, then add two of them to an {{#crossLink "ObjectSet"}}{{/crossLink}}.
+ <br> Then we apply a {{#crossLink "HighlightEffect"}}{{/crossLink}} to the {{#crossLink "ObjectSet"}}{{/crossLink}}, causing
+ it's {{#crossLink "Object"}}Objects{{/crossLink}} to become highlighted while the other two {{#crossLink "Object"}}Objects{{/crossLink}} remain un-highlighted.
 
- ````javascript
-
- // Create a Viewer
- var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
-
- // Create a Camera
- var camera = new BIMSURFER.Camera(viewer, {
-    eye: [0, 0, -10]
- });
-
- // Create a CameraControl to interact with the Camera
- var cameraControl = new BIMSURFER.CameraControl(viewer, {
-    camera: camera
- });
-
- // Create some BoxObjects
-
- new BIMSURFER.BoxObject(viewer, {
-    objectId: "foo",
-    ifcType: "IfcWall",
-    matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])
- });
-
- new BIMSURFER.BoxObject(viewer, {
-    objectId: "bar",
-    ifcType: "IfcWall",
-    matrix: BIMSURFER.math.translationMat4v([4, 0, -4])
- });
-
- new BIMSURFER.BoxObject(viewer, {
-    objectId: "baz",
-    ifcType: "IfcBeam",
-    matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])
- });
-
- // Create an ObjectSet
- var objectSet = new BIMSURFER.ObjectSet(viewer);
-
- // Apply an Isolate effect to the ObjectSet
- var isolateEffect = new BIMSURFER.IsolateEffect(viewer, {
-        objectSet: objectSet
- });
-
- // Add Objects to the ObjectSet by ID
- // These Objects become visible
- objectSet.addObjectIds(["foo", "bar", "baz"]);
-
- // Remove an Object from the ObjectSet by ID
- // That Object becomes invisible again
- objectSet.removeObjectIds(["baz"]);
-
- ````
-
- #### Adding and removing Objects by IFC type
-
- X-ray and highlight objects that match given IFC types, using an ObjectSet, {{#crossLink "XRayEffect"}}{{/crossLink}} and {{#crossLink "HighlightEffect"}}{{/crossLink}}:
+ <iframe style="width: 600px; height: 400px" src="../../examples/object_ObjectSet_addObjects.html"></iframe>
 
  ````javascript
 
@@ -5142,109 +5101,88 @@ var viewer = new BIMSURFER.Viewer(...);
 
  // Create a Camera
  var camera = new BIMSURFER.Camera(viewer, {
-    eye: [0, 0, -10]
- });
+        eye: [30, 20, -30]
+    });
 
- // Create a CameraControl to interact with the Camera
+ // Spin the camera
+ viewer.on("tick", function () {
+        camera.rotateEyeY(0.2);
+    });
+
+ // Create a CameraControl so we can move the Camera
  var cameraControl = new BIMSURFER.CameraControl(viewer, {
-    camera: camera
- });
+        camera: camera
+    });
 
- // Create some BoxObjects
+ // Create an AmbientLight
+ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
+        color: [0.7, 0.7, 0.7]
+    });
 
- new BIMSURFER.BoxObject(viewer, {
-    objectId: "foo",
-    ifcType: "IfcWall",
-    matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])
- });
+ // Create a DirLight
+ var dirLight1 = new BIMSURFER.DirLight(viewer, {
+        color: [0.6, 0.9, 0.9],
+        dir: [1.0, 0.0, 0.0],
+        space: "view"
+    });
 
- new BIMSURFER.BoxObject(viewer, {
-    objectId: "bar",
-    ifcType: "IfcWall",
-    matrix: BIMSURFER.math.translationMat4v([4, 0, -4])
- });
+ // Create a DirLight
+ var dirLight2 = new BIMSURFER.DirLight(viewer, {
+        color: [0.6, 0.9, 0.9],
+        dir: [-0.5, 0.0, -1.0],
+        space: "view"
+    });
 
- new BIMSURFER.Object(viewer, {
-    objectId: "baz",
-    ifcType: "IfcBeam",
-    matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])
- });
+ // Create a BoxGeometry
+ var geometry = new BIMSURFER.BoxGeometry(viewer, {
+        id: "myGeometry"
+    });
 
- // Create an ObjectSet
- var objectSet = new BIMSURFER.ObjectSet(viewer);
+ // Create some Objects
+ // Share the BoxGeometry among them
 
- // Apply an X-Ray effect to the ObjectSet
- var xrayEffect = new BIMSURFER.XRayEffect(viewer, {
-    objectSet: objectSet
- });
+ var object1 = new BIMSURFER.Object(viewer, {
+        ifcType: "IfcRoof",
+        geometries: [ geometry ],
+        matrix: BIMSURFER.math.translationMat4v([-8, 0, -8])
+    });
 
- // Apply a Highlight effect to the ObjectSet
- var highlightEffect = new BIMSURFER.HighlightEffect(viewer, {
-    objectSet: objectSet
- });
+ var object2 = new BIMSURFER.Object(viewer, {
+        ifcType: "IfcDistributionFlowElement",
+        geometries: [ geometry ],
+        matrix: BIMSURFER.math.translationMat4v([8, 0, -8])
+    });
 
- // Add Objects to the ObjectSet by IFC type
- // These Objects become opaque and highlighted
- objectSet.addTypes(["IfcWall", "IfcBeam"]);
+ var object3 = new BIMSURFER.Object(viewer, {
+        ifcType: "IfcDistributionFlowElement",
+        geometries: [ geometry ],
+        matrix: BIMSURFER.math.translationMat4v([-8, 0, 8])
+    });
 
- // Remove an Object from the ObjectSet by IFC type
- // That Object becomes transparent and non-highlighted
- objectSet.removeTypes(["IfcWall"]);
+ var object4 = new BIMSURFER.Object(viewer, {
+        ifcType: "IfcRoof",
+        geometries: [ geometry ],
+        matrix: BIMSURFER.math.translationMat4v([8, 0, 8])
+    });
 
- ````
+ // Create an ObjectSet that initially contains one of our Objects
 
- #### Using with a ClickSelectObjects
+ var objectSet = new BIMSURFER.ObjectSet(viewer, {
+        objects: [object1 ]
+    });
 
- Highlighting clicked objects, using an ObjectSet, {{#crossLink "HighlightEffect"}}{{/crossLink}} and {{#crossLink "ClickSelectObjects"}}{{/crossLink}}:
+ // Apply a Highlight effect to the ObjectSet, which causes the
+ // Object in the ObjectSet to become highlighted.
 
- ````javascript
-
- // Create a Viewer
- var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
-
- // Create a Camera
- var camera = new BIMSURFER.Camera(viewer, {
-    eye: [0, 0, -10]
- });
-
- // Create a CameraControl to interact with the Camera
- var cameraControl = new BIMSURFER.CameraControl(viewer, {
-    camera: camera
- });
-
- // Create some BoxObjects
-
- new BIMSURFER.BoxObject(viewer, {
-    objectId: "foo",
-    ifcType: "IfcWall",
-    matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])
- });
-
- new BIMSURFER.BoxObject(viewer, {
-    objectId: "bar",
-    ifcType: "IfcWall",
-    matrix: BIMSURFER.math.translationMat4v([4, 0, -4])
- });
-
- new BIMSURFER.Object(viewer, {
-    objectId: "baz",
-    ifcType: "IfcBeam",
-    matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])
- });
-
- // Create an ObjectSet
- var objectSet = new BIMSURFER.ObjectSet(viewer);
-
- // Apply a Highlight effect to the ObjectSet
- var highlightEffect = new BIMSURFER.HighlightEffect(viewer, {
+ var highlight = new BIMSURFER.HighlightEffect(viewer, {
         objectSet: objectSet
     });
 
- // Create a ClickSelectObjects control, which will add and remove objects to and from the ObjectSet
- // to and from the ObjectSet as we click them
- var clickSelect = new BIMSURFER.ClickSelectObjects(viewer, {
-        objectSet: objectSet
-    });
+ // Add a second Object to the ObjectSet, causing the Highlight to now render
+ // that Object as highlighted also
+
+ objectSet.addObjects([object3]);
+
  ````
 
  #### Boundaries
@@ -5771,30 +5709,30 @@ var viewer = new BIMSURFER.Viewer(...);
  // Create some Cameras
  var cameras = [
 
- new BIMSURFER.Camera(viewer, {
-            eye: [5, 5, 5],
-            active: false
-        }),
+    new BIMSURFER.Camera(viewer, {
+        eye: [5, 5, 5],
+        active: false
+    }),
 
- new BIMSURFER.Camera(viewer, {
-            eye: [-5, 5, 5],
-            active: false
-        }),
+    new BIMSURFER.Camera(viewer, {
+        eye: [-5, 5, 5],
+        active: false
+    }),
 
- new BIMSURFER.Camera(viewer, {
-            eye: [5, -5, 5],
-            active: false
-        }),
+    new BIMSURFER.Camera(viewer, {
+        eye: [5, -5, 5],
+        active: false
+    }),
 
- new BIMSURFER.Camera(viewer, {
-            eye: [5, 5, -5],
-            active: false
-        }),
+    new BIMSURFER.Camera(viewer, {
+        eye: [5, 5, -5],
+        active: false
+    }),
 
- new BIMSURFER.Camera(viewer, {
-            eye: [-5, -5, 5],
-            active: false
-        })
+    new BIMSURFER.Camera(viewer, {
+        eye: [-5, -5, 5],
+        active: false
+    })
  ];
 
  // Periodically switch between the Cameras
@@ -6101,8 +6039,7 @@ var viewer = new BIMSURFER.Viewer(...);
                                             type: "perspective",
                                             fovy: self.fovy,
                                             near: self.near,
-                                            far: self.far,
-                                            aspect: self.aspect
+                                            far: self.far
                                         }
                                     });
 
@@ -6525,11 +6462,19 @@ var viewer = new BIMSURFER.Viewer(...);
 
  ## Overview
 
-TODO
+ <ul>
+
+ <li>You only need one AmbientLight in your {{#crossLink "Viewer"}}{{/crossLink}}.</li>
+ <li>Normally you would combine AmbientLights with {{#crossLink "DirLight"}}DirLights{{/crossLink}} and/or
+ {{#crossLink "PointLight"}}PointLights{{/crossLink}}.</li>
+
+ </ul>
 
  ## Example
 
- <iframe style="width: 600px; height: 400px" src="../../examples/light_ambient.html"></iframe>
+ In the example below we're illuminating a {{#crossLink "TeapotObject"}}{{/crossLink}} with a single AmbientLight.
+
+ <iframe style="width: 600px; height: 400px" src="../../examples/light_AmbientLight.html"></iframe>
 
  ```` javascript
 // Create a Viewer
@@ -6629,7 +6574,9 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
  ## Example
 
- <iframe style="width: 600px; height: 400px" src="../../examples/light_point.html"></iframe>
+ In the example below we're illuminating a {{#crossLink "TeapotObject"}}{{/crossLink}} with a single PointLight.
+
+ <iframe style="width: 600px; height: 400px" src="../../examples/light_PointLight.html"></iframe>
 
  ```` javascript
  // Create a Viewer
@@ -6685,7 +6632,8 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
         _init: function (cfg) {
 
-            this._super(BIMSURFER._apply({ mode: "point" }, cfg));
+            this._super(BIMSURFER._apply({
+                mode: "point" }, cfg));
 
             this.pos = cfg.pos;
             this.color = cfg.color;
@@ -6732,7 +6680,8 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
                 set: function (value) {
                     this._color = value;
                     this._update({
-                        color: { r: value[0], g: value[1], b: value[2] }
+                        color: { r: value[0], g: value[1], b: value[2] },
+                        specularColor: { r: value[0], g: value[1], b: value[2] }
                     });
                 },
 
@@ -6857,7 +6806,9 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
  ## Example
 
- <iframe style="width: 600px; height: 400px" src="../../examples/light_directional.html"></iframe>
+ In the example below we're illuminating a {{#crossLink "TeapotObject"}}{{/crossLink}} with a single DirLight.
+
+ <iframe style="width: 600px; height: 400px" src="../../examples/light_DirLight.html"></iframe>
 
  ```` javascript
  // Create a Viewer
@@ -7000,7 +6951,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
  #### Creating a triangle mesh Geometry
 
- <iframe style="width: 600px; height: 400px" src="../../examples/geometry_custom.html">Run this example</iframe>
+ <iframe style="width: 600px; height: 400px" src="../../examples/geometry_Geometry.html">Run this example</iframe>
 
  ````javascript
 
@@ -7176,7 +7127,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
  ## Example
 
- <iframe style="width: 600px; height: 400px" src="../../examples/geometry_box.html"></iframe>
+ <iframe style="width: 600px; height: 400px" src="../../examples/geometry_BoxGeometry.html"></iframe>
 
  ````javascript
  // Create a Viewer
@@ -7286,7 +7237,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
  ## Example
 
- <iframe style="width: 600px; height: 400px" src="../../examples/geometry_teapot.html"></iframe>
+ <iframe style="width: 600px; height: 400px" src="../../examples/geometry_TeapotGeometry.html"></iframe>
 
  ````javascript
  // Create a Viewer
@@ -13195,7 +13146,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
  @param [cfg] {*} Configs
  @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
  @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Effect.
- @param [objectSet] {ObjectSet} The {{#crossLink "Objectset"}}{{/crossLink}} to update.
+ @param [objectSet] {ObjectSet} The {{#crossLink "ObjectSet"}}{{/crossLink}} to apply this Effect to.
  @extends Component
  */
 (function () {
@@ -13353,7 +13304,13 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
  ## Example
 
- Highlight objects that match given IDs, using an {{#crossLink "ObjectSet"}}{{/crossLink}} and a HighlightEffect:
+ #### Highlighting an ObjectSet
+
+ In this example we create four {{#crossLink "Object"}}Objects{{/crossLink}}, then add two of them to an {{#crossLink "ObjectSet"}}{{/crossLink}}.
+<br> Then we apply a {{#crossLink "HighlightEffect"}}{{/crossLink}} to the {{#crossLink "ObjectSet"}}{{/crossLink}}, causing
+ it's {{#crossLink "Object"}}Objects{{/crossLink}} to become highlighted while the other two {{#crossLink "Object"}}Objects{{/crossLink}} remain un-highlighted.
+
+ <iframe style="width: 600px; height: 400px" src="../../examples/effect_HighlightEffect.html"></iframe>
 
  ````javascript
 
@@ -13362,49 +13319,87 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
  // Create a Camera
  var camera = new BIMSURFER.Camera(viewer, {
-    eye: [0, 0, -10]
- });
+        eye: [30, 20, -30]
+    });
 
- // Create a CameraControl to interact with the Camera
+ // Spin the camera
+ viewer.on("tick", function () {
+        camera.rotateEyeY(0.2);
+    });
+
+ // Create a CameraControl so we can move the Camera
  var cameraControl = new BIMSURFER.CameraControl(viewer, {
-    camera: camera
- });
+        camera: camera
+    });
 
- // Create some BoxObjects
+ // Create an AmbientLight
+ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
+        color: [0.7, 0.7, 0.7]
+    });
 
- new BIMSURFER.BoxObject(viewer, {
-    objectId: "foo",
-    ifcType: "IfcWall",
-    matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])
- });
+ // Create a DirLight
+ var dirLight1 = new BIMSURFER.DirLight(viewer, {
+        color: [0.6, 0.9, 0.9],
+        dir: [1.0, 0.0, 0.0],
+        space: "view"
+    });
 
- new BIMSURFER.BoxObject(viewer, {
-    objectId: "bar",
-    ifcType: "IfcWall",
-    matrix: BIMSURFER.math.translationMat4v([4, 0, -4])
- });
+ // Create a DirLight
+ var dirLight2 = new BIMSURFER.DirLight(viewer, {
+        color: [0.6, 0.9, 0.9],
+        dir: [-0.5, 0.0, -1.0],
+        space: "view"
+    });
 
- new BIMSURFER.BoxObject(viewer, {
-    objectId: "baz",
-    ifcType: "IfcBeam",
-    matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])
- });
+ // Create a BoxGeometry
+ var geometry = new BIMSURFER.BoxGeometry(viewer, {
+        id: "myGeometry"
+    });
 
- // Create an ObjectSet
- var objectSet = new BIMSURFER.ObjectSet(viewer);
+ // Create some Objects
+ // Share the BoxGeometry among them
 
- // Apply a highlight effect to the ObjectSet
- var highlightEffect = new BIMSURFER.HighlightEffect(viewer, {
+ var object1 = new BIMSURFER.Object(viewer, {
+        ifcType: "IfcRoof",
+        geometries: [ geometry ],
+        matrix: BIMSURFER.math.translationMat4v([-8, 0, -8])
+    });
+
+ var object2 = new BIMSURFER.Object(viewer, {
+        ifcType: "IfcDistributionFlowElement",
+        geometries: [ geometry ],
+        matrix: BIMSURFER.math.translationMat4v([8, 0, -8])
+    });
+
+ var object3 = new BIMSURFER.Object(viewer, {
+        ifcType: "IfcRailing",
+        geometries: [ geometry ],
+        matrix: BIMSURFER.math.translationMat4v([-8, 0, 8])
+    });
+
+ var object4 = new BIMSURFER.Object(viewer, {
+        ifcType: "IfcRoof",
+        geometries: [ geometry ],
+        matrix: BIMSURFER.math.translationMat4v([8, 0, 8])
+    });
+
+ // Create an ObjectSet that initially contains one of our Objects
+
+ var objectSet = new BIMSURFER.ObjectSet(viewer, {
+        objects: [object1 ]
+    });
+
+ // Apply a Highlight effect to the ObjectSet, which causes the
+ // Object in the ObjectSet to become highlighted.
+
+ var highlight = new BIMSURFER.HighlightEffect(viewer, {
         objectSet: objectSet
     });
 
- // Add Objects to the ObjectSet by ID
- // These Objects become highlighted
- objectSet.addObjectIds(["foo", "bar", "baz"]);
+ // Add a second Object to the ObjectSet, causing the Highlight to now render
+ // that Object as highlighted also
 
- // Remove an Object from the ObjectSet by ID
- // That Object becomes non-highlighted again
- objectSet.removeObjectIds(["baz"]);
+ objectSet.addObjects([object3]);
 
  ````
 
@@ -13416,7 +13411,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
  @param [cfg] {*} Configs
  @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
  @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this HighlightEffect.
- @param [selection] {Selection} The {{#crossLink "Selection"}}{{/crossLink}} to update.
+ @param [objectSet] {ObjectSet} The {{#crossLink "ObjectSet"}}{{/crossLink}} to apply this HighlightEffect to.
  @extends Effect
  */
 (function () {
@@ -13453,7 +13448,11 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
  ## Example
 
- Isolate objects that match given IDs, using an {{#crossLink "ObjectSet"}}{{/crossLink}} and an IsolateEffect:
+ #### Isolating an ObjectSet
+
+ Isolate objects that match given IDs, using an {{#crossLink "ObjectSet"}}{{/crossLink}} and an IsolateEffect
+
+ <iframe style="width: 600px; height: 400px" src="../../examples/effect_IsolateEffect.html"></iframe>
 
  ````javascript
 
@@ -13516,7 +13515,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
  @param [cfg] {*} Configs
  @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
  @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this IsolateEffect.
- @param [selection] {Selection} The {{#crossLink "Selection"}}{{/crossLink}} to update.
+ @param [objectSet] {ObjectSet} The {{#crossLink "ObjectSet"}}{{/crossLink}} to apply this IsolateEffect to.
  @extends Effect
  */
 (function () {
@@ -13553,7 +13552,13 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
  ## Example
 
- X-ray objects that match given IFC types, using an {{#crossLink "ObjectSet"}}{{/crossLink}} and an XRayEffect:
+ #### XRaying an ObjectSet
+
+ In this example we create four {{#crossLink "Object"}}Objects{{/crossLink}}, then add two of them to an {{#crossLink "ObjectSet"}}{{/crossLink}}.
+ <br>Then we apply an {{#crossLink "XRayEffect"}}{{/crossLink}} to the {{#crossLink "ObjectSet"}}{{/crossLink}}, causing
+ it's {{#crossLink "Object"}}Objects{{/crossLink}} to remain opaque while the other two {{#crossLink "Object"}}Objects{{/crossLink}} become transparent.
+
+ <iframe style="width: 600px; height: 400px" src="../../examples/effect_XRayEffect.html"></iframe>
 
  ````javascript
 
@@ -13562,50 +13567,92 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
  // Create a Camera
  var camera = new BIMSURFER.Camera(viewer, {
-    eye: [0, 0, -10]
- });
+        eye: [20, 10, -20]
+    });
 
- // Create a CameraControl to interact with the Camera
+ // Spin the camera
+ viewer.on("tick", function () {
+        camera.rotateEyeY(0.2);
+    });
+
+ // Create a CameraControl so we can move the Camera
  var cameraControl = new BIMSURFER.CameraControl(viewer, {
-    camera: camera
- });
+        camera: camera
+    });
 
- // Create some BoxObjects
+ // Create an AmbientLight
+ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
+        color: [0.7, 0.7, 0.7]
+    });
 
- new BIMSURFER.BoxObject(viewer, {
-    objectId: "foo",
-    ifcType: "IfcWall",
-    matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])
- });
+ // Create a DirLight
+ var dirLight1 = new BIMSURFER.DirLight(viewer, {
+        color: [0.6, 0.9, 0.9],
+        dir: [1.0, 0.0, 0.0],
+        space: "view"
+    });
 
- new BIMSURFER.BoxObject(viewer, {
-    objectId: "bar",
-    ifcType: "IfcWall",
-    matrix: BIMSURFER.math.translationMat4v([4, 0, -4])
- });
+ // Create a DirLight
+ var dirLight2 = new BIMSURFER.DirLight(viewer, {
+        color: [0.6, 0.9, 0.9],
+        dir: [-0.5, 0.0, -1.0],
+        space: "view"
+    });
 
- new BIMSURFER.BoxObject(viewer, {
-    objectId: "baz",
-    ifcType: "IfcBeam",
-    matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])
- });
+ // Create a BoxGeometry
+ var geometry = new BIMSURFER.BoxGeometry(viewer, {
+        id: "myGeometry"
+    });
 
- // Create an ObjectSet
- var objectSet = new BIMSURFER.ObjectSet(viewer);
+ // Create some Objects
+ // Share the BoxGeometry among them
 
- // Apply an X-Ray effect to the ObjectSet
- var xrayEffect = new BIMSURFER.XRayEffect(viewer, {
-    objectSet: objectSet
- });
+ var object1 = new BIMSURFER.Object(viewer, {
+        ifcType: "IfcRoof",
+        geometries: [ geometry ],
+        matrix: BIMSURFER.math.translationMat4v([-8, 0, -8])
+    });
 
- // Add Objects to the ObjectSet by IFC type
- // These Objects become opaque
- objectSet.addObjectTypes(["IfcWall", "IfcBeam"]);
+ var object2 = new BIMSURFER.Object(viewer, {
+        ifcType: "IfcDistributionFlowElement",
+        geometries: [ geometry ],
+        matrix: BIMSURFER.math.translationMat4v([8, 0, -8])
+    });
 
- // Remove an Object from the ObjectSet by IFC type
- // That Object becomes transparent
- objectSet.removeObjectTypes(["IfcWall"]);
+ var object3 = new BIMSURFER.Object(viewer, {
+        ifcType: "IfcRailing",
+        geometries: [ geometry ],
+        matrix: BIMSURFER.math.translationMat4v([-8, 0, 8])
+    });
 
+ var object4 = new BIMSURFER.Object(viewer, {
+        ifcType: "IfcRoof",
+        geometries: [ geometry ],
+        matrix: BIMSURFER.math.translationMat4v([8, 0, 8])
+    });
+
+ // Create an ObjectSet that initially contains one of our Objects
+
+ var objectSet = new BIMSURFER.ObjectSet(viewer, {
+        objects: [object1 ]
+    });
+
+ // Apply an XRay effect to the ObjectSet, which causes all Objects in the Viewer
+ // that are not in the ObjectSet to become transparent.
+
+ var xray = new BIMSURFER.XRayEffect(viewer, {
+        objectSet: objectSet
+    });
+
+ // Add a second Object to the ObjectSet, causing the XRay to now render
+ // that Object as opaque also
+
+ objectSet.addObjects([object3]);
+
+ // Adjust the opacity of the transparent Objects
+
+ object2.opacity = 0.2;
+ object4.opacity = 0.2;
  ````
 
  @class XRayEffect
@@ -13616,7 +13663,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
  @param [cfg] {*} Configs
  @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
  @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this XRayEffect.
- @param [selection] {Selection} The {{#crossLink "Selection"}}{{/crossLink}} to update.
+ @param [objectSet] {ObjectSet} The {{#crossLink "ObjectSet"}}{{/crossLink}} to apply this XRayEffect to.
  @extends Effect
  */
 (function () {
@@ -13658,6 +13705,8 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
  </ul>
 
  ## Example
+
+ #### Controlling a Camera
 
  In this example we're viewing a {{#crossLink "TeapotObject"}}{{/crossLink}} with a {{#crossLink "Camera"}}{{/crossLink}} that's controlled by a CameraControl.
 
@@ -13871,7 +13920,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
  ## Example
 
- TODO
+ <iframe style="width: 600px; height: 400px" src="../../examples/control_MouseOrbitCamera.html"></iframe>
 
  @class MouseOrbitCamera
  @module BIMSURFER
@@ -14066,7 +14115,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
  ## Example
 
- TODO
+ <iframe style="width: 600px; height: 400px" src="../../examples/control_KeyboardOrbitCamera.html"></iframe>
 
  @class KeyboardOrbitCamera
  @module BIMSURFER
@@ -14249,7 +14298,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
  ## Example
 
- TODO
+ <iframe style="width: 600px; height: 400px" src="../../examples/control_MouseZoomCamera.html"></iframe>
 
  @class MouseZoomCamera
  @module BIMSURFER
@@ -14464,7 +14513,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
  ## Example
 
- TODO
+ <iframe style="width: 600px; height: 400px" src="../../examples/control_KeyboardZoomCamera.html"></iframe>
 
  @class KeyboardZoomCamera
  @module BIMSURFER
@@ -14631,7 +14680,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
  ## Example
 
- TODO
+ <iframe style="width: 600px; height: 400px" src="../../examples/control_MousePanCamera.html"></iframe>
 
  @class MousePanCamera
  @module BIMSURFER
@@ -14826,7 +14875,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
  ## Example
 
- TODO
+ <iframe style="width: 600px; height: 400px" src="../../examples/control_KeyboardPanCamera.html"></iframe>
 
  @class KeyboardPanCamera
  @module BIMSURFER
@@ -15007,7 +15056,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
  ## Example
 
- TODO
+ <iframe style="width: 600px; height: 400px" src="../../examples/control_KeyboardAxisCamera.html"></iframe>
 
  @class KeyboardAxisCamera
  @module BIMSURFER
@@ -15227,10 +15276,14 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
  ## Example
 
+ #### Clicking Objects to add them to a highlighted ObjectSet
+
  In this example, we view four {{#crossLink "Objects"}}Objects{{/crossLink}} with a {{#crossLink "Camera"}}{{/crossLink}}, which we manipulate with a {{#crossLink "CameraControl"}}{{/crossLink}}.
  <br>We also use a {{#crossLink "ClickSelectObjects"}}{{/crossLink}} to add and remove
  the {{#crossLink "Objects"}}Objects{{/crossLink}} to an {{#crossLink "ObjectSet"}}{{/crossLink}}, to which we're applying
  a {{#crossLink "HighlightEffect"}}{{/crossLink}}.
+ <br><br>
+ Click on the {{#crossLink "Objects"}}Objects{{/crossLink}} to select and highlight them - hold down SHIFT to multi-select.
 
  <iframe style="width: 600px; height: 400px" src="../../examples/control_ClickSelectObjects_HighlightEffect.html"></iframe>
 

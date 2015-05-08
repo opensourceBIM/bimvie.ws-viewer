@@ -20,6 +20,8 @@
 
  ## Example
 
+ In the example below we're illuminating a {{#crossLink "TeapotObject"}}{{/crossLink}} with a single PointLight.
+
  <iframe style="width: 600px; height: 400px" src="../../examples/light_PointLight.html"></iframe>
 
  ```` javascript
@@ -76,7 +78,8 @@
 
         _init: function (cfg) {
 
-            this._super(BIMSURFER._apply({ mode: "point" }, cfg));
+            this._super(BIMSURFER._apply({
+                mode: "point" }, cfg));
 
             this.pos = cfg.pos;
             this.color = cfg.color;
@@ -123,7 +126,8 @@
                 set: function (value) {
                     this._color = value;
                     this._update({
-                        color: { r: value[0], g: value[1], b: value[2] }
+                        color: { r: value[0], g: value[1], b: value[2] },
+                        specularColor: { r: value[0], g: value[1], b: value[2] }
                     });
                 },
 

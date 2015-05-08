@@ -357,8 +357,7 @@
                                             type: "perspective",
                                             fovy: self.fovy,
                                             near: self.near,
-                                            far: self.far,
-                                            aspect: self.aspect
+                                            far: self.far
                                         }
                                     });
 

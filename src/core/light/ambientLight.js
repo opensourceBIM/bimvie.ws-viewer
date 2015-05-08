@@ -5,9 +5,17 @@
 
  ## Overview
 
-TODO
+ <ul>
+
+ <li>You only need one AmbientLight in your {{#crossLink "Viewer"}}{{/crossLink}}.</li>
+ <li>Normally you would combine AmbientLights with {{#crossLink "DirLight"}}DirLights{{/crossLink}} and/or
+ {{#crossLink "PointLight"}}PointLights{{/crossLink}}.</li>
+
+ </ul>
 
  ## Example
+
+ In the example below we're illuminating a {{#crossLink "TeapotObject"}}{{/crossLink}} with a single AmbientLight.
 
  <iframe style="width: 600px; height: 400px" src="../../examples/light_AmbientLight.html"></iframe>
 
