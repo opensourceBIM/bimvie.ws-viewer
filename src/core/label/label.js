@@ -13,24 +13,11 @@
  {{#crossLink "Object/label:property"}}{{/crossLink}} property true.</li>
  </ul>
 
- A Label can be queried for its coordinates within each of BIMSurfer's five coordinate systems:
-
- <ul>
- <li>{{#crossLink "Label/pos:property"}}{{/crossLink}} - 3D coordinates within the Label's local Model coordinate system.</li>
- <li>{{#crossLink "Label/worldPos:property"}}{{/crossLink}} - 3D coordinates within the Viewer's current World coordinate
- system, after transformation by the {{#crossLink "Label/matrix:property"}}Label's modelling matrix{{/crossLink}}.</li>
- <li>{{#crossLink "Label/viewPos:property"}}{{/crossLink}} - 3D coordinates within the Viewer's current View
- coordinate system, after transformation by the {{#crossLink "Viewer/viewMatrix:property"}}Viewer's view matrix{{/crossLink}}.</li>
- <li>{{#crossLink "Label/projPos:property"}}{{/crossLink}} - 3D coordinates within the Viewer's current Projection
- coordinate system, after transformation by the {{#crossLink "Viewer/projMatrix:property"}}Viewer's projection matrix{{/crossLink}}.</li>
- <li>{{#crossLink "Label/canvasPos:property"}}{{/crossLink}} - 2D coordinates within the Viewer's current Canvas
- coordinate system.</li>
- </ul>
 
 
  ## Example
 
- <iframe style="width: 800px; height: 400px" src="../../examples/label_Label.html"></iframe>
+ <iframe style="width: 800px; height: 600px" src="../../examples/label_Label.html"></iframe>
 
  ````Javascript
  // Create a Viewer
