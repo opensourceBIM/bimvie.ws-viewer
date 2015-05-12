@@ -12,14 +12,6 @@
             -webkit-user-select: none;
             background-color: white;
         }
-
-        #myCanvas {
-            width: 100%;
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            position: absolute;
-        }
     </style>
 
     <link href="css/styles.css" rel="stylesheet"/>
@@ -42,7 +34,7 @@
 <script>
 
     // Create a Viewer
-    var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+    var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
 
     // Create a Camera
     var camera = new BIMSURFER.Camera(viewer, {
@@ -88,29 +80,29 @@
     // Share the box Geometry among them
 
     var object1 = new BIMSURFER.Object(viewer, {
-        objectId: "object1",
-        ifcType: "IfcRoof",
+        id: "object1",
+        type: "IfcRoof",
         geometries: [ geometry ],
         matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])
     });
 
     var object2 = new BIMSURFER.Object(viewer, {
-        objectId: "object2",
-        ifcType: "IfcDistributionFlowElement",
+        id: "object2",
+        type: "IfcDistributionFlowElement",
         geometries: [ geometry ],
         matrix: BIMSURFER.math.translationMat4v([4, 0, -4])
     });
 
     var object3 = new BIMSURFER.Object(viewer, {
-        objectId: "object3",
-        ifcType: "IfcDistributionFlowElement",
+        id: "object3",
+        type: "IfcDistributionFlowElement",
         geometries: [ geometry ],
         matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])
     });
 
     var object4 = new BIMSURFER.Object(viewer, {
-        objectId: "object4",
-        ifcType: "IfcRoof",
+        id: "object4",
+        type: "IfcRoof",
         geometries: [ geometry ],
         matrix: BIMSURFER.math.translationMat4v([4, 0, 4])
     });

@@ -20,6 +20,7 @@
         "src/core/object/object.js",
         "src/core/object/boxObject.js",
         "src/core/object/teapotObject.js",
+        "src/core/object/randomObjects.js",
         "src/core/object/objectSet.js",
 
         "src/core/camera/camera.js",
@@ -34,6 +35,7 @@
         "src/core/geometry/teapotGeometry.js",
 
         "src/core/effect/effect.js",
+        "src/core/effect/labelEffect.js",
         "src/core/effect/highlightEffect.js",
         "src/core/effect/isolateEffect.js",
         "src/core/effect/xrayEffect.js",
@@ -47,7 +49,10 @@
         "src/core/control/keyboardPanCamera.js",
         "src/core/control/keyboardAxisCamera.js",
 
-        "src/core/control/clickSelectObjects.js"
+        "src/core/control/clickSelectObjects.js",
+
+        "src/core/label/position.js",
+        "src/core/label/label.js"
     ],
 
     "extras": [

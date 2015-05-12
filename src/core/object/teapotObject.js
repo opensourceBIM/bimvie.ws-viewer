@@ -11,7 +11,7 @@
 
  ````Javascript
  // Create a Viewer
- var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+ var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
 
  // Create a Camera
  var camera = new BIMSURFER.Camera(viewer, {
@@ -25,8 +25,8 @@
 
  // Create a TeapotObject
  new BIMSURFER.TeapotObject(viewer, {
-    objectId: "foo",
-    ifcType: "IfcWall",
+    id: "foo",
+    type: "IfcWall",
     matrix: BIMSURFER.math.scaleMat4v([ 1.5, 1.5, 1.5 ])
  });
 

@@ -39,7 +39,10 @@
                         <div id="api-tabview-panel">
                             <ul id="api-classes" class="apis classes">
                                 <li><a href="../classes/AmbientLight.html">AmbientLight</a></li>
+                                <li><a href="../classes/Anaglyph.html">Anaglyph</a></li>
                                 <li><a href="../classes/BIMSURFER.html">BIMSURFER</a></li>
+                                <li><a href="../classes/BIMSURFER.constants.html">BIMSURFER.constants</a></li>
+                                <li><a href="../classes/BIMSURFER.Viewer.html">BIMSURFER.Viewer</a></li>
                                 <li><a href="../classes/BoxGeometry.html">BoxGeometry</a></li>
                                 <li><a href="../classes/BoxObject.html">BoxObject</a></li>
                                 <li><a href="../classes/Camera.html">Camera</a></li>
@@ -49,6 +52,7 @@
                                 <li><a href="../classes/Component.html">Component</a></li>
                                 <li><a href="../classes/Configs.html">Configs</a></li>
                                 <li><a href="../classes/Debug.html">Debug</a></li>
+                                <li><a href="../classes/DepthOfField.html">DepthOfField</a></li>
                                 <li><a href="../classes/DirLight.html">DirLight</a></li>
                                 <li><a href="../classes/Effect.html">Effect</a></li>
                                 <li><a href="../classes/Fly.html">Fly</a></li>
@@ -60,6 +64,8 @@
                                 <li><a href="../classes/KeyboardOrbitCamera.html">KeyboardOrbitCamera</a></li>
                                 <li><a href="../classes/KeyboardPanCamera.html">KeyboardPanCamera</a></li>
                                 <li><a href="../classes/KeyboardZoomCamera.html">KeyboardZoomCamera</a></li>
+                                <li><a href="../classes/Label.html">Label</a></li>
+                                <li><a href="../classes/LabelEffect.html">LabelEffect</a></li>
                                 <li><a href="../classes/Light.html">Light</a></li>
                                 <li><a href="../classes/math.html">math</a></li>
                                 <li><a href="../classes/MouseOrbitCamera.html">MouseOrbitCamera</a></li>
@@ -68,9 +74,10 @@
                                 <li><a href="../classes/Object.html">Object</a></li>
                                 <li><a href="../classes/ObjectSet.html">ObjectSet</a></li>
                                 <li><a href="../classes/PointLight.html">PointLight</a></li>
+                                <li><a href="../classes/Position.html">Position</a></li>
+                                <li><a href="../classes/RandomObjects.html">RandomObjects</a></li>
                                 <li><a href="../classes/TeapotGeometry.html">TeapotGeometry</a></li>
                                 <li><a href="../classes/TeapotObject.html">TeapotObject</a></li>
-                                <li><a href="../classes/Viewer.html">Viewer</a></li>
                                 <li><a href="../classes/XRayEffect.html">XRayEffect</a></li>
                             </ul>
                 
@@ -128,15 +135,15 @@
 
 
 <div class="box intro">
-    <p>Publishes key and mouse events that occur on the parent <a href="../classes/Viewer.html" class="crosslink">Viewer</a>&#39;s <a href="../classes/Canvas.html" class="crosslink">Canvas</a>.</p>
+    <p>Publishes key and mouse events that occur on the parent Viewer&#39;s <a href="../classes/Canvas.html" class="crosslink">Canvas</a>.</p>
 <h2 id="overview">Overview</h2>
 <ul>
-<li>Each <a href="../classes/Viewer.html" class="crosslink">Viewer</a> provides an Input on itself as a read-only property.</li>
+<li>Each Viewer provides an Input on itself as a read-only property.</li>
 </ul>
 
 <h2 id="example">Example</h2>
 <p>In this example, we&#39;re subscribing to some mouse and key events that will occur on
-a <a href="../classes/Viewer.html" class="crosslink">Viewer&#39;s</a> <a href="../classes/Canvas.html" class="crosslink">Canvas</a>.</p>
+a Viewer <a href="../classes/Canvas.html" class="crosslink">Canvas</a>.</p>
 <pre class="code prettyprint"><code class="lang-javascript">var viewer = new BIMSURFER.Viewer(...);
 
 var input = viewer.input;

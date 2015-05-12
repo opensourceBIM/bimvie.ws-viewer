@@ -39,7 +39,10 @@
                         <div id="api-tabview-panel">
                             <ul id="api-classes" class="apis classes">
                                 <li><a href="../classes/AmbientLight.html">AmbientLight</a></li>
+                                <li><a href="../classes/Anaglyph.html">Anaglyph</a></li>
                                 <li><a href="../classes/BIMSURFER.html">BIMSURFER</a></li>
+                                <li><a href="../classes/BIMSURFER.constants.html">BIMSURFER.constants</a></li>
+                                <li><a href="../classes/BIMSURFER.Viewer.html">BIMSURFER.Viewer</a></li>
                                 <li><a href="../classes/BoxGeometry.html">BoxGeometry</a></li>
                                 <li><a href="../classes/BoxObject.html">BoxObject</a></li>
                                 <li><a href="../classes/Camera.html">Camera</a></li>
@@ -49,6 +52,7 @@
                                 <li><a href="../classes/Component.html">Component</a></li>
                                 <li><a href="../classes/Configs.html">Configs</a></li>
                                 <li><a href="../classes/Debug.html">Debug</a></li>
+                                <li><a href="../classes/DepthOfField.html">DepthOfField</a></li>
                                 <li><a href="../classes/DirLight.html">DirLight</a></li>
                                 <li><a href="../classes/Effect.html">Effect</a></li>
                                 <li><a href="../classes/Fly.html">Fly</a></li>
@@ -60,6 +64,8 @@
                                 <li><a href="../classes/KeyboardOrbitCamera.html">KeyboardOrbitCamera</a></li>
                                 <li><a href="../classes/KeyboardPanCamera.html">KeyboardPanCamera</a></li>
                                 <li><a href="../classes/KeyboardZoomCamera.html">KeyboardZoomCamera</a></li>
+                                <li><a href="../classes/Label.html">Label</a></li>
+                                <li><a href="../classes/LabelEffect.html">LabelEffect</a></li>
                                 <li><a href="../classes/Light.html">Light</a></li>
                                 <li><a href="../classes/math.html">math</a></li>
                                 <li><a href="../classes/MouseOrbitCamera.html">MouseOrbitCamera</a></li>
@@ -68,9 +74,10 @@
                                 <li><a href="../classes/Object.html">Object</a></li>
                                 <li><a href="../classes/ObjectSet.html">ObjectSet</a></li>
                                 <li><a href="../classes/PointLight.html">PointLight</a></li>
+                                <li><a href="../classes/Position.html">Position</a></li>
+                                <li><a href="../classes/RandomObjects.html">RandomObjects</a></li>
                                 <li><a href="../classes/TeapotGeometry.html">TeapotGeometry</a></li>
                                 <li><a href="../classes/TeapotObject.html">TeapotObject</a></li>
-                                <li><a href="../classes/Viewer.html">Viewer</a></li>
                                 <li><a href="../classes/XRayEffect.html">XRayEffect</a></li>
                             </ul>
                 
@@ -148,7 +155,7 @@
  &#x60;&#x60;&#x60;&#x60;javascript
 
  // Create a Viewer
- var viewer = new BIMSURFER.Viewer(null, &quot;myDiv&quot;, {}, false);
+ var viewer = new BIMSURFER.Viewer({ element: &quot;myDiv&quot; });
 
  // Create a Camera
  var camera = new BIMSURFER.Camera(viewer, {
@@ -193,25 +200,25 @@
  // Share the BoxGeometry among them
 
  var object1 = new BIMSURFER.Object(viewer, {
-        ifcType: &quot;IfcRoof&quot;,
+        type: &quot;IfcRoof&quot;,
         geometries: [ geometry ],
         matrix: BIMSURFER.math.translationMat4v([-8, 0, -8])
     });
 
  var object2 = new BIMSURFER.Object(viewer, {
-        ifcType: &quot;IfcDistributionFlowElement&quot;,
+        type: &quot;IfcDistributionFlowElement&quot;,
         geometries: [ geometry ],
         matrix: BIMSURFER.math.translationMat4v([8, 0, -8])
     });
 
  var object3 = new BIMSURFER.Object(viewer, {
-        ifcType: &quot;IfcDistributionFlowElement&quot;,
+        type: &quot;IfcDistributionFlowElement&quot;,
         geometries: [ geometry ],
         matrix: BIMSURFER.math.translationMat4v([-8, 0, 8])
     });
 
  var object4 = new BIMSURFER.Object(viewer, {
-        ifcType: &quot;IfcRoof&quot;,
+        type: &quot;IfcRoof&quot;,
         geometries: [ geometry ],
         matrix: BIMSURFER.math.translationMat4v([8, 0, 8])
     });
@@ -316,10 +323,10 @@
                          * @param Boolean [cleared
                          * @param [e.removed] Info on removed Objects
                          * @param {Array of String} [e.removed.objectIds] IDs of removed Objects, when they were removed by ID
-                         * @param {{Array of String} [e.removed.ifcTypes] IFC types of removed Objects, when they were removed by IFC type
+                         * @param {{Array of String} [e.removed.types] IFC types of removed Objects, when they were removed by IFC type
                          * @param {} [e.added] Info on added Objects
                          * @param {Array of String} [e.added.objectIds] IDs of added Objects, when they were added by ID
-                         * @param {Array of String} [e.added.ifcTypes] IFC types of added Objects, when they were added by IFC type
+                         * @param {Array of String} [e.added.types] IFC types of added Objects, when they were added by IFC type
                          */
                         self.fire(&quot;updated&quot;, {
                             removed: {

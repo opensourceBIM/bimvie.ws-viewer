@@ -13,48 +13,46 @@
 
  ````Javascript
  // Create a Viewer
- var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+ var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
 
  // Create a Camera
  var camera = new BIMSURFER.Camera(viewer, {
-    eye: [10, 10, -10]
- });
+        eye: [10, 10, -10]
+    });
 
- // Create a CameraControl to interact with the Camera
+ // Create a CameraControl to control our Camera with mouse and keyboard
  var cameraControl = new BIMSURFER.CameraControl(viewer, {
-    camera: camera
- });
+        camera: camera
+    });
 
- // Create a BoxGeometry
- var boxGeometry = new BIMSURFER.BoxGeometry(viewer);
+ // Create a Geometry
+ var geometry = new BIMSURFER.TeapotGeometry(viewer, {
+        id: "myGeometry"
+    });
 
- // Create some Objects that use our BoxGeometry
+ // Create first Object
+ // Use the Geometry
+ var object21 = new BIMSURFER.Object(viewer, {
+        id: "myObject1",
+        type: "IfcCovering",
+        geometries: [ geometry ],
+        matrix: BIMSURFER.math.translationMat4v([-4, 0,0])
+    });
 
- new BIMSURFER.Object(viewer, {
-    objectId: "foo",
-    ifcType: "IfcWall",
-    geometries: [boxGeometry],
-    matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])
- });
-
- new BIMSURFER.BoxObject(viewer, {
-    objectId: "bar",
-    ifcType: "IfcWall",
-    geometries: [boxGeometry],
-    matrix: BIMSURFER.math.translationMat4v([4, 0, -4])
- });
-
- new BIMSURFER.Object(viewer, {
-    objectId: "baz",
-    ifcType: "IfcBeam",
-    geometries: [boxGeometry],
-    matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])
- });
+ // Create second Object
+ // Reuse the Geometry
+ var object2 = new BIMSURFER.Object(viewer, {
+        id: "myObject2",
+        type: "IfcFlowTerminal",
+        geometries: [ geometry ],
+        matrix: BIMSURFER.math.translationMat4v([4, 0,0])
+    });
  ````
 
  We can then find the objects in the {{#crossLink "Viewer"}}{{/crossLink}} by ID:
+
  ````javascript
- var foo = viewer.components["foo"];
+ var foo = viewer.components["myObject1"];
  ````
  or by IFC type:
  ````javascript
@@ -63,7 +61,7 @@
  var wallObjects = viewer.components["IfcWall"];
 
  // Get our "foo" object from those
- var foo = wallObjects["foo"];
+ var foo = wallObjects["moObject1"];
  ````
 
 
@@ -75,7 +73,7 @@
  @param [cfg] {*} Configs
  @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
  @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Object.
- @param [cfg.ifcType] {String} The IFC type of this Object.
+ @param [cfg.type] {String} The IFC type of this Object.
  @param [cfg.color] {Array of Number} The color of this Object, defaults to the color of the specified IFC type.
  @param [cfg.geometries] {Array of Geometry} The {{#crossLink "Geometry"}}{{/crossLink}} to render for this Object.
  @param [cfg.clipping=true] {Boolean} Whether this Object is clipped by {{#crossLink "Clips"}}{{/crossLink}}.
@@ -207,9 +205,9 @@
 
             this._initBoundary();
 
-            if (cfg.ifcType) {
+            this.type = cfg.type;
 
-                var ifcType = cfg.ifcType;
+            if (this.type) {
 
                 if (cfg.color) {
 
@@ -227,18 +225,18 @@
 
                     } else {
 
-                        color = materials[ifcType];
+                        color = materials[this.type];
 
                         if (!color) {
 
-                            this.log("Material not found for ifcType: ", ifcType);
+                            this.log("Material not found for type: ", this.type);
 
                             color = materials["DEFAULT"];
                         }
 
                         if (!color) {
 
-                            this.log("Default material not found for ifcType: ", ifcType);
+                            this.log("Default material not found for type: ", this.type);
                         }
                     }
 
@@ -259,6 +257,8 @@
             this.highlight = cfg.highlight;
 
             this.matrix = cfg.matrix;
+
+            this.label = cfg.label;
         },
 
         _initBoundary: function () {
@@ -387,6 +387,10 @@
                     }
 
                     this._enableNode.setEnabled(value);
+
+                    if (this.label) {
+                        this.label.active = value;
+                    }
 
                     /**
                      * Fired whenever this Object's {{#crossLink "Object/active:property"}}{{/crossLink}} property changes.
@@ -617,11 +621,59 @@
 
                     return this._center;
                 }
+            },
+
+            /**
+             * Indicates if this Object shows a debug {{#crossLink "Label"}}{{/crossLink}}.
+             *
+             * @property label
+             * @type Boolean
+             */
+            label: {
+
+                set: function (value) {
+
+                    value = !!value;
+
+                    if (!!this._label === value) {
+                        return;
+                    }
+
+                    if (value) {
+
+                        if (this._label) {
+
+
+                        } else {
+
+                            this._label = new BIMSURFER.Label(viewer, {
+                                object: this,
+                                text: "<b>" + this.className + "<hr style=\"height=1px; background: darkgray; border: 0;\"></b>" + (this.type ? ("type='" + this.type + "'<br>") : "") + "id='" + this.id + "'",
+                                pos: [0, 0, 0]
+                            });
+                        }
+
+                    } else {
+
+                        this._label.destroy();
+
+                        this._label = null;
+                    }
+                },
+
+                get: function () {
+                    return !!this._label;
+                }
             }
         },
 
         _destroy: function () {
+
             this._rootNode.destroy();
+
+            if (this.label) {
+                this.label.destroy();
+            }
         }
     });
 

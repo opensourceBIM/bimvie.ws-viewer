@@ -39,7 +39,10 @@
                         <div id="api-tabview-panel">
                             <ul id="api-classes" class="apis classes">
                                 <li><a href="../classes/AmbientLight.html">AmbientLight</a></li>
+                                <li><a href="../classes/Anaglyph.html">Anaglyph</a></li>
                                 <li><a href="../classes/BIMSURFER.html">BIMSURFER</a></li>
+                                <li><a href="../classes/BIMSURFER.constants.html">BIMSURFER.constants</a></li>
+                                <li><a href="../classes/BIMSURFER.Viewer.html">BIMSURFER.Viewer</a></li>
                                 <li><a href="../classes/BoxGeometry.html">BoxGeometry</a></li>
                                 <li><a href="../classes/BoxObject.html">BoxObject</a></li>
                                 <li><a href="../classes/Camera.html">Camera</a></li>
@@ -49,6 +52,7 @@
                                 <li><a href="../classes/Component.html">Component</a></li>
                                 <li><a href="../classes/Configs.html">Configs</a></li>
                                 <li><a href="../classes/Debug.html">Debug</a></li>
+                                <li><a href="../classes/DepthOfField.html">DepthOfField</a></li>
                                 <li><a href="../classes/DirLight.html">DirLight</a></li>
                                 <li><a href="../classes/Effect.html">Effect</a></li>
                                 <li><a href="../classes/Fly.html">Fly</a></li>
@@ -60,6 +64,8 @@
                                 <li><a href="../classes/KeyboardOrbitCamera.html">KeyboardOrbitCamera</a></li>
                                 <li><a href="../classes/KeyboardPanCamera.html">KeyboardPanCamera</a></li>
                                 <li><a href="../classes/KeyboardZoomCamera.html">KeyboardZoomCamera</a></li>
+                                <li><a href="../classes/Label.html">Label</a></li>
+                                <li><a href="../classes/LabelEffect.html">LabelEffect</a></li>
                                 <li><a href="../classes/Light.html">Light</a></li>
                                 <li><a href="../classes/math.html">math</a></li>
                                 <li><a href="../classes/MouseOrbitCamera.html">MouseOrbitCamera</a></li>
@@ -68,9 +74,10 @@
                                 <li><a href="../classes/Object.html">Object</a></li>
                                 <li><a href="../classes/ObjectSet.html">ObjectSet</a></li>
                                 <li><a href="../classes/PointLight.html">PointLight</a></li>
+                                <li><a href="../classes/Position.html">Position</a></li>
+                                <li><a href="../classes/RandomObjects.html">RandomObjects</a></li>
                                 <li><a href="../classes/TeapotGeometry.html">TeapotGeometry</a></li>
                                 <li><a href="../classes/TeapotObject.html">TeapotObject</a></li>
-                                <li><a href="../classes/Viewer.html">Viewer</a></li>
                                 <li><a href="../classes/XRayEffect.html">XRayEffect</a></li>
                             </ul>
                 
@@ -128,10 +135,10 @@
 
 
 <div class="box intro">
-    <p>A <strong>Camera</strong> defines a viewpoint within a <a href="../classes/Viewer.html" class="crosslink">Viewer</a>.</p>
+    <p>A <strong>Camera</strong> defines a viewpoint within a Viewer.</p>
 <h2 id="overview">Overview</h2>
 <ul>
-<li>You can have an unlimited number of Cameras in a <a href="../classes/Viewer.html" class="crosslink">Viewer</a>.</li>
+<li>You can have an unlimited number of Cameras in a Viewer.</li>
 <li>At any instant, the Camera we&#39;re looking through is the one whose <a href="../classes/Camera.html#property_active" class="crosslink">active</a> property is true.</li>
 <li>Cameras can be controlled with controls such as <a href="../classes/CameraControl.html" class="crosslink">CameraControl</a>, <a href="../classes/KeyboardAxisCamera.html" class="crosslink">KeyboardAxisCamera</a>,
 <a href="../classes/KeyboardOrbitCamera.html" class="crosslink">KeyboardOrbitCamera</a>, <a href="../classes/KeyboardPanCamera.html" class="crosslink">KeyboardPanCamera</a>, <a href="../classes/KeyboardZoomCamera.html" class="crosslink">KeyboardZoomCamera</a>,
@@ -143,7 +150,7 @@
 <iframe style="width: 600px; height: 400px" src="../../examples/camera_Camera_multiple.html"></iframe>
 
 <pre class="code prettyprint"><code class="lang-Javascript">// Create a Viewer
-var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
 
 // Create an object
 var box = new BIMSURFER.TeapotObject(viewer);

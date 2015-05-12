@@ -37,7 +37,7 @@
 <script>
 
     // Create a Viewer
-    var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+    var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
 
     // Create a Camera
     var camera = new BIMSURFER.Camera(viewer, {
@@ -58,7 +58,7 @@
     // Use the box Geometry
     var box = new BIMSURFER.Object(viewer, {
         id: "myObject1",
-        ifcType: "IfcCovering",
+        type: "IfcCovering",
         geometries: [ geometry ],
         matrix: BIMSURFER.math.translationMat4v([-8, 0, 0])
     });

@@ -38,7 +38,7 @@
 <script>
 
     // Create a Viewer
-    var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+    var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
 
     // -------------- Camera -------------------------
 
@@ -87,25 +87,25 @@
     // Share the box Geometry among them
 
     new BIMSURFER.Object(viewer, {
-        ifcType: "IfcRoof",
+        type: "IfcRoof",
         geometries: [ geometry ],
         matrix: BIMSURFER.math.translationMat4v([-8, 0, -8])
     });
 
     new BIMSURFER.Object(viewer, {
-        ifcType: "IfcDistributionFlowElement",
+        type: "IfcDistributionFlowElement",
         geometries: [ geometry ],
         matrix: BIMSURFER.math.translationMat4v([8, 0, -8])
     });
 
     new BIMSURFER.Object(viewer, {
-        ifcType: "IfcDistributionFlowElement",
+        type: "IfcDistributionFlowElement",
         geometries: [ geometry ],
         matrix: BIMSURFER.math.translationMat4v([-8, 0, 8])
     });
 
     new BIMSURFER.Object(viewer, {
-        ifcType: "IfcRoof",
+        type: "IfcRoof",
         geometries: [ geometry ],
         matrix: BIMSURFER.math.translationMat4v([8, 0, 8])
     });

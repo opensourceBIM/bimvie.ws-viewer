@@ -27,7 +27,7 @@
 
  ````Javascript
  // Create a Viewer
- var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+ var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
 
  // Create a Camera
  var camera = new BIMSURFER.Camera(viewer, {
@@ -46,29 +46,29 @@
  // Share the Geometry among them
 
  var object1 = new BIMSURFER.Object(viewer, {
-    objectId: "object1",
-    ifcType: "IfcRoof",
+    id: "object1",
+    type: "IfcRoof",
     geometries: [ geometry ],
     matrix: BIMSURFER.math.translationMat4v([-3, 0, -3])
  });
 
  var object2 = new BIMSURFER.Object(viewer, {
-    objectId: "object2",
-    ifcType: "IfcDistributionFlowElement",
+    id: "object2",
+    type: "IfcDistributionFlowElement",
     geometries: [ geometry ],
     matrix: BIMSURFER.math.translationMat4v([3, 0, -3])
  });
 
  var object3 = new BIMSURFER.Object(viewer, {
-    objectId: "object3",
-    ifcType: "IfcDistributionFlowElement",
+    id: "object3",
+    type: "IfcDistributionFlowElement",
     geometries: [ geometry ],
     matrix: BIMSURFER.math.translationMat4v([-3, 0, 3])
  });
 
  var object4 = new BIMSURFER.Object(viewer, {
-    objectId: "object4",
-    ifcType: "IfcRoof",
+    id: "object4",
+    type: "IfcRoof",
     geometries: [ geometry ],
     matrix: BIMSURFER.math.translationMat4v([3, 0, 3])
  });
@@ -81,7 +81,7 @@
     objectSet: objectSet
  });
 
- // Create a ClickSelectObjects
+ // Create a ClickSelectObjects to select or unselect the Objects with the mouse
  var clickSelectObjects = new BIMSURFER.ClickSelectObjects(viewer, {
     objectSet: objectSet
  });

@@ -43,7 +43,7 @@
 <script>
 
     // Create a Viewer
-    var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+    var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
 
     // Create a Camera
     var camera = new BIMSURFER.Camera(viewer, {
@@ -58,7 +58,7 @@
     // Use the box Geometry
     var box1 = new BIMSURFER.TeapotObject(viewer, {
         id: "myObject1",
-        ifcType: "IfcCovering",
+        type: "IfcCovering",
         matrix: BIMSURFER.math.translationMat4v([-4, 0,0])
     });
 
@@ -66,7 +66,7 @@
     // Reuse the box Geometry
     var box2 = new BIMSURFER.TeapotObject(viewer, {
         id: "myObject2",
-        ifcType: "IfcFlowTerminal",
+        type: "IfcFlowTerminal",
         matrix: BIMSURFER.math.translationMat4v([4, 0,0])
     });
 

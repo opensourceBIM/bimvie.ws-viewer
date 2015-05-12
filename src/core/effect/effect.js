@@ -17,7 +17,7 @@
  @param [cfg] {*} Configs
  @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
  @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Effect.
- @param [objectSet] {ObjectSet} The {{#crossLink "ObjectSet"}}{{/crossLink}} to apply this Effect to.
+ @param [cfg.objectSet] {ObjectSet} The {{#crossLink "ObjectSet"}}{{/crossLink}} to apply this Effect to.
  @extends Component
  */
 (function () {
@@ -54,6 +54,8 @@
                     self._dirty = true;
                 });
 
+            this.invert = cfg.invert;
+
             this.active = cfg.active !== false;
         },
 
@@ -88,6 +90,11 @@
 
                                         // Apply effect to Objects in the Viewer
                                         self.viewer.withClasses(["BIMSURFER.Object"],
+                                            function (object) {
+                                                self._apply.call(self, object);
+                                            });
+
+                                        self.viewer.withClasses(["BIMSURFER.BoxObject"],
                                             function (object) {
                                                 self._apply.call(self, object);
                                             });
@@ -137,18 +144,20 @@
 
                 set: function (value) {
 
+                    value = !!value;
+
                     if (this._invert === value) {
                         return;
                     }
 
-                    self._dirty = false;
+                    this._dirty = false;
 
                     /**
                      * Fired whenever this Effect's {{#crossLink "Effect/invert:property"}}{{/crossLink}} property changes.
                      * @event invert
                      * @param value The property's new value
                      */
-                    this.fire('invert', this._invert = true);
+                    this.fire('invert', this._invert = value);
                 },
 
                 get: function () {

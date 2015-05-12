@@ -3,7 +3,7 @@
 
 
  @class BIMSURFER
- @main SIMSURFER
+ @main BIMSURFER
  @static
  @author xeolabs / http://xeolabs.com/
  */

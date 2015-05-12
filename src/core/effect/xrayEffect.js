@@ -18,7 +18,7 @@
  ````javascript
 
  // Create a Viewer
- var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+ var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
 
  // Create a Camera
  var camera = new BIMSURFER.Camera(viewer, {
@@ -63,25 +63,25 @@
  // Share the BoxGeometry among them
 
  var object1 = new BIMSURFER.Object(viewer, {
-        ifcType: "IfcRoof",
+        type: "IfcRoof",
         geometries: [ geometry ],
         matrix: BIMSURFER.math.translationMat4v([-8, 0, -8])
     });
 
  var object2 = new BIMSURFER.Object(viewer, {
-        ifcType: "IfcDistributionFlowElement",
+        type: "IfcDistributionFlowElement",
         geometries: [ geometry ],
         matrix: BIMSURFER.math.translationMat4v([8, 0, -8])
     });
 
  var object3 = new BIMSURFER.Object(viewer, {
-        ifcType: "IfcRailing",
+        type: "IfcRailing",
         geometries: [ geometry ],
         matrix: BIMSURFER.math.translationMat4v([-8, 0, 8])
     });
 
  var object4 = new BIMSURFER.Object(viewer, {
-        ifcType: "IfcRoof",
+        type: "IfcRoof",
         geometries: [ geometry ],
         matrix: BIMSURFER.math.translationMat4v([8, 0, 8])
     });
@@ -118,7 +118,7 @@
  @param [cfg] {*} Configs
  @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
  @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this XRayEffect.
- @param [objectSet] {ObjectSet} The {{#crossLink "ObjectSet"}}{{/crossLink}} to apply this XRayEffect to.
+ @param [cfg.objectSet] {ObjectSet} The {{#crossLink "ObjectSet"}}{{/crossLink}} to apply this XRayEffect to.
  @extends Effect
  */
 (function () {

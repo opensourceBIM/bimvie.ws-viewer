@@ -11,7 +11,7 @@
 
  ````javascript
  // Create a Viewer
- var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+ var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
 
  // Create a Camera
  var camera = new BIMSURFER.Camera(viewer, {
@@ -30,8 +30,8 @@
  // Note that an Object can have multiple Geometries
 
  new BIMSURFER.Object(viewer, {
-    objectId: "foo",
-    ifcType: "IfcWall",
+    id: "foo",
+    type: "IfcWall",
     geometries: [ teapotGeometry ]
  });
  ````

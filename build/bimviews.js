@@ -4,7 +4,7 @@
  * A WebGL-based IFC Viewer for BIMSurfer
  * http://bimwiews.org/
  *
- * Built on 2015-05-08
+ * Built on 2015-05-12
  *
  * todo
  * Copyright 2015, todo
@@ -17,7 +17,7 @@
 
 
  @class BIMSURFER
- @main SIMSURFER
+ @main BIMSURFER
  @static
  @author xeolabs / http://xeolabs.com/
  */
@@ -321,7 +321,6 @@ BIMSURFER.utils.removeA  = function(arr) {
      *    3. This notice may not be removed or altered from any source
      *    distribution.
      */
-
 
 
     BIMSURFER.math = {
@@ -1639,14 +1638,14 @@ BIMSURFER.utils.removeA  = function(arr) {
         },
 
         /**  */
-        transformPoint3: function (m, p) {
+        transformPoint3: function (m, p, q) {
             var p0 = p[0], p1 = p[1], p2 = p[2];
-            return [
-                    (m[0] * p0) + (m[4] * p1) + (m[8] * p2) + m[12],
-                    (m[1] * p0) + (m[5] * p1) + (m[9] * p2) + m[13],
-                    (m[2] * p0) + (m[6] * p1) + (m[10] * p2) + m[14],
-                    (m[3] * p0) + (m[7] * p1) + (m[11] * p2) + m[15]
-            ];
+            q = q || [0, 0, 0, 0];
+            q[0] = (m[0] * p0) + (m[4] * p1) + (m[8] * p2) + m[12];
+            q[1] = (m[1] * p0) + (m[5] * p1) + (m[9] * p2) + m[13];
+            q[2] = (m[2] * p0) + (m[6] * p1) + (m[10] * p2) + m[14];
+            q[3] = (m[3] * p0) + (m[7] * p1) + (m[11] * p2) + m[15];
+            return q;
         },
 
 
@@ -1819,7 +1818,13 @@ BIMSURFER.utils.removeA  = function(arr) {
         }
     };
 
-})();;if (typeof BIMSURFER.constants != 'object') {
+})();;/**
+ * BIMSurfer constants.
+ * @module BIMSURFER
+ * @class constants
+ * @static
+ */
+if (typeof BIMSURFER.constants != 'object') {
     BIMSURFER.constants = {};
 }
 
@@ -1829,7 +1834,10 @@ BIMSURFER.utils.removeA  = function(arr) {
 BIMSURFER.constants.timeoutTime = 10000; // ms
 
 /**
- * The default IFC Types to load
+ * Default IFC types.
+ * @property defaultTypes
+ * @namespace BIMSURFER
+ * @type {{Array of String}}
  */
 BIMSURFER.constants.defaultTypes = [
     "IfcColumn",
@@ -2151,6 +2159,10 @@ BIMSURFER.constants.clamp = function (s, min, max) {
          */
         className: "BIMSURFER.Component",
 
+
+        getClassName: function() {
+
+        },
 
         __init: function (viewer, cfg) {
 
@@ -3566,28 +3578,73 @@ var viewer = new BIMSURFER.Viewer(...);
 })();
 
 ;/**
- The 3D viewer
+ A **Viewer** is a WebGL-based 3D viewer for the visualisation and evaluation of BIM models.
 
  ## Overview
 
- TODO
+ <ul>
+ <li></li>
+ </ul>
 
  ## Example
 
- TODO
+ In the example below we'll create a Viewer with a {{#crossLink "Camera"}}{{/crossLink}},
+ a {{#crossLink "CameraControl"}}{{/crossLink}} and a {{#crossLink "TeapotGeometry"}}{{/crossLink}},
+ which is used by an {{#crossLink "Object"}}{{/crossLink}}.
+ <br>Finally, we make the {{#crossLink "Camera"}}{{/crossLink}} orbit on each "tick" event emitted by the Viewer.
+
+ <iframe style="width: 600px; height: 400px" src="../../examples/viewer_Viewer.html"></iframe>
+
+ ````javascript
+ // Create a Viewer
+ var viewer = new BIMSURFER.Viewer({
+
+    // ID of the DIV element
+    element: "myDiv"
+ });
+
+ // Create a Camera
+ var camera = new BIMSURFER.Camera(viewer, {
+        eye: [5, 5, -5]
+    });
+
+ // Create a CameraControl to control our Camera with mouse and keyboard
+ var cameraControl = new BIMSURFER.CameraControl(viewer, {
+        camera: camera
+    });
+
+ // Create a Geometry
+ var geometry = new BIMSURFER.TeapotGeometry(viewer, {
+        id: "myGeometry"
+    });
+
+ // Create an Object that uses the Geometry
+ var object1 = new BIMSURFER.Object(viewer, {
+        id: "myObject1",
+        type: "IfcCovering",
+        geometries: [ geometry ]
+    });
+
+ // Spin the camera
+ viewer.on("tick", function () {
+        camera.rotateEyeY(0.2);
+    });
+ ````
 
  @class Viewer
  @module BIMSURFER
  @constructor
- @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
  @param [cfg] {*} Configs
  @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
  @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Object.
+ @param cfg.element {String|HTMLElement} ID or instance of a DIV element in the page.
+ @param cfg.bimServerApi {*} The BIMServer API.
  */
 (function () {
+
     "use strict";
 
-    BIMSURFER.Viewer = function (bimServerApi, div, options, autoStart) {
+    BIMSURFER.Viewer = function (cfg) {
 
         var self = this;
 
@@ -3604,29 +3661,44 @@ var viewer = new BIMSURFER.Viewer(...);
 
         // Check arguments
 
-        if (typeof div == 'string') {
-            div = jQuery('div#' + div)[0];
+        cfg = cfg || {};
+
+        var element = cfg.element;
+
+        if (!element) {
+            throw "Param expected: element";
         }
 
-        if (!jQuery(div).is('div')) {
-            console.error("BIMSURFER: Can't find div element");
-            return;
+        if (typeof element == 'string') {
+            element = jQuery('div#' + element)[0];
         }
 
-        // Clear container div
+        if (!jQuery(element).is('div')) {
+            throw "Can't find div element";
+        }
 
-        jQuery(div).empty();
+        // Clear container element
 
-        this._div = div;
+        jQuery(element).empty();
+
+        /**
+         * The HTML element ocupied by the Viewer
+         *
+         * @property element
+         * @final
+         * @type {HTMLElement}
+         */
+        this.element = element;
 
 
         /**
          * The BIMServer API
          *
          * @property bimServerApi
+         * @final
          * @type {Object}
          */
-        this.bimServerApi = bimServerApi;
+        this.bimServerApi = cfg.bimServerApi;
 
 
         this.SYSTEM = this;
@@ -3641,26 +3713,28 @@ var viewer = new BIMSURFER.Viewer(...);
         this.connectedServers = [];
 
 
-        var canvasId = jQuery(this._div).attr('id') + "-canvas";
+        var canvasId = jQuery(this.element).attr('id') + "-canvas";
 
         /**
-         * The HTML Canvas that this Viewer renders to. This is inserted into the div we configured this Viewer with.
+         * The HTML Canvas that this Viewer renders to. This is inserted into the element we configured this Viewer with.
          * @property canvas
+         * @final
          * @type {HTMLCanvasElement}
          * @final
          */
         this.canvas = jQuery('<canvas />')
             .attr('id', canvasId)
-            .attr('width', jQuery(this._div).width())
-            .attr('height', jQuery(this._div).height())
+            .attr('width', jQuery(this.element).width())
+            .attr('height', jQuery(this.element).height())
             .html('<p>This application requires a browser that supports the <a href="http://www.w3.org/html/wg/html5/">HTML5</a> &lt;canvas&gt; feature.</p>')
             .addClass(this.className.replace(/\./g, "-"))
-            .appendTo(this._div);
+            .appendTo(this.element);
 
 
         /**
          * The SceneJS scene graph that renders 3D content for this Viewer.
          * @property scene
+         * @final
          * @type {SceneJS.Scene}
          * @final
          */
@@ -3720,58 +3794,14 @@ var viewer = new BIMSURFER.Viewer(...);
          * ID of this Viewer
          *
          * @property id
+         * @final
          * @type {String}
          */
         this.id = this.scene.getId();
 
-//        // Set initial tag mask on scene graph
-//
-//        this.scene.set('tagMask', '^()$');
-
         // Init events
 
         var canvas = this.scene.getCanvas();
-
-        canvas.addEventListener('mousedown',
-            function (e) {
-                self.fire('mouseDown', e);
-            }, true);
-
-        canvas.addEventListener('mousemove',
-            function (e) {
-                self.fire('mouseMove', e);
-            }, true);
-
-        canvas.addEventListener('mouseup',
-            function (e) {
-                self.fire('mouseUp', e);
-            }, true);
-
-        canvas.addEventListener('touchstart',
-            function (e) {
-                self.fire('touchStart', e);
-            }, true);
-
-        canvas.addEventListener('touchmove',
-            function (e) {
-                self.fire('touchMove', e);
-            }, true);
-
-        canvas.addEventListener('touchend',
-            function (e) {
-                self.fire('touchEnd', e);
-            }, true);
-
-        canvas.addEventListener('mousewheel',
-            function (e) {
-                self.fire('mouseWheel', e);
-            }, true);
-
-        canvas.addEventListener('DOMMouseScroll',
-            function (e) {
-                self.fire('mouseWheel', e);
-            }, true);
-
 
         this.scene.on('tick',
             function (params) {
@@ -3781,6 +3811,20 @@ var viewer = new BIMSURFER.Viewer(...);
                 });
             });
 
+        this._lookatNode = this.scene.getNode('theLookat');
+
+        this._lookatNode.on("matrix",
+            function (matrix) {
+                self.fire('viewMatrix', matrix);
+            });
+
+        this._cameraNode = this.scene.getNode('theCamera');
+
+        this._cameraNode.on("matrix",
+            function (matrix) {
+                self.fire('projMatrix', matrix);
+            });
+
 
         // Pool where we'll keep all component IDs
         this._componentIDMap = new BIMSURFER.utils.Map();
@@ -3788,6 +3832,7 @@ var viewer = new BIMSURFER.Viewer(...);
         /**
          * The {{#crossLink "Component"}}Components{{/crossLink}} within this Viewer, mapped to their IDs.
          * @property components
+         * @final
          * @type {{String:Component}}
          */
         this.components = {};
@@ -3796,6 +3841,7 @@ var viewer = new BIMSURFER.Viewer(...);
         /**
          * The {{#crossLink "Component"}}Components{{/crossLink}} within this Viewer, mapped to their class names.
          * @property classes
+         * @final
          * @type {{String:{String:Component}}}
          */
         this.classes = {};
@@ -3804,6 +3850,7 @@ var viewer = new BIMSURFER.Viewer(...);
         /**
          * The {{#crossLink "Component"}}Components{{/crossLink}} within this Viewer, mapped to their IFC type names.
          * @property types
+         * @final
          * @type {{String:{String:Component}}}
          */
         this.types = {};
@@ -3811,7 +3858,7 @@ var viewer = new BIMSURFER.Viewer(...);
 
         // Add components
 
-        var components = options.components;
+        var components = cfg.components;
 
         if (components) {
 
@@ -3836,20 +3883,20 @@ var viewer = new BIMSURFER.Viewer(...);
             }
         }
 
-        if (BIMSURFER.utils.isset(options, options.autoStart)) {
-            if (!BIMSURFER.Util.isset(options.autoStart.serverUrl, options.autoStart.serverUsername, options.autoStart.serverPassword, options.autoStart.projectOid)) {
+        if (BIMSURFER.utils.isset(cfg, cfg.autoStart)) {
+            if (!BIMSURFER.Util.isset(cfg.autoStart.serverUrl, cfg.autoStart.serverUsername, cfg.autoStart.serverPassword, cfg.autoStart.projectOid)) {
                 console.error('Some autostart parameters are missing');
                 return;
             }
             var _this = this;
-            var BIMServer = new BIMSURFER.Server(this, options.autoStart.serverUrl, options.autoStart.serverUsername, options.autoStart.serverPassword, false, true, true, function () {
+            var BIMServer = new BIMSURFER.Server(this, cfg.autoStart.serverUrl, cfg.autoStart.serverUsername, cfg.autoStart.serverPassword, false, true, true, function () {
                 if (BIMServer.loginStatus != 'loggedin') {
-                    _this._div.innerHTML = 'Something went wrong while connecting';
+                    _this.element.innerHTML = 'Something went wrong while connecting';
                     console.error('Something went wrong while connecting');
                     return;
                 }
-                var project = BIMServer.getProjectByOid(options.autoStart.projectOid);
-                project.loadScene((BIMSURFER.Util.isset(options.autoStart.revisionOid) ? options.autoStart.revisionOid : null), true);
+                var project = BIMServer.getProjectByOid(cfg.autoStart.projectOid);
+                project.loadScene((BIMSURFER.Util.isset(cfg.autoStart.revisionOid) ? cfg.autoStart.revisionOid : null), true);
             });
         }
 
@@ -3873,7 +3920,10 @@ var viewer = new BIMSURFER.Viewer(...);
             });
 
         /**
-         * Input handling
+         * Input handling for this Viewer.
+         * @property input
+         * @final
+         * @type {BIMSURFER.Input}
          */
         this.input = new BIMSURFER.Input(this);
     };
@@ -3971,6 +4021,41 @@ var viewer = new BIMSURFER.Viewer(...);
          */
         this.fire("componentDestroyed", component, true);
     };
+
+    /**
+     * This Viewer's view transformation matrix.
+     *
+     * @property viewMatrix
+     * @final
+     * @default [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
+     * @type {Array of Number}
+     */
+    Object.defineProperty(BIMSURFER.Viewer.prototype, "viewMatrix", {
+
+        get: function() {
+            return this._lookatNode.getMatrix();
+        },
+
+        enumerable: true
+    });
+
+
+    /**
+     * This Viewer's projection transformation matrix.
+     *
+     * @property projMatrix
+     * @final
+     * @default [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
+     * @type {Array of Number}
+     */
+    Object.defineProperty(BIMSURFER.Viewer.prototype, "projMatrix", {
+
+        get: function() {
+            return this._cameraNode.getMatrix();
+        },
+
+        enumerable: true
+    });
 
     /**
      *
@@ -4265,7 +4350,7 @@ var viewer = new BIMSURFER.Viewer(...);
      * @method log
      * @param {String} message The message to log
      */
-    BIMSURFER.Viewer.log = function (message) {
+    BIMSURFER.Viewer.prototype.log = function (message) {
         window.console.log("[LOG] BIMSERVER.Viewer: " + message);
     };
 
@@ -4277,20 +4362,8 @@ var viewer = new BIMSURFER.Viewer(...);
      * @method error
      * @param {String} message The message to log
      */
-    BIMSURFER.Viewer.error = function (message) {
+    BIMSURFER.Viewer.prototype.error = function (message) {
         window.console.error("[ERROR] BIMSERVER.Viewer: " + message);
-    };
-
-    /**
-     * Logs a warning for this View to the JavaScript console.
-     *
-     * The console message will have this format: *````[WARN] BIMSERVER.Viewer: <message>````*
-     *
-     * @method warn
-     * @param {String} message The message to log
-     */
-    BIMSURFER.Viewer.warn = function (message) {
-        window.console.warn("[WARN] BIMSERVER.Viewer: " + message);
     };
 
 })();;/**
@@ -4308,48 +4381,46 @@ var viewer = new BIMSURFER.Viewer(...);
 
  ````Javascript
  // Create a Viewer
- var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+ var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
 
  // Create a Camera
  var camera = new BIMSURFER.Camera(viewer, {
-    eye: [10, 10, -10]
- });
+        eye: [10, 10, -10]
+    });
 
- // Create a CameraControl to interact with the Camera
+ // Create a CameraControl to control our Camera with mouse and keyboard
  var cameraControl = new BIMSURFER.CameraControl(viewer, {
-    camera: camera
- });
+        camera: camera
+    });
 
- // Create a BoxGeometry
- var boxGeometry = new BIMSURFER.BoxGeometry(viewer);
+ // Create a Geometry
+ var geometry = new BIMSURFER.TeapotGeometry(viewer, {
+        id: "myGeometry"
+    });
 
- // Create some Objects that use our BoxGeometry
+ // Create first Object
+ // Use the Geometry
+ var object21 = new BIMSURFER.Object(viewer, {
+        id: "myObject1",
+        type: "IfcCovering",
+        geometries: [ geometry ],
+        matrix: BIMSURFER.math.translationMat4v([-4, 0,0])
+    });
 
- new BIMSURFER.Object(viewer, {
-    objectId: "foo",
-    ifcType: "IfcWall",
-    geometries: [boxGeometry],
-    matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])
- });
-
- new BIMSURFER.BoxObject(viewer, {
-    objectId: "bar",
-    ifcType: "IfcWall",
-    geometries: [boxGeometry],
-    matrix: BIMSURFER.math.translationMat4v([4, 0, -4])
- });
-
- new BIMSURFER.Object(viewer, {
-    objectId: "baz",
-    ifcType: "IfcBeam",
-    geometries: [boxGeometry],
-    matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])
- });
+ // Create second Object
+ // Reuse the Geometry
+ var object2 = new BIMSURFER.Object(viewer, {
+        id: "myObject2",
+        type: "IfcFlowTerminal",
+        geometries: [ geometry ],
+        matrix: BIMSURFER.math.translationMat4v([4, 0,0])
+    });
  ````
 
  We can then find the objects in the {{#crossLink "Viewer"}}{{/crossLink}} by ID:
+
  ````javascript
- var foo = viewer.components["foo"];
+ var foo = viewer.components["myObject1"];
  ````
  or by IFC type:
  ````javascript
@@ -4358,7 +4429,7 @@ var viewer = new BIMSURFER.Viewer(...);
  var wallObjects = viewer.components["IfcWall"];
 
  // Get our "foo" object from those
- var foo = wallObjects["foo"];
+ var foo = wallObjects["moObject1"];
  ````
 
 
@@ -4370,7 +4441,7 @@ var viewer = new BIMSURFER.Viewer(...);
  @param [cfg] {*} Configs
  @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
  @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Object.
- @param [cfg.ifcType] {String} The IFC type of this Object.
+ @param [cfg.type] {String} The IFC type of this Object.
  @param [cfg.color] {Array of Number} The color of this Object, defaults to the color of the specified IFC type.
  @param [cfg.geometries] {Array of Geometry} The {{#crossLink "Geometry"}}{{/crossLink}} to render for this Object.
  @param [cfg.clipping=true] {Boolean} Whether this Object is clipped by {{#crossLink "Clips"}}{{/crossLink}}.
@@ -4502,9 +4573,9 @@ var viewer = new BIMSURFER.Viewer(...);
 
             this._initBoundary();
 
-            if (cfg.ifcType) {
+            this.type = cfg.type;
 
-                var ifcType = cfg.ifcType;
+            if (this.type) {
 
                 if (cfg.color) {
 
@@ -4522,18 +4593,18 @@ var viewer = new BIMSURFER.Viewer(...);
 
                     } else {
 
-                        color = materials[ifcType];
+                        color = materials[this.type];
 
                         if (!color) {
 
-                            this.log("Material not found for ifcType: ", ifcType);
+                            this.log("Material not found for type: ", this.type);
 
                             color = materials["DEFAULT"];
                         }
 
                         if (!color) {
 
-                            this.log("Default material not found for ifcType: ", ifcType);
+                            this.log("Default material not found for type: ", this.type);
                         }
                     }
 
@@ -4554,6 +4625,8 @@ var viewer = new BIMSURFER.Viewer(...);
             this.highlight = cfg.highlight;
 
             this.matrix = cfg.matrix;
+
+            this.label = cfg.label;
         },
 
         _initBoundary: function () {
@@ -4682,6 +4755,10 @@ var viewer = new BIMSURFER.Viewer(...);
                     }
 
                     this._enableNode.setEnabled(value);
+
+                    if (this.label) {
+                        this.label.active = value;
+                    }
 
                     /**
                      * Fired whenever this Object's {{#crossLink "Object/active:property"}}{{/crossLink}} property changes.
@@ -4912,11 +4989,59 @@ var viewer = new BIMSURFER.Viewer(...);
 
                     return this._center;
                 }
+            },
+
+            /**
+             * Indicates if this Object shows a debug {{#crossLink "Label"}}{{/crossLink}}.
+             *
+             * @property label
+             * @type Boolean
+             */
+            label: {
+
+                set: function (value) {
+
+                    value = !!value;
+
+                    if (!!this._label === value) {
+                        return;
+                    }
+
+                    if (value) {
+
+                        if (this._label) {
+
+
+                        } else {
+
+                            this._label = new BIMSURFER.Label(viewer, {
+                                object: this,
+                                text: "<b>" + this.className + "<hr style=\"height=1px; background: darkgray; border: 0;\"></b>" + (this.type ? ("type='" + this.type + "'<br>") : "") + "id='" + this.id + "'",
+                                pos: [0, 0, 0]
+                            });
+                        }
+
+                    } else {
+
+                        this._label.destroy();
+
+                        this._label = null;
+                    }
+                },
+
+                get: function () {
+                    return !!this._label;
+                }
             }
         },
 
         _destroy: function () {
+
             this._rootNode.destroy();
+
+            if (this.label) {
+                this.label.destroy();
+            }
         }
     });
 
@@ -4933,7 +5058,7 @@ var viewer = new BIMSURFER.Viewer(...);
 
  ````Javascript
  // Create a Viewer
- var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+ var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
 
  // Create a Camera
  var camera = new BIMSURFER.Camera(viewer, {
@@ -4947,8 +5072,8 @@ var viewer = new BIMSURFER.Viewer(...);
 
  // Create a BoxObject
  new BIMSURFER.BoxObject(viewer, {
-    objectId: "foo",
-    ifcType: "IfcWall",
+    id: "foo",
+    type: "IfcWall",
     matrix: BIMSURFER.math.scaleMat4v([1.5, 1.5, 1.5])
  });
 
@@ -4960,7 +5085,17 @@ var viewer = new BIMSURFER.Viewer(...);
  @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
  @param [cfg] {*} Configs
  @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
- @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this BoxObject.
+ @param [cfg.meta] {String:BoxObject} Optional map of user-defined metadata to attach to this BoxObject.
+ @param [cfg.type] {String} The IFC type of this BoxObject.
+ @param [cfg.color] {Array of Number} The color of this BoxObject, defaults to the color of the specified IFC type.
+ @param [cfg.geometries] {Array of Geometry} The {{#crossLink "Geometry"}}{{/crossLink}} to render for this BoxObject.
+ @param [cfg.clipping=true] {Boolean} Whether this BoxObject is clipped by {{#crossLink "Clips"}}{{/crossLink}}.
+ @param [cfg.transparent=false] {Boolean} Whether this BoxObject is transparent or not.
+ @param [cfg.opacity=1] {Number} Scalar in range 0-1 that controls opacity, where 0 is completely transparent and 1 is completely opaque.
+ Only applies while this BoxObject's {{#crossLink "BoxObject/transparent:property"}}transparent{{/crossLink}} equals ````true````.
+ @param [cfg.highlight=false] {Boolean} Whether this BoxObject is highlighted or not.
+ @param [cfg.xray=false] {Boolean} Whether this BoxObject is highlighted or not.
+ @param [cfg.matrix=[1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]] {Array of Number} Transform matrix - a one-dimensional, sixteen element array of elements, an identity matrix by default.
  @extends Object
  */
 (function () {
@@ -4987,7 +5122,6 @@ var viewer = new BIMSURFER.Viewer(...);
             }, cfg));
         },
 
-
         _destroy: function () {
 
             this._geometry.destroy();
@@ -5008,7 +5142,7 @@ var viewer = new BIMSURFER.Viewer(...);
 
  ````Javascript
  // Create a Viewer
- var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+ var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
 
  // Create a Camera
  var camera = new BIMSURFER.Camera(viewer, {
@@ -5022,8 +5156,8 @@ var viewer = new BIMSURFER.Viewer(...);
 
  // Create a TeapotObject
  new BIMSURFER.TeapotObject(viewer, {
-    objectId: "foo",
-    ifcType: "IfcWall",
+    id: "foo",
+    type: "IfcWall",
     matrix: BIMSURFER.math.scaleMat4v([ 1.5, 1.5, 1.5 ])
  });
 
@@ -5070,6 +5204,146 @@ var viewer = new BIMSURFER.Viewer(...);
         }
     });
 })();;/**
+
+ **RandomObjects** is a group of random {{#crossLink "BoxObject"}}BoxObjects{{/crossLink}}, useful for tests and demos.
+
+ ## Overview
+
+ <ul>
+ <li>The {{#crossLink "BoxObject"}}BoxObjects{{/crossLink}} are arranged in a 2D grid, and each get an IFC type, picked at random
+ from among the {{#crossLink "BIMSURFER.constants/defaultTypes:property"}}{{/crossLink}}.</li>
+ </ul>
+
+ ## Example
+
+ In this example we create a RandomObjects and an {{#crossLink "ObjectSet"}}{{/crossLink}}. Then we apply
+ a {{#crossLink "HighlightEffect"}}{{/crossLink}} to the {{#crossLink "ObjectSet"}}{{/crossLink}}, and a
+ {{#crossLink "ClickSelectObjects"}}{{/crossLink}} which will add or remove the RandomObject's
+ {{#crossLink "Object"}}Objects{{/crossLink}} from the {{#crossLink "ObjectSet"}}{{/crossLink}} as we click them
+ with the mouse. This causes the {{#crossLink "Object"}}Objects{{/crossLink}} to become highlighted as we click them,
+ then de-highlighted as we click them again.
+
+
+ <iframe style="width: 600px; height: 400px" src="../../examples/object_RandomObjects.html"></iframe>
+
+ ````javascript
+ // Create a Viewer
+ var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
+
+ // Create a Camera
+ var camera = new BIMSURFER.Camera(viewer, {
+        eye: [70, 70, -70]
+    });
+
+ // Spin the camera
+ viewer.on("tick", function () {
+        camera.rotateEyeY(0.2);
+    });
+
+ // Create a CameraControl
+ var cameraControl = new BIMSURFER.CameraControl(viewer, {
+        camera: camera
+    });
+
+ // Create a RandomObjects
+ var randomObjects = new BIMSURFER.RandomObjects(viewer);
+
+ // Create an ObjectSet
+ var objectSet = new BIMSURFER.ObjectSet(viewer);
+
+ // Apply a Highlight effect to the ObjectSet
+ var highlight = new BIMSURFER.HighlightEffect(viewer, {
+        objectSet: objectSet
+    });
+
+ // Create a ClickSelectObjects so we can select or unselect
+ // the Objects in the RandomObjects with the mouse
+ var clickSelectObjects = new BIMSURFER.ClickSelectObjects(viewer, {
+        objectSet: objectSet
+    });
+ ````
+
+ @class RandomObjects
+ @module BIMSURFER
+ @constructor
+ @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}.
+ @param [cfg] {*} RandomObjects configuration
+ @param [cfg.id] {String} Optional ID, unique among all components in the parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}, generated automatically when omitted.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this RandomObjects.
+ @param [cfg.numObjects] {Number} Number of {{#crossLink "Object"}}Objects{{/crossLink}} within this RandomObjects.
+ @param [cfg.labels] {Boolean} Indicates whether to show debugging {{#crossLink "Label"}}Labels{{/crossLink}} on the {{#crossLink "Object"}}Objects{{/crossLink}} within this RandomObjects.
+ @extends Component
+ */
+(function () {
+
+    "use strict";
+
+    BIMSURFER.RandomObjects = BIMSURFER.Component.extend({
+
+        /**
+         JavaScript class name for this Component.
+
+         @property className
+         @type String
+         @final
+         */
+        className: "BIMSURFER.RandomObjects",
+
+        _init: function (cfg) {
+
+            this._numObjects = cfg.numObjects || 25;
+
+            /**
+             * The {{#crossLink "Objects"}}{{/crossLink}} within this RandomObjects.
+             * @type {{Array of Object}}
+             */
+            this.objects = [];
+
+            this._labels = cfg.labels;
+
+            this._generate();
+        },
+
+        _generate: function () {
+
+            var len = Math.sqrt(this._numObjects);
+
+            var xStart = len * -0.5;
+            var zStart = len * -0.5;
+
+            var xEnd = len * 0.5;
+            var zEnd = len * 0.5;
+
+            var defaultTypes = BIMSURFER.constants.defaultTypes;
+
+            var spacing = 15;
+
+            for (var x = xStart; x < xEnd; x += 1) {
+                for (var z = zStart; z < zEnd; z += 1) {
+
+                    this.objects.push(
+                        new BIMSURFER.BoxObject(this.viewer, {
+                            id: "testObject" + this.objects.length,
+                            type: defaultTypes[Math.round(Math.random() * defaultTypes.length)],
+                            matrix: BIMSURFER.math.translationMat4v([x * spacing, 0, z * spacing]),
+                            label: this._labels
+                        }));
+                }
+            }
+        },
+
+        _clear: function () {
+            while (this.objects.length > 0) {
+                this.objects.pop().destroy();
+            }
+        },
+
+        _destroy: function () {
+            this._clear();
+        }
+    });
+})();
+;/**
  An **ObjectSet** is a set of {{#crossLink "Object"}}Objects{{/crossLink}}.
 
  ## Overview
@@ -5097,7 +5371,7 @@ var viewer = new BIMSURFER.Viewer(...);
  ````javascript
 
  // Create a Viewer
- var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+ var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
 
  // Create a Camera
  var camera = new BIMSURFER.Camera(viewer, {
@@ -5142,25 +5416,25 @@ var viewer = new BIMSURFER.Viewer(...);
  // Share the BoxGeometry among them
 
  var object1 = new BIMSURFER.Object(viewer, {
-        ifcType: "IfcRoof",
+        type: "IfcRoof",
         geometries: [ geometry ],
         matrix: BIMSURFER.math.translationMat4v([-8, 0, -8])
     });
 
  var object2 = new BIMSURFER.Object(viewer, {
-        ifcType: "IfcDistributionFlowElement",
+        type: "IfcDistributionFlowElement",
         geometries: [ geometry ],
         matrix: BIMSURFER.math.translationMat4v([8, 0, -8])
     });
 
  var object3 = new BIMSURFER.Object(viewer, {
-        ifcType: "IfcDistributionFlowElement",
+        type: "IfcDistributionFlowElement",
         geometries: [ geometry ],
         matrix: BIMSURFER.math.translationMat4v([-8, 0, 8])
     });
 
  var object4 = new BIMSURFER.Object(viewer, {
-        ifcType: "IfcRoof",
+        type: "IfcRoof",
         geometries: [ geometry ],
         matrix: BIMSURFER.math.translationMat4v([8, 0, 8])
     });
@@ -5265,10 +5539,10 @@ var viewer = new BIMSURFER.Viewer(...);
                          * @param Boolean [cleared
                          * @param [e.removed] Info on removed Objects
                          * @param {Array of String} [e.removed.objectIds] IDs of removed Objects, when they were removed by ID
-                         * @param {{Array of String} [e.removed.ifcTypes] IFC types of removed Objects, when they were removed by IFC type
+                         * @param {{Array of String} [e.removed.types] IFC types of removed Objects, when they were removed by IFC type
                          * @param {} [e.added] Info on added Objects
                          * @param {Array of String} [e.added.objectIds] IDs of added Objects, when they were added by ID
-                         * @param {Array of String} [e.added.ifcTypes] IFC types of added Objects, when they were added by IFC type
+                         * @param {Array of String} [e.added.types] IFC types of added Objects, when they were added by IFC type
                          */
                         self.fire("updated", {
                             removed: {
@@ -5701,7 +5975,7 @@ var viewer = new BIMSURFER.Viewer(...);
 
  ````Javascript
  // Create a Viewer
- var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+ var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
 
  // Create an object
  var box = new BIMSURFER.TeapotObject(viewer);
@@ -5773,7 +6047,7 @@ var viewer = new BIMSURFER.Viewer(...);
     "use strict";
 
     /**
-     * Defines a viewpoint within a {@link BIMSURFER.Viewer}.
+     * Defines a viewpoint within a {@link Viewer}.
      */
     BIMSURFER.Camera = BIMSURFER.Component.extend({
 
@@ -6478,7 +6752,7 @@ var viewer = new BIMSURFER.Viewer(...);
 
  ```` javascript
 // Create a Viewer
-var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
 
 // Create a Camera
 var camera = new BIMSURFER.Camera(viewer, {
@@ -6580,7 +6854,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
  ```` javascript
  // Create a Viewer
- var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+ var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
 
  // Create a Camera
  var camera = new BIMSURFER.Camera(viewer, {
@@ -6812,7 +7086,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
  ```` javascript
  // Create a Viewer
- var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+ var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
 
  // Create a Camera
  var camera = new BIMSURFER.Camera(viewer, {
@@ -6956,7 +7230,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
  ````javascript
 
  // Create a Viewer
- var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+ var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
 
  // Create a Camera
  var camera = new BIMSURFER.Camera(viewer, {
@@ -7006,8 +7280,8 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
  // Note that an Object can have multiple Geometries
 
  new BIMSURFER.BoxObject(viewer, {
-    objectId: "foo",
-    ifcType: "IfcWall",
+    id: "foo",
+    type: "IfcWall",
     geometries: [ geometry ]
  });
 
@@ -7131,7 +7405,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
  ````javascript
  // Create a Viewer
- var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+ var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
 
  // Create a Camera
  var camera = new BIMSURFER.Camera(viewer, {
@@ -7150,8 +7424,8 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
  // Note that an Object can have multiple Geometries
 
  new BIMSURFER.Object(viewer, {
-    objectId: "foo",
-    ifcType: "IfcWall",
+    id: "foo",
+    type: "IfcWall",
     geometries: [ boxGeometry ]
  });
 ````
@@ -7241,7 +7515,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
  ````javascript
  // Create a Viewer
- var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+ var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
 
  // Create a Camera
  var camera = new BIMSURFER.Camera(viewer, {
@@ -7260,8 +7534,8 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
  // Note that an Object can have multiple Geometries
 
  new BIMSURFER.Object(viewer, {
-    objectId: "foo",
-    ifcType: "IfcWall",
+    id: "foo",
+    type: "IfcWall",
     geometries: [ teapotGeometry ]
  });
  ````
@@ -13146,7 +13420,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
  @param [cfg] {*} Configs
  @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
  @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Effect.
- @param [objectSet] {ObjectSet} The {{#crossLink "ObjectSet"}}{{/crossLink}} to apply this Effect to.
+ @param [cfg.objectSet] {ObjectSet} The {{#crossLink "ObjectSet"}}{{/crossLink}} to apply this Effect to.
  @extends Component
  */
 (function () {
@@ -13183,6 +13457,8 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
                     self._dirty = true;
                 });
 
+            this.invert = cfg.invert;
+
             this.active = cfg.active !== false;
         },
 
@@ -13217,6 +13493,11 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
                                         // Apply effect to Objects in the Viewer
                                         self.viewer.withClasses(["BIMSURFER.Object"],
+                                            function (object) {
+                                                self._apply.call(self, object);
+                                            });
+
+                                        self.viewer.withClasses(["BIMSURFER.BoxObject"],
                                             function (object) {
                                                 self._apply.call(self, object);
                                             });
@@ -13266,18 +13547,20 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
                 set: function (value) {
 
+                    value = !!value;
+
                     if (this._invert === value) {
                         return;
                     }
 
-                    self._dirty = false;
+                    this._dirty = false;
 
                     /**
                      * Fired whenever this Effect's {{#crossLink "Effect/invert:property"}}{{/crossLink}} property changes.
                      * @event invert
                      * @param value The property's new value
                      */
-                    this.fire('invert', this._invert = true);
+                    this.fire('invert', this._invert = value);
                 },
 
                 get: function () {
@@ -13296,7 +13579,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
     });
 
 })();;/**
- A **HighlightEffect** is an {{#crossLink "Effect"}}{{/crossLink}} that highlights the {{#crossLink "Object"}}Objects{{/crossLink}} within an {{#crossLink "ObjectSet"}}{{/crossLink}}.
+ A **LabelEffect** is an {{#crossLink "Effect"}}{{/crossLink}} that highlights the {{#crossLink "Object"}}Objects{{/crossLink}} within an {{#crossLink "ObjectSet"}}{{/crossLink}}.
 
  ## Overview
 
@@ -13304,18 +13587,19 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
  ## Example
 
- #### Highlighting an ObjectSet
+ #### Labelling an ObjectSet
 
  In this example we create four {{#crossLink "Object"}}Objects{{/crossLink}}, then add two of them to an {{#crossLink "ObjectSet"}}{{/crossLink}}.
-<br> Then we apply a {{#crossLink "HighlightEffect"}}{{/crossLink}} to the {{#crossLink "ObjectSet"}}{{/crossLink}}, causing
- it's {{#crossLink "Object"}}Objects{{/crossLink}} to become highlighted while the other two {{#crossLink "Object"}}Objects{{/crossLink}} remain un-highlighted.
+ <br> Then we apply a {{#crossLink "LabelEffect"}}{{/crossLink}} to the {{#crossLink "ObjectSet"}}{{/crossLink}}, causing
+ it's {{#crossLink "Object"}}Objects{{/crossLink}} to become labeled, while the other
+ two {{#crossLink "Object"}}Objects{{/crossLink}} remain without labels.
 
- <iframe style="width: 600px; height: 400px" src="../../examples/effect_HighlightEffect.html"></iframe>
+ <iframe style="width: 600px; height: 400px" src="../../examples/effect_LabelEffect.html"></iframe>
 
  ````javascript
 
  // Create a Viewer
- var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+ var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
 
  // Create a Camera
  var camera = new BIMSURFER.Camera(viewer, {
@@ -13360,25 +13644,181 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
  // Share the BoxGeometry among them
 
  var object1 = new BIMSURFER.Object(viewer, {
-        ifcType: "IfcRoof",
+        type: "IfcRoof",
         geometries: [ geometry ],
         matrix: BIMSURFER.math.translationMat4v([-8, 0, -8])
     });
 
  var object2 = new BIMSURFER.Object(viewer, {
-        ifcType: "IfcDistributionFlowElement",
+        type: "IfcDistributionFlowElement",
         geometries: [ geometry ],
         matrix: BIMSURFER.math.translationMat4v([8, 0, -8])
     });
 
  var object3 = new BIMSURFER.Object(viewer, {
-        ifcType: "IfcRailing",
+        type: "IfcRailing",
         geometries: [ geometry ],
         matrix: BIMSURFER.math.translationMat4v([-8, 0, 8])
     });
 
  var object4 = new BIMSURFER.Object(viewer, {
-        ifcType: "IfcRoof",
+        type: "IfcRoof",
+        geometries: [ geometry ],
+        matrix: BIMSURFER.math.translationMat4v([8, 0, 8])
+    });
+
+ // Create an ObjectSet that initially contains one of our Objects
+
+ var objectSet = new BIMSURFER.ObjectSet(viewer, {
+        objects: [object1 ]
+    });
+
+ // Apply a Labels effect to the ObjectSet, which causes the
+ // Object in the ObjectSet to become labelsed.
+
+ var labels = new BIMSURFER.LabelEffect(viewer, {
+        objectSet: objectSet
+    });
+
+ // Add a second Object to the ObjectSet, causing the Labels to now render
+ // that Object as labelsed also
+
+ objectSet.addObjects([object3]);
+
+ ````
+
+ @class LabelEffect
+ @module BIMSURFER
+ @submodule effect
+ @constructor
+ @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
+ @param [cfg] {*} Configs
+ @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this LabelEffect.
+ @param [cfg.objectSet] {ObjectSet} The {{#crossLink "ObjectSet"}}{{/crossLink}} to apply this LabelEffect to.
+ @extends Effect
+ */
+(function () {
+
+    "use strict";
+
+    var labelPool = [];
+    var lenLabelPool = 0;
+
+    function getLabel() {
+        return lenLabelPool > 0 ? labelPool[--lenLabelPool] : new Label();
+    }
+
+    function putLabel(label) {
+        labelPool.push(label);
+    }
+
+    BIMSURFER.LabelEffect = BIMSURFER.Effect.extend({
+
+        /**
+         JavaScript class name for this Component.
+
+         @property className
+         @type String
+         @final
+         */
+        className: "BIMSURFER.LabelEffect",
+
+        _init: function (cfg) {
+            this._super(cfg);
+        },
+
+        _apply: function (object) {
+            var selected = this.objectSet.objects[object.id];
+            object.label = this.invert ? !selected : !!selected;
+        }
+    });
+
+
+})();;/**
+ A **HighlightEffect** is an {{#crossLink "Effect"}}{{/crossLink}} that highlights the {{#crossLink "Object"}}Objects{{/crossLink}} within an {{#crossLink "ObjectSet"}}{{/crossLink}}.
+
+ ## Overview
+
+ TODO
+
+ ## Example
+
+ #### Highlighting an ObjectSet
+
+ In this example we create four {{#crossLink "Object"}}Objects{{/crossLink}}, then add two of them to an {{#crossLink "ObjectSet"}}{{/crossLink}}.
+<br> Then we apply a {{#crossLink "HighlightEffect"}}{{/crossLink}} to the {{#crossLink "ObjectSet"}}{{/crossLink}}, causing
+ it's {{#crossLink "Object"}}Objects{{/crossLink}} to become highlighted while the other two {{#crossLink "Object"}}Objects{{/crossLink}} remain un-highlighted.
+
+ <iframe style="width: 600px; height: 400px" src="../../examples/effect_HighlightEffect.html"></iframe>
+
+ ````javascript
+
+ // Create a Viewer
+ var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
+
+ // Create a Camera
+ var camera = new BIMSURFER.Camera(viewer, {
+        eye: [30, 20, -30]
+    });
+
+ // Spin the camera
+ viewer.on("tick", function () {
+        camera.rotateEyeY(0.2);
+    });
+
+ // Create a CameraControl so we can move the Camera
+ var cameraControl = new BIMSURFER.CameraControl(viewer, {
+        camera: camera
+    });
+
+ // Create an AmbientLight
+ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
+        color: [0.7, 0.7, 0.7]
+    });
+
+ // Create a DirLight
+ var dirLight1 = new BIMSURFER.DirLight(viewer, {
+        color: [0.6, 0.9, 0.9],
+        dir: [1.0, 0.0, 0.0],
+        space: "view"
+    });
+
+ // Create a DirLight
+ var dirLight2 = new BIMSURFER.DirLight(viewer, {
+        color: [0.6, 0.9, 0.9],
+        dir: [-0.5, 0.0, -1.0],
+        space: "view"
+    });
+
+ // Create a BoxGeometry
+ var geometry = new BIMSURFER.BoxGeometry(viewer, {
+        id: "myGeometry"
+    });
+
+ // Create some Objects
+ // Share the BoxGeometry among them
+
+ var object1 = new BIMSURFER.Object(viewer, {
+        type: "IfcRoof",
+        geometries: [ geometry ],
+        matrix: BIMSURFER.math.translationMat4v([-8, 0, -8])
+    });
+
+ var object2 = new BIMSURFER.Object(viewer, {
+        type: "IfcDistributionFlowElement",
+        geometries: [ geometry ],
+        matrix: BIMSURFER.math.translationMat4v([8, 0, -8])
+    });
+
+ var object3 = new BIMSURFER.Object(viewer, {
+        type: "IfcRailing",
+        geometries: [ geometry ],
+        matrix: BIMSURFER.math.translationMat4v([-8, 0, 8])
+    });
+
+ var object4 = new BIMSURFER.Object(viewer, {
+        type: "IfcRoof",
         geometries: [ geometry ],
         matrix: BIMSURFER.math.translationMat4v([8, 0, 8])
     });
@@ -13411,7 +13851,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
  @param [cfg] {*} Configs
  @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
  @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this HighlightEffect.
- @param [objectSet] {ObjectSet} The {{#crossLink "ObjectSet"}}{{/crossLink}} to apply this HighlightEffect to.
+ @param [cfg.objectSet] {ObjectSet} The {{#crossLink "ObjectSet"}}{{/crossLink}} to apply this HighlightEffect to.
  @extends Effect
  */
 (function () {
@@ -13457,7 +13897,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
  ````javascript
 
  // Create a Viewer
- var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+ var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
 
  // Create a Camera
  var camera = new BIMSURFER.Camera(viewer, {
@@ -13472,20 +13912,20 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
  // Create some BoxObjects
 
  new BIMSURFER.BoxObject(viewer, {
-    objectId: "foo",
-    ifcType: "IfcWall",
+    id: "foo",
+    type: "IfcWall",
     matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])
  });
 
  new BIMSURFER.BoxObject(viewer, {
-    objectId: "bar",
-    ifcType: "IfcWall",
+    id: "bar",
+    type: "IfcWall",
     matrix: BIMSURFER.math.translationMat4v([4, 0, -4])
  });
 
  new BIMSURFER.BoxObject(viewer, {
-    objectId: "baz",
-    ifcType: "IfcBeam",
+    id: "baz",
+    type: "IfcBeam",
     matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])
  });
 
@@ -13515,7 +13955,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
  @param [cfg] {*} Configs
  @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
  @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this IsolateEffect.
- @param [objectSet] {ObjectSet} The {{#crossLink "ObjectSet"}}{{/crossLink}} to apply this IsolateEffect to.
+ @param [cfg.objectSet] {ObjectSet} The {{#crossLink "ObjectSet"}}{{/crossLink}} to apply this IsolateEffect to.
  @extends Effect
  */
 (function () {
@@ -13563,7 +14003,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
  ````javascript
 
  // Create a Viewer
- var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+ var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
 
  // Create a Camera
  var camera = new BIMSURFER.Camera(viewer, {
@@ -13608,25 +14048,25 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
  // Share the BoxGeometry among them
 
  var object1 = new BIMSURFER.Object(viewer, {
-        ifcType: "IfcRoof",
+        type: "IfcRoof",
         geometries: [ geometry ],
         matrix: BIMSURFER.math.translationMat4v([-8, 0, -8])
     });
 
  var object2 = new BIMSURFER.Object(viewer, {
-        ifcType: "IfcDistributionFlowElement",
+        type: "IfcDistributionFlowElement",
         geometries: [ geometry ],
         matrix: BIMSURFER.math.translationMat4v([8, 0, -8])
     });
 
  var object3 = new BIMSURFER.Object(viewer, {
-        ifcType: "IfcRailing",
+        type: "IfcRailing",
         geometries: [ geometry ],
         matrix: BIMSURFER.math.translationMat4v([-8, 0, 8])
     });
 
  var object4 = new BIMSURFER.Object(viewer, {
-        ifcType: "IfcRoof",
+        type: "IfcRoof",
         geometries: [ geometry ],
         matrix: BIMSURFER.math.translationMat4v([8, 0, 8])
     });
@@ -13663,7 +14103,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
  @param [cfg] {*} Configs
  @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
  @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this XRayEffect.
- @param [objectSet] {ObjectSet} The {{#crossLink "ObjectSet"}}{{/crossLink}} to apply this XRayEffect to.
+ @param [cfg.objectSet] {ObjectSet} The {{#crossLink "ObjectSet"}}{{/crossLink}} to apply this XRayEffect to.
  @extends Effect
  */
 (function () {
@@ -13713,7 +14153,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
  <iframe style="width: 600px; height: 400px" src="../../examples/control_CameraControl.html"></iframe>
 
  ````Javascript
- var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+ var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
 
  var camera = new BIMSURFER.Camera(viewer, {
         eye: [5, 5, -5]
@@ -15289,7 +15729,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
  ````Javascript
  // Create a Viewer
- var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+ var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
 
  // Create a Camera
  var camera = new BIMSURFER.Camera(viewer, {
@@ -15308,29 +15748,29 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
  // Share the Geometry among them
 
  var object1 = new BIMSURFER.Object(viewer, {
-    objectId: "object1",
-    ifcType: "IfcRoof",
+    id: "object1",
+    type: "IfcRoof",
     geometries: [ geometry ],
     matrix: BIMSURFER.math.translationMat4v([-3, 0, -3])
  });
 
  var object2 = new BIMSURFER.Object(viewer, {
-    objectId: "object2",
-    ifcType: "IfcDistributionFlowElement",
+    id: "object2",
+    type: "IfcDistributionFlowElement",
     geometries: [ geometry ],
     matrix: BIMSURFER.math.translationMat4v([3, 0, -3])
  });
 
  var object3 = new BIMSURFER.Object(viewer, {
-    objectId: "object3",
-    ifcType: "IfcDistributionFlowElement",
+    id: "object3",
+    type: "IfcDistributionFlowElement",
     geometries: [ geometry ],
     matrix: BIMSURFER.math.translationMat4v([-3, 0, 3])
  });
 
  var object4 = new BIMSURFER.Object(viewer, {
-    objectId: "object4",
-    ifcType: "IfcRoof",
+    id: "object4",
+    type: "IfcRoof",
     geometries: [ geometry ],
     matrix: BIMSURFER.math.translationMat4v([3, 0, 3])
  });
@@ -15343,7 +15783,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
     objectSet: objectSet
  });
 
- // Create a ClickSelectObjects
+ // Create a ClickSelectObjects to select or unselect the Objects with the mouse
  var clickSelectObjects = new BIMSURFER.ClickSelectObjects(viewer, {
     objectSet: objectSet
  });
@@ -15481,6 +15921,626 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
         _destroy: function () {
             this.active = false;
+        }
+    });
+})();;/**
+ A **Position** is a spatial location within a {{#crossLink "Viewer"}}{{/crossLink}}.
+
+ ## Overview
+
+ A Position provides its coordinates in each of BIMSurfer's five coordinate systems:
+
+ <ul>
+ <li>{{#crossLink "Position/pos:property"}}{{/crossLink}} - 3D coordinates within the Position's local Model coordinate system.</li>
+ <li>{{#crossLink "Position/worldPos:property"}}{{/crossLink}} - 3D coordinates within the Viewer's current World coordinate
+ system, after transformation by the {{#crossLink "Position/matrix:property"}}Position's modelling matrix{{/crossLink}}.</li>
+ <li>{{#crossLink "Position/viewPos:property"}}{{/crossLink}} - 3D coordinates within the Viewer's current View
+ coordinate system, after transformation by the {{#crossLink "Viewer/viewMatrix:property"}}Viewer's view matrix{{/crossLink}}.</li>
+ <li>{{#crossLink "Position/projPos:property"}}{{/crossLink}} - 3D coordinates within the Viewer's current Projection
+ coordinate system, after transformation by the {{#crossLink "Viewer/projMatrix:property"}}Viewer's projection matrix{{/crossLink}}.</li>
+ <li>{{#crossLink "Position/canvasPos:property"}}{{/crossLink}} - 2D coordinates within the Viewer's current Canvas
+ coordinate system.</li>
+ </ul>
+
+ ## Example
+
+ ````Javascript
+ // Create a Viewer
+ var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
+
+ // Create a Camera
+ var camera = new BIMSURFER.Camera(viewer, {
+     eye: [20, 20, -20]
+ });
+
+ // Create a CameraControl to interact with the Camera
+ var cameraControl = new BIMSURFER.CameraControl(viewer, {
+    camera: camera
+ });
+
+ // Create a Position
+ new BIMSURFER.Position(viewer, {
+    pos: [0,0,0],
+    matrix: BIMSURFER.math.translationMat4v([4, 0,0])
+ });
+
+ ````
+
+ @class Position
+ @module BIMSURFER
+ @constructor
+ @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
+ @param [cfg] {*} Configs
+ @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Position.
+ @param [cfg.pos] {Array of Number} Position's 3D location.
+ @param [cfg.matrix=[1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]] {Array of Number} Transform matrix - a one-dimensional, sixteen element array of elements, an identity matrix by default.
+ @extends Component
+ */
+(function () {
+
+    "use strict";
+
+    BIMSURFER.Position = BIMSURFER.Component.extend({
+
+        /**
+         JavaScript class name for this Component.
+
+         @property className
+         @type String
+         @final
+         */
+        className: "BIMSURFER.Position",
+
+        _init: function (cfg) {
+
+            this._viewMatrix = this.viewer.viewMatrix;
+            this._projMatrix = this.viewer.projMatrix;
+
+            this._pos = [0, 0, 0];
+            this._worldPos = [0, 0, 0];
+            this._viewPos = [0, 0, 0];
+            this._projPos = [0, 0, 0];
+            this._canvasPos = [0, 0, 0];
+
+            this._updatedirty = true;
+            this._worldPosDirty = true;
+            this._viewPosDirty = true;
+            this._projPosDirty = true;
+            this._canvasPosDirty = true;
+
+            var self = this;
+
+            this._onViewMatrix = this.viewer.on("viewMatrix",
+                function (matrix) {
+
+                    self._viewMatrix = matrix;
+
+                    self._updatedirty = true;
+                    self._viewPosDirty = true;
+                    self._projPosDirty = true;
+                    self._canvasPosDirty = true;
+                });
+
+            this._onProjMatrix = this.viewer.on("projMatrix",
+                function (matrix) {
+
+                    self._projMatrix = matrix;
+
+                    self._updatedirty = true;
+                    self._projPosDirty = true;
+                    self._canvasPosDirty = true;
+                });
+
+            this._onTick = this.viewer.on("tick",
+                function () {
+                    if (self._updatedirty) {
+                        self.fire("updated");
+                        self._updatedirty = false;
+                    }
+                });
+
+            this.pos = cfg.pos;
+
+            this.matrix = cfg.matrix;
+        },
+
+        _props: {
+
+            /**
+             * The Position's 3D coordinates within its local Model coordinate system, ie. before transformation by
+             * the Position's {{#crossLink "Position/matrix:property"}}matrix{{/crossLink}}.
+             *
+             * @property pos
+             * @default [0,0,0]
+             * @type {Array of Number}
+             */
+            pos: {
+
+                set: function (value) {
+
+                    value = value || [0, 0, 0];
+
+                    if (value[0] !== this._pos[0] ||
+                        value[1] !== this._pos[1] ||
+                        value[2] !== this._pos[2]) {
+
+                        this._pos[0] = value[0];
+                        this._pos[1] = value[1];
+                        this._pos[2] = value[2];
+
+                        this._updatedirty = true;
+                        this._worldPosDirty = true;
+                        this._viewPosDirty = true;
+                        this._projPosDirty = true;
+                        this._canvasPosDirty = true;
+                    }
+                },
+
+                get: function () {
+                    return this._pos;
+                }
+            },
+
+            /**
+             * This Positions's 4x4 modelling transformation matrix.
+             *
+             * @property matrix
+             * @default [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
+             * @type {Array of Number}
+             */
+            matrix: {
+
+                set: function (value) {
+
+                    value = value || [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 ];
+
+                    this._updatedirty = true;
+                    this._worldPosDirty = true;
+                    this._viewPosDirty = true;
+                    this._projPosDirty = true;
+                    this._canvasPosDirty = true;
+
+                    this._matrix = value;
+                },
+
+                get: function () {
+                    return this._matrix;
+                }
+            },
+
+            /**
+             * This Position's 3D coordinates within the World coordinate system, ie. after transformation by
+             * the Position's {{#crossLink "Position/matrix:property"}}matrix{{/crossLink}} and before
+             * transformation by Viewer's {{#crossLink "Viewer/viewMatrix:property"}}viewing matrix{{/crossLink}}.
+             *
+             * @property worldPos
+             * @final
+             * @default [0,0,0]
+             * @type {Array of Number}
+             */
+            worldPos: {
+
+                get: function () {
+
+                    if (this._worldPosDirty) {
+
+                        if (this._matrix) {
+
+                            BIMSURFER.math.transformPoint3(this._matrix, this._pos, this._worldPos);
+
+                        } else {
+
+                            this._worldPos[0] = this._pos[0];
+                            this._worldPos[1] = this._pos[1];
+                            this._worldPos[2] = this._pos[2];
+                        }
+
+                        this._worldPosDirty = false;
+                    }
+
+                    return this._worldPos;
+                }
+            },
+
+            /**
+             * This Position's 3D coordinates within the View coordinate system, ie. after transformation by
+             * the Viewer's {{#crossLink "Viewer/viewMatrix:property"}}view matrix{{/crossLink}} and before
+             * transformation by the Viewer's {{#crossLink "Viewer/projMatrix:property"}}projection matrix{{/crossLink}}.
+             *
+             * @property viewPos
+             * @final
+             * @type {Array of Number}
+             */
+            viewPos: {
+
+                get: function () {
+
+                    if (this._viewPosDirty) {
+
+                        BIMSURFER.math.transformPoint3(this._viewMatrix, this.worldPos, this._viewPos);
+
+                        this._viewPos[3] = 1; // Need homogeneous 'w' for perspective division
+
+                        this._viewPosDirty = false;
+                    }
+
+                    return this._viewPos;
+                }
+            },
+
+            /**
+             * This Position's 3D homogeneous coordinates within the Projection coordinate system, ie. after transformation by
+             * the Viewer's {{#crossLink "Viewer/projMatrix:property"}}projection matrix{{/crossLink}}.
+             *
+             * @property projPos
+             * @final
+             * @type {Array of Number}
+             */
+            projPos: {
+
+                get: function () {
+
+                    if (this._projPosDirty) {
+
+                        BIMSURFER.math.transformPoint3(this._projMatrix, this.viewPos, this._projPos);
+
+                        this._projPosDirty = false;
+                    }
+
+                    return this._projPos;
+                }
+            },
+
+            /**
+             * This Position's 2D coordinates within the Canvas coordinate system.
+             *
+             * @property canvasPos
+             * @final
+             * @type {Array of Number}
+             */
+            canvasPos: {
+
+                get: function () {
+
+                    if (this._canvasPosDirty) {
+
+                        var projPos = this.projPos;
+
+                        var x = projPos[0];
+                        var y = projPos[1];
+                        var w = projPos[3];
+
+                        var canvas = this.viewer.canvas;
+
+                        this._canvasPos[0] = Math.round((1 + x / w) * canvas.width() / 2);
+                        this._canvasPos[1] = Math.round((1 - y / w) * canvas.height() / 2);
+
+                        this._canvasPosDirty = false;
+                    }
+
+                    return this._canvasPos;
+                }
+            }
+        },
+
+        _destroy: function () {
+
+            this.viewer.off(this._onViewMatrix);
+
+            this.viewer.off(this._onProjMatrix);
+
+            this.viewer.off(this._onTick);
+        }
+    });
+})();;/**
+ A **Label** is a user-defined HTML element that floats over a 3D position within a {{#crossLink "Viewer"}}{{/crossLink}}.
+
+ ## Overview
+
+ <ul>
+ <li>When configured with an {{#crossLink "Object"}}{{/crossLink}}, a Label will always track
+ its {{#crossLink "Object"}}Object's{{/crossLink}} position, offset by the vector indicated
+ in {{#crossLink "Label/pos:property"}}{{/crossLink}}.</li>
+
+ <li>For debugging purposes, an {{#crossLink "Object"}}{{/crossLink}} has its own built-in Label, 
+ which can be shown by setting the {{#crossLink "Object"}}Object's{{/crossLink}} 
+ {{#crossLink "Object/label:property"}}{{/crossLink}} property true.</li>
+ </ul>
+
+ A Label can be queried for its coordinates within each of BIMSurfer's five coordinate systems:
+
+ <ul>
+ <li>{{#crossLink "Label/pos:property"}}{{/crossLink}} - 3D coordinates within the Label's local Model coordinate system.</li>
+ <li>{{#crossLink "Label/worldPos:property"}}{{/crossLink}} - 3D coordinates within the Viewer's current World coordinate
+ system, after transformation by the {{#crossLink "Label/matrix:property"}}Label's modelling matrix{{/crossLink}}.</li>
+ <li>{{#crossLink "Label/viewPos:property"}}{{/crossLink}} - 3D coordinates within the Viewer's current View
+ coordinate system, after transformation by the {{#crossLink "Viewer/viewMatrix:property"}}Viewer's view matrix{{/crossLink}}.</li>
+ <li>{{#crossLink "Label/projPos:property"}}{{/crossLink}} - 3D coordinates within the Viewer's current Projection
+ coordinate system, after transformation by the {{#crossLink "Viewer/projMatrix:property"}}Viewer's projection matrix{{/crossLink}}.</li>
+ <li>{{#crossLink "Label/canvasPos:property"}}{{/crossLink}} - 2D coordinates within the Viewer's current Canvas
+ coordinate system.</li>
+ </ul>
+
+
+ ## Example
+
+ <iframe style="width: 800px; height: 400px" src="../../examples/spatial_Label.html"></iframe>
+
+ ````Javascript
+ // Create a Viewer
+ var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
+
+ // Create a Camera
+ var camera = new BIMSURFER.Camera(viewer, {
+        eye: [20, 15, -20],
+        look: [0,-10,0]
+    });
+
+ // Spin the camera
+ viewer.on("tick", function () {
+        camera.rotateEyeY(0.2);
+    });
+
+ // Create a CameraControl so we can move the Camera
+ var cameraControl = new BIMSURFER.CameraControl(viewer, {
+        camera: camera
+    });
+
+ // Create an AmbientLight
+ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
+        color: [0.7, 0.7, 0.7]
+    });
+
+ // Create a DirLight
+ var dirLight1 = new BIMSURFER.DirLight(viewer, {
+        color: [0.6, 0.9, 0.9],
+        dir: [1.0, 0.0, 0.0],
+        space: "view"
+    });
+
+ // Create a DirLight
+ var dirLight2 = new BIMSURFER.DirLight(viewer, {
+        color: [0.6, 0.9, 0.9],
+        dir: [-0.5, 0.0, -1.0],
+        space: "view"
+    });
+
+ // Create a BoxGeometry
+ var geometry = new BIMSURFER.BoxGeometry(viewer, {
+        id: "myGeometry"
+    });
+
+ // Create some Objects
+ // Share the BoxGeometry among them
+ // Activate their debug Labels
+
+ var object1 = new BIMSURFER.Object(viewer, {
+        id: "object1",
+        type: "IfcRoof",
+        geometries: [ geometry ],
+        matrix: BIMSURFER.math.translationMat4v([-8, 0, -8])
+    });
+
+ var object2 = new BIMSURFER.Object(viewer, {
+        id: "object2",
+        type: "IfcDistributionFlowElement",
+        geometries: [ geometry ],
+        matrix: BIMSURFER.math.translationMat4v([8, 0, -8])
+    });
+
+ var object3 = new BIMSURFER.Object(viewer, {
+        id: "object3",
+        type: "IfcRailing",
+        geometries: [ geometry ],
+        matrix: BIMSURFER.math.translationMat4v([-8, 0, 8])
+    });
+
+ var object4 = new BIMSURFER.Object(viewer, {
+        id: "object4",
+        type: "IfcRoof",
+        geometries: [ geometry ],
+        matrix: BIMSURFER.math.translationMat4v([8, 0, 8])
+    });
+
+ // Create some Labels on two of the Objects
+ // Each Label displays a snippet of HTML and is positioned relative to its Object's origin
+
+ var label1 = new BIMSURFER.Label(viewer, {
+        object: object1,
+        text: "<b>Label on Object 'object1'</b><br><br><iframe width='320' height='200' src='https://www.youtube.com/embed/oTONvRtlW44' frameborder='0' allowfullscreen></iframe>",
+        pos: [0, 2, 0] // Offset from Object's local Model-space origin
+    });
+
+ var label2 = new BIMSURFER.Label(viewer, {
+        object: object4,
+        text: "<b>First Label on Object 'object2'</b><br>",
+        pos: [0, 0, 0] // Offset from Object's local Model-space origin
+    });
+
+ var label3 = new BIMSURFER.Label(viewer, {
+        object: object4,
+        text: "<b>Second label on Object 'object2'</b><br>",
+        pos: [0, -2, 0] // Offset from Object's local Model-space origin
+    });
+ ````
+
+ @class Label
+ @module BIMSURFER
+ @constructor
+ @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
+ @param [cfg] {*} Configs
+ @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Label.
+ @param [cfg.object] {Object} The {{#crossLink "Object"}}{{/crossLink}} to attach this Label to.
+ @param [cfg.text] {String} Text to insert into this Label.
+ @param [cfg.pos] {Array of Number} Label's 3D offset from the {{#crossLink "Object"}}Object's{{/crossLink}} origin.
+ @param [cfg.matrix=[1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]] {Array of Number} Transform matrix - a one-dimensional,
+ sixteen element array of elements, an identity matrix by default.
+ @extends Position
+ */
+(function () {
+
+    "use strict";
+
+    BIMSURFER.Label = BIMSURFER.Position.extend({
+
+        /**
+         JavaScript class name for this Component.
+
+         @property className
+         @type String
+         @final
+         */
+        className: "BIMSURFER.Label",
+
+        _init: function (cfg) {
+
+            this._super(cfg);
+
+            /**
+             * This Label's {{#crossLink "Object"}}{{/crossLink}}.
+             *
+             * Can be undefined.
+             *
+             * @property object
+             * @type BIMSURFER.Object
+             * @final
+             */
+            this.object = cfg.object;
+
+            $(this.viewer.element).append("<div id ='" + this.id + "' style='position:  absolute; line-height=140%; " +
+                "padding:5px; display: none;  border: 1px black solid; top:0px; left: 100px; z-index: 1000; " +
+                "background: lightgray; width:auto; height: auto;'>XXXX</div>");
+
+            this.element = $("#" + this.id + "");
+
+            var self = this;
+
+            if (this.object) {
+                this._onObjectMatrix = this.object.on("matrix",
+                    function (matrix) {
+
+                        self.matrix = matrix;
+
+                    });
+
+                this._onObjectDestroy = this.object.on("destroyed",
+                    function () {
+
+                        self.object.off(self._onObjectMatrix);
+
+                        self.object = null;
+                    });
+            }
+
+            this.text = cfg.text || "";            
+
+            var activate = cfg.active !== false;
+
+            if (!activate) {
+                this.active = false;
+            }
+
+            this.on("updated",
+                function () {
+
+                    var viewPos = self.viewPos;
+                    var canvasPos = self.canvasPos;
+
+                    self.element.css({
+                        left: canvasPos[0],
+                        top: canvasPos[1],
+                        zIndex: 100000 + Math.round(viewPos[2])
+                    });
+
+                    if (activate) {
+                        this.active = true;
+                        activate = false;
+                    }
+                });
+        },
+
+        _props: {
+
+            /**
+             * Text within this Label.
+             *
+             * Fires an {{#crossLink "Label/text:event"}}{{/crossLink}} event on change.
+             *
+             * @property text
+             * @type String
+             */
+            text: {
+
+                set: function (value) {
+
+                    if (this._text === value) {
+                        return;
+                    }
+
+                    this.element.html(value);
+
+                    /**
+                     * Fired whenever this Label's {{#crossLink "Label/text:property"}}{{/crossLink}} property changes.
+                     * @event text
+                     * @param value The property's new value
+                     */
+                    this.fire('text', this._text = value);
+                },
+
+                get: function () {
+                    return this._text;
+                }
+            },
+            
+            /**
+             * Flag which indicates whether this Label is active or not.
+             *
+             * Fires an {{#crossLink "Label/active:event"}}{{/crossLink}} event on change.
+             *
+             * @property active
+             * @type Boolean
+             */
+            active: {
+
+                set: function (value) {
+
+                    if (this._active === value) {
+                        return;
+                    }
+
+                    if (value) {
+                        this.element.show();
+
+                    } else {
+                        this.element.hide();
+                    }
+
+                    /**
+                     * Fired whenever this Label's {{#crossLink "Label/active:property"}}{{/crossLink}} property changes.
+                     * @event active
+                     * @param value The property's new value
+                     */
+                    this.fire('active', this._active = value);
+                },
+
+                get: function () {
+                    return this._active;
+                }
+            }
+        },
+
+        _destroy: function () {
+
+            if (this.object) {
+
+                this.object.off(this._onObjectMatrix);
+
+                this.object.off(this._onObjectDestroy);
+            }
+
+            this.element.remove();
         }
     });
 })();

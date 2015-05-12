@@ -16,7 +16,7 @@
  ````javascript
 
  // Create a Viewer
- var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+ var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
 
  // Create a Camera
  var camera = new BIMSURFER.Camera(viewer, {
@@ -31,20 +31,20 @@
  // Create some BoxObjects
 
  new BIMSURFER.BoxObject(viewer, {
-    objectId: "foo",
-    ifcType: "IfcWall",
+    id: "foo",
+    type: "IfcWall",
     matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])
  });
 
  new BIMSURFER.BoxObject(viewer, {
-    objectId: "bar",
-    ifcType: "IfcWall",
+    id: "bar",
+    type: "IfcWall",
     matrix: BIMSURFER.math.translationMat4v([4, 0, -4])
  });
 
  new BIMSURFER.BoxObject(viewer, {
-    objectId: "baz",
-    ifcType: "IfcBeam",
+    id: "baz",
+    type: "IfcBeam",
     matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])
  });
 
@@ -74,7 +74,7 @@
  @param [cfg] {*} Configs
  @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
  @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this IsolateEffect.
- @param [objectSet] {ObjectSet} The {{#crossLink "ObjectSet"}}{{/crossLink}} to apply this IsolateEffect to.
+ @param [cfg.objectSet] {ObjectSet} The {{#crossLink "ObjectSet"}}{{/crossLink}} to apply this IsolateEffect to.
  @extends Effect
  */
 (function () {

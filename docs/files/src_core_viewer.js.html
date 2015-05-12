@@ -39,7 +39,10 @@
                         <div id="api-tabview-panel">
                             <ul id="api-classes" class="apis classes">
                                 <li><a href="../classes/AmbientLight.html">AmbientLight</a></li>
+                                <li><a href="../classes/Anaglyph.html">Anaglyph</a></li>
                                 <li><a href="../classes/BIMSURFER.html">BIMSURFER</a></li>
+                                <li><a href="../classes/BIMSURFER.constants.html">BIMSURFER.constants</a></li>
+                                <li><a href="../classes/BIMSURFER.Viewer.html">BIMSURFER.Viewer</a></li>
                                 <li><a href="../classes/BoxGeometry.html">BoxGeometry</a></li>
                                 <li><a href="../classes/BoxObject.html">BoxObject</a></li>
                                 <li><a href="../classes/Camera.html">Camera</a></li>
@@ -49,6 +52,7 @@
                                 <li><a href="../classes/Component.html">Component</a></li>
                                 <li><a href="../classes/Configs.html">Configs</a></li>
                                 <li><a href="../classes/Debug.html">Debug</a></li>
+                                <li><a href="../classes/DepthOfField.html">DepthOfField</a></li>
                                 <li><a href="../classes/DirLight.html">DirLight</a></li>
                                 <li><a href="../classes/Effect.html">Effect</a></li>
                                 <li><a href="../classes/Fly.html">Fly</a></li>
@@ -60,6 +64,8 @@
                                 <li><a href="../classes/KeyboardOrbitCamera.html">KeyboardOrbitCamera</a></li>
                                 <li><a href="../classes/KeyboardPanCamera.html">KeyboardPanCamera</a></li>
                                 <li><a href="../classes/KeyboardZoomCamera.html">KeyboardZoomCamera</a></li>
+                                <li><a href="../classes/Label.html">Label</a></li>
+                                <li><a href="../classes/LabelEffect.html">LabelEffect</a></li>
                                 <li><a href="../classes/Light.html">Light</a></li>
                                 <li><a href="../classes/math.html">math</a></li>
                                 <li><a href="../classes/MouseOrbitCamera.html">MouseOrbitCamera</a></li>
@@ -68,9 +74,10 @@
                                 <li><a href="../classes/Object.html">Object</a></li>
                                 <li><a href="../classes/ObjectSet.html">ObjectSet</a></li>
                                 <li><a href="../classes/PointLight.html">PointLight</a></li>
+                                <li><a href="../classes/Position.html">Position</a></li>
+                                <li><a href="../classes/RandomObjects.html">RandomObjects</a></li>
                                 <li><a href="../classes/TeapotGeometry.html">TeapotGeometry</a></li>
                                 <li><a href="../classes/TeapotObject.html">TeapotObject</a></li>
-                                <li><a href="../classes/Viewer.html">Viewer</a></li>
                                 <li><a href="../classes/XRayEffect.html">XRayEffect</a></li>
                             </ul>
                 
@@ -121,28 +128,73 @@
 <div class="file">
     <pre class="code prettyprint linenums">
 /**
- The 3D viewer
+ A **Viewer** is a WebGL-based 3D viewer for the visualisation and evaluation of BIM models.
 
  ## Overview
 
- TODO
+ &lt;ul&gt;
+ &lt;li&gt;&lt;/li&gt;
+ &lt;/ul&gt;
 
  ## Example
 
- TODO
+ In the example below we&#x27;ll create a Viewer with a {{#crossLink &quot;Camera&quot;}}{{/crossLink}},
+ a {{#crossLink &quot;CameraControl&quot;}}{{/crossLink}} and a {{#crossLink &quot;TeapotGeometry&quot;}}{{/crossLink}},
+ which is used by an {{#crossLink &quot;Object&quot;}}{{/crossLink}}.
+ &lt;br&gt;Finally, we make the {{#crossLink &quot;Camera&quot;}}{{/crossLink}} orbit on each &quot;tick&quot; event emitted by the Viewer.
+
+ &lt;iframe style=&quot;width: 600px; height: 400px&quot; src=&quot;../../examples/viewer_Viewer.html&quot;&gt;&lt;/iframe&gt;
+
+ &#x60;&#x60;&#x60;&#x60;javascript
+ // Create a Viewer
+ var viewer = new BIMSURFER.Viewer({
+
+    // ID of the DIV element
+    element: &quot;myDiv&quot;
+ });
+
+ // Create a Camera
+ var camera = new BIMSURFER.Camera(viewer, {
+        eye: [5, 5, -5]
+    });
+
+ // Create a CameraControl to control our Camera with mouse and keyboard
+ var cameraControl = new BIMSURFER.CameraControl(viewer, {
+        camera: camera
+    });
+
+ // Create a Geometry
+ var geometry = new BIMSURFER.TeapotGeometry(viewer, {
+        id: &quot;myGeometry&quot;
+    });
+
+ // Create an Object that uses the Geometry
+ var object1 = new BIMSURFER.Object(viewer, {
+        id: &quot;myObject1&quot;,
+        type: &quot;IfcCovering&quot;,
+        geometries: [ geometry ]
+    });
+
+ // Spin the camera
+ viewer.on(&quot;tick&quot;, function () {
+        camera.rotateEyeY(0.2);
+    });
+ &#x60;&#x60;&#x60;&#x60;
 
  @class Viewer
  @module BIMSURFER
  @constructor
- @param [viewer] {Viewer} Parent {{#crossLink &quot;Viewer&quot;}}{{/crossLink}}.
  @param [cfg] {*} Configs
  @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
  @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Object.
+ @param cfg.element {String|HTMLElement} ID or instance of a DIV element in the page.
+ @param cfg.bimServerApi {*} The BIMServer API.
  */
 (function () {
+
     &quot;use strict&quot;;
 
-    BIMSURFER.Viewer = function (bimServerApi, div, options, autoStart) {
+    BIMSURFER.Viewer = function (cfg) {
 
         var self = this;
 
@@ -159,29 +211,44 @@
 
         // Check arguments
 
-        if (typeof div == &#x27;string&#x27;) {
-            div = jQuery(&#x27;div#&#x27; + div)[0];
+        cfg = cfg || {};
+
+        var element = cfg.element;
+
+        if (!element) {
+            throw &quot;Param expected: element&quot;;
         }
 
-        if (!jQuery(div).is(&#x27;div&#x27;)) {
-            console.error(&quot;BIMSURFER: Can&#x27;t find div element&quot;);
-            return;
+        if (typeof element == &#x27;string&#x27;) {
+            element = jQuery(&#x27;div#&#x27; + element)[0];
         }
 
-        // Clear container div
+        if (!jQuery(element).is(&#x27;div&#x27;)) {
+            throw &quot;Can&#x27;t find div element&quot;;
+        }
 
-        jQuery(div).empty();
+        // Clear container element
 
-        this._div = div;
+        jQuery(element).empty();
+
+        /**
+         * The HTML element ocupied by the Viewer
+         *
+         * @property element
+         * @final
+         * @type {HTMLElement}
+         */
+        this.element = element;
 
 
         /**
          * The BIMServer API
          *
          * @property bimServerApi
+         * @final
          * @type {Object}
          */
-        this.bimServerApi = bimServerApi;
+        this.bimServerApi = cfg.bimServerApi;
 
 
         this.SYSTEM = this;
@@ -196,26 +263,28 @@
         this.connectedServers = [];
 
 
-        var canvasId = jQuery(this._div).attr(&#x27;id&#x27;) + &quot;-canvas&quot;;
+        var canvasId = jQuery(this.element).attr(&#x27;id&#x27;) + &quot;-canvas&quot;;
 
         /**
-         * The HTML Canvas that this Viewer renders to. This is inserted into the div we configured this Viewer with.
+         * The HTML Canvas that this Viewer renders to. This is inserted into the element we configured this Viewer with.
          * @property canvas
+         * @final
          * @type {HTMLCanvasElement}
          * @final
          */
         this.canvas = jQuery(&#x27;&lt;canvas /&gt;&#x27;)
             .attr(&#x27;id&#x27;, canvasId)
-            .attr(&#x27;width&#x27;, jQuery(this._div).width())
-            .attr(&#x27;height&#x27;, jQuery(this._div).height())
+            .attr(&#x27;width&#x27;, jQuery(this.element).width())
+            .attr(&#x27;height&#x27;, jQuery(this.element).height())
             .html(&#x27;&lt;p&gt;This application requires a browser that supports the &lt;a href=&quot;http://www.w3.org/html/wg/html5/&quot;&gt;HTML5&lt;/a&gt; &amp;lt;canvas&amp;gt; feature.&lt;/p&gt;&#x27;)
             .addClass(this.className.replace(/\./g, &quot;-&quot;))
-            .appendTo(this._div);
+            .appendTo(this.element);
 
 
         /**
          * The SceneJS scene graph that renders 3D content for this Viewer.
          * @property scene
+         * @final
          * @type {SceneJS.Scene}
          * @final
          */
@@ -275,58 +344,14 @@
          * ID of this Viewer
          *
          * @property id
+         * @final
          * @type {String}
          */
         this.id = this.scene.getId();
 
-//        // Set initial tag mask on scene graph
-//
-//        this.scene.set(&#x27;tagMask&#x27;, &#x27;^()$&#x27;);
-
         // Init events
 
         var canvas = this.scene.getCanvas();
-
-        canvas.addEventListener(&#x27;mousedown&#x27;,
-            function (e) {
-                self.fire(&#x27;mouseDown&#x27;, e);
-            }, true);
-
-        canvas.addEventListener(&#x27;mousemove&#x27;,
-            function (e) {
-                self.fire(&#x27;mouseMove&#x27;, e);
-            }, true);
-
-        canvas.addEventListener(&#x27;mouseup&#x27;,
-            function (e) {
-                self.fire(&#x27;mouseUp&#x27;, e);
-            }, true);
-
-        canvas.addEventListener(&#x27;touchstart&#x27;,
-            function (e) {
-                self.fire(&#x27;touchStart&#x27;, e);
-            }, true);
-
-        canvas.addEventListener(&#x27;touchmove&#x27;,
-            function (e) {
-                self.fire(&#x27;touchMove&#x27;, e);
-            }, true);
-
-        canvas.addEventListener(&#x27;touchend&#x27;,
-            function (e) {
-                self.fire(&#x27;touchEnd&#x27;, e);
-            }, true);
-
-        canvas.addEventListener(&#x27;mousewheel&#x27;,
-            function (e) {
-                self.fire(&#x27;mouseWheel&#x27;, e);
-            }, true);
-
-        canvas.addEventListener(&#x27;DOMMouseScroll&#x27;,
-            function (e) {
-                self.fire(&#x27;mouseWheel&#x27;, e);
-            }, true);
-
 
         this.scene.on(&#x27;tick&#x27;,
             function (params) {
@@ -336,6 +361,20 @@
                 });
             });
 
+        this._lookatNode = this.scene.getNode(&#x27;theLookat&#x27;);
+
+        this._lookatNode.on(&quot;matrix&quot;,
+            function (matrix) {
+                self.fire(&#x27;viewMatrix&#x27;, matrix);
+            });
+
+        this._cameraNode = this.scene.getNode(&#x27;theCamera&#x27;);
+
+        this._cameraNode.on(&quot;matrix&quot;,
+            function (matrix) {
+                self.fire(&#x27;projMatrix&#x27;, matrix);
+            });
+
 
         // Pool where we&#x27;ll keep all component IDs
         this._componentIDMap = new BIMSURFER.utils.Map();
@@ -343,6 +382,7 @@
         /**
          * The {{#crossLink &quot;Component&quot;}}Components{{/crossLink}} within this Viewer, mapped to their IDs.
          * @property components
+         * @final
          * @type {{String:Component}}
          */
         this.components = {};
@@ -351,6 +391,7 @@
         /**
          * The {{#crossLink &quot;Component&quot;}}Components{{/crossLink}} within this Viewer, mapped to their class names.
          * @property classes
+         * @final
          * @type {{String:{String:Component}}}
          */
         this.classes = {};
@@ -359,6 +400,7 @@
         /**
          * The {{#crossLink &quot;Component&quot;}}Components{{/crossLink}} within this Viewer, mapped to their IFC type names.
          * @property types
+         * @final
          * @type {{String:{String:Component}}}
          */
         this.types = {};
@@ -366,7 +408,7 @@
 
         // Add components
 
-        var components = options.components;
+        var components = cfg.components;
 
         if (components) {
 
@@ -391,20 +433,20 @@
             }
         }
 
-        if (BIMSURFER.utils.isset(options, options.autoStart)) {
-            if (!BIMSURFER.Util.isset(options.autoStart.serverUrl, options.autoStart.serverUsername, options.autoStart.serverPassword, options.autoStart.projectOid)) {
+        if (BIMSURFER.utils.isset(cfg, cfg.autoStart)) {
+            if (!BIMSURFER.Util.isset(cfg.autoStart.serverUrl, cfg.autoStart.serverUsername, cfg.autoStart.serverPassword, cfg.autoStart.projectOid)) {
                 console.error(&#x27;Some autostart parameters are missing&#x27;);
                 return;
             }
             var _this = this;
-            var BIMServer = new BIMSURFER.Server(this, options.autoStart.serverUrl, options.autoStart.serverUsername, options.autoStart.serverPassword, false, true, true, function () {
+            var BIMServer = new BIMSURFER.Server(this, cfg.autoStart.serverUrl, cfg.autoStart.serverUsername, cfg.autoStart.serverPassword, false, true, true, function () {
                 if (BIMServer.loginStatus != &#x27;loggedin&#x27;) {
-                    _this._div.innerHTML = &#x27;Something went wrong while connecting&#x27;;
+                    _this.element.innerHTML = &#x27;Something went wrong while connecting&#x27;;
                     console.error(&#x27;Something went wrong while connecting&#x27;);
                     return;
                 }
-                var project = BIMServer.getProjectByOid(options.autoStart.projectOid);
-                project.loadScene((BIMSURFER.Util.isset(options.autoStart.revisionOid) ? options.autoStart.revisionOid : null), true);
+                var project = BIMServer.getProjectByOid(cfg.autoStart.projectOid);
+                project.loadScene((BIMSURFER.Util.isset(cfg.autoStart.revisionOid) ? cfg.autoStart.revisionOid : null), true);
             });
         }
 
@@ -428,7 +470,10 @@
             });
 
         /**
-         * Input handling
+         * Input handling for this Viewer.
+         * @property input
+         * @final
+         * @type {BIMSURFER.Input}
          */
         this.input = new BIMSURFER.Input(this);
     };
@@ -526,6 +571,41 @@
          */
         this.fire(&quot;componentDestroyed&quot;, component, true);
     };
+
+    /**
+     * This Viewer&#x27;s view transformation matrix.
+     *
+     * @property viewMatrix
+     * @final
+     * @default [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
+     * @type {Array of Number}
+     */
+    Object.defineProperty(BIMSURFER.Viewer.prototype, &quot;viewMatrix&quot;, {
+
+        get: function() {
+            return this._lookatNode.getMatrix();
+        },
+
+        enumerable: true
+    });
+
+
+    /**
+     * This Viewer&#x27;s projection transformation matrix.
+     *
+     * @property projMatrix
+     * @final
+     * @default [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
+     * @type {Array of Number}
+     */
+    Object.defineProperty(BIMSURFER.Viewer.prototype, &quot;projMatrix&quot;, {
+
+        get: function() {
+            return this._cameraNode.getMatrix();
+        },
+
+        enumerable: true
+    });
 
     /**
      *
@@ -820,7 +900,7 @@
      * @method log
      * @param {String} message The message to log
      */
-    BIMSURFER.Viewer.log = function (message) {
+    BIMSURFER.Viewer.prototype.log = function (message) {
         window.console.log(&quot;[LOG] BIMSERVER.Viewer: &quot; + message);
     };
 
@@ -832,20 +912,8 @@
      * @method error
      * @param {String} message The message to log
      */
-    BIMSURFER.Viewer.error = function (message) {
+    BIMSURFER.Viewer.prototype.error = function (message) {
         window.console.error(&quot;[ERROR] BIMSERVER.Viewer: &quot; + message);
-    };
-
-    /**
-     * Logs a warning for this View to the JavaScript console.
-     *
-     * The console message will have this format: *&#x60;&#x60;&#x60;&#x60;[WARN] BIMSERVER.Viewer: &lt;message&gt;&#x60;&#x60;&#x60;&#x60;*
-     *
-     * @method warn
-     * @param {String} message The message to log
-     */
-    BIMSURFER.Viewer.warn = function (message) {
-        window.console.warn(&quot;[WARN] BIMSERVER.Viewer: &quot; + message);
     };
 
 })();

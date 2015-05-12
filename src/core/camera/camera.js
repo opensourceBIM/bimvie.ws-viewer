@@ -19,7 +19,7 @@
 
  ````Javascript
  // Create a Viewer
- var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+ var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
 
  // Create an object
  var box = new BIMSURFER.TeapotObject(viewer);
@@ -91,7 +91,7 @@
     "use strict";
 
     /**
-     * Defines a viewpoint within a {@link BIMSURFER.Viewer}.
+     * Defines a viewpoint within a {@link Viewer}.
      */
     BIMSURFER.Camera = BIMSURFER.Component.extend({
 

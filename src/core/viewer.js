@@ -1,26 +1,71 @@
 /**
- The 3D viewer
+ A **Viewer** is a WebGL-based 3D viewer for the visualisation and evaluation of BIM models.
 
  ## Overview
 
- TODO
+ <ul>
+ <li></li>
+ </ul>
 
  ## Example
 
- TODO
+ In the example below we'll create a Viewer with a {{#crossLink "Camera"}}{{/crossLink}},
+ a {{#crossLink "CameraControl"}}{{/crossLink}} and a {{#crossLink "TeapotGeometry"}}{{/crossLink}},
+ which is used by an {{#crossLink "Object"}}{{/crossLink}}.
+ <br>Finally, we make the {{#crossLink "Camera"}}{{/crossLink}} orbit on each "tick" event emitted by the Viewer.
+
+ <iframe style="width: 600px; height: 400px" src="../../examples/viewer_Viewer.html"></iframe>
+
+ ````javascript
+ // Create a Viewer
+ var viewer = new BIMSURFER.Viewer({
+
+    // ID of the DIV element
+    element: "myDiv"
+ });
+
+ // Create a Camera
+ var camera = new BIMSURFER.Camera(viewer, {
+        eye: [5, 5, -5]
+    });
+
+ // Create a CameraControl to control our Camera with mouse and keyboard
+ var cameraControl = new BIMSURFER.CameraControl(viewer, {
+        camera: camera
+    });
+
+ // Create a Geometry
+ var geometry = new BIMSURFER.TeapotGeometry(viewer, {
+        id: "myGeometry"
+    });
+
+ // Create an Object that uses the Geometry
+ var object1 = new BIMSURFER.Object(viewer, {
+        id: "myObject1",
+        type: "IfcCovering",
+        geometries: [ geometry ]
+    });
+
+ // Spin the camera
+ viewer.on("tick", function () {
+        camera.rotateEyeY(0.2);
+    });
+ ````
 
  @class Viewer
  @module BIMSURFER
  @constructor
- @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
  @param [cfg] {*} Configs
  @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
  @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Object.
+ @param cfg.element {String|HTMLElement} ID or instance of a DIV element in the page.
+ @param cfg.bimServerApi {*} The BIMServer API.
  */
 (function () {
+
     "use strict";
 
-    BIMSURFER.Viewer = function (bimServerApi, div, options, autoStart) {
+    BIMSURFER.Viewer = function (cfg) {
 
         var self = this;
 
@@ -37,29 +82,44 @@
 
         // Check arguments
 
-        if (typeof div == 'string') {
-            div = jQuery('div#' + div)[0];
+        cfg = cfg || {};
+
+        var element = cfg.element;
+
+        if (!element) {
+            throw "Param expected: element";
         }
 
-        if (!jQuery(div).is('div')) {
-            console.error("BIMSURFER: Can't find div element");
-            return;
+        if (typeof element == 'string') {
+            element = jQuery('div#' + element)[0];
         }
 
-        // Clear container div
+        if (!jQuery(element).is('div')) {
+            throw "Can't find div element";
+        }
 
-        jQuery(div).empty();
+        // Clear container element
 
-        this._div = div;
+        jQuery(element).empty();
+
+        /**
+         * The HTML element ocupied by the Viewer
+         *
+         * @property element
+         * @final
+         * @type {HTMLElement}
+         */
+        this.element = element;
 
 
         /**
          * The BIMServer API
          *
          * @property bimServerApi
+         * @final
          * @type {Object}
          */
-        this.bimServerApi = bimServerApi;
+        this.bimServerApi = cfg.bimServerApi;
 
 
         this.SYSTEM = this;
@@ -74,26 +134,28 @@
         this.connectedServers = [];
 
 
-        var canvasId = jQuery(this._div).attr('id') + "-canvas";
+        var canvasId = jQuery(this.element).attr('id') + "-canvas";
 
         /**
-         * The HTML Canvas that this Viewer renders to. This is inserted into the div we configured this Viewer with.
+         * The HTML Canvas that this Viewer renders to. This is inserted into the element we configured this Viewer with.
          * @property canvas
+         * @final
          * @type {HTMLCanvasElement}
          * @final
          */
         this.canvas = jQuery('<canvas />')
             .attr('id', canvasId)
-            .attr('width', jQuery(this._div).width())
-            .attr('height', jQuery(this._div).height())
+            .attr('width', jQuery(this.element).width())
+            .attr('height', jQuery(this.element).height())
             .html('<p>This application requires a browser that supports the <a href="http://www.w3.org/html/wg/html5/">HTML5</a> &lt;canvas&gt; feature.</p>')
             .addClass(this.className.replace(/\./g, "-"))
-            .appendTo(this._div);
+            .appendTo(this.element);
 
 
         /**
          * The SceneJS scene graph that renders 3D content for this Viewer.
          * @property scene
+         * @final
          * @type {SceneJS.Scene}
          * @final
          */
@@ -153,58 +215,14 @@
          * ID of this Viewer
          *
          * @property id
+         * @final
          * @type {String}
          */
         this.id = this.scene.getId();
 
-//        // Set initial tag mask on scene graph
-//
-//        this.scene.set('tagMask', '^()$');
-
         // Init events
 
         var canvas = this.scene.getCanvas();
-
-        canvas.addEventListener('mousedown',
-            function (e) {
-                self.fire('mouseDown', e);
-            }, true);
-
-        canvas.addEventListener('mousemove',
-            function (e) {
-                self.fire('mouseMove', e);
-            }, true);
-
-        canvas.addEventListener('mouseup',
-            function (e) {
-                self.fire('mouseUp', e);
-            }, true);
-
-        canvas.addEventListener('touchstart',
-            function (e) {
-                self.fire('touchStart', e);
-            }, true);
-
-        canvas.addEventListener('touchmove',
-            function (e) {
-                self.fire('touchMove', e);
-            }, true);
-
-        canvas.addEventListener('touchend',
-            function (e) {
-                self.fire('touchEnd', e);
-            }, true);
-
-        canvas.addEventListener('mousewheel',
-            function (e) {
-                self.fire('mouseWheel', e);
-            }, true);
-
-        canvas.addEventListener('DOMMouseScroll',
-            function (e) {
-                self.fire('mouseWheel', e);
-            }, true);
-
 
         this.scene.on('tick',
             function (params) {
@@ -214,6 +232,20 @@
                 });
             });
 
+        this._lookatNode = this.scene.getNode('theLookat');
+
+        this._lookatNode.on("matrix",
+            function (matrix) {
+                self.fire('viewMatrix', matrix);
+            });
+
+        this._cameraNode = this.scene.getNode('theCamera');
+
+        this._cameraNode.on("matrix",
+            function (matrix) {
+                self.fire('projMatrix', matrix);
+            });
+
 
         // Pool where we'll keep all component IDs
         this._componentIDMap = new BIMSURFER.utils.Map();
@@ -221,6 +253,7 @@
         /**
          * The {{#crossLink "Component"}}Components{{/crossLink}} within this Viewer, mapped to their IDs.
          * @property components
+         * @final
          * @type {{String:Component}}
          */
         this.components = {};
@@ -229,6 +262,7 @@
         /**
          * The {{#crossLink "Component"}}Components{{/crossLink}} within this Viewer, mapped to their class names.
          * @property classes
+         * @final
          * @type {{String:{String:Component}}}
          */
         this.classes = {};
@@ -237,6 +271,7 @@
         /**
          * The {{#crossLink "Component"}}Components{{/crossLink}} within this Viewer, mapped to their IFC type names.
          * @property types
+         * @final
          * @type {{String:{String:Component}}}
          */
         this.types = {};
@@ -244,7 +279,7 @@
 
         // Add components
 
-        var components = options.components;
+        var components = cfg.components;
 
         if (components) {
 
@@ -269,20 +304,20 @@
             }
         }
 
-        if (BIMSURFER.utils.isset(options, options.autoStart)) {
-            if (!BIMSURFER.Util.isset(options.autoStart.serverUrl, options.autoStart.serverUsername, options.autoStart.serverPassword, options.autoStart.projectOid)) {
+        if (BIMSURFER.utils.isset(cfg, cfg.autoStart)) {
+            if (!BIMSURFER.Util.isset(cfg.autoStart.serverUrl, cfg.autoStart.serverUsername, cfg.autoStart.serverPassword, cfg.autoStart.projectOid)) {
                 console.error('Some autostart parameters are missing');
                 return;
             }
             var _this = this;
-            var BIMServer = new BIMSURFER.Server(this, options.autoStart.serverUrl, options.autoStart.serverUsername, options.autoStart.serverPassword, false, true, true, function () {
+            var BIMServer = new BIMSURFER.Server(this, cfg.autoStart.serverUrl, cfg.autoStart.serverUsername, cfg.autoStart.serverPassword, false, true, true, function () {
                 if (BIMServer.loginStatus != 'loggedin') {
-                    _this._div.innerHTML = 'Something went wrong while connecting';
+                    _this.element.innerHTML = 'Something went wrong while connecting';
                     console.error('Something went wrong while connecting');
                     return;
                 }
-                var project = BIMServer.getProjectByOid(options.autoStart.projectOid);
-                project.loadScene((BIMSURFER.Util.isset(options.autoStart.revisionOid) ? options.autoStart.revisionOid : null), true);
+                var project = BIMServer.getProjectByOid(cfg.autoStart.projectOid);
+                project.loadScene((BIMSURFER.Util.isset(cfg.autoStart.revisionOid) ? cfg.autoStart.revisionOid : null), true);
             });
         }
 
@@ -306,7 +341,10 @@
             });
 
         /**
-         * Input handling
+         * Input handling for this Viewer.
+         * @property input
+         * @final
+         * @type {BIMSURFER.Input}
          */
         this.input = new BIMSURFER.Input(this);
     };
@@ -404,6 +442,41 @@
          */
         this.fire("componentDestroyed", component, true);
     };
+
+    /**
+     * This Viewer's view transformation matrix.
+     *
+     * @property viewMatrix
+     * @final
+     * @default [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
+     * @type {Array of Number}
+     */
+    Object.defineProperty(BIMSURFER.Viewer.prototype, "viewMatrix", {
+
+        get: function() {
+            return this._lookatNode.getMatrix();
+        },
+
+        enumerable: true
+    });
+
+
+    /**
+     * This Viewer's projection transformation matrix.
+     *
+     * @property projMatrix
+     * @final
+     * @default [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
+     * @type {Array of Number}
+     */
+    Object.defineProperty(BIMSURFER.Viewer.prototype, "projMatrix", {
+
+        get: function() {
+            return this._cameraNode.getMatrix();
+        },
+
+        enumerable: true
+    });
 
     /**
      *
@@ -698,7 +771,7 @@
      * @method log
      * @param {String} message The message to log
      */
-    BIMSURFER.Viewer.log = function (message) {
+    BIMSURFER.Viewer.prototype.log = function (message) {
         window.console.log("[LOG] BIMSERVER.Viewer: " + message);
     };
 
@@ -710,20 +783,8 @@
      * @method error
      * @param {String} message The message to log
      */
-    BIMSURFER.Viewer.error = function (message) {
+    BIMSURFER.Viewer.prototype.error = function (message) {
         window.console.error("[ERROR] BIMSERVER.Viewer: " + message);
-    };
-
-    /**
-     * Logs a warning for this View to the JavaScript console.
-     *
-     * The console message will have this format: *````[WARN] BIMSERVER.Viewer: <message>````*
-     *
-     * @method warn
-     * @param {String} message The message to log
-     */
-    BIMSURFER.Viewer.warn = function (message) {
-        window.console.warn("[WARN] BIMSERVER.Viewer: " + message);
     };
 
 })();

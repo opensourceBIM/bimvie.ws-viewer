@@ -12,14 +12,6 @@
             -webkit-user-select: none;
             background-color: white;
         }
-
-        #myCanvas {
-            width: 100%;
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            position: absolute;
-        }
     </style>
 
     <link href="css/styles.css" rel="stylesheet"/>
@@ -38,7 +30,7 @@
 <script>
 
     // Create a Viewer
-    var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+    var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
 
     // Create a Camera
     var camera = new BIMSURFER.Camera(viewer, {
@@ -59,7 +51,7 @@
     // Use the box Geometry
     var box1 = new BIMSURFER.Object(viewer, {
         id: "myObject1",
-        ifcType: "IfcCovering",
+        type: "IfcCovering",
         geometries: [ geometry ],
         matrix: BIMSURFER.math.translationMat4v([-8, 0,0])
     });
@@ -68,7 +60,7 @@
     // Reuse the box Geometry
     var box2 = new BIMSURFER.Object(viewer, {
         id: "myObject2",
-        ifcType: "IfcFlowTerminal",
+        type: "IfcFlowTerminal",
         geometries: [ geometry ],
         matrix: BIMSURFER.math.translationMat4v([8, 0,0])
     });

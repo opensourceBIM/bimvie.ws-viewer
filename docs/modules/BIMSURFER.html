@@ -39,7 +39,10 @@
                         <div id="api-tabview-panel">
                             <ul id="api-classes" class="apis classes">
                                 <li><a href="../classes/AmbientLight.html">AmbientLight</a></li>
+                                <li><a href="../classes/Anaglyph.html">Anaglyph</a></li>
                                 <li><a href="../classes/BIMSURFER.html">BIMSURFER</a></li>
+                                <li><a href="../classes/BIMSURFER.constants.html">BIMSURFER.constants</a></li>
+                                <li><a href="../classes/BIMSURFER.Viewer.html">BIMSURFER.Viewer</a></li>
                                 <li><a href="../classes/BoxGeometry.html">BoxGeometry</a></li>
                                 <li><a href="../classes/BoxObject.html">BoxObject</a></li>
                                 <li><a href="../classes/Camera.html">Camera</a></li>
@@ -49,6 +52,7 @@
                                 <li><a href="../classes/Component.html">Component</a></li>
                                 <li><a href="../classes/Configs.html">Configs</a></li>
                                 <li><a href="../classes/Debug.html">Debug</a></li>
+                                <li><a href="../classes/DepthOfField.html">DepthOfField</a></li>
                                 <li><a href="../classes/DirLight.html">DirLight</a></li>
                                 <li><a href="../classes/Effect.html">Effect</a></li>
                                 <li><a href="../classes/Fly.html">Fly</a></li>
@@ -60,6 +64,8 @@
                                 <li><a href="../classes/KeyboardOrbitCamera.html">KeyboardOrbitCamera</a></li>
                                 <li><a href="../classes/KeyboardPanCamera.html">KeyboardPanCamera</a></li>
                                 <li><a href="../classes/KeyboardZoomCamera.html">KeyboardZoomCamera</a></li>
+                                <li><a href="../classes/Label.html">Label</a></li>
+                                <li><a href="../classes/LabelEffect.html">LabelEffect</a></li>
                                 <li><a href="../classes/Light.html">Light</a></li>
                                 <li><a href="../classes/math.html">math</a></li>
                                 <li><a href="../classes/MouseOrbitCamera.html">MouseOrbitCamera</a></li>
@@ -68,9 +74,10 @@
                                 <li><a href="../classes/Object.html">Object</a></li>
                                 <li><a href="../classes/ObjectSet.html">ObjectSet</a></li>
                                 <li><a href="../classes/PointLight.html">PointLight</a></li>
+                                <li><a href="../classes/Position.html">Position</a></li>
+                                <li><a href="../classes/RandomObjects.html">RandomObjects</a></li>
                                 <li><a href="../classes/TeapotGeometry.html">TeapotGeometry</a></li>
                                 <li><a href="../classes/TeapotObject.html">TeapotObject</a></li>
-                                <li><a href="../classes/Viewer.html">Viewer</a></li>
                                 <li><a href="../classes/XRayEffect.html">XRayEffect</a></li>
                             </ul>
                 
@@ -128,118 +135,7 @@
 
 
 <div class="box intro">
-    <p><strong>Component</strong> is the base class for all components within a <a href="../classes/Viewer.html" class="crosslink">Viewer</a>.</p>
-<p><hr>
-<em>Contents</em></p>
-<p><Ul>
- <li><a href="#ids">Component IDs</a></li>
- <li><a href="#componentProps">Properties</a></li>
- <li><a href="#metadata">Metadata</a></li>
- <li><a href="#logging">Logging</a></li>
- <li><a href="#destruction">Destruction</a></li>
- </ul></p>
-<p><hr></p>
-<h2 id="-a-name-ids-component-ids-a-"><a name="ids">Component IDs</a></h2>
-<p>Every Component has an ID that&#39;s unique within the parent <a href="../classes/Viewer.html" class="crosslink">Viewer</a>. the <a href="../classes/Viewer.html" class="crosslink">Viewer</a> generates
- the IDs automatically by default, however you can also specify them yourself. In the example below, we&#39;re creating a
- viewer comprised of <a href="../classes/Viewer.html" class="crosslink">Viewer</a>, Material, <a href="../classes/Geometry.html" class="crosslink">Geometry</a> and
- GameObject components, while letting xeoEngine generate its own ID for
- the <a href="../classes/Geometry.html" class="crosslink">Geometry</a>:</p>
-<pre class="code prettyprint"><code class="lang-javascript"><code>&#x60;</code>`
-## &lt;a name="componentProps"&gt;Properties&lt;/a&gt;
-Almost every property on a xeoEngine Component fires a change event when you update it. For example, we can subscribe
- to the Material/diffuse:event event that a
- Material fires when its Material/diffuse:property
- property is updated, like so:
-<code>&#x60;</code>`javascript
- // Bind a change callback to a property
- var handle = material.on("diffuse", function(diffuse) {
-    console.log("Material diffuse color has changed to: [" + diffuse[0] + ", " + diffuse[1] + "," + diffuse[2] + "]");
-});
-// Change the property value, which fires the callback
- material.diffuse = [ 0.0, 0.5, 0.5 ];
-// Unsubscribe from the property change event
- material.off(handle);
-</code></pre>
-<p>We can also subscribe to changes in the way components are attached to each other, since components are properties
- of other components. For example, we can subscribe to the &#39;GameObject/material:event&#39; event that a
- GameObject fires when its GameObject/material:property
- property is set to a different Material:</p>
-<pre class="code prettyprint"><code class="lang-javascript"> // Bind a change callback to the GameObject&#39;s Material
- object1.on("material", function(material) {
-    console.log("GameObject&#39;s Material has changed to: " + material.id);
-});
-// Now replace that Material with another
- object1.material = new BIMSURFER.Material({
-    id: "myOtherMaterial",
-    diffuse: [ 0.3, 0.3, 0.6 ]
-    //..
-});
-</code></pre>
-<h2 id="-a-name-metadata-metadata-a-"><a name="metadata">Metadata</a></h2>
-<p>You can set optional <strong>metadata</strong> on your Components, which can be anything you like. These are intended
- to help manage your components within your application code or content pipeline. You could use metadata to attach
- authoring or version information, like this:</p>
-<pre class="code prettyprint"><code class="lang-javascript"> // Viewer with authoring metadata
- var viewer = new BIMSURFER.Viewer({
-    id: "myViewer",
-    metadata: {
-        title: "My awesome 3D viewer",
-        author: "@xeolabs",
- date: "February 13 2015"
- }
- });
-// Material with descriptive metadata
- var material = new BIMSURFER.Material(viewer, {
-    id: "myMaterial",
-    diffuse: [1, 0, 0],
-    metadata: {
-        description: "Bright red color with no textures",
-        version: "0.1",
-        foo: "bar"
-    }
-});
-</code></pre>
-<p>As with all properties, you can subscribe and change the metadata like this:</p>
-<pre class="code prettyprint"><code class="lang-javascript"> // Subscribe to changes to the Material&#39;s metadata
- material.on("metadata", function(value) {
-    console.log("Metadata changed: " + JSON.stringify(value));
-});
-// Change the Material&#39;s metadata, firing our change handler
- material.metadata = {
-    description: "Bright red color with no textures",
-    version: "0.2",
-    foo: "baz"
-};
-</code></pre>
-<h2 id="-a-name-logging-logging-a-"><a name="logging">Logging</a></h2>
-<p>Components have methods to log ID-prefixed messages to the JavaScript console:</p>
-<pre class="code prettyprint"><code class="lang-javascript"> material.log("Everything is fine, situation normal.");
- material.warn("Wait, whats that red light?");
- material.error("Aw, snap!");
-</code></pre>
-<p>The logged messages will look like this in the console:</p>
-<pre class="code prettyprint"><code class="lang-text"> [LOG]   myMaterial: Everything is fine, situation normal.
- [WARN]  myMaterial: Wait, whats that red light..
- [ERROR] myMaterial: Aw, snap!
-</code></pre>
-<h2 id="-a-name-destruction-destruction-a-"><a name="destruction">Destruction</a></h2>
-<p>Get notification of destruction directly on the Components:</p>
-<pre class="code prettyprint"><code class="lang-javascript"> material.on("destroyed", function() {
-    this.log("Component was destroyed: " + this.id);
-});
-</code></pre>
-<p>Or get notification of destruction of any Component within its <a href="../classes/Viewer.html" class="crosslink">Viewer</a>, indiscriminately:</p>
-<pre class="code prettyprint"><code class="lang-javascript"> viewer.on("componentDestroyed", function(component) {
-    this.log("Component was destroyed: " + component.id);
-});
-</code></pre>
-<p>Then destroy a component like this:</p>
-<pre class="code prettyprint"><code class="lang-javascript"> material.destroy();
-</code></pre>
-<p>Other Components that are linked to it will fall back on a default of some sort. For example, any
- GameObject that were linked to our Material
- will then automatically link to the <a href="../classes/Viewer.html" class="crosslink">Viewer&#39;s</a> default Viewer/material:property.</p>
+    <p>The BIMSURFER namespace.</p>
 
 </div>
 
@@ -255,8 +151,23 @@ Almost every property on a xeoEngine Component fires a change event when you upd
                     </a>
                 </li>
                 <li class="module-class">
+                    <a href="../classes/Anaglyph.html">
+                        Anaglyph
+                    </a>
+                </li>
+                <li class="module-class">
                     <a href="../classes/BIMSURFER.html">
                         BIMSURFER
+                    </a>
+                </li>
+                <li class="module-class">
+                    <a href="../classes/BIMSURFER.constants.html">
+                        BIMSURFER.constants
+                    </a>
+                </li>
+                <li class="module-class">
+                    <a href="../classes/BIMSURFER.Viewer.html">
+                        BIMSURFER.Viewer
                     </a>
                 </li>
                 <li class="module-class">
@@ -302,6 +213,11 @@ Almost every property on a xeoEngine Component fires a change event when you upd
                 <li class="module-class">
                     <a href="../classes/Debug.html">
                         Debug
+                    </a>
+                </li>
+                <li class="module-class">
+                    <a href="../classes/DepthOfField.html">
+                        DepthOfField
                     </a>
                 </li>
                 <li class="module-class">
@@ -360,6 +276,16 @@ Almost every property on a xeoEngine Component fires a change event when you upd
                     </a>
                 </li>
                 <li class="module-class">
+                    <a href="../classes/Label.html">
+                        Label
+                    </a>
+                </li>
+                <li class="module-class">
+                    <a href="../classes/LabelEffect.html">
+                        LabelEffect
+                    </a>
+                </li>
+                <li class="module-class">
                     <a href="../classes/Light.html">
                         Light
                     </a>
@@ -400,6 +326,16 @@ Almost every property on a xeoEngine Component fires a change event when you upd
                     </a>
                 </li>
                 <li class="module-class">
+                    <a href="../classes/Position.html">
+                        Position
+                    </a>
+                </li>
+                <li class="module-class">
+                    <a href="../classes/RandomObjects.html">
+                        RandomObjects
+                    </a>
+                </li>
+                <li class="module-class">
                     <a href="../classes/TeapotGeometry.html">
                         TeapotGeometry
                     </a>
@@ -407,11 +343,6 @@ Almost every property on a xeoEngine Component fires a change event when you upd
                 <li class="module-class">
                     <a href="../classes/TeapotObject.html">
                         TeapotObject
-                    </a>
-                </li>
-                <li class="module-class">
-                    <a href="../classes/Viewer.html">
-                        Viewer
                     </a>
                 </li>
                 <li class="module-class">
@@ -467,7 +398,7 @@ In this example we define multiple Cameras looking at a {{#crossLink "TeapotObje
 
 <code>&#x60;</code>`Javascript
 // Create a Viewer
-var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
 
 // Create an object
 var box = new BIMSURFER.TeapotObject(viewer);
@@ -549,7 +480,7 @@ In this example we're viewing a {{#crossLink "TeapotObject"}}{{/crossLink}} with
 <iframe style="width: 600px; height: 400px" src="../../examples/control_CameraControl.html"></iframe>
 
 <code>&#x60;</code>`Javascript
-var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
 
 var camera = new BIMSURFER.Camera(viewer, {
        eye: [5, 5, -5]
@@ -614,7 +545,7 @@ TODO
 
 <code>&#x60;</code>`javascript
 // Create a Viewer
-var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
 
 // Create a Camera
 var camera = new BIMSURFER.Camera(viewer, {
@@ -633,8 +564,8 @@ var boxGeometry = new BIMSURFER.BoxGeometry(viewer);
 // Note that an Object can have multiple Geometries
 
 new BIMSURFER.Object(viewer, {
-   objectId: "foo",
-   ifcType: "IfcWall",
+   id: "foo",
+   type: "IfcWall",
    geometries: [ boxGeometry ]
 });
 <code>&#x60;</code>`

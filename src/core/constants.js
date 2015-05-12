@@ -1,3 +1,9 @@
+/**
+ * BIMSurfer constants.
+ * @module BIMSURFER
+ * @class constants
+ * @static
+ */
 if (typeof BIMSURFER.constants != 'object') {
     BIMSURFER.constants = {};
 }
@@ -8,7 +14,10 @@ if (typeof BIMSURFER.constants != 'object') {
 BIMSURFER.constants.timeoutTime = 10000; // ms
 
 /**
- * The default IFC Types to load
+ * Default IFC types.
+ * @property defaultTypes
+ * @namespace BIMSURFER
+ * @type {{Array of String}}
  */
 BIMSURFER.constants.defaultTypes = [
     "IfcColumn",

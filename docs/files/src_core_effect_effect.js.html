@@ -39,7 +39,10 @@
                         <div id="api-tabview-panel">
                             <ul id="api-classes" class="apis classes">
                                 <li><a href="../classes/AmbientLight.html">AmbientLight</a></li>
+                                <li><a href="../classes/Anaglyph.html">Anaglyph</a></li>
                                 <li><a href="../classes/BIMSURFER.html">BIMSURFER</a></li>
+                                <li><a href="../classes/BIMSURFER.constants.html">BIMSURFER.constants</a></li>
+                                <li><a href="../classes/BIMSURFER.Viewer.html">BIMSURFER.Viewer</a></li>
                                 <li><a href="../classes/BoxGeometry.html">BoxGeometry</a></li>
                                 <li><a href="../classes/BoxObject.html">BoxObject</a></li>
                                 <li><a href="../classes/Camera.html">Camera</a></li>
@@ -49,6 +52,7 @@
                                 <li><a href="../classes/Component.html">Component</a></li>
                                 <li><a href="../classes/Configs.html">Configs</a></li>
                                 <li><a href="../classes/Debug.html">Debug</a></li>
+                                <li><a href="../classes/DepthOfField.html">DepthOfField</a></li>
                                 <li><a href="../classes/DirLight.html">DirLight</a></li>
                                 <li><a href="../classes/Effect.html">Effect</a></li>
                                 <li><a href="../classes/Fly.html">Fly</a></li>
@@ -60,6 +64,8 @@
                                 <li><a href="../classes/KeyboardOrbitCamera.html">KeyboardOrbitCamera</a></li>
                                 <li><a href="../classes/KeyboardPanCamera.html">KeyboardPanCamera</a></li>
                                 <li><a href="../classes/KeyboardZoomCamera.html">KeyboardZoomCamera</a></li>
+                                <li><a href="../classes/Label.html">Label</a></li>
+                                <li><a href="../classes/LabelEffect.html">LabelEffect</a></li>
                                 <li><a href="../classes/Light.html">Light</a></li>
                                 <li><a href="../classes/math.html">math</a></li>
                                 <li><a href="../classes/MouseOrbitCamera.html">MouseOrbitCamera</a></li>
@@ -68,9 +74,10 @@
                                 <li><a href="../classes/Object.html">Object</a></li>
                                 <li><a href="../classes/ObjectSet.html">ObjectSet</a></li>
                                 <li><a href="../classes/PointLight.html">PointLight</a></li>
+                                <li><a href="../classes/Position.html">Position</a></li>
+                                <li><a href="../classes/RandomObjects.html">RandomObjects</a></li>
                                 <li><a href="../classes/TeapotGeometry.html">TeapotGeometry</a></li>
                                 <li><a href="../classes/TeapotObject.html">TeapotObject</a></li>
-                                <li><a href="../classes/Viewer.html">Viewer</a></li>
                                 <li><a href="../classes/XRayEffect.html">XRayEffect</a></li>
                             </ul>
                 
@@ -139,7 +146,7 @@
  @param [cfg] {*} Configs
  @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
  @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Effect.
- @param [objectSet] {ObjectSet} The {{#crossLink &quot;ObjectSet&quot;}}{{/crossLink}} to apply this Effect to.
+ @param [cfg.objectSet] {ObjectSet} The {{#crossLink &quot;ObjectSet&quot;}}{{/crossLink}} to apply this Effect to.
  @extends Component
  */
 (function () {
@@ -176,6 +183,8 @@
                     self._dirty = true;
                 });
 
+            this.invert = cfg.invert;
+
             this.active = cfg.active !== false;
         },
 
@@ -210,6 +219,11 @@
 
                                         // Apply effect to Objects in the Viewer
                                         self.viewer.withClasses([&quot;BIMSURFER.Object&quot;],
+                                            function (object) {
+                                                self._apply.call(self, object);
+                                            });
+
+                                        self.viewer.withClasses([&quot;BIMSURFER.BoxObject&quot;],
                                             function (object) {
                                                 self._apply.call(self, object);
                                             });
@@ -259,18 +273,20 @@
 
                 set: function (value) {
 
+                    value = !!value;
+
                     if (this._invert === value) {
                         return;
                     }
 
-                    self._dirty = false;
+                    this._dirty = false;
 
                     /**
                      * Fired whenever this Effect&#x27;s {{#crossLink &quot;Effect/invert:property&quot;}}{{/crossLink}} property changes.
                      * @event invert
                      * @param value The property&#x27;s new value
                      */
-                    this.fire(&#x27;invert&#x27;, this._invert = true);
+                    this.fire(&#x27;invert&#x27;, this._invert = value);
                 },
 
                 get: function () {

@@ -42,7 +42,7 @@
 <script>
 
     // Create a Viewer
-    var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+    var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
 
     // -------------- Camera -------------------------
 
@@ -90,27 +90,31 @@
     // Share the box Geometry among them
 
     var object1 = new BIMSURFER.Object(viewer, {
-        ifcType: "IfcRoof",
+        type: "IfcRoof",
         geometries: [ geometry ],
-        matrix: BIMSURFER.math.translationMat4v([-3, 0, -3])
+        matrix: BIMSURFER.math.translationMat4v([-3, 0, -3]),
+        label: true
     });
 
     var object2 = new BIMSURFER.Object(viewer, {
-        ifcType: "IfcDistributionFlowElement",
+        type: "IfcDistributionFlowElement",
         geometries: [ geometry ],
-        matrix: BIMSURFER.math.translationMat4v([3, 0, -3])
+        matrix: BIMSURFER.math.translationMat4v([3, 0, -3]),
+        label: true
     });
 
     var object3 = new BIMSURFER.Object(viewer, {
-        ifcType: "IfcRailing",
+        type: "IfcRailing",
         geometries: [ geometry ],
-        matrix: BIMSURFER.math.translationMat4v([-3, 0, 3])
+        matrix: BIMSURFER.math.translationMat4v([-3, 0, 3]),
+        label: true
     });
 
     var object4 = new BIMSURFER.Object(viewer, {
-        ifcType: "IfcRoof",
+        type: "IfcRoof",
         geometries: [ geometry ],
-        matrix: BIMSURFER.math.translationMat4v([3, 0, 3])
+        matrix: BIMSURFER.math.translationMat4v([3, 0, 3]),
+        label: true
     });
 
     // Create a Selection that initially selects two of our Objects

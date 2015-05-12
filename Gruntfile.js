@@ -90,7 +90,7 @@ module.exports = function (grunt) {
                 options: {
                     paths: ['src/core'],
                     outdir: './docs/',
-                    "exclude" : "renderer, utils, webgl"
+                    exclude : "renderer, utils, webgl"
                 },
                 logo: '../assets/images/logo.png'
             }

@@ -26,7 +26,7 @@
     "use strict";
 
     /**
-     * Defines a viewpoint within a {@link BIMSURFER.Viewer}.
+     * Defines a viewpoint within a {@link Viewer}.
      */
     BIMSURFER.Debug = BIMSURFER.Component.extend({
 

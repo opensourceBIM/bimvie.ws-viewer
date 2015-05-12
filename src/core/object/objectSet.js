@@ -26,7 +26,7 @@
  ````javascript
 
  // Create a Viewer
- var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+ var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
 
  // Create a Camera
  var camera = new BIMSURFER.Camera(viewer, {
@@ -71,25 +71,25 @@
  // Share the BoxGeometry among them
 
  var object1 = new BIMSURFER.Object(viewer, {
-        ifcType: "IfcRoof",
+        type: "IfcRoof",
         geometries: [ geometry ],
         matrix: BIMSURFER.math.translationMat4v([-8, 0, -8])
     });
 
  var object2 = new BIMSURFER.Object(viewer, {
-        ifcType: "IfcDistributionFlowElement",
+        type: "IfcDistributionFlowElement",
         geometries: [ geometry ],
         matrix: BIMSURFER.math.translationMat4v([8, 0, -8])
     });
 
  var object3 = new BIMSURFER.Object(viewer, {
-        ifcType: "IfcDistributionFlowElement",
+        type: "IfcDistributionFlowElement",
         geometries: [ geometry ],
         matrix: BIMSURFER.math.translationMat4v([-8, 0, 8])
     });
 
  var object4 = new BIMSURFER.Object(viewer, {
-        ifcType: "IfcRoof",
+        type: "IfcRoof",
         geometries: [ geometry ],
         matrix: BIMSURFER.math.translationMat4v([8, 0, 8])
     });
@@ -194,10 +194,10 @@
                          * @param Boolean [cleared
                          * @param [e.removed] Info on removed Objects
                          * @param {Array of String} [e.removed.objectIds] IDs of removed Objects, when they were removed by ID
-                         * @param {{Array of String} [e.removed.ifcTypes] IFC types of removed Objects, when they were removed by IFC type
+                         * @param {{Array of String} [e.removed.types] IFC types of removed Objects, when they were removed by IFC type
                          * @param {} [e.added] Info on added Objects
                          * @param {Array of String} [e.added.objectIds] IDs of added Objects, when they were added by ID
-                         * @param {Array of String} [e.added.ifcTypes] IFC types of added Objects, when they were added by IFC type
+                         * @param {Array of String} [e.added.types] IFC types of added Objects, when they were added by IFC type
                          */
                         self.fire("updated", {
                             removed: {

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+
+    <style>
+        body {
+            margin: 0;
+            -moz-user-select: -moz-none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            background-color: white;
+        }
+
+        .label {
+            position: absolute;
+            width: 180px;
+            height: 120px;
+            clear: both;
+            padding: 8px;
+            overflow: hidden;
+            background: blue;
+            color: white;
+            margin: 0 auto;
+            border: 1px solid;
+            text-align: left;
+            -webkit-box-shadow: #444 5px 5px 2px;
+            border-bottom-left-radius: 5px 5px;
+            border-bottom-right-radius: 5px 5px;
+            border-top-left-radius: 5px 5px;
+            border-top-right-radius: 5px 5px;
+            z-index: 100000;
+        }
+    </style>
+
+    <link href="css/styles.css" rel="stylesheet"/>
+
+    <script src="../lib/jquery-2.1.3.min.js"></script>
+    <script src="../lib/scenejs.js"></script>
+    <script src="../build/bimviews.js"></script>
+
+
+</head>
+<body>
+
+<div id="info" class="infoDark">
+    <a href="../docs/classes/Label.html" target="_other">BIMSURFER.Label</a>
+</div>
+
+<div id="myDiv" style=" height: 100%; width: 100%;">
+</div>
+
+<script>
+
+    // Create a Viewer
+    var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
+
+    // Create a Camera
+    var camera = new BIMSURFER.Camera(viewer, {
+        eye: [30, 20, -30],
+        look: [0, -5, 0]
+    });
+
+    // Spin the camera
+    viewer.on("tick", function () {
+        camera.rotateEyeY(0.2);
+    });
+
+    // Create a CameraControl so we can move the Camera
+    var cameraControl = new BIMSURFER.CameraControl(viewer, {
+        camera: camera
+    });
+
+    // Create an AmbientLight
+    var ambientLight = new BIMSURFER.AmbientLight(viewer, {
+        color: [0.7, 0.7, 0.7]
+    });
+
+    // Create a DirLight
+    var dirLight1 = new BIMSURFER.DirLight(viewer, {
+        color: [0.6, 0.9, 0.9],
+        dir: [1.0, 0.0, 0.0],
+        space: "view"
+    });
+
+    // Create a DirLight
+    var dirLight2 = new BIMSURFER.DirLight(viewer, {
+        color: [0.6, 0.9, 0.9],
+        dir: [-0.5, 0.0, -1.0],
+        space: "view"
+    });
+
+    // Create a BoxGeometry
+    var geometry = new BIMSURFER.BoxGeometry(viewer, {
+        id: "myGeometry"
+    });
+
+    // Create some Objects
+    // Share the BoxGeometry among them
+    // Activate their debug Labels
+
+    var object1 = new BIMSURFER.Object(viewer, {
+        id: "object1",
+        type: "IfcRoof",
+        geometries: [ geometry ],
+        matrix: BIMSURFER.math.translationMat4v([-8, 0, -8])
+    });
+
+    var object2 = new BIMSURFER.Object(viewer, {
+        id: "object2",
+        type: "IfcDistributionFlowElement",
+        geometries: [ geometry ],
+        matrix: BIMSURFER.math.translationMat4v([8, 0, -8])
+    });
+
+    var object3 = new BIMSURFER.Object(viewer, {
+        id: "object3",
+        type: "IfcRailing",
+        geometries: [ geometry ],
+        matrix: BIMSURFER.math.translationMat4v([-8, 0, 8])
+    });
+
+    var object4 = new BIMSURFER.Object(viewer, {
+        id: "object4",
+        type: "IfcRoof",
+        geometries: [ geometry ],
+        matrix: BIMSURFER.math.translationMat4v([8, 0, 8])
+    });
+
+    // Create some Labels on two of the Objects
+    // Each Label displays a snippet of HTML and is positioned relative to its Object's origin
+
+    var label1 = new BIMSURFER.Label(viewer, {
+        object: object1,
+        text: "<b>Label on Object 'object1'</b><br><br><iframe width='320' height='200' src='https://www.youtube.com/embed/oTONvRtlW44' frameborder='0' allowfullscreen></iframe>",
+        pos: [0, 2, 0] // Offset from Object's local Model-space origin
+    });
+
+    var label2 = new BIMSURFER.Label(viewer, {
+        object: object4,
+        text: "<b>First Label on Object 'object2'</b><br>",
+        pos: [0, 0, 0] // Offset from Object's local Model-space origin
+    });
+
+    var label3 = new BIMSURFER.Label(viewer, {
+        object: object4,
+        text: "<b>Second label on Object 'object2'</b><br>",
+        pos: [0, -2, 0] // Offset from Object's local Model-space origin
+    });
+
+</script>
+
+</body>
+</html>

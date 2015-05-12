@@ -43,38 +43,37 @@
 <script>
 
     // Create a Viewer
-    var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+    var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
 
     // Create a Camera
     var camera = new BIMSURFER.Camera(viewer, {
         eye: [10, 10, -10]
     });
 
+    // Create a CameraControl to control our Camera with mouse and keyboard
     var cameraControl = new BIMSURFER.CameraControl(viewer, {
         camera: camera
     });
 
-    // Create a box Geometry
-    // Geometry defaults to a 2x2x2 box when no vertex
-    // or index arrays are specified
+    // Create a Geometry
     var geometry = new BIMSURFER.TeapotGeometry(viewer, {
         id: "myGeometry"
     });
 
-    // Create first box Object
-    // Use the box Geometry
-    var box1 = new BIMSURFER.Object(viewer, {
+    // Create first Object
+    // Use the Geometry
+    var object21 = new BIMSURFER.Object(viewer, {
         id: "myObject1",
-        ifcType: "IfcCovering",
+        type: "IfcCovering",
         geometries: [ geometry ],
         matrix: BIMSURFER.math.translationMat4v([-4, 0,0])
     });
 
-    // Create second box Object
-    // Reuse the box Geometry
-    var box2 = new BIMSURFER.Object(viewer, {
+    // Create second Object
+    // Reuse the Geometry
+    var object2 = new BIMSURFER.Object(viewer, {
         id: "myObject2",
-        ifcType: "IfcFlowTerminal",
+        type: "IfcFlowTerminal",
         geometries: [ geometry ],
         matrix: BIMSURFER.math.translationMat4v([4, 0,0])
     });

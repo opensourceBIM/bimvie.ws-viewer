@@ -39,7 +39,10 @@
                         <div id="api-tabview-panel">
                             <ul id="api-classes" class="apis classes">
                                 <li><a href="../classes/AmbientLight.html">AmbientLight</a></li>
+                                <li><a href="../classes/Anaglyph.html">Anaglyph</a></li>
                                 <li><a href="../classes/BIMSURFER.html">BIMSURFER</a></li>
+                                <li><a href="../classes/BIMSURFER.constants.html">BIMSURFER.constants</a></li>
+                                <li><a href="../classes/BIMSURFER.Viewer.html">BIMSURFER.Viewer</a></li>
                                 <li><a href="../classes/BoxGeometry.html">BoxGeometry</a></li>
                                 <li><a href="../classes/BoxObject.html">BoxObject</a></li>
                                 <li><a href="../classes/Camera.html">Camera</a></li>
@@ -49,6 +52,7 @@
                                 <li><a href="../classes/Component.html">Component</a></li>
                                 <li><a href="../classes/Configs.html">Configs</a></li>
                                 <li><a href="../classes/Debug.html">Debug</a></li>
+                                <li><a href="../classes/DepthOfField.html">DepthOfField</a></li>
                                 <li><a href="../classes/DirLight.html">DirLight</a></li>
                                 <li><a href="../classes/Effect.html">Effect</a></li>
                                 <li><a href="../classes/Fly.html">Fly</a></li>
@@ -60,6 +64,8 @@
                                 <li><a href="../classes/KeyboardOrbitCamera.html">KeyboardOrbitCamera</a></li>
                                 <li><a href="../classes/KeyboardPanCamera.html">KeyboardPanCamera</a></li>
                                 <li><a href="../classes/KeyboardZoomCamera.html">KeyboardZoomCamera</a></li>
+                                <li><a href="../classes/Label.html">Label</a></li>
+                                <li><a href="../classes/LabelEffect.html">LabelEffect</a></li>
                                 <li><a href="../classes/Light.html">Light</a></li>
                                 <li><a href="../classes/math.html">math</a></li>
                                 <li><a href="../classes/MouseOrbitCamera.html">MouseOrbitCamera</a></li>
@@ -68,9 +74,10 @@
                                 <li><a href="../classes/Object.html">Object</a></li>
                                 <li><a href="../classes/ObjectSet.html">ObjectSet</a></li>
                                 <li><a href="../classes/PointLight.html">PointLight</a></li>
+                                <li><a href="../classes/Position.html">Position</a></li>
+                                <li><a href="../classes/RandomObjects.html">RandomObjects</a></li>
                                 <li><a href="../classes/TeapotGeometry.html">TeapotGeometry</a></li>
                                 <li><a href="../classes/TeapotObject.html">TeapotObject</a></li>
-                                <li><a href="../classes/Viewer.html">Viewer</a></li>
                                 <li><a href="../classes/XRayEffect.html">XRayEffect</a></li>
                             </ul>
                 
@@ -135,48 +142,46 @@
 
  &#x60;&#x60;&#x60;&#x60;Javascript
  // Create a Viewer
- var viewer = new BIMSURFER.Viewer(null, &quot;myDiv&quot;, {}, false);
+ var viewer = new BIMSURFER.Viewer({ element: &quot;myDiv&quot; });
 
  // Create a Camera
  var camera = new BIMSURFER.Camera(viewer, {
-    eye: [10, 10, -10]
- });
+        eye: [10, 10, -10]
+    });
 
- // Create a CameraControl to interact with the Camera
+ // Create a CameraControl to control our Camera with mouse and keyboard
  var cameraControl = new BIMSURFER.CameraControl(viewer, {
-    camera: camera
- });
+        camera: camera
+    });
 
- // Create a BoxGeometry
- var boxGeometry = new BIMSURFER.BoxGeometry(viewer);
+ // Create a Geometry
+ var geometry = new BIMSURFER.TeapotGeometry(viewer, {
+        id: &quot;myGeometry&quot;
+    });
 
- // Create some Objects that use our BoxGeometry
+ // Create first Object
+ // Use the Geometry
+ var object21 = new BIMSURFER.Object(viewer, {
+        id: &quot;myObject1&quot;,
+        type: &quot;IfcCovering&quot;,
+        geometries: [ geometry ],
+        matrix: BIMSURFER.math.translationMat4v([-4, 0,0])
+    });
 
- new BIMSURFER.Object(viewer, {
-    objectId: &quot;foo&quot;,
-    ifcType: &quot;IfcWall&quot;,
-    geometries: [boxGeometry],
-    matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])
- });
-
- new BIMSURFER.BoxObject(viewer, {
-    objectId: &quot;bar&quot;,
-    ifcType: &quot;IfcWall&quot;,
-    geometries: [boxGeometry],
-    matrix: BIMSURFER.math.translationMat4v([4, 0, -4])
- });
-
- new BIMSURFER.Object(viewer, {
-    objectId: &quot;baz&quot;,
-    ifcType: &quot;IfcBeam&quot;,
-    geometries: [boxGeometry],
-    matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])
- });
+ // Create second Object
+ // Reuse the Geometry
+ var object2 = new BIMSURFER.Object(viewer, {
+        id: &quot;myObject2&quot;,
+        type: &quot;IfcFlowTerminal&quot;,
+        geometries: [ geometry ],
+        matrix: BIMSURFER.math.translationMat4v([4, 0,0])
+    });
  &#x60;&#x60;&#x60;&#x60;
 
  We can then find the objects in the {{#crossLink &quot;Viewer&quot;}}{{/crossLink}} by ID:
+
  &#x60;&#x60;&#x60;&#x60;javascript
- var foo = viewer.components[&quot;foo&quot;];
+ var foo = viewer.components[&quot;myObject1&quot;];
  &#x60;&#x60;&#x60;&#x60;
  or by IFC type:
  &#x60;&#x60;&#x60;&#x60;javascript
@@ -185,7 +190,7 @@
  var wallObjects = viewer.components[&quot;IfcWall&quot;];
 
  // Get our &quot;foo&quot; object from those
- var foo = wallObjects[&quot;foo&quot;];
+ var foo = wallObjects[&quot;moObject1&quot;];
  &#x60;&#x60;&#x60;&#x60;
 
 
@@ -197,7 +202,7 @@
  @param [cfg] {*} Configs
  @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
  @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Object.
- @param [cfg.ifcType] {String} The IFC type of this Object.
+ @param [cfg.type] {String} The IFC type of this Object.
  @param [cfg.color] {Array of Number} The color of this Object, defaults to the color of the specified IFC type.
  @param [cfg.geometries] {Array of Geometry} The {{#crossLink &quot;Geometry&quot;}}{{/crossLink}} to render for this Object.
  @param [cfg.clipping=true] {Boolean} Whether this Object is clipped by {{#crossLink &quot;Clips&quot;}}{{/crossLink}}.
@@ -329,9 +334,9 @@
 
             this._initBoundary();
 
-            if (cfg.ifcType) {
+            this.type = cfg.type;
 
-                var ifcType = cfg.ifcType;
+            if (this.type) {
 
                 if (cfg.color) {
 
@@ -349,18 +354,18 @@
 
                     } else {
 
-                        color = materials[ifcType];
+                        color = materials[this.type];
 
                         if (!color) {
 
-                            this.log(&quot;Material not found for ifcType: &quot;, ifcType);
+                            this.log(&quot;Material not found for type: &quot;, this.type);
 
                             color = materials[&quot;DEFAULT&quot;];
                         }
 
                         if (!color) {
 
-                            this.log(&quot;Default material not found for ifcType: &quot;, ifcType);
+                            this.log(&quot;Default material not found for type: &quot;, this.type);
                         }
                     }
 
@@ -381,6 +386,8 @@
             this.highlight = cfg.highlight;
 
             this.matrix = cfg.matrix;
+
+            this.label = cfg.label;
         },
 
         _initBoundary: function () {
@@ -509,6 +516,10 @@
                     }
 
                     this._enableNode.setEnabled(value);
+
+                    if (this.label) {
+                        this.label.active = value;
+                    }
 
                     /**
                      * Fired whenever this Object&#x27;s {{#crossLink &quot;Object/active:property&quot;}}{{/crossLink}} property changes.
@@ -739,11 +750,59 @@
 
                     return this._center;
                 }
+            },
+
+            /**
+             * Indicates if this Object shows a debug {{#crossLink &quot;Label&quot;}}{{/crossLink}}.
+             *
+             * @property label
+             * @type Boolean
+             */
+            label: {
+
+                set: function (value) {
+
+                    value = !!value;
+
+                    if (!!this._label === value) {
+                        return;
+                    }
+
+                    if (value) {
+
+                        if (this._label) {
+
+
+                        } else {
+
+                            this._label = new BIMSURFER.Label(viewer, {
+                                object: this,
+                                text: &quot;&lt;b&gt;&quot; + this.className + &quot;&lt;hr style=\&quot;height=1px; background: darkgray; border: 0;\&quot;&gt;&lt;/b&gt;&quot; + (this.type ? (&quot;type=&#x27;&quot; + this.type + &quot;&#x27;&lt;br&gt;&quot;) : &quot;&quot;) + &quot;id=&#x27;&quot; + this.id + &quot;&#x27;&quot;,
+                                pos: [0, 0, 0]
+                            });
+                        }
+
+                    } else {
+
+                        this._label.destroy();
+
+                        this._label = null;
+                    }
+                },
+
+                get: function () {
+                    return !!this._label;
+                }
             }
         },
 
         _destroy: function () {
+
             this._rootNode.destroy();
+
+            if (this.label) {
+                this.label.destroy();
+            }
         }
     });
 

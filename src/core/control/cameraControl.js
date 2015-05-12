@@ -20,7 +20,7 @@
  <iframe style="width: 600px; height: 400px" src="../../examples/control_CameraControl.html"></iframe>
 
  ````Javascript
- var viewer = new BIMSURFER.Viewer(null, "myDiv", {}, false);
+ var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
 
  var camera = new BIMSURFER.Camera(viewer, {
         eye: [5, 5, -5]

@@ -184,6 +184,10 @@
         className: "BIMSURFER.Component",
 
 
+        getClassName: function() {
+
+        },
+
         __init: function (viewer, cfg) {
 
             cfg = cfg || {};
