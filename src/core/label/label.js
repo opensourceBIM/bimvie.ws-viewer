@@ -30,7 +30,7 @@
 
  ## Example
 
- <iframe style="width: 800px; height: 400px" src="../../examples/spatial_Label.html"></iframe>
+ <iframe style="width: 800px; height: 400px" src="../../examples/label_Label.html"></iframe>
 
  ````Javascript
  // Create a Viewer
