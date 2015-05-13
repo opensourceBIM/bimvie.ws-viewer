@@ -8,19 +8,33 @@ An extensible and modular WebGL-based 3D viewer for BIMSurfer.
 
 ## Features
 
-Features so far - work in progress.
+Work in progress!
 
 **Cameras**
 
- * [Multiple cameras](http://opensourcebim.github.io/bimvie.ws-viewer/examples/#camera_Camera_multiple)
- * [Camera interaction](http://opensourcebim.github.io/bimvie.ws-viewer/examples/#control_CameraControl)
+Create an [unlimited number of cameras](http://opensourcebim.github.io/bimvie.ws-viewer/examples/#camera_Camera_multiple) in your Viewer 
+and switch between them as required.
+ 
+Use a [CameraControl](http://opensourcebim.github.io/bimvie.ws-viewer/examples/#control_CameraControl) to interact with your 
+cameras, or compose your own custom camera control from these modular controller components:
+
+ * [KeyboardAxisCamera](http://opensourcebim.github.io/bimvie.ws-viewer/examples/#control_KeyboardAxisCamera)
+ * [KeyboardOrbitCamera](http://opensourcebim.github.io/bimvie.ws-viewer/examples/#control_KeyboardOrbitCamera)
+ * [KeyboardPanCamera](http://opensourcebim.github.io/bimvie.ws-viewer/examples/#control_KeyboardPanCamera)
+ * [KeyboardZoomCamera](http://opensourcebim.github.io/bimvie.ws-viewer/examples/#control_KeyboardZoomCamera)
+ * [MouseOrbitCamera](http://opensourcebim.github.io/bimvie.ws-viewer/examples/#control_MouseOrbitCamera)
+ * [MouseZoomCamera](http://opensourcebim.github.io/bimvie.ws-viewer/examples/#control_MouseZoomCamera)  
  
 **Animation**
+
+Fly your cameras around using these animation components:
 
  * [Fly camera to boundary](http://opensourcebim.github.io/bimvie.ws-viewer/examples/#animate_CameraFlyAnimation_boundary)
  * [Fly camera to position](http://opensourcebim.github.io/bimvie.ws-viewer/examples/#animate_CameraFlyAnimation_position)
  
 **Effects**
+
+Emphasise your objects using these modular effects components:
 
  * [Highlight objects](http://opensourcebim.github.io/bimvie.ws-viewer/examples/#effect_HighlightEffect)
  * [X-Ray objects](http://opensourcebim.github.io/bimvie.ws-viewer/examples/#effect_XRayEffect)
@@ -28,6 +42,8 @@ Features so far - work in progress.
  * [Label objects - custom HTML labels](http://opensourcebim.github.io/bimvie.ws-viewer/examples/#label_Label)
  
 **Lights**
+
+Create an unlimited number of light sources in your Viewer, using these light source components:
 
  * [Ambient lights](http://opensourcebim.github.io/bimvie.ws-viewer/examples/#light_AmbientLight)
  * [Directional lights](http://opensourcebim.github.io/bimvie.ws-viewer/examples/#light_DirLight)
