@@ -36,18 +36,18 @@ Fly your cameras around using these animation components:
 
 Emphasise your objects using these modular effects components:
 
- * [Highlight objects](http://opensourcebim.github.io/bimvie.ws-viewer/examples/#effect_HighlightEffect)
- * [X-Ray objects](http://opensourcebim.github.io/bimvie.ws-viewer/examples/#effect_XRayEffect)
- * [Label objects - labels for debugging](http://opensourcebim.github.io/bimvie.ws-viewer/examples/#effect_LabelEffect)
- * [Label objects - custom HTML labels](http://opensourcebim.github.io/bimvie.ws-viewer/examples/#label_Label)
+ * [HighlightEffect](http://opensourcebim.github.io/bimvie.ws-viewer/examples/#effect_HighlightEffect)
+ * [XRayEffect](http://opensourcebim.github.io/bimvie.ws-viewer/examples/#effect_XRayEffect)
+ * [LabelEffect - labels for debugging](http://opensourcebim.github.io/bimvie.ws-viewer/examples/#effect_LabelEffect)
+ * [Label - custom HTML labels](http://opensourcebim.github.io/bimvie.ws-viewer/examples/#label_Label)
  
 **Lights**
 
-Create an unlimited number of light sources in your Viewer, using these light source components:
+Create an unlimited number of ambient, directional and point lights in your Viewer, using these light source components:
 
- * [Ambient lights](http://opensourcebim.github.io/bimvie.ws-viewer/examples/#light_AmbientLight)
- * [Directional lights](http://opensourcebim.github.io/bimvie.ws-viewer/examples/#light_DirLight)
- * [Point lights](http://opensourcebim.github.io/bimvie.ws-viewer/examples/#light_PointLight)
+ * [AmbientLight](http://opensourcebim.github.io/bimvie.ws-viewer/examples/#light_AmbientLight)
+ * [DirLight](http://opensourcebim.github.io/bimvie.ws-viewer/examples/#light_DirLight)
+ * [PointLight](http://opensourcebim.github.io/bimvie.ws-viewer/examples/#light_PointLight)
  
 **Geometry**
   
