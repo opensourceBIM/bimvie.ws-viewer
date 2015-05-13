@@ -12,7 +12,7 @@ Features so far - work in progress.
 
 #### Cameras
 
- * [Multiple cameras](http://opensourcebim.github.io/bimvie.ws-viewer/examples/#camera_Camera)
+ * [Multiple cameras](http://opensourcebim.github.io/bimvie.ws-viewer/examples/#camera_Camera_multiple)
  * [Camera interaction](http://opensourcebim.github.io/bimvie.ws-viewer/examples/#control_CameraControl)
  
 #### Animation
