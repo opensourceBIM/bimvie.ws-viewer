@@ -24,7 +24,8 @@ Features so far - work in progress.
 
  * [Highlight objects](http://opensourcebim.github.io/bimvie.ws-viewer/examples/#effect_HighlightEffect)
  * [X-Ray objects](http://opensourcebim.github.io/bimvie.ws-viewer/examples/#effect_XRayEffect)
- * [Label objects](http://opensourcebim.github.io/bimvie.ws-viewer/examples/#effect_LabelEffect)
+ * [Label objects - labels for debugging](http://opensourcebim.github.io/bimvie.ws-viewer/examples/#effect_LabelEffect)
+ * [Label objects - custom HTML labels](http://opensourcebim.github.io/bimvie.ws-viewer/examples/#label_Label)
  
 #### Lights
 
