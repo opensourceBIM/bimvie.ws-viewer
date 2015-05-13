@@ -47,6 +47,7 @@
                                 <li><a href="../classes/BoxObject.html">BoxObject</a></li>
                                 <li><a href="../classes/Camera.html">Camera</a></li>
                                 <li><a href="../classes/CameraControl.html">CameraControl</a></li>
+                                <li><a href="../classes/CameraFlyAnimation.html">CameraFlyAnimation</a></li>
                                 <li><a href="../classes/Canvas.html">Canvas</a></li>
                                 <li><a href="../classes/ClickSelectObjects.html">ClickSelectObjects</a></li>
                                 <li><a href="../classes/Component.html">Component</a></li>
@@ -55,7 +56,7 @@
                                 <li><a href="../classes/DepthOfField.html">DepthOfField</a></li>
                                 <li><a href="../classes/DirLight.html">DirLight</a></li>
                                 <li><a href="../classes/Effect.html">Effect</a></li>
-                                <li><a href="../classes/Fly.html">Fly</a></li>
+                                <li><a href="../classes/FrameEffect.html">FrameEffect</a></li>
                                 <li><a href="../classes/Geometry.html">Geometry</a></li>
                                 <li><a href="../classes/HighlightEffect.html">HighlightEffect</a></li>
                                 <li><a href="../classes/Input.html">Input</a></li>
@@ -248,7 +249,7 @@
 
             this.objectSet = cfg.objectSet || new BIMSURFER.ObjectSet(this.viewer);
 
-            this._multi = false;
+            this._multi = !!cfg.multi;
 
             this.active = cfg.active !== false;
         },
@@ -293,7 +294,7 @@
                                 if (((e[0] &gt; lastX) ? (e[0] - lastX &lt; 5) : (lastX - e[0] &lt; 5)) &amp;&amp;
                                     ((e[1] &gt; lastY) ? (e[1] - lastY &lt; 5) : (lastY - e[1] &lt; 5))) {
 
-                                    var multiSelect = input.keyDown[input.KEY_SHIFT];
+                                    var multiSelect = self._multi || input.keyDown[input.KEY_SHIFT];
 
                                     var hit = self.viewer.pick(lastX, lastY, {});
 

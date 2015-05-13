@@ -47,6 +47,7 @@
                                 <li><a href="../classes/BoxObject.html">BoxObject</a></li>
                                 <li><a href="../classes/Camera.html">Camera</a></li>
                                 <li><a href="../classes/CameraControl.html">CameraControl</a></li>
+                                <li><a href="../classes/CameraFlyAnimation.html">CameraFlyAnimation</a></li>
                                 <li><a href="../classes/Canvas.html">Canvas</a></li>
                                 <li><a href="../classes/ClickSelectObjects.html">ClickSelectObjects</a></li>
                                 <li><a href="../classes/Component.html">Component</a></li>
@@ -55,7 +56,7 @@
                                 <li><a href="../classes/DepthOfField.html">DepthOfField</a></li>
                                 <li><a href="../classes/DirLight.html">DirLight</a></li>
                                 <li><a href="../classes/Effect.html">Effect</a></li>
-                                <li><a href="../classes/Fly.html">Fly</a></li>
+                                <li><a href="../classes/FrameEffect.html">FrameEffect</a></li>
                                 <li><a href="../classes/Geometry.html">Geometry</a></li>
                                 <li><a href="../classes/HighlightEffect.html">HighlightEffect</a></li>
                                 <li><a href="../classes/Input.html">Input</a></li>
@@ -210,23 +211,29 @@
 
                         var self = this;
 
+
                         this._tickSub = this.viewer.on(&quot;tick&quot;,
                             function () {
 
                                 if (self._dirty) {
 
                                     if (self._apply) {
+                                        self._apply();
+                                    }
+
+                                    if (self._applyObject) {
 
                                         // Apply effect to Objects in the Viewer
                                         self.viewer.withClasses([&quot;BIMSURFER.Object&quot;],
                                             function (object) {
-                                                self._apply.call(self, object);
+                                                self._applyObject.call(self, object);
                                             });
 
                                         self.viewer.withClasses([&quot;BIMSURFER.BoxObject&quot;],
                                             function (object) {
-                                                self._apply.call(self, object);
+                                                self._applyObject.call(self, object);
                                             });
+
                                     }
 
                                     self._dirty = false;

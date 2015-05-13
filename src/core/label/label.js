@@ -100,7 +100,8 @@
 
  var label1 = new BIMSURFER.Label(viewer, {
         object: object1,
-        text: "<b>Label on Object 'object1'</b><br><br><iframe width='320' height='200' src='https://www.youtube.com/embed/oTONvRtlW44' frameborder='0' allowfullscreen></iframe>",
+        text: "<b>Label on Object 'object1'</b><br><br><iframe width='320' height='200' " +
+            "src='https://www.youtube.com/embed/oTONvRtlW44' frameborder='0' allowfullscreen></iframe>",
         pos: [0, 2, 0] // Offset from Object's local Model-space origin
     });
 

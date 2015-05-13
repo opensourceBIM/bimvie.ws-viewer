@@ -81,23 +81,29 @@
 
                         var self = this;
 
+
                         this._tickSub = this.viewer.on("tick",
                             function () {
 
                                 if (self._dirty) {
 
                                     if (self._apply) {
+                                        self._apply();
+                                    }
+
+                                    if (self._applyObject) {
 
                                         // Apply effect to Objects in the Viewer
                                         self.viewer.withClasses(["BIMSURFER.Object"],
                                             function (object) {
-                                                self._apply.call(self, object);
+                                                self._applyObject.call(self, object);
                                             });
 
                                         self.viewer.withClasses(["BIMSURFER.BoxObject"],
                                             function (object) {
-                                                self._apply.call(self, object);
+                                                self._applyObject.call(self, object);
                                             });
+
                                     }
 
                                     self._dirty = false;

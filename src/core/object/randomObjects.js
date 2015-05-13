@@ -11,51 +11,33 @@
 
  ## Example
 
- In this example we create a RandomObjects and an {{#crossLink "ObjectSet"}}{{/crossLink}}. Then we apply
- a {{#crossLink "HighlightEffect"}}{{/crossLink}} to the {{#crossLink "ObjectSet"}}{{/crossLink}}, and a
- {{#crossLink "ClickSelectObjects"}}{{/crossLink}} which will add or remove the RandomObject's
- {{#crossLink "Object"}}Objects{{/crossLink}} from the {{#crossLink "ObjectSet"}}{{/crossLink}} as we click them
- with the mouse. This causes the {{#crossLink "Object"}}Objects{{/crossLink}} to become highlighted as we click them,
- then de-highlighted as we click them again.
-
+ In this example we create a RandomObjects containing 55 {{#crossLink "Object"}}Objects{{/crossLink}}:
 
  <iframe style="width: 600px; height: 400px" src="../../examples/object_RandomObjects.html"></iframe>
 
  ````javascript
- // Create a Viewer
- var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
+// Create a Viewer
+var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
 
- // Create a Camera
- var camera = new BIMSURFER.Camera(viewer, {
-        eye: [70, 70, -70]
-    });
+// Create a Camera
+var camera = new BIMSURFER.Camera(viewer, {
+     eye: [70, 70, -70]
+});
 
- // Spin the camera
- viewer.on("tick", function () {
-        camera.rotateEyeY(0.2);
-    });
+// Spin the camera
+viewer.on("tick", function () {
+    camera.rotateEyeY(0.2);
+});
 
- // Create a CameraControl
- var cameraControl = new BIMSURFER.CameraControl(viewer, {
-        camera: camera
-    });
+// Create a CameraControl
+var cameraControl = new BIMSURFER.CameraControl(viewer, {
+    camera: camera
+});
 
- // Create a RandomObjects
- var randomObjects = new BIMSURFER.RandomObjects(viewer);
-
- // Create an ObjectSet
- var objectSet = new BIMSURFER.ObjectSet(viewer);
-
- // Apply a Highlight effect to the ObjectSet
- var highlight = new BIMSURFER.HighlightEffect(viewer, {
-        objectSet: objectSet
-    });
-
- // Create a ClickSelectObjects so we can select or unselect
- // the Objects in the RandomObjects with the mouse
- var clickSelectObjects = new BIMSURFER.ClickSelectObjects(viewer, {
-        objectSet: objectSet
-    });
+// Create a RandomObjects
+var randomObjects = new BIMSURFER.RandomObjects(viewer, {
+    numObjects: 55
+});
  ````
 
  @class RandomObjects

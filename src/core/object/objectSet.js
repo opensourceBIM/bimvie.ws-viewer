@@ -240,6 +240,36 @@
         },
 
         /**
+         * Adds all {{#crossLink "Object"}}Objects{{/crossLink}} in the {{#crossLink "Viewer"}}{{/crossLink}} to this ObjectSet.
+         *
+         * Fires an {{#crossLink "ObjectSet/updated:event"}}{{/crossLink}} event.
+         *
+         * @method addAllObjects
+         */
+        addAllObjects: function() {
+
+            var objects = [];
+
+            // Apply effect to Objects in the Viewer
+            this.viewer.withClasses(["BIMSURFER.Object"],
+                function (object) {
+                    objects.push(object);
+                });
+
+            this.viewer.withClasses(["BIMSURFER.BoxObject"],
+                function (object) {
+                    objects.push(object);
+                });
+
+            this.viewer.withClasses(["BIMSURFER.TeapotObject"],
+                function (object) {
+                    objects.push(object);
+                });
+
+            this.addObjects(objects);
+        },
+
+        /**
          * Adds {{#crossLink "Object"}}Objects{{/crossLink}} instances to this ObjectSet.
          *
          * The {{#crossLink "Object"}}Objects{{/crossLink}} must be in the same {{#crossLink "Viewer"}}{{/crossLink}} as this ObjectSet.
@@ -499,12 +529,12 @@
             // For an empty selection, boundary is zero volume and centered at the origin
 
             if (this.numObjects === 0) {
-                this._boundary.xmin = 0.0;
-                this._boundary.ymin = 0.0;
-                this._boundary.zmin = 0.0;
-                this._boundary.xmax = 0.0;
-                this._boundary.ymax = 0.0;
-                this._boundary.zmax = 0.0;
+                this._boundary.xmin = -1.0;
+                this._boundary.ymin = -1.0;
+                this._boundary.zmin = -1.0;
+                this._boundary.xmax =  1.0;
+                this._boundary.ymax =  1.0;
+                this._boundary.zmax =  1.0;
 
             } else {
 
@@ -572,9 +602,9 @@
                     if (this._boundaryDirty) {
 
                         this._rebuildBoundary();
-
-                        return this._boundary;
                     }
+
+                    return this._boundary;
                 }
             },
 

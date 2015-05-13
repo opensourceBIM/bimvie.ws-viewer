@@ -347,6 +347,21 @@
          * @type {BIMSURFER.Input}
          */
         this.input = new BIMSURFER.Input(this);
+
+
+
+        /**
+         * The number of {{#crossLink "Objects"}}{{/crossLink}} within this ObjectSet.
+         *
+         * @property numObjects
+         * @type Number
+         */
+        this.numObjects = 0;
+
+        this._boundary = {xmin: 0.0, ymin: 0.0, zmin: 0.0, xmax: 0.0, ymax: 0.0, zmax: 0.0 };
+        this._center = [0, 0, 0];
+
+        this._boundaryDirty = true;
     };
 
     /**
@@ -477,6 +492,114 @@
 
         enumerable: true
     });
+
+    /**
+     * Boundary of all components in this Viewer.
+     *
+     * @property boundary
+     * @final
+     * @type {*}
+     */
+    Object.defineProperty(BIMSURFER.Viewer.prototype, "boundary", {
+
+        get: function() {
+
+            if (this._boundaryDirty) {
+                this._rebuildBoundary();
+            }
+
+            return this._boundary;
+        },
+
+        enumerable: true
+    });
+
+    /**
+     * center of all components in this Viewer.
+     *
+     * @property center
+     * @final
+     * @type {*}
+     */
+    Object.defineProperty(BIMSURFER.Viewer.prototype, "center", {
+
+        get: function() {
+
+            if (this._boundaryDirty) {
+                this._rebuildBoundary();
+            }
+
+            return this._center;
+        },
+
+        enumerable: true
+    });
+
+    BIMSURFER.Viewer.prototype._rebuildBoundary = function () {
+
+//        if (!this._boundaryDirty) {
+//            return;
+//        }
+//
+//        // For an empty selection, boundary is zero volume and centered at the origin
+//
+//        if (this.numObjects === 0) {
+//            this._boundary.xmin = -1.0;
+//            this._boundary.ymin = -1.0;
+//            this._boundary.zmin = -1.0;
+//            this._boundary.xmax =  1.0;
+//            this._boundary.ymax =  1.0;
+//            this._boundary.zmax =  1.0;
+//
+//        } else {
+//
+//            // Set boundary inside-out, ready to expand by each selected object
+//
+//            this._boundary.xmin = 1000000.0;
+//            this._boundary.ymin = 1000000.0;
+//            this._boundary.zmin = 1000000.0;
+//            this._boundary.xmax = -1000000.0;
+//            this._boundary.ymax = -1000000.0;
+//            this._boundary.zmax = -1000000.0;
+//
+//            var object;
+//            var boundary;
+//
+//            for (var objectId in this.objects) {
+//                if (this.objects.hasOwnProperty(objectId)) {
+//
+//                    object = this.objects[objectId];
+//
+//                    boundary = object.boundary;
+//
+//                    if (boundary.xmin < this._boundary.xmin) {
+//                        this._boundary.xmin = boundary.xmin;
+//                    }
+//                    if (boundary.ymin < this._boundary.ymin) {
+//                        this._boundary.ymin = boundary.ymin;
+//                    }
+//                    if (boundary.zmin < this._boundary.zmin) {
+//                        this._boundary.zmin = boundary.zmin;
+//                    }
+//                    if (boundary.xmax > this._boundary.xmax) {
+//                        this._boundary.xmax = boundary.xmax;
+//                    }
+//                    if (boundary.ymax > this._boundary.ymax) {
+//                        this._boundary.ymax = boundary.ymax;
+//                    }
+//                    if (boundary.zmax > this._boundary.zmax) {
+//                        this._boundary.zmax = boundary.zmax;
+//                    }
+//                }
+//            }
+//        }
+//
+//        this._center[0] = (this._boundary.xmax + this._boundary.xmin) * 0.5;
+//        this._center[1] = (this._boundary.ymax + this._boundary.ymin) * 0.5;
+//        this._center[2] = (this._boundary.zmax + this._boundary.zmin) * 0.5;
+//
+//        this._boundaryDirty = false;
+    };
 
     /**
      *

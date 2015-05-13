@@ -47,6 +47,7 @@
                                 <li><a href="../classes/BoxObject.html">BoxObject</a></li>
                                 <li><a href="../classes/Camera.html">Camera</a></li>
                                 <li><a href="../classes/CameraControl.html">CameraControl</a></li>
+                                <li><a href="../classes/CameraFlyAnimation.html">CameraFlyAnimation</a></li>
                                 <li><a href="../classes/Canvas.html">Canvas</a></li>
                                 <li><a href="../classes/ClickSelectObjects.html">ClickSelectObjects</a></li>
                                 <li><a href="../classes/Component.html">Component</a></li>
@@ -55,7 +56,7 @@
                                 <li><a href="../classes/DepthOfField.html">DepthOfField</a></li>
                                 <li><a href="../classes/DirLight.html">DirLight</a></li>
                                 <li><a href="../classes/Effect.html">Effect</a></li>
-                                <li><a href="../classes/Fly.html">Fly</a></li>
+                                <li><a href="../classes/FrameEffect.html">FrameEffect</a></li>
                                 <li><a href="../classes/Geometry.html">Geometry</a></li>
                                 <li><a href="../classes/HighlightEffect.html">HighlightEffect</a></li>
                                 <li><a href="../classes/Input.html">Input</a></li>
@@ -140,51 +141,33 @@
 
  ## Example
 
- In this example we create a RandomObjects and an {{#crossLink &quot;ObjectSet&quot;}}{{/crossLink}}. Then we apply
- a {{#crossLink &quot;HighlightEffect&quot;}}{{/crossLink}} to the {{#crossLink &quot;ObjectSet&quot;}}{{/crossLink}}, and a
- {{#crossLink &quot;ClickSelectObjects&quot;}}{{/crossLink}} which will add or remove the RandomObject&#x27;s
- {{#crossLink &quot;Object&quot;}}Objects{{/crossLink}} from the {{#crossLink &quot;ObjectSet&quot;}}{{/crossLink}} as we click them
- with the mouse. This causes the {{#crossLink &quot;Object&quot;}}Objects{{/crossLink}} to become highlighted as we click them,
- then de-highlighted as we click them again.
-
+ In this example we create a RandomObjects containing 55 {{#crossLink &quot;Object&quot;}}Objects{{/crossLink}}:
 
  &lt;iframe style=&quot;width: 600px; height: 400px&quot; src=&quot;../../examples/object_RandomObjects.html&quot;&gt;&lt;/iframe&gt;
 
  &#x60;&#x60;&#x60;&#x60;javascript
- // Create a Viewer
- var viewer = new BIMSURFER.Viewer({ element: &quot;myDiv&quot; });
+// Create a Viewer
+var viewer = new BIMSURFER.Viewer({ element: &quot;myDiv&quot; });
 
- // Create a Camera
- var camera = new BIMSURFER.Camera(viewer, {
-        eye: [70, 70, -70]
-    });
+// Create a Camera
+var camera = new BIMSURFER.Camera(viewer, {
+     eye: [70, 70, -70]
+});
 
- // Spin the camera
- viewer.on(&quot;tick&quot;, function () {
-        camera.rotateEyeY(0.2);
-    });
+// Spin the camera
+viewer.on(&quot;tick&quot;, function () {
+    camera.rotateEyeY(0.2);
+});
 
- // Create a CameraControl
- var cameraControl = new BIMSURFER.CameraControl(viewer, {
-        camera: camera
-    });
+// Create a CameraControl
+var cameraControl = new BIMSURFER.CameraControl(viewer, {
+    camera: camera
+});
 
- // Create a RandomObjects
- var randomObjects = new BIMSURFER.RandomObjects(viewer);
-
- // Create an ObjectSet
- var objectSet = new BIMSURFER.ObjectSet(viewer);
-
- // Apply a Highlight effect to the ObjectSet
- var highlight = new BIMSURFER.HighlightEffect(viewer, {
-        objectSet: objectSet
-    });
-
- // Create a ClickSelectObjects so we can select or unselect
- // the Objects in the RandomObjects with the mouse
- var clickSelectObjects = new BIMSURFER.ClickSelectObjects(viewer, {
-        objectSet: objectSet
-    });
+// Create a RandomObjects
+var randomObjects = new BIMSURFER.RandomObjects(viewer, {
+    numObjects: 55
+});
  &#x60;&#x60;&#x60;&#x60;
 
  @class RandomObjects

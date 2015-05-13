@@ -47,6 +47,7 @@
                                 <li><a href="../classes/BoxObject.html">BoxObject</a></li>
                                 <li><a href="../classes/Camera.html">Camera</a></li>
                                 <li><a href="../classes/CameraControl.html">CameraControl</a></li>
+                                <li><a href="../classes/CameraFlyAnimation.html">CameraFlyAnimation</a></li>
                                 <li><a href="../classes/Canvas.html">Canvas</a></li>
                                 <li><a href="../classes/ClickSelectObjects.html">ClickSelectObjects</a></li>
                                 <li><a href="../classes/Component.html">Component</a></li>
@@ -55,7 +56,7 @@
                                 <li><a href="../classes/DepthOfField.html">DepthOfField</a></li>
                                 <li><a href="../classes/DirLight.html">DirLight</a></li>
                                 <li><a href="../classes/Effect.html">Effect</a></li>
-                                <li><a href="../classes/Fly.html">Fly</a></li>
+                                <li><a href="../classes/FrameEffect.html">FrameEffect</a></li>
                                 <li><a href="../classes/Geometry.html">Geometry</a></li>
                                 <li><a href="../classes/HighlightEffect.html">HighlightEffect</a></li>
                                 <li><a href="../classes/Input.html">Input</a></li>
@@ -147,40 +148,30 @@
  from among the <a href="../classes/BIMSURFER.constants.html#property_defaultTypes" class="crosslink">defaultTypes</a>.</li>
  </ul></p>
 <h2 id="example">Example</h2>
-<p>In this example we create a RandomObjects and an <a href="../classes/ObjectSet.html" class="crosslink">ObjectSet</a>. Then we apply
- a <a href="../classes/HighlightEffect.html" class="crosslink">HighlightEffect</a> to the <a href="../classes/ObjectSet.html" class="crosslink">ObjectSet</a>, and a
- <a href="../classes/ClickSelectObjects.html" class="crosslink">ClickSelectObjects</a> which will add or remove the RandomObject&#39;s
- Object from the <a href="../classes/ObjectSet.html" class="crosslink">ObjectSet</a> as we click them
- with the mouse. This causes the Object to become highlighted as we click them,
- then de-highlighted as we click them again.</p>
+<p>In this example we create a RandomObjects containing 55 Object:</p>
 <p><iframe style="width: 600px; height: 400px" src="../../examples/object_RandomObjects.html"></iframe></p>
-<pre class="code prettyprint"><code class="lang-javascript"> // Create a Viewer
- var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
+<pre class="code prettyprint"><code class="lang-javascript">// Create a Viewer
+var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
+
 // Create a Camera
- var camera = new BIMSURFER.Camera(viewer, {
-        eye: [70, 70, -70]
-    });
+var camera = new BIMSURFER.Camera(viewer, {
+     eye: [70, 70, -70]
+});
+
 // Spin the camera
- viewer.on("tick", function () {
-        camera.rotateEyeY(0.2);
-    });
+viewer.on("tick", function () {
+    camera.rotateEyeY(0.2);
+});
+
 // Create a CameraControl
- var cameraControl = new BIMSURFER.CameraControl(viewer, {
-        camera: camera
-    });
+var cameraControl = new BIMSURFER.CameraControl(viewer, {
+    camera: camera
+});
+
 // Create a RandomObjects
- var randomObjects = new BIMSURFER.RandomObjects(viewer);
-// Create an ObjectSet
- var objectSet = new BIMSURFER.ObjectSet(viewer);
-// Apply a Highlight effect to the ObjectSet
- var highlight = new BIMSURFER.HighlightEffect(viewer, {
-        objectSet: objectSet
-    });
-// Create a ClickSelectObjects so we can select or unselect
- // the Objects in the RandomObjects with the mouse
- var clickSelectObjects = new BIMSURFER.ClickSelectObjects(viewer, {
-        objectSet: objectSet
-    });
+var randomObjects = new BIMSURFER.RandomObjects(viewer, {
+    numObjects: 55
+});
 </code></pre>
 
 </div>
@@ -936,7 +927,7 @@ any subsequent notifications on that location as they are made.</p>
                                     Component
                                 </a>
                                 but overwritten in
-                            <a href="../files/src_core_object_randomObjects.js.html#l78"><code>src&#x2F;core&#x2F;object&#x2F;randomObjects.js:78</code></a>
+                            <a href="../files/src_core_object_randomObjects.js.html#l60"><code>src&#x2F;core&#x2F;object&#x2F;randomObjects.js:60</code></a>
                             </p>
                     
                     

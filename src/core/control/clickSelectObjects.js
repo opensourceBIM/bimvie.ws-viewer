@@ -119,7 +119,7 @@
 
             this.objectSet = cfg.objectSet || new BIMSURFER.ObjectSet(this.viewer);
 
-            this._multi = false;
+            this._multi = !!cfg.multi;
 
             this.active = cfg.active !== false;
         },
@@ -164,7 +164,7 @@
                                 if (((e[0] > lastX) ? (e[0] - lastX < 5) : (lastX - e[0] < 5)) &&
                                     ((e[1] > lastY) ? (e[1] - lastY < 5) : (lastY - e[1] < 5))) {
 
-                                    var multiSelect = input.keyDown[input.KEY_SHIFT];
+                                    var multiSelect = self._multi || input.keyDown[input.KEY_SHIFT];
 
                                     var hit = self.viewer.pick(lastX, lastY, {});
 

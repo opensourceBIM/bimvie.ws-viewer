@@ -45,7 +45,6 @@
         camera: camera
     });
 
-    // -------------- Lights -------------------------
 
     // Create an AmbientLight
     var ambientLight = new BIMSURFER.AmbientLight(viewer, {
@@ -66,15 +65,10 @@
         space: "view"
     });
 
-    // -------------- Geometries -------------------------
 
-    // Create a box Geometry
-    // Geometry defaults to a 2x2x2 box when no vertex or index arrays are specified
-    var geometry = new BIMSURFER.TeapotGeometry(viewer, {
-        id: "myGeometry"
-    });
+    // Create a Geometry
+    var geometry = new BIMSURFER.TeapotGeometry(viewer);
 
-    // -------------- Objects -------------------------
 
     // Create some Objects
     // Share the box Geometry among them
@@ -83,45 +77,47 @@
         id: "object1",
         type: "IfcRoof",
         geometries: [ geometry ],
-        matrix: BIMSURFER.math.translationMat4v([-4, 0, -4])
+        matrix: BIMSURFER.math.translationMat4v([-3, 0, -3])
     });
 
     var object2 = new BIMSURFER.Object(viewer, {
         id: "object2",
         type: "IfcDistributionFlowElement",
         geometries: [ geometry ],
-        matrix: BIMSURFER.math.translationMat4v([4, 0, -4])
+        matrix: BIMSURFER.math.translationMat4v([3, 0, -3])
     });
 
     var object3 = new BIMSURFER.Object(viewer, {
         id: "object3",
         type: "IfcDistributionFlowElement",
         geometries: [ geometry ],
-        matrix: BIMSURFER.math.translationMat4v([-4, 0, 4])
+        matrix: BIMSURFER.math.translationMat4v([-3, 0, 3])
     });
 
     var object4 = new BIMSURFER.Object(viewer, {
         id: "object4",
         type: "IfcRoof",
         geometries: [ geometry ],
-        matrix: BIMSURFER.math.translationMat4v([4, 0, 4])
+        matrix: BIMSURFER.math.translationMat4v([3, 0, 3])
     });
 
-    // Create a Selection
 
     var objectSet = new BIMSURFER.ObjectSet(viewer);
+
+
+    new BIMSURFER.ClickSelectObjects(viewer, {
+        objectSet: objectSet
+    });
+
 
     // Apply a X-Ray effect to the Selection, which will cause the selected
     // objects to appear transparent and all other Objects opaque
 
     new BIMSURFER.XRayEffect(viewer, {
-        objectSet: objectSet,
-        invert: true
+        objectSet: objectSet
     });
 
-    // Create a objectSet control
-
-    new BIMSURFER.ClickSelectObjects(viewer, {
+    new BIMSURFER.LabelEffect(viewer, {
         objectSet: objectSet
     });
 

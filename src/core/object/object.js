@@ -259,6 +259,8 @@
             this.matrix = cfg.matrix;
 
             this.label = cfg.label;
+
+            this.active = cfg.active !== false;
         },
 
         _initBoundary: function () {
@@ -540,7 +542,7 @@
 
                 set: function (value) {
 
-                    this._opacity = value !== null && value !== undefined ? value : 1.0;
+                    this._opacity = value !== null && value !== undefined ? value : 0.4;
 
                     this._materialNode.setAlpha(this._xray ? 0.7 : (this._transparent ? this._opacity : 1.0));
                 },

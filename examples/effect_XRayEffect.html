@@ -51,7 +51,7 @@
 
     // Spin the camera
     viewer.on("tick", function () {
-        camera.rotateEyeY(0.2);
+        camera.rotateEyeY(0.1);
     });
 
     // Create a CameraControl so we can move the Camera
@@ -87,28 +87,24 @@
     // Share the BoxGeometry among them
 
     var object1 = new BIMSURFER.Object(viewer, {
-        id: "object1",
         type: "IfcRoof",
         geometries: [ geometry ],
         matrix: BIMSURFER.math.translationMat4v([-8, 0, -8])
     });
 
     var object2 = new BIMSURFER.Object(viewer, {
-        id: "object2",
         type: "IfcDistributionFlowElement",
         geometries: [ geometry ],
         matrix: BIMSURFER.math.translationMat4v([8, 0, -8])
     });
 
     var object3 = new BIMSURFER.Object(viewer, {
-        id: "object3",
         type: "IfcRailing",
         geometries: [ geometry ],
         matrix: BIMSURFER.math.translationMat4v([-8, 0, 8])
     });
 
     var object4 = new BIMSURFER.Object(viewer, {
-        id: "object4",
         type: "IfcRoof",
         geometries: [ geometry ],
         matrix: BIMSURFER.math.translationMat4v([8, 0, 8])
@@ -116,9 +112,7 @@
 
     // Create an ObjectSet that initially contains one of our Objects
 
-    var objectSet = new BIMSURFER.ObjectSet(viewer, {
-        objects: [object1 ]
-    });
+    var objectSet = new BIMSURFER.ObjectSet(viewer);
 
     // Apply an XRay effect to the ObjectSet, which causes all Objects in the Viewer
     // that are not in the ObjectSet to become transparent.
@@ -127,15 +121,9 @@
         objectSet: objectSet
     });
 
-    // Add a second Object to the ObjectSet, causing the XRay to now render
-    // that Object as opaque also
-
-    objectSet.addObjects([object3]);
-
-    // Adjust the opacity of the transparent Objects
-
-    object2.opacity = 0.2;
-    object4.opacity = 0.2;
+    new BIMSURFER.ClickSelectObjects(viewer, {
+        objectSet: objectSet
+    });
 
 </script>
 

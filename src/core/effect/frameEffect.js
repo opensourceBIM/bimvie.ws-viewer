@@ -1,5 +1,5 @@
 /**
- A **HighlightEffect** is an {{#crossLink "Effect"}}{{/crossLink}} that highlights the {{#crossLink "Object"}}Objects{{/crossLink}} within an {{#crossLink "ObjectSet"}}{{/crossLink}}.
+ A **FrameEffect** is an {{#crossLink "Effect"}}{{/crossLink}} that highlights the {{#crossLink "Object"}}Objects{{/crossLink}} within an {{#crossLink "ObjectSet"}}{{/crossLink}}.
 
  ## Overview
 
@@ -10,7 +10,7 @@
  #### Highlighting an ObjectSet
 
  In this example we create four {{#crossLink "Object"}}Objects{{/crossLink}}, then add two of them to an {{#crossLink "ObjectSet"}}{{/crossLink}}.
-<br> Then we apply a {{#crossLink "HighlightEffect"}}{{/crossLink}} to the {{#crossLink "ObjectSet"}}{{/crossLink}}, causing
+ <br> Then we apply a {{#crossLink "FrameEffect"}}{{/crossLink}} to the {{#crossLink "ObjectSet"}}{{/crossLink}}, causing
  it's {{#crossLink "Object"}}Objects{{/crossLink}} to become highlighted while the other two {{#crossLink "Object"}}Objects{{/crossLink}} remain un-highlighted.
 
  <iframe style="width: 600px; height: 400px" src="../../examples/effect_HighlightEffect.html"></iframe>
@@ -95,7 +95,7 @@
  // Apply a Highlight effect to the ObjectSet, which causes the
  // Object in the ObjectSet to become highlighted.
 
- var highlight = new BIMSURFER.HighlightEffect(viewer, {
+ var highlight = new BIMSURFER.FrameEffect(viewer, {
         objectSet: objectSet
     });
 
@@ -106,22 +106,22 @@
 
  ````
 
- @class HighlightEffect
+ @class FrameEffect
  @module BIMSURFER
  @submodule effect
  @constructor
  @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
  @param [cfg] {*} Configs
  @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
- @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this HighlightEffect.
- @param [cfg.objectSet] {ObjectSet} The {{#crossLink "ObjectSet"}}{{/crossLink}} to apply this HighlightEffect to.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this FrameEffect.
+ @param [cfg.objectSet] {ObjectSet} The {{#crossLink "ObjectSet"}}{{/crossLink}} to apply this FrameEffect to.
  @extends Effect
  */
 (function () {
 
     "use strict";
 
-    BIMSURFER.HighlightEffect = BIMSURFER.Effect.extend({
+    BIMSURFER.FrameEffect = BIMSURFER.Effect.extend({
 
         /**
          JavaScript class name for this Component.
@@ -130,16 +130,28 @@
          @type String
          @final
          */
-        className: "BIMSURFER.HighlightEffect",
+        className: "BIMSURFER.FrameEffect",
 
         _init: function (cfg) {
+
             this._super(cfg);
+
+            this._fly = new BIMSURFER.CameraFlyAnimation(viewer, {
+                camera: cfg.camera
+            });
         },
 
-        _applyObject: function (object) {
-            var selected = this.objectSet.objects[object.id];
-            object.highlight = this.invert ? !selected : !!selected;
+        _apply: function () {
+
+            this._fly.flyTo({
+                boundary: this.objectSet.boundary,
+                arc: 0.0,
+                velocity: 40
+            });
+        },
+
+        _destroy: function() {
+            this._fly.destroy();
         }
     });
-
 })();

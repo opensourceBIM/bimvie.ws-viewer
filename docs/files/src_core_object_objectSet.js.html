@@ -47,6 +47,7 @@
                                 <li><a href="../classes/BoxObject.html">BoxObject</a></li>
                                 <li><a href="../classes/Camera.html">Camera</a></li>
                                 <li><a href="../classes/CameraControl.html">CameraControl</a></li>
+                                <li><a href="../classes/CameraFlyAnimation.html">CameraFlyAnimation</a></li>
                                 <li><a href="../classes/Canvas.html">Canvas</a></li>
                                 <li><a href="../classes/ClickSelectObjects.html">ClickSelectObjects</a></li>
                                 <li><a href="../classes/Component.html">Component</a></li>
@@ -55,7 +56,7 @@
                                 <li><a href="../classes/DepthOfField.html">DepthOfField</a></li>
                                 <li><a href="../classes/DirLight.html">DirLight</a></li>
                                 <li><a href="../classes/Effect.html">Effect</a></li>
-                                <li><a href="../classes/Fly.html">Fly</a></li>
+                                <li><a href="../classes/FrameEffect.html">FrameEffect</a></li>
                                 <li><a href="../classes/Geometry.html">Geometry</a></li>
                                 <li><a href="../classes/HighlightEffect.html">HighlightEffect</a></li>
                                 <li><a href="../classes/Input.html">Input</a></li>
@@ -369,6 +370,36 @@
         },
 
         /**
+         * Adds all {{#crossLink &quot;Object&quot;}}Objects{{/crossLink}} in the {{#crossLink &quot;Viewer&quot;}}{{/crossLink}} to this ObjectSet.
+         *
+         * Fires an {{#crossLink &quot;ObjectSet/updated:event&quot;}}{{/crossLink}} event.
+         *
+         * @method addAllObjects
+         */
+        addAllObjects: function() {
+
+            var objects = [];
+
+            // Apply effect to Objects in the Viewer
+            this.viewer.withClasses([&quot;BIMSURFER.Object&quot;],
+                function (object) {
+                    objects.push(object);
+                });
+
+            this.viewer.withClasses([&quot;BIMSURFER.BoxObject&quot;],
+                function (object) {
+                    objects.push(object);
+                });
+
+            this.viewer.withClasses([&quot;BIMSURFER.TeapotObject&quot;],
+                function (object) {
+                    objects.push(object);
+                });
+
+            this.addObjects(objects);
+        },
+
+        /**
          * Adds {{#crossLink &quot;Object&quot;}}Objects{{/crossLink}} instances to this ObjectSet.
          *
          * The {{#crossLink &quot;Object&quot;}}Objects{{/crossLink}} must be in the same {{#crossLink &quot;Viewer&quot;}}{{/crossLink}} as this ObjectSet.
@@ -628,12 +659,12 @@
             // For an empty selection, boundary is zero volume and centered at the origin
 
             if (this.numObjects === 0) {
-                this._boundary.xmin = 0.0;
-                this._boundary.ymin = 0.0;
-                this._boundary.zmin = 0.0;
-                this._boundary.xmax = 0.0;
-                this._boundary.ymax = 0.0;
-                this._boundary.zmax = 0.0;
+                this._boundary.xmin = -1.0;
+                this._boundary.ymin = -1.0;
+                this._boundary.zmin = -1.0;
+                this._boundary.xmax =  1.0;
+                this._boundary.ymax =  1.0;
+                this._boundary.zmax =  1.0;
 
             } else {
 
@@ -701,9 +732,9 @@
                     if (this._boundaryDirty) {
 
                         this._rebuildBoundary();
-
-                        return this._boundary;
                     }
+
+                    return this._boundary;
                 }
             },
 

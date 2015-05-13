@@ -11,7 +11,7 @@
             "name": "src/core/animate/cameraFlyAnimation.js",
             "modules": {},
             "classes": {
-                "Fly": 1
+                "CameraFlyAnimation": 1
             },
             "fors": {},
             "namespaces": {}
@@ -136,6 +136,15 @@
             "modules": {},
             "classes": {
                 "Effect": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/core/effect/frameEffect.js": {
+            "name": "src/core/effect/frameEffect.js",
+            "modules": {},
+            "classes": {
+                "FrameEffect": 1
             },
             "fors": {},
             "namespaces": {}
@@ -415,7 +424,7 @@
                 "input": 1
             },
             "classes": {
-                "Fly": 1,
+                "CameraFlyAnimation": 1,
                 "Camera": 1,
                 "Canvas": 1,
                 "CameraControl": 1,
@@ -429,6 +438,7 @@
                 "MouseZoomCamera": 1,
                 "Debug": 1,
                 "Effect": 1,
+                "FrameEffect": 1,
                 "HighlightEffect": 1,
                 "IsolateEffect": 1,
                 "LabelEffect": 1,
@@ -472,7 +482,7 @@
             "name": "animate",
             "submodules": {},
             "classes": {
-                "Fly": 1
+                "CameraFlyAnimation": 1
             },
             "fors": {},
             "is_submodule": 1,
@@ -494,7 +504,7 @@
             "namespaces": {},
             "module": "BIMSURFER",
             "namespace": "",
-            "description": "A **Camera** defines a viewpoint within a {{#crossLink \"Viewer\"}}Viewer{{/crossLink}}.\n\n## Overview\n\n<ul>\n<li>You can have an unlimited number of Cameras in a {{#crossLink \"Viewer\"}}{{/crossLink}}.</li>\n<li>At any instant, the Camera we're looking through is the one whose {{#crossLink \"Camera/active:property\"}}active{{/crossLink}} property is true.</li>\n<li>Cameras can be controlled with controls such as {{#crossLink \"CameraControl\"}}{{/crossLink}}, {{#crossLink \"KeyboardAxisCamera\"}}{{/crossLink}},\n{{#crossLink \"KeyboardOrbitCamera\"}}{{/crossLink}}, {{#crossLink \"KeyboardPanCamera\"}}{{/crossLink}}, {{#crossLink \"KeyboardZoomCamera\"}}{{/crossLink}},\n{{#crossLink \"MouseOrbitCamera\"}}{{/crossLink}}, {{#crossLink \"MousePanCamera\"}}{{/crossLink}} and {{#crossLink \"MouseZoomCamera\"}}{{/crossLink}}.</li>\n</ul>\n\n## Example\n\nIn this example we define multiple Cameras looking at a {{#crossLink \"TeapotObject\"}}{{/crossLink}}, then periodically switch between the Cameras.\n\n<iframe style=\"width: 600px; height: 400px\" src=\"../../examples/camera_Camera_multiple.html\"></iframe>\n\n````Javascript\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer({ element: \"myDiv\" });\n\n// Create an object\nvar box = new BIMSURFER.TeapotObject(viewer);\n\n// Create some Cameras\nvar cameras = [\n\n   new BIMSURFER.Camera(viewer, {\n       eye: [5, 5, 5],\n       active: false\n   }),\n\n   new BIMSURFER.Camera(viewer, {\n       eye: [-5, 5, 5],\n       active: false\n   }),\n\n   new BIMSURFER.Camera(viewer, {\n       eye: [5, -5, 5],\n       active: false\n   }),\n\n   new BIMSURFER.Camera(viewer, {\n       eye: [5, 5, -5],\n       active: false\n   }),\n\n   new BIMSURFER.Camera(viewer, {\n       eye: [-5, -5, 5],\n       active: false\n   })\n];\n\n// Periodically switch between the Cameras\n\nvar i = -1;\nvar last = -1;\n\nsetInterval(function () {\n\n       if (last > -1) {\n           cameras[last].active = false\n       }\n\n       i = (i + 1) % (cameras.length - 1);\n\n       cameras[i].active = true;\n\n       last = i;\n\n   }, 1000);\n````",
+            "description": "A **Camera** defines a viewpoint within a {{#crossLink \"Viewer\"}}Viewer{{/crossLink}}.\n\n## Overview\n\n<ul>\n<li>You can have an unlimited number of Cameras in a {{#crossLink \"Viewer\"}}{{/crossLink}}.</li>\n<li>At any instant, the Camera we're looking through is the one whose {{#crossLink \"Camera/active:property\"}}active{{/crossLink}} property is true.</li>\n<li>Cameras can be controlled with controls such as {{#crossLink \"CameraControl\"}}{{/crossLink}}, {{#crossLink \"KeyboardAxisCamera\"}}{{/crossLink}},\n{{#crossLink \"KeyboardOrbitCamera\"}}{{/crossLink}}, {{#crossLink \"KeyboardPanCamera\"}}{{/crossLink}}, {{#crossLink \"KeyboardZoomCamera\"}}{{/crossLink}},\n{{#crossLink \"MouseOrbitCamera\"}}{{/crossLink}}, {{#crossLink \"MousePanCamera\"}}{{/crossLink}} and {{#crossLink \"MouseZoomCamera\"}}{{/crossLink}}.</li>\n</ul>\n\n## Example\n\nIn this example we define multiple Cameras looking at a {{#crossLink \"TeapotObject\"}}{{/crossLink}}, then periodically switch between the Cameras.\n\n<iframe style=\"width: 600px; height: 400px\" src=\"../../examples/camera_Camera_multiple.html\"></iframe>\n\n````Javascript\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer({ element: \"myDiv\" });\n\n// Create an object\nvar box = new BIMSURFER.TeapotObject(viewer);\n\n// Create some Cameras\nvar cameras = [\n\nnew BIMSURFER.Camera(viewer, {\n       eye: [5, 5, 5],\n       active: false\n   }),\n\nnew BIMSURFER.Camera(viewer, {\n       eye: [-5, 5, 5],\n       active: false\n   }),\n\nnew BIMSURFER.Camera(viewer, {\n       eye: [5, -5, 5],\n       active: false\n   }),\n\nnew BIMSURFER.Camera(viewer, {\n       eye: [5, 5, -5],\n       active: false\n   }),\n\nnew BIMSURFER.Camera(viewer, {\n       eye: [-5, -5, 5],\n       active: false\n   })\n];\n\n// Periodically switch between the Cameras\n\nvar i = -1;\nvar last = -1;\n\nsetInterval(function () {\n\n       if (last > -1) {\n           cameras[last].active = false\n       }\n\n       i = (i + 1) % (cameras.length - 1);\n\n       cameras[i].active = true;\n\n       last = i;\n\n   }, 1000);\n````",
             "file": "src/core/camera/camera.js",
             "line": 1
         },
@@ -541,6 +551,7 @@
             "submodules": {},
             "classes": {
                 "Effect": 1,
+                "FrameEffect": 1,
                 "HighlightEffect": 1,
                 "IsolateEffect": 1,
                 "LabelEffect": 1,
@@ -589,9 +600,9 @@
         }
     },
     "classes": {
-        "Fly": {
-            "name": "Fly",
-            "shortname": "Fly",
+        "CameraFlyAnimation": {
+            "name": "CameraFlyAnimation",
+            "shortname": "CameraFlyAnimation",
             "classitems": [],
             "plugins": [],
             "extensions": [],
@@ -651,7 +662,7 @@
             "namespace": "",
             "file": "src/core/camera/camera.js",
             "line": 1,
-            "description": "A **Camera** defines a viewpoint within a {{#crossLink \"Viewer\"}}Viewer{{/crossLink}}.\n\n## Overview\n\n<ul>\n<li>You can have an unlimited number of Cameras in a {{#crossLink \"Viewer\"}}{{/crossLink}}.</li>\n<li>At any instant, the Camera we're looking through is the one whose {{#crossLink \"Camera/active:property\"}}active{{/crossLink}} property is true.</li>\n<li>Cameras can be controlled with controls such as {{#crossLink \"CameraControl\"}}{{/crossLink}}, {{#crossLink \"KeyboardAxisCamera\"}}{{/crossLink}},\n{{#crossLink \"KeyboardOrbitCamera\"}}{{/crossLink}}, {{#crossLink \"KeyboardPanCamera\"}}{{/crossLink}}, {{#crossLink \"KeyboardZoomCamera\"}}{{/crossLink}},\n{{#crossLink \"MouseOrbitCamera\"}}{{/crossLink}}, {{#crossLink \"MousePanCamera\"}}{{/crossLink}} and {{#crossLink \"MouseZoomCamera\"}}{{/crossLink}}.</li>\n</ul>\n\n## Example\n\nIn this example we define multiple Cameras looking at a {{#crossLink \"TeapotObject\"}}{{/crossLink}}, then periodically switch between the Cameras.\n\n<iframe style=\"width: 600px; height: 400px\" src=\"../../examples/camera_Camera_multiple.html\"></iframe>\n\n````Javascript\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer({ element: \"myDiv\" });\n\n// Create an object\nvar box = new BIMSURFER.TeapotObject(viewer);\n\n// Create some Cameras\nvar cameras = [\n\n   new BIMSURFER.Camera(viewer, {\n       eye: [5, 5, 5],\n       active: false\n   }),\n\n   new BIMSURFER.Camera(viewer, {\n       eye: [-5, 5, 5],\n       active: false\n   }),\n\n   new BIMSURFER.Camera(viewer, {\n       eye: [5, -5, 5],\n       active: false\n   }),\n\n   new BIMSURFER.Camera(viewer, {\n       eye: [5, 5, -5],\n       active: false\n   }),\n\n   new BIMSURFER.Camera(viewer, {\n       eye: [-5, -5, 5],\n       active: false\n   })\n];\n\n// Periodically switch between the Cameras\n\nvar i = -1;\nvar last = -1;\n\nsetInterval(function () {\n\n       if (last > -1) {\n           cameras[last].active = false\n       }\n\n       i = (i + 1) % (cameras.length - 1);\n\n       cameras[i].active = true;\n\n       last = i;\n\n   }, 1000);\n````",
+            "description": "A **Camera** defines a viewpoint within a {{#crossLink \"Viewer\"}}Viewer{{/crossLink}}.\n\n## Overview\n\n<ul>\n<li>You can have an unlimited number of Cameras in a {{#crossLink \"Viewer\"}}{{/crossLink}}.</li>\n<li>At any instant, the Camera we're looking through is the one whose {{#crossLink \"Camera/active:property\"}}active{{/crossLink}} property is true.</li>\n<li>Cameras can be controlled with controls such as {{#crossLink \"CameraControl\"}}{{/crossLink}}, {{#crossLink \"KeyboardAxisCamera\"}}{{/crossLink}},\n{{#crossLink \"KeyboardOrbitCamera\"}}{{/crossLink}}, {{#crossLink \"KeyboardPanCamera\"}}{{/crossLink}}, {{#crossLink \"KeyboardZoomCamera\"}}{{/crossLink}},\n{{#crossLink \"MouseOrbitCamera\"}}{{/crossLink}}, {{#crossLink \"MousePanCamera\"}}{{/crossLink}} and {{#crossLink \"MouseZoomCamera\"}}{{/crossLink}}.</li>\n</ul>\n\n## Example\n\nIn this example we define multiple Cameras looking at a {{#crossLink \"TeapotObject\"}}{{/crossLink}}, then periodically switch between the Cameras.\n\n<iframe style=\"width: 600px; height: 400px\" src=\"../../examples/camera_Camera_multiple.html\"></iframe>\n\n````Javascript\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer({ element: \"myDiv\" });\n\n// Create an object\nvar box = new BIMSURFER.TeapotObject(viewer);\n\n// Create some Cameras\nvar cameras = [\n\nnew BIMSURFER.Camera(viewer, {\n       eye: [5, 5, 5],\n       active: false\n   }),\n\nnew BIMSURFER.Camera(viewer, {\n       eye: [-5, 5, 5],\n       active: false\n   }),\n\nnew BIMSURFER.Camera(viewer, {\n       eye: [5, -5, 5],\n       active: false\n   }),\n\nnew BIMSURFER.Camera(viewer, {\n       eye: [5, 5, -5],\n       active: false\n   }),\n\nnew BIMSURFER.Camera(viewer, {\n       eye: [-5, -5, 5],\n       active: false\n   })\n];\n\n// Periodically switch between the Cameras\n\nvar i = -1;\nvar last = -1;\n\nsetInterval(function () {\n\n       if (last > -1) {\n           cameras[last].active = false\n       }\n\n       i = (i + 1) % (cameras.length - 1);\n\n       cameras[i].active = true;\n\n       last = i;\n\n   }, 1000);\n````",
             "submodule": "camera",
             "is_constructor": 1,
             "params": [
@@ -1308,6 +1319,57 @@
             ],
             "extends": "Component"
         },
+        "FrameEffect": {
+            "name": "FrameEffect",
+            "shortname": "FrameEffect",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "BIMSURFER",
+            "namespace": "",
+            "file": "src/core/effect/frameEffect.js",
+            "line": 1,
+            "description": "A **FrameEffect** is an {{#crossLink \"Effect\"}}{{/crossLink}} that highlights the {{#crossLink \"Object\"}}Objects{{/crossLink}} within an {{#crossLink \"ObjectSet\"}}{{/crossLink}}.\n\n## Overview\n\nTODO\n\n## Example\n\n#### Highlighting an ObjectSet\n\nIn this example we create four {{#crossLink \"Object\"}}Objects{{/crossLink}}, then add two of them to an {{#crossLink \"ObjectSet\"}}{{/crossLink}}.\n<br> Then we apply a {{#crossLink \"FrameEffect\"}}{{/crossLink}} to the {{#crossLink \"ObjectSet\"}}{{/crossLink}}, causing\nit's {{#crossLink \"Object\"}}Objects{{/crossLink}} to become highlighted while the other two {{#crossLink \"Object\"}}Objects{{/crossLink}} remain un-highlighted.\n\n<iframe style=\"width: 600px; height: 400px\" src=\"../../examples/effect_HighlightEffect.html\"></iframe>\n\n````javascript\n\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer({ element: \"myDiv\" });\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n       eye: [30, 20, -30]\n   });\n\n// Spin the camera\nviewer.on(\"tick\", function () {\n       camera.rotateEyeY(0.2);\n   });\n\n// Create a CameraControl so we can move the Camera\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n       camera: camera\n   });\n\n// Create an AmbientLight\nvar ambientLight = new BIMSURFER.AmbientLight(viewer, {\n       color: [0.7, 0.7, 0.7]\n   });\n\n// Create a DirLight\nvar dirLight1 = new BIMSURFER.DirLight(viewer, {\n       color: [0.6, 0.9, 0.9],\n       dir: [1.0, 0.0, 0.0],\n       space: \"view\"\n   });\n\n// Create a DirLight\nvar dirLight2 = new BIMSURFER.DirLight(viewer, {\n       color: [0.6, 0.9, 0.9],\n       dir: [-0.5, 0.0, -1.0],\n       space: \"view\"\n   });\n\n// Create a BoxGeometry\nvar geometry = new BIMSURFER.BoxGeometry(viewer, {\n       id: \"myGeometry\"\n   });\n\n// Create some Objects\n// Share the BoxGeometry among them\n\nvar object1 = new BIMSURFER.Object(viewer, {\n       type: \"IfcRoof\",\n       geometries: [ geometry ],\n       matrix: BIMSURFER.math.translationMat4v([-8, 0, -8])\n   });\n\nvar object2 = new BIMSURFER.Object(viewer, {\n       type: \"IfcDistributionFlowElement\",\n       geometries: [ geometry ],\n       matrix: BIMSURFER.math.translationMat4v([8, 0, -8])\n   });\n\nvar object3 = new BIMSURFER.Object(viewer, {\n       type: \"IfcRailing\",\n       geometries: [ geometry ],\n       matrix: BIMSURFER.math.translationMat4v([-8, 0, 8])\n   });\n\nvar object4 = new BIMSURFER.Object(viewer, {\n       type: \"IfcRoof\",\n       geometries: [ geometry ],\n       matrix: BIMSURFER.math.translationMat4v([8, 0, 8])\n   });\n\n// Create an ObjectSet that initially contains one of our Objects\n\nvar objectSet = new BIMSURFER.ObjectSet(viewer, {\n       objects: [object1 ]\n   });\n\n// Apply a Highlight effect to the ObjectSet, which causes the\n// Object in the ObjectSet to become highlighted.\n\nvar highlight = new BIMSURFER.FrameEffect(viewer, {\n       objectSet: objectSet\n   });\n\n// Add a second Object to the ObjectSet, causing the Highlight to now render\n// that Object as highlighted also\n\nobjectSet.addObjects([object3]);\n\n````",
+            "submodule": "effect",
+            "is_constructor": 1,
+            "params": [
+                {
+                    "name": "viewer",
+                    "description": "Parent {{#crossLink \"Viewer\"}}{{/crossLink}}.",
+                    "type": "Viewer",
+                    "optional": true
+                },
+                {
+                    "name": "cfg",
+                    "description": "Configs",
+                    "type": "*",
+                    "optional": true,
+                    "props": [
+                        {
+                            "name": "id",
+                            "description": "Optional ID, unique among all components in the parent viewer, generated automatically when omitted.",
+                            "type": "String",
+                            "optional": true
+                        },
+                        {
+                            "name": "meta",
+                            "description": "Optional map of user-defined metadata to attach to this FrameEffect.",
+                            "type": "String:Object",
+                            "optional": true
+                        },
+                        {
+                            "name": "objectSet",
+                            "description": "The {{#crossLink \"ObjectSet\"}}{{/crossLink}} to apply this FrameEffect to.",
+                            "type": "ObjectSet",
+                            "optional": true
+                        }
+                    ]
+                }
+            ],
+            "extends": "Effect"
+        },
         "HighlightEffect": {
             "name": "HighlightEffect",
             "shortname": "HighlightEffect",
@@ -1718,7 +1780,7 @@
             "namespace": "",
             "file": "src/core/label/label.js",
             "line": 1,
-            "description": "A **Label** is a user-defined HTML element that floats over a 3D position within a {{#crossLink \"Viewer\"}}{{/crossLink}}.\n\n## Overview\n\n<ul>\n<li>When configured with an {{#crossLink \"Object\"}}{{/crossLink}}, a Label will always track\nits {{#crossLink \"Object\"}}Object's{{/crossLink}} position, offset by the vector indicated\nin {{#crossLink \"Label/pos:property\"}}{{/crossLink}}.</li>\n\n<li>For debugging purposes, an {{#crossLink \"Object\"}}{{/crossLink}} has its own built-in Label, \nwhich can be shown by setting the {{#crossLink \"Object\"}}Object's{{/crossLink}} \n{{#crossLink \"Object/label:property\"}}{{/crossLink}} property true.</li>\n</ul>\n\n\n\n## Example\n\n<iframe style=\"width: 800px; height: 600px\" src=\"../../examples/label_Label.html\"></iframe>\n\n````Javascript\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer({ element: \"myDiv\" });\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n       eye: [20, 15, -20],\n       look: [0,-10,0]\n   });\n\n// Spin the camera\nviewer.on(\"tick\", function () {\n       camera.rotateEyeY(0.2);\n   });\n\n// Create a CameraControl so we can move the Camera\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n       camera: camera\n   });\n\n// Create an AmbientLight\nvar ambientLight = new BIMSURFER.AmbientLight(viewer, {\n       color: [0.7, 0.7, 0.7]\n   });\n\n// Create a DirLight\nvar dirLight1 = new BIMSURFER.DirLight(viewer, {\n       color: [0.6, 0.9, 0.9],\n       dir: [1.0, 0.0, 0.0],\n       space: \"view\"\n   });\n\n// Create a DirLight\nvar dirLight2 = new BIMSURFER.DirLight(viewer, {\n       color: [0.6, 0.9, 0.9],\n       dir: [-0.5, 0.0, -1.0],\n       space: \"view\"\n   });\n\n// Create a BoxGeometry\nvar geometry = new BIMSURFER.BoxGeometry(viewer, {\n       id: \"myGeometry\"\n   });\n\n// Create some Objects\n// Share the BoxGeometry among them\n// Activate their debug Labels\n\nvar object1 = new BIMSURFER.Object(viewer, {\n       id: \"object1\",\n       type: \"IfcRoof\",\n       geometries: [ geometry ],\n       matrix: BIMSURFER.math.translationMat4v([-8, 0, -8])\n   });\n\nvar object2 = new BIMSURFER.Object(viewer, {\n       id: \"object2\",\n       type: \"IfcDistributionFlowElement\",\n       geometries: [ geometry ],\n       matrix: BIMSURFER.math.translationMat4v([8, 0, -8])\n   });\n\nvar object3 = new BIMSURFER.Object(viewer, {\n       id: \"object3\",\n       type: \"IfcRailing\",\n       geometries: [ geometry ],\n       matrix: BIMSURFER.math.translationMat4v([-8, 0, 8])\n   });\n\nvar object4 = new BIMSURFER.Object(viewer, {\n       id: \"object4\",\n       type: \"IfcRoof\",\n       geometries: [ geometry ],\n       matrix: BIMSURFER.math.translationMat4v([8, 0, 8])\n   });\n\n// Create some Labels on two of the Objects\n// Each Label displays a snippet of HTML and is positioned relative to its Object's origin\n\nvar label1 = new BIMSURFER.Label(viewer, {\n       object: object1,\n       text: \"<b>Label on Object 'object1'</b><br><br><iframe width='320' height='200' src='https://www.youtube.com/embed/oTONvRtlW44' frameborder='0' allowfullscreen></iframe>\",\n       pos: [0, 2, 0] // Offset from Object's local Model-space origin\n   });\n\nvar label2 = new BIMSURFER.Label(viewer, {\n       object: object4,\n       text: \"<b>First Label on Object 'object2'</b><br>\",\n       pos: [0, 0, 0] // Offset from Object's local Model-space origin\n   });\n\nvar label3 = new BIMSURFER.Label(viewer, {\n       object: object4,\n       text: \"<b>Second label on Object 'object2'</b><br>\",\n       pos: [0, -2, 0] // Offset from Object's local Model-space origin\n   });\n````",
+            "description": "A **Label** is a user-defined HTML element that floats over a 3D position within a {{#crossLink \"Viewer\"}}{{/crossLink}}.\n\n## Overview\n\n<ul>\n<li>When configured with an {{#crossLink \"Object\"}}{{/crossLink}}, a Label will always track\nits {{#crossLink \"Object\"}}Object's{{/crossLink}} position, offset by the vector indicated\nin {{#crossLink \"Label/pos:property\"}}{{/crossLink}}.</li>\n\n<li>For debugging purposes, an {{#crossLink \"Object\"}}{{/crossLink}} has its own built-in Label, \nwhich can be shown by setting the {{#crossLink \"Object\"}}Object's{{/crossLink}} \n{{#crossLink \"Object/label:property\"}}{{/crossLink}} property true.</li>\n</ul>\n\n\n\n## Example\n\n<iframe style=\"width: 800px; height: 600px\" src=\"../../examples/label_Label.html\"></iframe>\n\n````Javascript\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer({ element: \"myDiv\" });\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n       eye: [20, 15, -20],\n       look: [0,-10,0]\n   });\n\n// Spin the camera\nviewer.on(\"tick\", function () {\n       camera.rotateEyeY(0.2);\n   });\n\n// Create a CameraControl so we can move the Camera\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n       camera: camera\n   });\n\n// Create an AmbientLight\nvar ambientLight = new BIMSURFER.AmbientLight(viewer, {\n       color: [0.7, 0.7, 0.7]\n   });\n\n// Create a DirLight\nvar dirLight1 = new BIMSURFER.DirLight(viewer, {\n       color: [0.6, 0.9, 0.9],\n       dir: [1.0, 0.0, 0.0],\n       space: \"view\"\n   });\n\n// Create a DirLight\nvar dirLight2 = new BIMSURFER.DirLight(viewer, {\n       color: [0.6, 0.9, 0.9],\n       dir: [-0.5, 0.0, -1.0],\n       space: \"view\"\n   });\n\n// Create a BoxGeometry\nvar geometry = new BIMSURFER.BoxGeometry(viewer, {\n       id: \"myGeometry\"\n   });\n\n// Create some Objects\n// Share the BoxGeometry among them\n// Activate their debug Labels\n\nvar object1 = new BIMSURFER.Object(viewer, {\n       id: \"object1\",\n       type: \"IfcRoof\",\n       geometries: [ geometry ],\n       matrix: BIMSURFER.math.translationMat4v([-8, 0, -8])\n   });\n\nvar object2 = new BIMSURFER.Object(viewer, {\n       id: \"object2\",\n       type: \"IfcDistributionFlowElement\",\n       geometries: [ geometry ],\n       matrix: BIMSURFER.math.translationMat4v([8, 0, -8])\n   });\n\nvar object3 = new BIMSURFER.Object(viewer, {\n       id: \"object3\",\n       type: \"IfcRailing\",\n       geometries: [ geometry ],\n       matrix: BIMSURFER.math.translationMat4v([-8, 0, 8])\n   });\n\nvar object4 = new BIMSURFER.Object(viewer, {\n       id: \"object4\",\n       type: \"IfcRoof\",\n       geometries: [ geometry ],\n       matrix: BIMSURFER.math.translationMat4v([8, 0, 8])\n   });\n\n// Create some Labels on two of the Objects\n// Each Label displays a snippet of HTML and is positioned relative to its Object's origin\n\nvar label1 = new BIMSURFER.Label(viewer, {\n       object: object1,\n       text: \"<b>Label on Object 'object1'</b><br><br><iframe width='320' height='200' \" +\n           \"src='https://www.youtube.com/embed/oTONvRtlW44' frameborder='0' allowfullscreen></iframe>\",\n       pos: [0, 2, 0] // Offset from Object's local Model-space origin\n   });\n\nvar label2 = new BIMSURFER.Label(viewer, {\n       object: object4,\n       text: \"<b>First Label on Object 'object2'</b><br>\",\n       pos: [0, 0, 0] // Offset from Object's local Model-space origin\n   });\n\nvar label3 = new BIMSURFER.Label(viewer, {\n       object: object4,\n       text: \"<b>Second label on Object 'object2'</b><br>\",\n       pos: [0, -2, 0] // Offset from Object's local Model-space origin\n   });\n````",
             "is_constructor": 1,
             "params": [
                 {
@@ -2368,7 +2430,7 @@
             "namespace": "",
             "file": "src/core/object/randomObjects.js",
             "line": 1,
-            "description": "**RandomObjects** is a group of random {{#crossLink \"BoxObject\"}}BoxObjects{{/crossLink}}, useful for tests and demos.\n## Overview\n<ul>\n <li>The {{#crossLink \"BoxObject\"}}BoxObjects{{/crossLink}} are arranged in a 2D grid, and each get an IFC type, picked at random\n from among the {{#crossLink \"BIMSURFER.constants/defaultTypes:property\"}}{{/crossLink}}.</li>\n </ul>\n## Example\nIn this example we create a RandomObjects and an {{#crossLink \"ObjectSet\"}}{{/crossLink}}. Then we apply\n a {{#crossLink \"HighlightEffect\"}}{{/crossLink}} to the {{#crossLink \"ObjectSet\"}}{{/crossLink}}, and a\n {{#crossLink \"ClickSelectObjects\"}}{{/crossLink}} which will add or remove the RandomObject's\n {{#crossLink \"Object\"}}Objects{{/crossLink}} from the {{#crossLink \"ObjectSet\"}}{{/crossLink}} as we click them\n with the mouse. This causes the {{#crossLink \"Object\"}}Objects{{/crossLink}} to become highlighted as we click them,\n then de-highlighted as we click them again.\n\n<iframe style=\"width: 600px; height: 400px\" src=\"../../examples/object_RandomObjects.html\"></iframe>\n````javascript\n // Create a Viewer\n var viewer = new BIMSURFER.Viewer({ element: \"myDiv\" });\n// Create a Camera\n var camera = new BIMSURFER.Camera(viewer, {\n        eye: [70, 70, -70]\n    });\n// Spin the camera\n viewer.on(\"tick\", function () {\n        camera.rotateEyeY(0.2);\n    });\n// Create a CameraControl\n var cameraControl = new BIMSURFER.CameraControl(viewer, {\n        camera: camera\n    });\n// Create a RandomObjects\n var randomObjects = new BIMSURFER.RandomObjects(viewer);\n// Create an ObjectSet\n var objectSet = new BIMSURFER.ObjectSet(viewer);\n// Apply a Highlight effect to the ObjectSet\n var highlight = new BIMSURFER.HighlightEffect(viewer, {\n        objectSet: objectSet\n    });\n// Create a ClickSelectObjects so we can select or unselect\n // the Objects in the RandomObjects with the mouse\n var clickSelectObjects = new BIMSURFER.ClickSelectObjects(viewer, {\n        objectSet: objectSet\n    });\n ````",
+            "description": "**RandomObjects** is a group of random {{#crossLink \"BoxObject\"}}BoxObjects{{/crossLink}}, useful for tests and demos.\n## Overview\n<ul>\n <li>The {{#crossLink \"BoxObject\"}}BoxObjects{{/crossLink}} are arranged in a 2D grid, and each get an IFC type, picked at random\n from among the {{#crossLink \"BIMSURFER.constants/defaultTypes:property\"}}{{/crossLink}}.</li>\n </ul>\n## Example\nIn this example we create a RandomObjects containing 55 {{#crossLink \"Object\"}}Objects{{/crossLink}}:\n<iframe style=\"width: 600px; height: 400px\" src=\"../../examples/object_RandomObjects.html\"></iframe>\n````javascript\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer({ element: \"myDiv\" });\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n     eye: [70, 70, -70]\n});\n\n// Spin the camera\nviewer.on(\"tick\", function () {\n    camera.rotateEyeY(0.2);\n});\n\n// Create a CameraControl\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n    camera: camera\n});\n\n// Create a RandomObjects\nvar randomObjects = new BIMSURFER.RandomObjects(viewer, {\n    numObjects: 55\n});\n ````",
             "is_constructor": 1,
             "params": [
                 {
@@ -2736,7 +2798,70 @@
             "name": "className",
             "type": "String",
             "final": 1,
-            "class": "Fly",
+            "class": "CameraFlyAnimation",
+            "module": "BIMSURFER",
+            "submodule": "animate"
+        },
+        {
+            "file": "src/core/animate/cameraFlyAnimation.js",
+            "line": 84,
+            "description": "Begins flying this CameraFlyAnimation's {{#crossLink \"Camera\"}}{{/crossLink}} to the given target.\n\n<ul>\n    <li>When the target is a boundary, the {{#crossLink \"Camera\"}}{{/crossLink}} will fly towards the target\n    and stop when the target fills most of the canvas.</li>\n    <li>When the target is an explicit {{#crossLink \"Camera\"}}{{/crossLink}} position, given as ````eye````, ````look```` and ````up````\n     vectors, then this CameraFlyAnimation will interpolate the {{#crossLink \"Camera\"}}{{/crossLink}} to that target and stop there.</li>",
+            "itemtype": "method",
+            "name": "flyTo",
+            "params": [
+                {
+                    "name": "params",
+                    "description": "Flight parameters",
+                    "type": "*",
+                    "props": [
+                        {
+                            "name": "arc",
+                            "description": "indicating how much the\n{{#crossLink \"Camera/eye:property\"}}Camera's eye{{/crossLink}} position will\nswing away from its {{#crossLink \"Camera/eye:property\"}}look{{/crossLink}} position as it flies to the target.",
+                            "type": "Number",
+                            "optional": true,
+                            "optdefault": "0]   Factor in range [0..1"
+                        },
+                        {
+                            "name": "boundary",
+                            "description": "}  Boundary target to fly to.",
+                            "type": "Xmin:Number, ymin:Number, zmin: Number, xmax: Number, ymax: Number, zmax: Number",
+                            "optional": true
+                        },
+                        {
+                            "name": "eye",
+                            "description": "Position to fly the {{#crossLink \"Camera/eye:property\"}}Camera's eye{{/crossLink}} position to.",
+                            "type": "Array of Number",
+                            "optional": true
+                        },
+                        {
+                            "name": "look",
+                            "description": "Position to fly the {{#crossLink \"Camera/look:property\"}}Camera's look{{/crossLink}} position to.",
+                            "type": "Array of Number",
+                            "optional": true
+                        },
+                        {
+                            "name": "up",
+                            "description": "Position to fly the {{#crossLink \"Camera/up:property\"}}Camera's up{{/crossLink}} vector to.",
+                            "type": "Array of Number",
+                            "optional": true
+                        },
+                        {
+                            "name": "velocity",
+                            "description": "Flight speed factor.",
+                            "type": "Number",
+                            "optional": true,
+                            "optdefault": "0"
+                        }
+                    ]
+                },
+                {
+                    "name": "ok",
+                    "description": "Callback fired on arrival",
+                    "type": "Function",
+                    "optional": true
+                }
+            ],
+            "class": "CameraFlyAnimation",
             "module": "BIMSURFER",
             "submodule": "animate"
         },
@@ -2921,7 +3046,7 @@
         },
         {
             "file": "src/core/camera/camera.js",
-            "line": 418,
+            "line": 424,
             "description": "Position of the point-of-interest.\nFires a {{#crossLink \"Camera/look:event\"}}{{/crossLink}} event on change.",
             "itemtype": "property",
             "name": "look",
@@ -2933,7 +3058,7 @@
         },
         {
             "file": "src/core/camera/camera.js",
-            "line": 437,
+            "line": 449,
             "description": "Direction of the \"up\" vector.\nFires an {{#crossLink \"Camera/up:event\"}}{{/crossLink}} event on change.",
             "itemtype": "property",
             "name": "up",
@@ -3660,7 +3785,7 @@
         },
         {
             "file": "src/core/effect/effect.js",
-            "line": 112,
+            "line": 118,
             "description": "Fired whenever this Effect's {{#crossLink \"Effect/active:property\"}}{{/crossLink}} property changes.",
             "itemtype": "event",
             "name": "active",
@@ -3676,7 +3801,7 @@
         },
         {
             "file": "src/core/effect/effect.js",
-            "line": 127,
+            "line": 133,
             "description": "Flag which inverts the {{#crossLink \"Object\"}}Objects{{/crossLink}} that this Effect applies to.\n\n<ul>\n    <li>When true, this Effect applies to {{#crossLink \"Object\"}}Objects{{/crossLink}} that are in\n    the {{#crossLink \"Component/viewer:property\"}}{{/crossLink}} but **not** in the {{#crossLink \"Effect/objectSet:property\"}}{{/crossLink}}.</li>\n\n    <li>When false, this Effect applies to {{#crossLink \"Object\"}}Objects{{/crossLink}} that are in\n    the {{#crossLink \"Component/viewer:property\"}}{{/crossLink}} and **also** in the {{#crossLink \"Effect/objectSet:property\"}}{{/crossLink}}.</li>\n</ul>\n\nFires an {{#crossLink \"Effect/invert:event\"}}{{/crossLink}} event on change.",
             "itemtype": "property",
             "name": "invert",
@@ -3687,7 +3812,7 @@
         },
         {
             "file": "src/core/effect/effect.js",
-            "line": 155,
+            "line": 161,
             "description": "Fired whenever this Effect's {{#crossLink \"Effect/invert:property\"}}{{/crossLink}} property changes.",
             "itemtype": "event",
             "name": "invert",
@@ -3698,6 +3823,18 @@
                 }
             ],
             "class": "Effect",
+            "module": "BIMSURFER",
+            "submodule": "effect"
+        },
+        {
+            "file": "src/core/effect/frameEffect.js",
+            "line": 126,
+            "description": "JavaScript class name for this Component.",
+            "itemtype": "property",
+            "name": "className",
+            "type": "String",
+            "final": 1,
+            "class": "FrameEffect",
             "module": "BIMSURFER",
             "submodule": "effect"
         },
@@ -5173,7 +5310,7 @@
         },
         {
             "file": "src/core/label/label.js",
-            "line": 140,
+            "line": 141,
             "description": "JavaScript class name for this Component.",
             "itemtype": "property",
             "name": "className",
@@ -5184,7 +5321,7 @@
         },
         {
             "file": "src/core/label/label.js",
-            "line": 153,
+            "line": 154,
             "description": "This Label's {{#crossLink \"Object\"}}{{/crossLink}}.\n\nCan be undefined.",
             "itemtype": "property",
             "name": "object",
@@ -5195,7 +5332,7 @@
         },
         {
             "file": "src/core/label/label.js",
-            "line": 218,
+            "line": 219,
             "description": "Text within this Label.\n\nFires an {{#crossLink \"Label/text:event\"}}{{/crossLink}} event on change.",
             "itemtype": "property",
             "name": "text",
@@ -5205,7 +5342,7 @@
         },
         {
             "file": "src/core/label/label.js",
-            "line": 236,
+            "line": 237,
             "description": "Fired whenever this Label's {{#crossLink \"Label/text:property\"}}{{/crossLink}} property changes.",
             "itemtype": "event",
             "name": "text",
@@ -5220,7 +5357,7 @@
         },
         {
             "file": "src/core/label/label.js",
-            "line": 249,
+            "line": 250,
             "description": "Flag which indicates whether this Label is active or not.\n\nFires an {{#crossLink \"Label/active:event\"}}{{/crossLink}} event on change.",
             "itemtype": "property",
             "name": "active",
@@ -5230,7 +5367,7 @@
         },
         {
             "file": "src/core/label/label.js",
-            "line": 272,
+            "line": 273,
             "description": "Fired whenever this Label's {{#crossLink \"Label/active:property\"}}{{/crossLink}} property changes.",
             "itemtype": "event",
             "name": "active",
@@ -6726,7 +6863,7 @@
         },
         {
             "file": "src/core/object/object.js",
-            "line": 371,
+            "line": 373,
             "description": "Whether this Object is active or not.\n\nFires an {{#crossLink \"Object/active:event\"}}{{/crossLink}} event on change.",
             "itemtype": "property",
             "name": "active",
@@ -6736,7 +6873,7 @@
         },
         {
             "file": "src/core/object/object.js",
-            "line": 395,
+            "line": 397,
             "description": "Fired whenever this Object's {{#crossLink \"Object/active:property\"}}{{/crossLink}} property changes.",
             "itemtype": "event",
             "name": "active",
@@ -6751,7 +6888,7 @@
         },
         {
             "file": "src/core/object/object.js",
-            "line": 408,
+            "line": 410,
             "description": "Whether this Object is transparent.",
             "itemtype": "property",
             "name": "transparent",
@@ -6762,7 +6899,7 @@
         },
         {
             "file": "src/core/object/object.js",
-            "line": 437,
+            "line": 439,
             "description": "Whether this Object is highlighted.",
             "itemtype": "property",
             "name": "highlighted",
@@ -6773,7 +6910,7 @@
         },
         {
             "file": "src/core/object/object.js",
-            "line": 465,
+            "line": 467,
             "description": "Whether this Object is X-rayed",
             "itemtype": "property",
             "name": "xray",
@@ -6784,7 +6921,7 @@
         },
         {
             "file": "src/core/object/object.js",
-            "line": 494,
+            "line": 496,
             "description": "The color of this Object.",
             "itemtype": "property",
             "name": "color",
@@ -6795,7 +6932,7 @@
         },
         {
             "file": "src/core/object/object.js",
-            "line": 527,
+            "line": 529,
             "description": "Factor in the range [0..1] indicating how transparent this Object is.\n\nA value of 0.0 indicates fully transparent, 1.0 is fully opaque.\n\nThis Object will appear transparent only if {{#crossLink \"Object/transparent:property\"}}{{/crossLink}} is also\nset to **true**.",
             "itemtype": "property",
             "name": "opacity",
@@ -6806,7 +6943,7 @@
         },
         {
             "file": "src/core/object/object.js",
-            "line": 553,
+            "line": 555,
             "description": "This Object's transformation matrix.",
             "itemtype": "property",
             "name": "matrix",
@@ -6817,7 +6954,7 @@
         },
         {
             "file": "src/core/object/object.js",
-            "line": 578,
+            "line": 580,
             "description": "The World-space boundary of this Object.",
             "itemtype": "property",
             "name": "boundary",
@@ -6827,7 +6964,7 @@
         },
         {
             "file": "src/core/object/object.js",
-            "line": 602,
+            "line": 604,
             "description": "The World-space center of this Object.",
             "itemtype": "property",
             "name": "center",
@@ -6837,7 +6974,7 @@
         },
         {
             "file": "src/core/object/object.js",
-            "line": 626,
+            "line": 628,
             "description": "Indicates if this Object shows a debug {{#crossLink \"Label\"}}{{/crossLink}}.",
             "itemtype": "property",
             "name": "label",
@@ -6947,6 +7084,15 @@
         {
             "file": "src/core/object/objectSet.js",
             "line": 242,
+            "description": "Adds all {{#crossLink \"Object\"}}Objects{{/crossLink}} in the {{#crossLink \"Viewer\"}}{{/crossLink}} to this ObjectSet.\n\nFires an {{#crossLink \"ObjectSet/updated:event\"}}{{/crossLink}} event.",
+            "itemtype": "method",
+            "name": "addAllObjects",
+            "class": "ObjectSet",
+            "module": "BIMSURFER"
+        },
+        {
+            "file": "src/core/object/objectSet.js",
+            "line": 272,
             "description": "Adds {{#crossLink \"Object\"}}Objects{{/crossLink}} instances to this ObjectSet.\n\nThe {{#crossLink \"Object\"}}Objects{{/crossLink}} must be in the same {{#crossLink \"Viewer\"}}{{/crossLink}} as this ObjectSet.\n\nFires an {{#crossLink \"ObjectSet/updated:event\"}}{{/crossLink}} event.",
             "itemtype": "method",
             "name": "addObjects",
@@ -6962,7 +7108,7 @@
         },
         {
             "file": "src/core/object/objectSet.js",
-            "line": 305,
+            "line": 335,
             "description": "Removes {{#crossLink \"Object\"}}Objects{{/crossLink}} instances from this ObjectSet.\n\nThe {{#crossLink \"Object\"}}Objects{{/crossLink}} must be in the same {{#crossLink \"Viewer\"}}{{/crossLink}} as this ObjectSet.\n\nFires an {{#crossLink \"ObjectSet/updated:event\"}}{{/crossLink}} event.",
             "itemtype": "method",
             "name": "removeObjects",
@@ -6978,7 +7124,7 @@
         },
         {
             "file": "src/core/object/objectSet.js",
-            "line": 328,
+            "line": 358,
             "description": "Adds {{#crossLink \"Object\"}}Objects{{/crossLink}} by ID to this ObjectSet.\n\nThe {{#crossLink \"Object\"}}Objects{{/crossLink}} must be in the same {{#crossLink \"Viewer\"}}{{/crossLink}} as this ObjectSet.\n\nFires an {{#crossLink \"ObjectSet/updated:event\"}}{{/crossLink}} event.",
             "itemtype": "method",
             "name": "addObjectIds",
@@ -6994,7 +7140,7 @@
         },
         {
             "file": "src/core/object/objectSet.js",
-            "line": 363,
+            "line": 393,
             "description": "Removes {{#crossLink \"Object\"}}Objects{{/crossLink}} by ID from this ObjectSet.\n\nThe {{#crossLink \"Object\"}}Objects{{/crossLink}} must be in the same {{#crossLink \"Viewer\"}}{{/crossLink}} as this ObjectSet.\n\nFires an {{#crossLink \"ObjectSet/updated:event\"}}{{/crossLink}} event.",
             "itemtype": "method",
             "name": "removeObjectIds",
@@ -7010,7 +7156,7 @@
         },
         {
             "file": "src/core/object/objectSet.js",
-            "line": 398,
+            "line": 428,
             "description": "Adds {{#crossLink \"Object\"}}Objects{{/crossLink}} by IFC type to this ObjectSet.\n\nThe {{#crossLink \"Object\"}}Objects{{/crossLink}} must be in the same {{#crossLink \"Viewer\"}}{{/crossLink}} as this ObjectSet.\n\nFires an {{#crossLink \"ObjectSet/updated:event\"}}{{/crossLink}} event.",
             "itemtype": "method",
             "name": "addTypes",
@@ -7026,7 +7172,7 @@
         },
         {
             "file": "src/core/object/objectSet.js",
-            "line": 439,
+            "line": 469,
             "description": "Removes {{#crossLink \"Object\"}}Objects{{/crossLink}} by IFC type from this ObjectSet.\n\nThe {{#crossLink \"Object\"}}Objects{{/crossLink}} must be in the same {{#crossLink \"Viewer\"}}{{/crossLink}} as this ObjectSet.\n\nFires an {{#crossLink \"ObjectSet/updated:event\"}}{{/crossLink}} event.",
             "itemtype": "method",
             "name": "removeTypes",
@@ -7042,7 +7188,7 @@
         },
         {
             "file": "src/core/object/objectSet.js",
-            "line": 479,
+            "line": 509,
             "description": "Iterates with a callback over the {{#crossLink \"Object\"}}Objects{{/crossLink}} in this ObjectSet.",
             "itemtype": "method",
             "name": "withObjects",
@@ -7058,7 +7204,7 @@
         },
         {
             "file": "src/core/object/objectSet.js",
-            "line": 561,
+            "line": 591,
             "description": "The axis-aligned World-space boundary of the {{#crossLink \"Object\"}}Objects{{/crossLink}} within this ObjectSet.",
             "itemtype": "property",
             "name": "boundary",
@@ -7069,7 +7215,7 @@
         },
         {
             "file": "src/core/object/objectSet.js",
-            "line": 581,
+            "line": 611,
             "description": "The World-space center of the {{#crossLink \"Object\"}}Objects{{/crossLink}} within this ObjectSet.",
             "itemtype": "property",
             "name": "center",
@@ -7080,7 +7226,7 @@
         },
         {
             "file": "src/core/object/randomObjects.js",
-            "line": 78,
+            "line": 60,
             "description": "JavaScript class name for this Component.",
             "itemtype": "property",
             "name": "className",
@@ -7091,7 +7237,7 @@
         },
         {
             "file": "src/core/object/randomObjects.js",
-            "line": 91,
+            "line": 73,
             "description": "The {{#crossLink \"Objects\"}}{{/crossLink}} within this RandomObjects.",
             "type": "{{Array of Object}}",
             "class": "RandomObjects",
@@ -7794,7 +7940,17 @@
         },
         {
             "file": "src/core/viewer.js",
-            "line": 352,
+            "line": 353,
+            "description": "The number of {{#crossLink \"Objects\"}}{{/crossLink}} within this ObjectSet.",
+            "itemtype": "property",
+            "name": "numObjects",
+            "type": "Number",
+            "class": "BIMSURFER.Viewer",
+            "module": "BIMSURFER"
+        },
+        {
+            "file": "src/core/viewer.js",
+            "line": 367,
             "description": "Adds a {{#crossLink \"Component\"}}{{/crossLink}} to this viewer.\n\nThis is called within the constructors of {{#crossLink \"Component\"}}{{/crossLink}} subclasses.\n\nThe {{#crossLink \"Component\"}}{{/crossLink}} is assigned a\nunique {{#crossLink \"Component/id:property\"}}{{/crossLink}} if it does not yet have one.",
             "access": "private",
             "tagname": "",
@@ -7810,7 +7966,7 @@
         },
         {
             "file": "src/core/viewer.js",
-            "line": 403,
+            "line": 418,
             "description": "Fired whenever a Component has been created within this Viewer.",
             "itemtype": "event",
             "name": "componentCreated",
@@ -7826,7 +7982,7 @@
         },
         {
             "file": "src/core/viewer.js",
-            "line": 411,
+            "line": 426,
             "description": "Removes a {{#crossLink \"Component\"}}{{/crossLink}} from this Viewer.\n\nThis is called within the destructors of {{#crossLink \"Component\"}}{{/crossLink}} subclasses.",
             "access": "private",
             "tagname": "",
@@ -7842,7 +7998,7 @@
         },
         {
             "file": "src/core/viewer.js",
-            "line": 438,
+            "line": 453,
             "description": "Fired whenever a component within this Viewer has been destroyed.",
             "itemtype": "event",
             "name": "componentDestroyed",
@@ -7858,7 +8014,7 @@
         },
         {
             "file": "src/core/viewer.js",
-            "line": 446,
+            "line": 461,
             "description": "This Viewer's view transformation matrix.",
             "itemtype": "property",
             "name": "viewMatrix",
@@ -7870,7 +8026,7 @@
         },
         {
             "file": "src/core/viewer.js",
-            "line": 464,
+            "line": 479,
             "description": "This Viewer's projection transformation matrix.",
             "itemtype": "property",
             "name": "projMatrix",
@@ -7882,13 +8038,35 @@
         },
         {
             "file": "src/core/viewer.js",
-            "line": 481,
+            "line": 496,
+            "description": "Boundary of all components in this Viewer.",
+            "itemtype": "property",
+            "name": "boundary",
+            "final": 1,
+            "type": "{*}",
             "class": "BIMSURFER.Viewer",
             "module": "BIMSURFER"
         },
         {
             "file": "src/core/viewer.js",
-            "line": 503,
+            "line": 517,
+            "description": "center of all components in this Viewer.",
+            "itemtype": "property",
+            "name": "center",
+            "final": 1,
+            "type": "{*}",
+            "class": "BIMSURFER.Viewer",
+            "module": "BIMSURFER"
+        },
+        {
+            "file": "src/core/viewer.js",
+            "line": 604,
+            "class": "BIMSURFER.Viewer",
+            "module": "BIMSURFER"
+        },
+        {
+            "file": "src/core/viewer.js",
+            "line": 626,
             "description": "Stores a connection to a server for later use.",
             "params": [
                 {
@@ -7902,7 +8080,7 @@
         },
         {
             "file": "src/core/viewer.js",
-            "line": 514,
+            "line": 637,
             "description": "Resizes the viewport and updates the aspect ratio",
             "params": [
                 {
@@ -7921,14 +8099,14 @@
         },
         {
             "file": "src/core/viewer.js",
-            "line": 540,
+            "line": 663,
             "description": "Loads and shows the geometry of the revisions that are in the load queue",
             "class": "BIMSURFER.Viewer",
             "module": "BIMSURFER"
         },
         {
             "file": "src/core/viewer.js",
-            "line": 562,
+            "line": 685,
             "description": "Iterates with a callback over Components of the given classes",
             "params": [
                 {
@@ -7947,7 +8125,7 @@
         },
         {
             "file": "src/core/viewer.js",
-            "line": 583,
+            "line": 706,
             "description": "Iterates with a callback over Components of the given IFC types",
             "params": [
                 {
@@ -7966,7 +8144,7 @@
         },
         {
             "file": "src/core/viewer.js",
-            "line": 604,
+            "line": 727,
             "description": "Shows an IFC type of a revision.",
             "params": [
                 {
@@ -7985,7 +8163,7 @@
         },
         {
             "file": "src/core/viewer.js",
-            "line": 618,
+            "line": 741,
             "description": "Hides an IFC type of a revision.",
             "params": [
                 {
@@ -8004,7 +8182,7 @@
         },
         {
             "file": "src/core/viewer.js",
-            "line": 631,
+            "line": 754,
             "description": "Hides all the types of a revision",
             "params": [
                 {
@@ -8018,7 +8196,7 @@
         },
         {
             "file": "src/core/viewer.js",
-            "line": 643,
+            "line": 766,
             "description": "Shows a revision",
             "params": [
                 {
@@ -8038,7 +8216,7 @@
         },
         {
             "file": "src/core/viewer.js",
-            "line": 672,
+            "line": 795,
             "description": "Fires an event on this Viewer.\n\nNotifies existing subscribers to the event, retains the event to give to\nany subsequent notifications on that location as they are made.",
             "itemtype": "method",
             "name": "fire",
@@ -8066,7 +8244,7 @@
         },
         {
             "file": "src/core/viewer.js",
-            "line": 699,
+            "line": 822,
             "description": "Subscribes to an event on this Viewer.\n\nThe callback is be called with this Viewer as scope.",
             "itemtype": "method",
             "name": "on",
@@ -8098,7 +8276,7 @@
         },
         {
             "file": "src/core/viewer.js",
-            "line": 729,
+            "line": 852,
             "description": "Cancels an event subscription that was previously made with {{#crossLink \"Viewer/on:method\"}}{{/crossLink}} or\n{{#crossLink \"Viewer/once:method\"}}{{/crossLink}}.",
             "itemtype": "method",
             "name": "off",
@@ -8114,7 +8292,7 @@
         },
         {
             "file": "src/core/viewer.js",
-            "line": 748,
+            "line": 871,
             "description": "Subscribes to the next occurrence of the given event on this Viewer, then un-subscribes as soon as the event is handled.",
             "itemtype": "method",
             "name": "once",
@@ -8142,7 +8320,7 @@
         },
         {
             "file": "src/core/viewer.js",
-            "line": 766,
+            "line": 889,
             "description": "Logs a console debugging message for this View.\n\nThe console message will have this format: *````[LOG] BIMSERVER.Viewer: <message>````*",
             "itemtype": "method",
             "name": "log",
@@ -8158,7 +8336,7 @@
         },
         {
             "file": "src/core/viewer.js",
-            "line": 778,
+            "line": 901,
             "description": "Logs an error for this View to the JavaScript console.\n\nThe console message will have this format: *````[ERROR] BIMSERVER.Viewer: <message>````*",
             "itemtype": "method",
             "name": "error",
@@ -8556,7 +8734,7 @@
         },
         {
             "message": "Missing item type\nThe {{#crossLink \"Objects\"}}{{/crossLink}} within this RandomObjects.",
-            "line": " src/core/object/randomObjects.js:91"
+            "line": " src/core/object/randomObjects.js:73"
         },
         {
             "message": "Missing item type\nGeneric map of IDs to items - can generate own IDs or accept given IDs. IDs should be strings in order to not\nclash with internally generated IDs, which are numbers.",
@@ -8616,51 +8794,51 @@
         },
         {
             "message": "Missing item type\nAdds a {{#crossLink \"Component\"}}{{/crossLink}} to this viewer.\n\nThis is called within the constructors of {{#crossLink \"Component\"}}{{/crossLink}} subclasses.\n\nThe {{#crossLink \"Component\"}}{{/crossLink}} is assigned a\nunique {{#crossLink \"Component/id:property\"}}{{/crossLink}} if it does not yet have one.",
-            "line": " src/core/viewer.js:352"
+            "line": " src/core/viewer.js:367"
         },
         {
             "message": "Missing item type\nRemoves a {{#crossLink \"Component\"}}{{/crossLink}} from this Viewer.\n\nThis is called within the destructors of {{#crossLink \"Component\"}}{{/crossLink}} subclasses.",
-            "line": " src/core/viewer.js:411"
+            "line": " src/core/viewer.js:426"
         },
         {
             "message": "Missing item type",
-            "line": " src/core/viewer.js:481"
-        },
-        {
-            "message": "Missing item type\nStores a connection to a server for later use.",
-            "line": " src/core/viewer.js:503"
-        },
-        {
-            "message": "Missing item type\nResizes the viewport and updates the aspect ratio",
-            "line": " src/core/viewer.js:514"
-        },
-        {
-            "message": "Missing item type\nLoads and shows the geometry of the revisions that are in the load queue",
-            "line": " src/core/viewer.js:540"
-        },
-        {
-            "message": "Missing item type\nIterates with a callback over Components of the given classes",
-            "line": " src/core/viewer.js:562"
-        },
-        {
-            "message": "Missing item type\nIterates with a callback over Components of the given IFC types",
-            "line": " src/core/viewer.js:583"
-        },
-        {
-            "message": "Missing item type\nShows an IFC type of a revision.",
             "line": " src/core/viewer.js:604"
         },
         {
+            "message": "Missing item type\nStores a connection to a server for later use.",
+            "line": " src/core/viewer.js:626"
+        },
+        {
+            "message": "Missing item type\nResizes the viewport and updates the aspect ratio",
+            "line": " src/core/viewer.js:637"
+        },
+        {
+            "message": "Missing item type\nLoads and shows the geometry of the revisions that are in the load queue",
+            "line": " src/core/viewer.js:663"
+        },
+        {
+            "message": "Missing item type\nIterates with a callback over Components of the given classes",
+            "line": " src/core/viewer.js:685"
+        },
+        {
+            "message": "Missing item type\nIterates with a callback over Components of the given IFC types",
+            "line": " src/core/viewer.js:706"
+        },
+        {
+            "message": "Missing item type\nShows an IFC type of a revision.",
+            "line": " src/core/viewer.js:727"
+        },
+        {
             "message": "Missing item type\nHides an IFC type of a revision.",
-            "line": " src/core/viewer.js:618"
+            "line": " src/core/viewer.js:741"
         },
         {
             "message": "Missing item type\nHides all the types of a revision",
-            "line": " src/core/viewer.js:631"
+            "line": " src/core/viewer.js:754"
         },
         {
             "message": "Missing item type\nShows a revision",
-            "line": " src/core/viewer.js:643"
+            "line": " src/core/viewer.js:766"
         }
     ]
 }

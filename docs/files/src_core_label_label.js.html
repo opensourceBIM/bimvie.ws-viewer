@@ -47,6 +47,7 @@
                                 <li><a href="../classes/BoxObject.html">BoxObject</a></li>
                                 <li><a href="../classes/Camera.html">Camera</a></li>
                                 <li><a href="../classes/CameraControl.html">CameraControl</a></li>
+                                <li><a href="../classes/CameraFlyAnimation.html">CameraFlyAnimation</a></li>
                                 <li><a href="../classes/Canvas.html">Canvas</a></li>
                                 <li><a href="../classes/ClickSelectObjects.html">ClickSelectObjects</a></li>
                                 <li><a href="../classes/Component.html">Component</a></li>
@@ -55,7 +56,7 @@
                                 <li><a href="../classes/DepthOfField.html">DepthOfField</a></li>
                                 <li><a href="../classes/DirLight.html">DirLight</a></li>
                                 <li><a href="../classes/Effect.html">Effect</a></li>
-                                <li><a href="../classes/Fly.html">Fly</a></li>
+                                <li><a href="../classes/FrameEffect.html">FrameEffect</a></li>
                                 <li><a href="../classes/Geometry.html">Geometry</a></li>
                                 <li><a href="../classes/HighlightEffect.html">HighlightEffect</a></li>
                                 <li><a href="../classes/Input.html">Input</a></li>
@@ -229,7 +230,8 @@
 
  var label1 = new BIMSURFER.Label(viewer, {
         object: object1,
-        text: &quot;&lt;b&gt;Label on Object &#x27;object1&#x27;&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;iframe width=&#x27;320&#x27; height=&#x27;200&#x27; src=&#x27;https://www.youtube.com/embed/oTONvRtlW44&#x27; frameborder=&#x27;0&#x27; allowfullscreen&gt;&lt;/iframe&gt;&quot;,
+        text: &quot;&lt;b&gt;Label on Object &#x27;object1&#x27;&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;iframe width=&#x27;320&#x27; height=&#x27;200&#x27; &quot; +
+            &quot;src=&#x27;https://www.youtube.com/embed/oTONvRtlW44&#x27; frameborder=&#x27;0&#x27; allowfullscreen&gt;&lt;/iframe&gt;&quot;,
         pos: [0, 2, 0] // Offset from Object&#x27;s local Model-space origin
     });
 

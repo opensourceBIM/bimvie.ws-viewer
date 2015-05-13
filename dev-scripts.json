@@ -39,6 +39,7 @@
         "src/core/effect/highlightEffect.js",
         "src/core/effect/isolateEffect.js",
         "src/core/effect/xrayEffect.js",
+        "src/core/effect/frameEffect.js",
 
         "src/core/control/cameraControl.js",
         "src/core/control/mouseOrbitCamera.js",
@@ -52,7 +53,9 @@
         "src/core/control/clickSelectObjects.js",
 
         "src/core/label/position.js",
-        "src/core/label/label.js"
+        "src/core/label/label.js",
+
+        "src/core/animate/cameraFlyAnimation.js"
     ],
 
     "extras": [

@@ -119,23 +119,11 @@
         objectSet: objectSet
     });
 
-    // Apply a Highlight effect to the ObjectSet, which causes the
-    // Object in the ObjectSet to become highlighted.
-
-    var highlight = new BIMSURFER.HighlightEffect(viewer, {
-        objectSet: objectSet
-    });
-
-    var xray = new BIMSURFER.XRayEffect(viewer, {
-        objectSet: objectSet
-    });
-
-    // Create a ClickSelectObjects which will add Objects to
-    // the ObjectSet as we click them
-
     new BIMSURFER.ClickSelectObjects(viewer, {
-        objectSet: objectSet
+        objectSet: labels.objectSet,
+        multi: true
     });
+
 
 </script>
 

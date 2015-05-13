@@ -47,6 +47,7 @@
                                 <li><a href="../classes/BoxObject.html">BoxObject</a></li>
                                 <li><a href="../classes/Camera.html">Camera</a></li>
                                 <li><a href="../classes/CameraControl.html">CameraControl</a></li>
+                                <li><a href="../classes/CameraFlyAnimation.html">CameraFlyAnimation</a></li>
                                 <li><a href="../classes/Canvas.html">Canvas</a></li>
                                 <li><a href="../classes/ClickSelectObjects.html">ClickSelectObjects</a></li>
                                 <li><a href="../classes/Component.html">Component</a></li>
@@ -55,7 +56,7 @@
                                 <li><a href="../classes/DepthOfField.html">DepthOfField</a></li>
                                 <li><a href="../classes/DirLight.html">DirLight</a></li>
                                 <li><a href="../classes/Effect.html">Effect</a></li>
-                                <li><a href="../classes/Fly.html">Fly</a></li>
+                                <li><a href="../classes/FrameEffect.html">FrameEffect</a></li>
                                 <li><a href="../classes/Geometry.html">Geometry</a></li>
                                 <li><a href="../classes/HighlightEffect.html">HighlightEffect</a></li>
                                 <li><a href="../classes/Input.html">Input</a></li>
@@ -342,7 +343,15 @@ viewer.on("tick", function () {
 
                             </li>
                             <li class="index-item property">
+                                <a href="#property_boundary">boundary</a>
+
+                            </li>
+                            <li class="index-item property">
                                 <a href="#property_canvas">canvas</a>
+
+                            </li>
+                            <li class="index-item property">
+                                <a href="#property_center">center</a>
 
                             </li>
                             <li class="index-item property">
@@ -371,6 +380,10 @@ viewer.on("tick", function () {
                             </li>
                             <li class="index-item property">
                                 <a href="#property_input">input</a>
+
+                            </li>
+                            <li class="index-item property">
+                                <a href="#property_numObjects">numObjects</a>
 
                             </li>
                             <li class="index-item property">
@@ -433,7 +446,7 @@ viewer.on("tick", function () {
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_core_viewer.js.html#l778"><code>src&#x2F;core&#x2F;viewer.js:778</code></a>
+        <a href="../files/src_core_viewer.js.html#l901"><code>src&#x2F;core&#x2F;viewer.js:901</code></a>
         </p>
 
 
@@ -494,7 +507,7 @@ viewer.on("tick", function () {
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_core_viewer.js.html#l672"><code>src&#x2F;core&#x2F;viewer.js:672</code></a>
+        <a href="../files/src_core_viewer.js.html#l795"><code>src&#x2F;core&#x2F;viewer.js:795</code></a>
         </p>
 
 
@@ -573,7 +586,7 @@ any subsequent notifications on that location as they are made.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_core_viewer.js.html#l766"><code>src&#x2F;core&#x2F;viewer.js:766</code></a>
+        <a href="../files/src_core_viewer.js.html#l889"><code>src&#x2F;core&#x2F;viewer.js:889</code></a>
         </p>
 
 
@@ -628,7 +641,7 @@ any subsequent notifications on that location as they are made.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_core_viewer.js.html#l729"><code>src&#x2F;core&#x2F;viewer.js:729</code></a>
+        <a href="../files/src_core_viewer.js.html#l852"><code>src&#x2F;core&#x2F;viewer.js:852</code></a>
         </p>
 
 
@@ -692,7 +705,7 @@ Viewer/once:method.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_core_viewer.js.html#l699"><code>src&#x2F;core&#x2F;viewer.js:699</code></a>
+        <a href="../files/src_core_viewer.js.html#l822"><code>src&#x2F;core&#x2F;viewer.js:822</code></a>
         </p>
 
 
@@ -785,7 +798,7 @@ Viewer/once:method.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_core_viewer.js.html#l748"><code>src&#x2F;core&#x2F;viewer.js:748</code></a>
+        <a href="../files/src_core_viewer.js.html#l871"><code>src&#x2F;core&#x2F;viewer.js:871</code></a>
         </p>
 
 
@@ -872,6 +885,32 @@ Viewer/once:method.</p>
                     
                     
                     </div>
+                    <div id="property_boundary" class="property item">
+                        <h3 class="name"><code>boundary</code></h3>
+                        <span class="type"></span>
+                    
+                    
+                    
+                            <span class="flag final">final</span>
+                    
+                    
+                        <div class="meta">
+                                    <p>
+                                    Defined in
+                            <a href="../files/src_core_viewer.js.html#l496"><code>src&#x2F;core&#x2F;viewer.js:496</code></a>
+                            </p>
+                    
+                    
+                        </div>
+                    
+                        <div class="description">
+                            <p>Boundary of all components in this Viewer.</p>
+                    
+                        </div>
+                    
+                    
+                    
+                    </div>
                     <div id="property_canvas" class="property item">
                         <h3 class="name"><code>canvas</code></h3>
                         <span class="type">HTMLCanvasElement</span>
@@ -892,6 +931,32 @@ Viewer/once:method.</p>
                     
                         <div class="description">
                             <p>The HTML Canvas that this Viewer renders to. This is inserted into the element we configured this Viewer with.</p>
+                    
+                        </div>
+                    
+                    
+                    
+                    </div>
+                    <div id="property_center" class="property item">
+                        <h3 class="name"><code>center</code></h3>
+                        <span class="type"></span>
+                    
+                    
+                    
+                            <span class="flag final">final</span>
+                    
+                    
+                        <div class="meta">
+                                    <p>
+                                    Defined in
+                            <a href="../files/src_core_viewer.js.html#l517"><code>src&#x2F;core&#x2F;viewer.js:517</code></a>
+                            </p>
+                    
+                    
+                        </div>
+                    
+                        <div class="description">
+                            <p>center of all components in this Viewer.</p>
                     
                         </div>
                     
@@ -1079,6 +1144,31 @@ Viewer/once:method.</p>
                     
                     
                     </div>
+                    <div id="property_numObjects" class="property item">
+                        <h3 class="name"><code>numObjects</code></h3>
+                        <span class="type">Number</span>
+                    
+                    
+                    
+                    
+                    
+                        <div class="meta">
+                                    <p>
+                                    Defined in
+                            <a href="../files/src_core_viewer.js.html#l353"><code>src&#x2F;core&#x2F;viewer.js:353</code></a>
+                            </p>
+                    
+                    
+                        </div>
+                    
+                        <div class="description">
+                            <p>The number of Objects within this ObjectSet.</p>
+                    
+                        </div>
+                    
+                    
+                    
+                    </div>
                     <div id="property_projMatrix" class="property item">
                         <h3 class="name"><code>projMatrix</code></h3>
                         <span class="type">Array of Number</span>
@@ -1091,7 +1181,7 @@ Viewer/once:method.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_viewer.js.html#l464"><code>src&#x2F;core&#x2F;viewer.js:464</code></a>
+                            <a href="../files/src_core_viewer.js.html#l479"><code>src&#x2F;core&#x2F;viewer.js:479</code></a>
                             </p>
                     
                     
@@ -1170,7 +1260,7 @@ Viewer/once:method.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_viewer.js.html#l446"><code>src&#x2F;core&#x2F;viewer.js:446</code></a>
+                            <a href="../files/src_core_viewer.js.html#l461"><code>src&#x2F;core&#x2F;viewer.js:461</code></a>
                             </p>
                     
                     
@@ -1202,7 +1292,7 @@ Viewer/once:method.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_viewer.js.html#l403"><code>src&#x2F;core&#x2F;viewer.js:403</code></a>
+                            <a href="../files/src_core_viewer.js.html#l418"><code>src&#x2F;core&#x2F;viewer.js:418</code></a>
                             </p>
                     
                     
@@ -1244,7 +1334,7 @@ Viewer/once:method.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_viewer.js.html#l438"><code>src&#x2F;core&#x2F;viewer.js:438</code></a>
+                            <a href="../files/src_core_viewer.js.html#l453"><code>src&#x2F;core&#x2F;viewer.js:453</code></a>
                             </p>
                     
                     

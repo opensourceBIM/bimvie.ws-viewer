@@ -47,6 +47,7 @@
                                 <li><a href="../classes/BoxObject.html">BoxObject</a></li>
                                 <li><a href="../classes/Camera.html">Camera</a></li>
                                 <li><a href="../classes/CameraControl.html">CameraControl</a></li>
+                                <li><a href="../classes/CameraFlyAnimation.html">CameraFlyAnimation</a></li>
                                 <li><a href="../classes/Canvas.html">Canvas</a></li>
                                 <li><a href="../classes/ClickSelectObjects.html">ClickSelectObjects</a></li>
                                 <li><a href="../classes/Component.html">Component</a></li>
@@ -55,7 +56,7 @@
                                 <li><a href="../classes/DepthOfField.html">DepthOfField</a></li>
                                 <li><a href="../classes/DirLight.html">DirLight</a></li>
                                 <li><a href="../classes/Effect.html">Effect</a></li>
-                                <li><a href="../classes/Fly.html">Fly</a></li>
+                                <li><a href="../classes/FrameEffect.html">FrameEffect</a></li>
                                 <li><a href="../classes/Geometry.html">Geometry</a></li>
                                 <li><a href="../classes/HighlightEffect.html">HighlightEffect</a></li>
                                 <li><a href="../classes/Input.html">Input</a></li>
@@ -476,6 +477,21 @@
          * @type {BIMSURFER.Input}
          */
         this.input = new BIMSURFER.Input(this);
+
+
+
+        /**
+         * The number of {{#crossLink &quot;Objects&quot;}}{{/crossLink}} within this ObjectSet.
+         *
+         * @property numObjects
+         * @type Number
+         */
+        this.numObjects = 0;
+
+        this._boundary = {xmin: 0.0, ymin: 0.0, zmin: 0.0, xmax: 0.0, ymax: 0.0, zmax: 0.0 };
+        this._center = [0, 0, 0];
+
+        this._boundaryDirty = true;
     };
 
     /**
@@ -606,6 +622,114 @@
 
         enumerable: true
     });
+
+    /**
+     * Boundary of all components in this Viewer.
+     *
+     * @property boundary
+     * @final
+     * @type {*}
+     */
+    Object.defineProperty(BIMSURFER.Viewer.prototype, &quot;boundary&quot;, {
+
+        get: function() {
+
+            if (this._boundaryDirty) {
+                this._rebuildBoundary();
+            }
+
+            return this._boundary;
+        },
+
+        enumerable: true
+    });
+
+    /**
+     * center of all components in this Viewer.
+     *
+     * @property center
+     * @final
+     * @type {*}
+     */
+    Object.defineProperty(BIMSURFER.Viewer.prototype, &quot;center&quot;, {
+
+        get: function() {
+
+            if (this._boundaryDirty) {
+                this._rebuildBoundary();
+            }
+
+            return this._center;
+        },
+
+        enumerable: true
+    });
+
+    BIMSURFER.Viewer.prototype._rebuildBoundary = function () {
+
+//        if (!this._boundaryDirty) {
+//            return;
+//        }
+//
+//        // For an empty selection, boundary is zero volume and centered at the origin
+//
+//        if (this.numObjects === 0) {
+//            this._boundary.xmin = -1.0;
+//            this._boundary.ymin = -1.0;
+//            this._boundary.zmin = -1.0;
+//            this._boundary.xmax =  1.0;
+//            this._boundary.ymax =  1.0;
+//            this._boundary.zmax =  1.0;
+//
+//        } else {
+//
+//            // Set boundary inside-out, ready to expand by each selected object
+//
+//            this._boundary.xmin = 1000000.0;
+//            this._boundary.ymin = 1000000.0;
+//            this._boundary.zmin = 1000000.0;
+//            this._boundary.xmax = -1000000.0;
+//            this._boundary.ymax = -1000000.0;
+//            this._boundary.zmax = -1000000.0;
+//
+//            var object;
+//            var boundary;
+//
+//            for (var objectId in this.objects) {
+//                if (this.objects.hasOwnProperty(objectId)) {
+//
+//                    object = this.objects[objectId];
+//
+//                    boundary = object.boundary;
+//
+//                    if (boundary.xmin &lt; this._boundary.xmin) {
+//                        this._boundary.xmin = boundary.xmin;
+//                    }
+//                    if (boundary.ymin &lt; this._boundary.ymin) {
+//                        this._boundary.ymin = boundary.ymin;
+//                    }
+//                    if (boundary.zmin &lt; this._boundary.zmin) {
+//                        this._boundary.zmin = boundary.zmin;
+//                    }
+//                    if (boundary.xmax &gt; this._boundary.xmax) {
+//                        this._boundary.xmax = boundary.xmax;
+//                    }
+//                    if (boundary.ymax &gt; this._boundary.ymax) {
+//                        this._boundary.ymax = boundary.ymax;
+//                    }
+//                    if (boundary.zmax &gt; this._boundary.zmax) {
+//                        this._boundary.zmax = boundary.zmax;
+//                    }
+//                }
+//            }
+//        }
+//
+//        this._center[0] = (this._boundary.xmax + this._boundary.xmin) * 0.5;
+//        this._center[1] = (this._boundary.ymax + this._boundary.ymin) * 0.5;
+//        this._center[2] = (this._boundary.zmax + this._boundary.zmin) * 0.5;
+//
+//        this._boundaryDirty = false;
+    };
 
     /**
      *

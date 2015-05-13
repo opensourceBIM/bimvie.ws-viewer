@@ -47,6 +47,7 @@
                                 <li><a href="../classes/BoxObject.html">BoxObject</a></li>
                                 <li><a href="../classes/Camera.html">Camera</a></li>
                                 <li><a href="../classes/CameraControl.html">CameraControl</a></li>
+                                <li><a href="../classes/CameraFlyAnimation.html">CameraFlyAnimation</a></li>
                                 <li><a href="../classes/Canvas.html">Canvas</a></li>
                                 <li><a href="../classes/ClickSelectObjects.html">ClickSelectObjects</a></li>
                                 <li><a href="../classes/Component.html">Component</a></li>
@@ -55,7 +56,7 @@
                                 <li><a href="../classes/DepthOfField.html">DepthOfField</a></li>
                                 <li><a href="../classes/DirLight.html">DirLight</a></li>
                                 <li><a href="../classes/Effect.html">Effect</a></li>
-                                <li><a href="../classes/Fly.html">Fly</a></li>
+                                <li><a href="../classes/FrameEffect.html">FrameEffect</a></li>
                                 <li><a href="../classes/Geometry.html">Geometry</a></li>
                                 <li><a href="../classes/HighlightEffect.html">HighlightEffect</a></li>
                                 <li><a href="../classes/Input.html">Input</a></li>
@@ -378,6 +379,10 @@ objectSet.addObjects([object3]);
 
                     <ul class="index-list methods extends">
                             <li class="index-item method">
+                                <a href="#method_addAllObjects">addAllObjects</a>
+
+                            </li>
+                            <li class="index-item method">
                                 <a href="#method_addObjectIds">addObjectIds</a>
 
                             </li>
@@ -507,6 +512,38 @@ objectSet.addObjects([object3]);
             <div id="methods" class="api-class-tabpanel">
                 <h2 class="off-left">Methods</h2>
 
+<div id="method_addAllObjects" class="method item">
+    <h3 class="name"><code>addAllObjects</code></h3>
+
+        <span class="paren">()</span>
+
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_core_object_objectSet.js.html#l242"><code>src&#x2F;core&#x2F;object&#x2F;objectSet.js:242</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Adds all Object in the Viewer to this ObjectSet.</p>
+<p>Fires an <a href="../classes/ObjectSet.html#event_updated" class="crosslink">updated</a> event.</p>
+
+    </div>
+
+
+
+
+</div>
 <div id="method_addObjectIds" class="method item">
     <h3 class="name"><code>addObjectIds</code></h3>
 
@@ -528,7 +565,7 @@ objectSet.addObjects([object3]);
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_core_object_objectSet.js.html#l328"><code>src&#x2F;core&#x2F;object&#x2F;objectSet.js:328</code></a>
+        <a href="../files/src_core_object_objectSet.js.html#l358"><code>src&#x2F;core&#x2F;object&#x2F;objectSet.js:358</code></a>
         </p>
 
 
@@ -584,7 +621,7 @@ objectSet.addObjects([object3]);
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_core_object_objectSet.js.html#l242"><code>src&#x2F;core&#x2F;object&#x2F;objectSet.js:242</code></a>
+        <a href="../files/src_core_object_objectSet.js.html#l272"><code>src&#x2F;core&#x2F;object&#x2F;objectSet.js:272</code></a>
         </p>
 
 
@@ -640,7 +677,7 @@ objectSet.addObjects([object3]);
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_core_object_objectSet.js.html#l398"><code>src&#x2F;core&#x2F;object&#x2F;objectSet.js:398</code></a>
+        <a href="../files/src_core_object_objectSet.js.html#l428"><code>src&#x2F;core&#x2F;object&#x2F;objectSet.js:428</code></a>
         </p>
 
 
@@ -1190,7 +1227,7 @@ any subsequent notifications on that location as they are made.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_core_object_objectSet.js.html#l363"><code>src&#x2F;core&#x2F;object&#x2F;objectSet.js:363</code></a>
+        <a href="../files/src_core_object_objectSet.js.html#l393"><code>src&#x2F;core&#x2F;object&#x2F;objectSet.js:393</code></a>
         </p>
 
 
@@ -1246,7 +1283,7 @@ any subsequent notifications on that location as they are made.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_core_object_objectSet.js.html#l305"><code>src&#x2F;core&#x2F;object&#x2F;objectSet.js:305</code></a>
+        <a href="../files/src_core_object_objectSet.js.html#l335"><code>src&#x2F;core&#x2F;object&#x2F;objectSet.js:335</code></a>
         </p>
 
 
@@ -1302,7 +1339,7 @@ any subsequent notifications on that location as they are made.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_core_object_objectSet.js.html#l439"><code>src&#x2F;core&#x2F;object&#x2F;objectSet.js:439</code></a>
+        <a href="../files/src_core_object_objectSet.js.html#l469"><code>src&#x2F;core&#x2F;object&#x2F;objectSet.js:469</code></a>
         </p>
 
 
@@ -1413,7 +1450,7 @@ any subsequent notifications on that location as they are made.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_core_object_objectSet.js.html#l479"><code>src&#x2F;core&#x2F;object&#x2F;objectSet.js:479</code></a>
+        <a href="../files/src_core_object_objectSet.js.html#l509"><code>src&#x2F;core&#x2F;object&#x2F;objectSet.js:509</code></a>
         </p>
 
 
@@ -1462,7 +1499,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_object_objectSet.js.html#l561"><code>src&#x2F;core&#x2F;object&#x2F;objectSet.js:561</code></a>
+                            <a href="../files/src_core_object_objectSet.js.html#l591"><code>src&#x2F;core&#x2F;object&#x2F;objectSet.js:591</code></a>
                             </p>
                     
                     
@@ -1487,7 +1524,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_object_objectSet.js.html#l581"><code>src&#x2F;core&#x2F;object&#x2F;objectSet.js:581</code></a>
+                            <a href="../files/src_core_object_objectSet.js.html#l611"><code>src&#x2F;core&#x2F;object&#x2F;objectSet.js:611</code></a>
                             </p>
                     
                     

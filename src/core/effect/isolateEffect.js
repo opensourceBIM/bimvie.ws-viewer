@@ -96,7 +96,7 @@
             this._super(cfg);
         },
 
-        _apply: function (object) {
+        _applyObject: function (object) {
             var selected = this.objectSet.objects[object.id];
             object.active = this.invert ? !selected : !!selected;
         }

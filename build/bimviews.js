@@ -4,7 +4,7 @@
  * A WebGL-based IFC Viewer for BIMSurfer
  * http://bimwiews.org/
  *
- * Built on 2015-05-12
+ * Built on 2015-05-13
  *
  * todo
  * Copyright 2015, todo
@@ -3926,6 +3926,21 @@ var viewer = new BIMSURFER.Viewer(...);
          * @type {BIMSURFER.Input}
          */
         this.input = new BIMSURFER.Input(this);
+
+
+
+        /**
+         * The number of {{#crossLink "Objects"}}{{/crossLink}} within this ObjectSet.
+         *
+         * @property numObjects
+         * @type Number
+         */
+        this.numObjects = 0;
+
+        this._boundary = {xmin: 0.0, ymin: 0.0, zmin: 0.0, xmax: 0.0, ymax: 0.0, zmax: 0.0 };
+        this._center = [0, 0, 0];
+
+        this._boundaryDirty = true;
     };
 
     /**
@@ -4056,6 +4071,114 @@ var viewer = new BIMSURFER.Viewer(...);
 
         enumerable: true
     });
+
+    /**
+     * Boundary of all components in this Viewer.
+     *
+     * @property boundary
+     * @final
+     * @type {*}
+     */
+    Object.defineProperty(BIMSURFER.Viewer.prototype, "boundary", {
+
+        get: function() {
+
+            if (this._boundaryDirty) {
+                this._rebuildBoundary();
+            }
+
+            return this._boundary;
+        },
+
+        enumerable: true
+    });
+
+    /**
+     * center of all components in this Viewer.
+     *
+     * @property center
+     * @final
+     * @type {*}
+     */
+    Object.defineProperty(BIMSURFER.Viewer.prototype, "center", {
+
+        get: function() {
+
+            if (this._boundaryDirty) {
+                this._rebuildBoundary();
+            }
+
+            return this._center;
+        },
+
+        enumerable: true
+    });
+
+    BIMSURFER.Viewer.prototype._rebuildBoundary = function () {
+
+//        if (!this._boundaryDirty) {
+//            return;
+//        }
+//
+//        // For an empty selection, boundary is zero volume and centered at the origin
+//
+//        if (this.numObjects === 0) {
+//            this._boundary.xmin = -1.0;
+//            this._boundary.ymin = -1.0;
+//            this._boundary.zmin = -1.0;
+//            this._boundary.xmax =  1.0;
+//            this._boundary.ymax =  1.0;
+//            this._boundary.zmax =  1.0;
+//
+//        } else {
+//
+//            // Set boundary inside-out, ready to expand by each selected object
+//
+//            this._boundary.xmin = 1000000.0;
+//            this._boundary.ymin = 1000000.0;
+//            this._boundary.zmin = 1000000.0;
+//            this._boundary.xmax = -1000000.0;
+//            this._boundary.ymax = -1000000.0;
+//            this._boundary.zmax = -1000000.0;
+//
+//            var object;
+//            var boundary;
+//
+//            for (var objectId in this.objects) {
+//                if (this.objects.hasOwnProperty(objectId)) {
+//
+//                    object = this.objects[objectId];
+//
+//                    boundary = object.boundary;
+//
+//                    if (boundary.xmin < this._boundary.xmin) {
+//                        this._boundary.xmin = boundary.xmin;
+//                    }
+//                    if (boundary.ymin < this._boundary.ymin) {
+//                        this._boundary.ymin = boundary.ymin;
+//                    }
+//                    if (boundary.zmin < this._boundary.zmin) {
+//                        this._boundary.zmin = boundary.zmin;
+//                    }
+//                    if (boundary.xmax > this._boundary.xmax) {
+//                        this._boundary.xmax = boundary.xmax;
+//                    }
+//                    if (boundary.ymax > this._boundary.ymax) {
+//                        this._boundary.ymax = boundary.ymax;
+//                    }
+//                    if (boundary.zmax > this._boundary.zmax) {
+//                        this._boundary.zmax = boundary.zmax;
+//                    }
+//                }
+//            }
+//        }
+//
+//        this._center[0] = (this._boundary.xmax + this._boundary.xmin) * 0.5;
+//        this._center[1] = (this._boundary.ymax + this._boundary.ymin) * 0.5;
+//        this._center[2] = (this._boundary.zmax + this._boundary.zmin) * 0.5;
+//
+//        this._boundaryDirty = false;
+    };
 
     /**
      *
@@ -4627,6 +4750,8 @@ var viewer = new BIMSURFER.Viewer(...);
             this.matrix = cfg.matrix;
 
             this.label = cfg.label;
+
+            this.active = cfg.active !== false;
         },
 
         _initBoundary: function () {
@@ -4908,7 +5033,7 @@ var viewer = new BIMSURFER.Viewer(...);
 
                 set: function (value) {
 
-                    this._opacity = value !== null && value !== undefined ? value : 1.0;
+                    this._opacity = value !== null && value !== undefined ? value : 0.4;
 
                     this._materialNode.setAlpha(this._xray ? 0.7 : (this._transparent ? this._opacity : 1.0));
                 },
@@ -5216,51 +5341,33 @@ var viewer = new BIMSURFER.Viewer(...);
 
  ## Example
 
- In this example we create a RandomObjects and an {{#crossLink "ObjectSet"}}{{/crossLink}}. Then we apply
- a {{#crossLink "HighlightEffect"}}{{/crossLink}} to the {{#crossLink "ObjectSet"}}{{/crossLink}}, and a
- {{#crossLink "ClickSelectObjects"}}{{/crossLink}} which will add or remove the RandomObject's
- {{#crossLink "Object"}}Objects{{/crossLink}} from the {{#crossLink "ObjectSet"}}{{/crossLink}} as we click them
- with the mouse. This causes the {{#crossLink "Object"}}Objects{{/crossLink}} to become highlighted as we click them,
- then de-highlighted as we click them again.
-
+ In this example we create a RandomObjects containing 55 {{#crossLink "Object"}}Objects{{/crossLink}}:
 
  <iframe style="width: 600px; height: 400px" src="../../examples/object_RandomObjects.html"></iframe>
 
  ````javascript
- // Create a Viewer
- var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
+// Create a Viewer
+var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
 
- // Create a Camera
- var camera = new BIMSURFER.Camera(viewer, {
-        eye: [70, 70, -70]
-    });
+// Create a Camera
+var camera = new BIMSURFER.Camera(viewer, {
+     eye: [70, 70, -70]
+});
 
- // Spin the camera
- viewer.on("tick", function () {
-        camera.rotateEyeY(0.2);
-    });
+// Spin the camera
+viewer.on("tick", function () {
+    camera.rotateEyeY(0.2);
+});
 
- // Create a CameraControl
- var cameraControl = new BIMSURFER.CameraControl(viewer, {
-        camera: camera
-    });
+// Create a CameraControl
+var cameraControl = new BIMSURFER.CameraControl(viewer, {
+    camera: camera
+});
 
- // Create a RandomObjects
- var randomObjects = new BIMSURFER.RandomObjects(viewer);
-
- // Create an ObjectSet
- var objectSet = new BIMSURFER.ObjectSet(viewer);
-
- // Apply a Highlight effect to the ObjectSet
- var highlight = new BIMSURFER.HighlightEffect(viewer, {
-        objectSet: objectSet
-    });
-
- // Create a ClickSelectObjects so we can select or unselect
- // the Objects in the RandomObjects with the mouse
- var clickSelectObjects = new BIMSURFER.ClickSelectObjects(viewer, {
-        objectSet: objectSet
-    });
+// Create a RandomObjects
+var randomObjects = new BIMSURFER.RandomObjects(viewer, {
+    numObjects: 55
+});
  ````
 
  @class RandomObjects
@@ -5585,6 +5692,36 @@ var viewer = new BIMSURFER.Viewer(...);
         },
 
         /**
+         * Adds all {{#crossLink "Object"}}Objects{{/crossLink}} in the {{#crossLink "Viewer"}}{{/crossLink}} to this ObjectSet.
+         *
+         * Fires an {{#crossLink "ObjectSet/updated:event"}}{{/crossLink}} event.
+         *
+         * @method addAllObjects
+         */
+        addAllObjects: function() {
+
+            var objects = [];
+
+            // Apply effect to Objects in the Viewer
+            this.viewer.withClasses(["BIMSURFER.Object"],
+                function (object) {
+                    objects.push(object);
+                });
+
+            this.viewer.withClasses(["BIMSURFER.BoxObject"],
+                function (object) {
+                    objects.push(object);
+                });
+
+            this.viewer.withClasses(["BIMSURFER.TeapotObject"],
+                function (object) {
+                    objects.push(object);
+                });
+
+            this.addObjects(objects);
+        },
+
+        /**
          * Adds {{#crossLink "Object"}}Objects{{/crossLink}} instances to this ObjectSet.
          *
          * The {{#crossLink "Object"}}Objects{{/crossLink}} must be in the same {{#crossLink "Viewer"}}{{/crossLink}} as this ObjectSet.
@@ -5844,12 +5981,12 @@ var viewer = new BIMSURFER.Viewer(...);
             // For an empty selection, boundary is zero volume and centered at the origin
 
             if (this.numObjects === 0) {
-                this._boundary.xmin = 0.0;
-                this._boundary.ymin = 0.0;
-                this._boundary.zmin = 0.0;
-                this._boundary.xmax = 0.0;
-                this._boundary.ymax = 0.0;
-                this._boundary.zmax = 0.0;
+                this._boundary.xmin = -1.0;
+                this._boundary.ymin = -1.0;
+                this._boundary.zmin = -1.0;
+                this._boundary.xmax =  1.0;
+                this._boundary.ymax =  1.0;
+                this._boundary.zmax =  1.0;
 
             } else {
 
@@ -5917,9 +6054,9 @@ var viewer = new BIMSURFER.Viewer(...);
                     if (this._boundaryDirty) {
 
                         this._rebuildBoundary();
-
-                        return this._boundary;
                     }
+
+                    return this._boundary;
                 }
             },
 
@@ -5983,27 +6120,27 @@ var viewer = new BIMSURFER.Viewer(...);
  // Create some Cameras
  var cameras = [
 
-    new BIMSURFER.Camera(viewer, {
+ new BIMSURFER.Camera(viewer, {
         eye: [5, 5, 5],
         active: false
     }),
 
-    new BIMSURFER.Camera(viewer, {
+ new BIMSURFER.Camera(viewer, {
         eye: [-5, 5, 5],
         active: false
     }),
 
-    new BIMSURFER.Camera(viewer, {
+ new BIMSURFER.Camera(viewer, {
         eye: [5, -5, 5],
         active: false
     }),
 
-    new BIMSURFER.Camera(viewer, {
+ new BIMSURFER.Camera(viewer, {
         eye: [5, 5, -5],
         active: false
     }),
 
-    new BIMSURFER.Camera(viewer, {
+ new BIMSURFER.Camera(viewer, {
         eye: [-5, -5, 5],
         active: false
     })
@@ -6362,7 +6499,13 @@ var viewer = new BIMSURFER.Viewer(...);
             eye: {
 
                 set: function (value) {
-                    this._eye = value || [ 0, 0, -10 ];
+                    if (!this._eye) {
+                        this._eye = [0, 0, 0];
+                    }
+                    this._eye[0] = value ? value[0] : 0;
+                    this._eye[1] = value ? value[1] : 1;
+                    this._eye[2] = value ? value[2] : -10;
+
                     this._lookatNodeDirty = true;
                 },
 
@@ -6381,7 +6524,13 @@ var viewer = new BIMSURFER.Viewer(...);
             look: {
 
                 set: function (value) {
-                    this._look = value || [ 0, 0, 0 ];
+                    if (!this._look) {
+                        this._look = [0, 0, 0];
+                    }
+                    this._look[0] = value ? value[0] : 0;
+                    this._look[1] = value ? value[1] : 0;
+                    this._look[2] = value ? value[2] : 0;
+
                     this._lookatNodeDirty = true;
                 },
 
@@ -6400,7 +6549,13 @@ var viewer = new BIMSURFER.Viewer(...);
             up: {
 
                 set: function (value) {
-                    this._up = value || [0, 1, 0];
+                    if (!this._up) {
+                        this._up = [0, 0, 0];
+                    }
+                    this._up[0] = value ? value[0] : 0;
+                    this._up[1] = value ? value[1] : 1;
+                    this._up[2] = value ? value[2] : 0;
+
                     this._lookatNodeDirty = true;
                 },
 
@@ -6448,7 +6603,7 @@ var viewer = new BIMSURFER.Viewer(...);
             screenPan: {
 
                 set: function (value) {
-                    this._screenPan= value || [0,0];
+                    this._screenPan = value || [0, 0];
                     this._cameraNodeDirty = true;
                 },
 
@@ -13484,23 +13639,29 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
                         var self = this;
 
+
                         this._tickSub = this.viewer.on("tick",
                             function () {
 
                                 if (self._dirty) {
 
                                     if (self._apply) {
+                                        self._apply();
+                                    }
+
+                                    if (self._applyObject) {
 
                                         // Apply effect to Objects in the Viewer
                                         self.viewer.withClasses(["BIMSURFER.Object"],
                                             function (object) {
-                                                self._apply.call(self, object);
+                                                self._applyObject.call(self, object);
                                             });
 
                                         self.viewer.withClasses(["BIMSURFER.BoxObject"],
                                             function (object) {
-                                                self._apply.call(self, object);
+                                                self._applyObject.call(self, object);
                                             });
+
                                     }
 
                                     self._dirty = false;
@@ -13728,7 +13889,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
             this._super(cfg);
         },
 
-        _apply: function (object) {
+        _applyObject: function (object) {
             var selected = this.objectSet.objects[object.id];
             object.label = this.invert ? !selected : !!selected;
         }
@@ -13873,7 +14034,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
             this._super(cfg);
         },
 
-        _apply: function (object) {
+        _applyObject: function (object) {
             var selected = this.objectSet.objects[object.id];
             object.highlight = this.invert ? !selected : !!selected;
         }
@@ -13977,7 +14138,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
             this._super(cfg);
         },
 
-        _apply: function (object) {
+        _applyObject: function (object) {
             var selected = this.objectSet.objects[object.id];
             object.active = this.invert ? !selected : !!selected;
         }
@@ -14125,12 +14286,168 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
             this._super(cfg);
         },
 
-        _apply: function (object) {
+        _applyObject: function (object) {
             var selected = this.objectSet.objects[object.id];
             object.xray = this.invert ? !!selected : !selected;
         }
     });
 
+})();;/**
+ A **FrameEffect** is an {{#crossLink "Effect"}}{{/crossLink}} that highlights the {{#crossLink "Object"}}Objects{{/crossLink}} within an {{#crossLink "ObjectSet"}}{{/crossLink}}.
+
+ ## Overview
+
+ TODO
+
+ ## Example
+
+ #### Highlighting an ObjectSet
+
+ In this example we create four {{#crossLink "Object"}}Objects{{/crossLink}}, then add two of them to an {{#crossLink "ObjectSet"}}{{/crossLink}}.
+ <br> Then we apply a {{#crossLink "FrameEffect"}}{{/crossLink}} to the {{#crossLink "ObjectSet"}}{{/crossLink}}, causing
+ it's {{#crossLink "Object"}}Objects{{/crossLink}} to become highlighted while the other two {{#crossLink "Object"}}Objects{{/crossLink}} remain un-highlighted.
+
+ <iframe style="width: 600px; height: 400px" src="../../examples/effect_HighlightEffect.html"></iframe>
+
+ ````javascript
+
+ // Create a Viewer
+ var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
+
+ // Create a Camera
+ var camera = new BIMSURFER.Camera(viewer, {
+        eye: [30, 20, -30]
+    });
+
+ // Spin the camera
+ viewer.on("tick", function () {
+        camera.rotateEyeY(0.2);
+    });
+
+ // Create a CameraControl so we can move the Camera
+ var cameraControl = new BIMSURFER.CameraControl(viewer, {
+        camera: camera
+    });
+
+ // Create an AmbientLight
+ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
+        color: [0.7, 0.7, 0.7]
+    });
+
+ // Create a DirLight
+ var dirLight1 = new BIMSURFER.DirLight(viewer, {
+        color: [0.6, 0.9, 0.9],
+        dir: [1.0, 0.0, 0.0],
+        space: "view"
+    });
+
+ // Create a DirLight
+ var dirLight2 = new BIMSURFER.DirLight(viewer, {
+        color: [0.6, 0.9, 0.9],
+        dir: [-0.5, 0.0, -1.0],
+        space: "view"
+    });
+
+ // Create a BoxGeometry
+ var geometry = new BIMSURFER.BoxGeometry(viewer, {
+        id: "myGeometry"
+    });
+
+ // Create some Objects
+ // Share the BoxGeometry among them
+
+ var object1 = new BIMSURFER.Object(viewer, {
+        type: "IfcRoof",
+        geometries: [ geometry ],
+        matrix: BIMSURFER.math.translationMat4v([-8, 0, -8])
+    });
+
+ var object2 = new BIMSURFER.Object(viewer, {
+        type: "IfcDistributionFlowElement",
+        geometries: [ geometry ],
+        matrix: BIMSURFER.math.translationMat4v([8, 0, -8])
+    });
+
+ var object3 = new BIMSURFER.Object(viewer, {
+        type: "IfcRailing",
+        geometries: [ geometry ],
+        matrix: BIMSURFER.math.translationMat4v([-8, 0, 8])
+    });
+
+ var object4 = new BIMSURFER.Object(viewer, {
+        type: "IfcRoof",
+        geometries: [ geometry ],
+        matrix: BIMSURFER.math.translationMat4v([8, 0, 8])
+    });
+
+ // Create an ObjectSet that initially contains one of our Objects
+
+ var objectSet = new BIMSURFER.ObjectSet(viewer, {
+        objects: [object1 ]
+    });
+
+ // Apply a Highlight effect to the ObjectSet, which causes the
+ // Object in the ObjectSet to become highlighted.
+
+ var highlight = new BIMSURFER.FrameEffect(viewer, {
+        objectSet: objectSet
+    });
+
+ // Add a second Object to the ObjectSet, causing the Highlight to now render
+ // that Object as highlighted also
+
+ objectSet.addObjects([object3]);
+
+ ````
+
+ @class FrameEffect
+ @module BIMSURFER
+ @submodule effect
+ @constructor
+ @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
+ @param [cfg] {*} Configs
+ @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this FrameEffect.
+ @param [cfg.objectSet] {ObjectSet} The {{#crossLink "ObjectSet"}}{{/crossLink}} to apply this FrameEffect to.
+ @extends Effect
+ */
+(function () {
+
+    "use strict";
+
+    BIMSURFER.FrameEffect = BIMSURFER.Effect.extend({
+
+        /**
+         JavaScript class name for this Component.
+
+         @property className
+         @type String
+         @final
+         */
+        className: "BIMSURFER.FrameEffect",
+
+        _init: function (cfg) {
+
+            this._super(cfg);
+
+            this._fly = new BIMSURFER.CameraFlyAnimation(viewer, {
+                camera: cfg.camera
+            });
+        },
+
+        _apply: function () {
+
+            this._fly.flyTo({
+                boundary: this.objectSet.boundary,
+                arc: 0.0,
+                velocity: 40
+            });
+        },
+
+        _destroy: function() {
+            this._fly.destroy();
+        }
+    });
 })();;/**
  A **CameraControl** allows you to pan, rotate and zoom a {{#crossLink "Camera"}}{{/crossLink}} using the mouse and keyboard,
  as well as switch it between preset left, right, anterior, posterior, superior and inferior views.
@@ -15821,7 +16138,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
             this.objectSet = cfg.objectSet || new BIMSURFER.ObjectSet(this.viewer);
 
-            this._multi = false;
+            this._multi = !!cfg.multi;
 
             this.active = cfg.active !== false;
         },
@@ -15866,7 +16183,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
                                 if (((e[0] > lastX) ? (e[0] - lastX < 5) : (lastX - e[0] < 5)) &&
                                     ((e[1] > lastY) ? (e[1] - lastY < 5) : (lastY - e[1] < 5))) {
 
-                                    var multiSelect = input.keyDown[input.KEY_SHIFT];
+                                    var multiSelect = self._multi || input.keyDown[input.KEY_SHIFT];
 
                                     var hit = self.viewer.pick(lastX, lastY, {});
 
@@ -16248,24 +16565,11 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
  {{#crossLink "Object/label:property"}}{{/crossLink}} property true.</li>
  </ul>
 
- A Label can be queried for its coordinates within each of BIMSurfer's five coordinate systems:
-
- <ul>
- <li>{{#crossLink "Label/pos:property"}}{{/crossLink}} - 3D coordinates within the Label's local Model coordinate system.</li>
- <li>{{#crossLink "Label/worldPos:property"}}{{/crossLink}} - 3D coordinates within the Viewer's current World coordinate
- system, after transformation by the {{#crossLink "Label/matrix:property"}}Label's modelling matrix{{/crossLink}}.</li>
- <li>{{#crossLink "Label/viewPos:property"}}{{/crossLink}} - 3D coordinates within the Viewer's current View
- coordinate system, after transformation by the {{#crossLink "Viewer/viewMatrix:property"}}Viewer's view matrix{{/crossLink}}.</li>
- <li>{{#crossLink "Label/projPos:property"}}{{/crossLink}} - 3D coordinates within the Viewer's current Projection
- coordinate system, after transformation by the {{#crossLink "Viewer/projMatrix:property"}}Viewer's projection matrix{{/crossLink}}.</li>
- <li>{{#crossLink "Label/canvasPos:property"}}{{/crossLink}} - 2D coordinates within the Viewer's current Canvas
- coordinate system.</li>
- </ul>
 
 
  ## Example
 
- <iframe style="width: 800px; height: 400px" src="../../examples/spatial_Label.html"></iframe>
+ <iframe style="width: 800px; height: 600px" src="../../examples/label_Label.html"></iframe>
 
  ````Javascript
  // Create a Viewer
@@ -16348,7 +16652,8 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
  var label1 = new BIMSURFER.Label(viewer, {
         object: object1,
-        text: "<b>Label on Object 'object1'</b><br><br><iframe width='320' height='200' src='https://www.youtube.com/embed/oTONvRtlW44' frameborder='0' allowfullscreen></iframe>",
+        text: "<b>Label on Object 'object1'</b><br><br><iframe width='320' height='200' " +
+            "src='https://www.youtube.com/embed/oTONvRtlW44' frameborder='0' allowfullscreen></iframe>",
         pos: [0, 2, 0] // Offset from Object's local Model-space origin
     });
 
@@ -16543,4 +16848,356 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
             this.element.remove();
         }
     });
+})();;/**
+
+ **Fly** flys a {{#crossLink "Camera"}}{{/crossLink}}
+
+ ## Overview
+
+ ## Example
+
+ TODO
+
+ ````javascript
+ TODO
+ ````
+ @class CameraFlyAnimation
+ @module BIMSURFER
+ @submodule animate
+ @constructor
+ @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}.
+ @param [cfg] {*} Fly configuration
+
+ @param [cfg.id] {String} Optional ID, unique among all components in the parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}, generated automatically when omitted.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Fly.
+ @param [cfg.camera] {Camera} Camera to control
+ @extends Component
+ */
+(function () {
+
+    "use strict";
+
+    BIMSURFER.CameraFlyAnimation = BIMSURFER.Component.extend({
+
+        /**
+         JavaScript class name for this Component.
+
+         @property className
+         @type String
+         @final
+         */
+        className: "BIMSURFER.CameraFlyAnimation",
+
+        _init: function (cfg) {
+
+            var self = this;
+
+            this._camera = null;
+
+            this._arc = 0.0;
+
+            this._look1 = [0, 0, 0];
+            this._eye1 = [0, 0, 0];
+            this._up1 = [0, 0, 0];
+
+            this._look2 = [0, 0, 0];
+            this._eye2 = [0, 0, 0];
+            this._up2 = [0, 0, 0];
+
+            this._vec = [0, 0, 0];
+
+            this._dist = 0;
+
+            this._duration = 0;
+
+            this._flying = false;
+
+            this._ok = null;
+
+            this._onTick = null;
+
+            this._camera = cfg.camera;
+
+            this._tempVec = BIMSURFER.math.vec3();
+
+            this._eyeVec = BIMSURFER.math.vec3();
+            this._lookVec = BIMSURFER.math.vec3();
+
+            this._stopFOV = 55;
+
+            this._velocity = 1.0;
+
+            this._time1 = null;
+            this._time2 = null;
+        },
+
+        /**
+         * Begins flying this CameraFlyAnimation's {{#crossLink "Camera"}}{{/crossLink}} to the given target.
+         *
+         * <ul>
+         *     <li>When the target is a boundary, the {{#crossLink "Camera"}}{{/crossLink}} will fly towards the target
+         *     and stop when the target fills most of the canvas.</li>
+         *     <li>When the target is an explicit {{#crossLink "Camera"}}{{/crossLink}} position, given as ````eye````, ````look```` and ````up````
+         *      vectors, then this CameraFlyAnimation will interpolate the {{#crossLink "Camera"}}{{/crossLink}} to that target and stop there.</li>
+         * @method flyTo
+         * @param params  {*} Flight parameters
+         * @param[params.arc=0]  {Number} Factor in range [0..1] indicating how much the
+         * {{#crossLink "Camera/eye:property"}}Camera's eye{{/crossLink}} position will
+         * swing away from its {{#crossLink "Camera/eye:property"}}look{{/crossLink}} position as it flies to the target.
+         * @param [params.boundary] {{xmin:Number, ymin:Number, zmin: Number, xmax: Number, ymax: Number, zmax: Number }}  Boundary target to fly to.
+         * @param [params.eye] {Array of Number} Position to fly the {{#crossLink "Camera/eye:property"}}Camera's eye{{/crossLink}} position to.
+         * @param [params.look] {Array of Number} Position to fly the {{#crossLink "Camera/look:property"}}Camera's look{{/crossLink}} position to.
+         * @param [params.up] {Array of Number} Position to fly the {{#crossLink "Camera/up:property"}}Camera's up{{/crossLink}} vector to.
+         * @param [params.velocity=0] {Number} Flight speed factor.
+         * @param [ok] {Function} Callback fired on arrival
+         */
+        flyTo: function (params, ok) {
+
+            if (this._flying) {
+                this.stop();
+            }
+
+            this._ok = ok;
+
+            this._arc = params.arc === undefined ? 0.0 : params.arc;
+
+            var camera = this.camera;
+
+            // Set up initial camera state
+
+            this._look1 = camera.look;
+            this._look1 = [this._look1[0], this._look1[1], this._look1[2]];
+
+            this._eye1 = camera.eye;
+            this._eye1 = [this._eye1[0], this._eye1[1], this._eye1[2]];
+
+            this._up1 = camera.up;
+            this._up1 = [this._up1[0], this._up1[1], this._up1[2]];
+
+            // Get normalized eye->look vector
+
+            this._vec = BIMSURFER.math.normalizeVec3(BIMSURFER.math.subVec3(this._eye1, this._look1, []));
+
+            // Back-off factor in range of [0..1], when 0 is close, 1 is far
+
+            var backOff = params.backOff || 0.5;
+
+            if (backOff < 0) {
+                backOff = 0;
+
+            } else if (backOff > 1) {
+                backOff = 1;
+            }
+
+            backOff = 1 - backOff;
+
+            // Set up final camera state
+
+            if (params.boundary) {
+
+                // Zooming to look and eye computed from boundary
+
+                var boundary = params.boundary;
+
+                if (boundary.xmax <= boundary.xmin || boundary.ymax <= boundary.ymin || boundary.zmax <= boundary.zmin) {
+                    return;
+                }
+
+                var dist = params.dist || 2.5;
+                var lenVec = Math.abs(BIMSURFER.math.lenVec3(this._vec));
+                var diag = BIMSURFER.math.getBoundaryDiag(boundary);
+                var len = Math.abs((diag / (1.0 + (backOff * 0.8))) / Math.tan(this._stopFOV / 2));  /// Tweak this to set final camera distance on arrival
+                var sca = (len / lenVec) * dist;
+
+                this._look2 = BIMSURFER.math.getBoundaryCenter(boundary);
+                this._look2 = [this._look2[0], this._look2[1], this._look2[2]];
+
+                if (params.offset) {
+
+                    this._look2[0] += params.offset[0];
+                    this._look2[1] += params.offset[1];
+                    this._look2[2] += params.offset[2];
+                }
+
+                this._eye2 = BIMSURFER.math.addVec3(this._look2, BIMSURFER.math.mulVec3Scalar(this._vec, sca, []));
+                this._up2 = BIMSURFER.math.vec3();
+                this._up2[1] = 1;
+
+            } else {
+
+                // Zooming to specific look and eye points
+
+                var lookat = params;
+
+                var look = lookat.look || camera.look;
+                var eye = lookat.eye || camera.eye;
+                var up = lookat.up || camera.up;
+
+                var cameraEye = camera.eye;
+                var cameraLook = camera.look;
+                var cameraUp = camera.up;
+
+                if (look) {
+
+                    this._look2[0] = look[0];
+                    this._look2[1] = look[1];
+                    this._look2[2] = look[2];
+
+                } else {
+
+                    this._look2[0] = cameraLook[0];
+                    this._look2[1] = cameraLook[1];
+                    this._look2[2] = cameraLook[2];
+                }
+
+                if (eye) {
+
+                    this._eye2[0] = eye[0];
+                    this._eye2[1] = eye[1];
+                    this._eye2[2] = eye[2];
+
+                } else {
+
+                    this._eye2[0] = cameraEye[0];
+                    this._eye2[1] = cameraEye[1];
+                    this._eye2[2] = cameraEye[2];
+                }
+
+                if (up) {
+
+                    this._up2[0] = up[0];
+                    this._up2[1] = up[1];
+                    this._up2[2] = up[2];
+
+                } else {
+
+                    this._up2[0] = cameraUp[0];
+                    this._up2[1] = cameraUp[1];
+                    this._up2[2] = cameraUp[2];
+                }
+            }
+
+            // Distance to travel
+
+            var lookDist = Math.abs(BIMSURFER.math.lenVec3(BIMSURFER.math.subVec3(this._look2, this._look1, [])));
+
+            var eyeDist = Math.abs(BIMSURFER.math.lenVec3(BIMSURFER.math.subVec3(this._eye2, this._eye1, [])));
+
+            this._dist = lookDist < eyeDist ? lookDist : eyeDist;
+
+
+            // Duration of travel
+
+            var velocity = params.velocity || this._velocity;
+
+            if (velocity < 0) {
+                velocity = 0;
+            }
+
+            this._velocity = velocity < 0 ? 1.0 : velocity;
+
+            this._duration = 1 + (1000.0 * (this._dist / this._velocity)); // extra seconds to ensure arrival
+
+
+            this.fire("started", params, true);
+
+
+            var self = this;
+
+            this._time1 = (new Date()).getTime();
+            this._time2 = this._time1 + this._duration;
+
+            this._tick = this.viewer.on("tick",
+                function (params) {
+                    self._update(params.time * 1000.0);
+                });
+
+            this._flying = true;
+        },
+
+        _update: function (time) {
+
+            if (!this._flying) {
+                return;
+            }
+
+            time = (new Date()).getTime();
+
+            var t = (time - this._time1) / (this._time2 - this._time1);
+
+            if (t > 1) {
+                this.stop();
+                return;
+            }
+
+            var easedTime = this.easing ? this._easeOut(t, 0, 1, 2) : t;
+
+            easedTime = this.easing ? this._easeIn(easedTime, 0, 1, 2) : easedTime;
+
+            if (easedTime > 0.8) {
+                this.stop();
+                return;
+            }
+
+            this._camera.eye = BIMSURFER.math.lerpVec3(easedTime, 0, 1, this._eye1, this._eye2, []);
+            this._camera.look = BIMSURFER.math.lerpVec3(easedTime, 0, 1, this._look1, this._look2, []);
+            //this._camera.up = BIMSURFER.math.lerpVec3(easedTime, 0, 1, this._up1, this._up2, []);
+        },
+
+        _easeOut: function (t, b, c, d) {
+            var ts = (t /= d) * t;
+            var tc = ts * t;
+            return b + c * (-1 * ts * ts + 4 * tc + -6 * ts + 4 * t);
+        },
+
+        _easeIn: function (t, b, c, d) {
+            var ts = (t /= d) * t;
+            var tc = ts * t;
+            return b + c * (tc * ts);
+        },
+
+        stop: function () {
+
+            if (!this._flying) {
+                return;
+            }
+
+            this.viewer.off(this._tick);
+
+            this._flying = false;
+
+            this._time1 = null;
+            this._time2 = null;
+            this._duration = null;
+
+            this.fire("stopped", true, true);
+
+            var ok = this._ok;
+
+            if (ok) {
+                this._ok = false;
+                ok();
+            }
+        },
+
+        _props: {
+
+            camera: {
+
+                set: function (value) {
+                    this._camera = value;
+                    this.stop();
+                },
+
+                get: function () {
+                    return this._camera;
+                }
+            }
+        },
+
+        _destroy: function () {
+            this.stop();
+        }
+    });
+
 })();

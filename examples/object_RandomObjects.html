@@ -39,7 +39,7 @@
 
     // Create a Camera
     var camera = new BIMSURFER.Camera(viewer, {
-        eye: [70, 70, -70]
+        eye: [80, 80, -80]
     });
 
     // Spin the camera
@@ -53,25 +53,8 @@
     });
 
     // Create a RandomObjects
-    new BIMSURFER.RandomObjects(viewer);
-
-    // Create an ObjectSet
-    var objectSet = new BIMSURFER.ObjectSet(viewer);
-
-    // Apply a Highlight effect to the ObjectSet
-    new BIMSURFER.HighlightEffect(viewer, {
-        objectSet: objectSet
-    });
-
-    // Apply a Label effect to the ObjectSet
-    new BIMSURFER.LabelEffect(viewer, {
-        objectSet: objectSet
-    });
-
-    // Create a ClickSelectObjects so we can select or unselect
-    // the Objects in the RandomObjects with the mouse
-    new BIMSURFER.ClickSelectObjects(viewer, {
-        objectSet: objectSet
+    var randomObjects = new BIMSURFER.RandomObjects(viewer, {
+        numObjects: 55
     });
 
 </script>

@@ -27,27 +27,27 @@
  // Create some Cameras
  var cameras = [
 
-    new BIMSURFER.Camera(viewer, {
+ new BIMSURFER.Camera(viewer, {
         eye: [5, 5, 5],
         active: false
     }),
 
-    new BIMSURFER.Camera(viewer, {
+ new BIMSURFER.Camera(viewer, {
         eye: [-5, 5, 5],
         active: false
     }),
 
-    new BIMSURFER.Camera(viewer, {
+ new BIMSURFER.Camera(viewer, {
         eye: [5, -5, 5],
         active: false
     }),
 
-    new BIMSURFER.Camera(viewer, {
+ new BIMSURFER.Camera(viewer, {
         eye: [5, 5, -5],
         active: false
     }),
 
-    new BIMSURFER.Camera(viewer, {
+ new BIMSURFER.Camera(viewer, {
         eye: [-5, -5, 5],
         active: false
     })
@@ -406,7 +406,13 @@
             eye: {
 
                 set: function (value) {
-                    this._eye = value || [ 0, 0, -10 ];
+                    if (!this._eye) {
+                        this._eye = [0, 0, 0];
+                    }
+                    this._eye[0] = value ? value[0] : 0;
+                    this._eye[1] = value ? value[1] : 1;
+                    this._eye[2] = value ? value[2] : -10;
+
                     this._lookatNodeDirty = true;
                 },
 
@@ -425,7 +431,13 @@
             look: {
 
                 set: function (value) {
-                    this._look = value || [ 0, 0, 0 ];
+                    if (!this._look) {
+                        this._look = [0, 0, 0];
+                    }
+                    this._look[0] = value ? value[0] : 0;
+                    this._look[1] = value ? value[1] : 0;
+                    this._look[2] = value ? value[2] : 0;
+
                     this._lookatNodeDirty = true;
                 },
 
@@ -444,7 +456,13 @@
             up: {
 
                 set: function (value) {
-                    this._up = value || [0, 1, 0];
+                    if (!this._up) {
+                        this._up = [0, 0, 0];
+                    }
+                    this._up[0] = value ? value[0] : 0;
+                    this._up[1] = value ? value[1] : 1;
+                    this._up[2] = value ? value[2] : 0;
+
                     this._lookatNodeDirty = true;
                 },
 
@@ -492,7 +510,7 @@
             screenPan: {
 
                 set: function (value) {
-                    this._screenPan= value || [0,0];
+                    this._screenPan = value || [0, 0];
                     this._cameraNodeDirty = true;
                 },
 
