@@ -36,7 +36,7 @@ Features so far - work in progress.
 #### Geometry
   
  * [Custom meshes](http://opensourcebim.github.io/bimvie.ws-viewer/examples/#geometry_Geometry)
- * Primitives for debugging - [box](http://opensourcebim.github.io/bimvie.ws-viewer/examples/#geometry_Box), [box](examples/#geometry_Teapot) 
+ * Primitives for debugging - [box](http://opensourcebim.github.io/bimvie.ws-viewer/examples/#geometry_BoxGeometry), [teapot](examples/#geometry_TeapotGeometry) 
  
 ## Dev Tasks
 
