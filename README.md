@@ -10,6 +10,11 @@ An extensible and modular WebGL-based 3D viewer for BIMSurfer.
 
 Work in progress!
 
+**Viewer**
+
+ * Embed multiple viewers in a page
+ * Transparent canvas for reduced GPU workload
+ 
 **Cameras**
 
 Create an [unlimited number of cameras](http://opensourcebim.github.io/bimvie.ws-viewer/examples/#camera_Camera_multiple) in your Viewer 
@@ -49,8 +54,9 @@ Create an unlimited number of ambient, directional and point lights in your View
  * [DirLight](http://opensourcebim.github.io/bimvie.ws-viewer/examples/#light_DirLight)
  * [PointLight](http://opensourcebim.github.io/bimvie.ws-viewer/examples/#light_PointLight)
  
-**Geometry**
+**Objects**
   
+ Define objects that may be 
  * [Custom meshes](http://opensourcebim.github.io/bimvie.ws-viewer/examples/#geometry_Geometry)
  * Primitives for debugging - [box](http://opensourcebim.github.io/bimvie.ws-viewer/examples/#geometry_BoxGeometry), [teapot](http://opensourcebim.github.io/bimvie.ws-viewer/examples/#geometry_TeapotGeometry) 
  

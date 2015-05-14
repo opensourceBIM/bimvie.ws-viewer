@@ -30,7 +30,10 @@
         camera: camera
     });
 
- var teapot = new BIMSURFER.TeapotObject(viewer);
+ // Create a RandomObjects
+ var randomObjects = new BIMSURFER.RandomObjects(viewer, {
+        numObjects: 55
+    });
 
 
  ````
@@ -63,6 +66,8 @@
 
         _init: function (cfg) {
 
+            var self = this;
+
             var viewer = this.viewer;
 
             this._keyboardAxis = new BIMSURFER.KeyboardAxisCamera(viewer);
@@ -88,6 +93,31 @@
             });
 
             this.camera = cfg.camera;
+
+            this._mousePickObject = new BIMSURFER.MousePickObject(viewer, {
+                rayPick: true
+            });
+
+            this._cameraFly = new BIMSURFER.CameraFlyAnimation(viewer, {
+                camera: this.camera
+            });
+
+            this._mousePickObject.on("pick",
+                function (e) {
+
+                    var diff = BIMSURFER.math.subVec3(self._cameraFly.camera.eye, self._cameraFly.camera.look, []);
+
+                    self._cameraFly.flyTo({
+                        look: e.worldPos,
+                        eye: [e.worldPos[0] + diff[0], e.worldPos[1] + diff[1], e.worldPos[2] + diff[2]]
+                    });
+                });
+
+            // Handle when nothing is picked
+            this._mousePickObject.on("nopick", function (e) {
+                // alert("Mothing picked");
+            });
+
 
             this.firstPerson = cfg.firstPerson;
 
@@ -139,6 +169,8 @@
                         }
                     }
 
+                    //   this._cameraFly.camera = camera;
+
                     this._camera = camera;
 
                     this._keyboardAxis.camera = camera;
@@ -178,6 +210,8 @@
                     this._mouseOrbit.active = value;
                     this._keyboardPan.active = value;
                     this._mousePan.active = value;
+                    this._mousePickObject.active = value;
+                    this._cameraFly.active = value;
 
                     /**
                      * Fired whenever this CameraControl's {{#crossLink "CameraControl/active:property"}}{{/crossLink}} property changes.
@@ -202,6 +236,8 @@
             this._mousePan.destroy();
             this._keyboardZoom.destroy();
             this._mouseZoom.destroy();
+            this._mousePickObject.destroy();
+            this._cameraFly.destroy();
 
             this.active = false;
         }

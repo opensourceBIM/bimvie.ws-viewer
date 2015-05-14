@@ -4,7 +4,7 @@
  * A WebGL-based IFC Viewer for BIMSurfer
  * http://bimwiews.org/
  *
- * Built on 2015-05-13
+ * Built on 2015-05-14
  *
  * todo
  * Copyright 2015, todo
@@ -6211,6 +6211,9 @@ var randomObjects = new BIMSURFER.RandomObjects(viewer, {
             this._rested = false;
 
             this._tickSub = null;
+
+
+            // TODO: compute/orthogolalize 'up'
 
             this.eye = cfg.eye;
             this.look = cfg.look;
@@ -14480,7 +14483,10 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
         camera: camera
     });
 
- var teapot = new BIMSURFER.TeapotObject(viewer);
+ // Create a RandomObjects
+ var randomObjects = new BIMSURFER.RandomObjects(viewer, {
+        numObjects: 55
+    });
 
 
  ````
@@ -14513,6 +14519,8 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
         _init: function (cfg) {
 
+            var self = this;
+
             var viewer = this.viewer;
 
             this._keyboardAxis = new BIMSURFER.KeyboardAxisCamera(viewer);
@@ -14538,6 +14546,31 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
             });
 
             this.camera = cfg.camera;
+
+            this._mousePickObject = new BIMSURFER.MousePickObject(viewer, {
+                rayPick: true
+            });
+
+            this._cameraFly = new BIMSURFER.CameraFlyAnimation(viewer, {
+                camera: this.camera
+            });
+
+            this._mousePickObject.on("pick",
+                function (e) {
+
+                    var diff = BIMSURFER.math.subVec3(self._cameraFly.camera.eye, self._cameraFly.camera.look, []);
+
+                    self._cameraFly.flyTo({
+                        look: e.worldPos,
+                        eye: [e.worldPos[0] + diff[0], e.worldPos[1] + diff[1], e.worldPos[2] + diff[2]]
+                    });
+                });
+
+            // Handle when nothing is picked
+            this._mousePickObject.on("nopick", function (e) {
+                // alert("Mothing picked");
+            });
+
 
             this.firstPerson = cfg.firstPerson;
 
@@ -14589,6 +14622,8 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
                         }
                     }
 
+                    //   this._cameraFly.camera = camera;
+
                     this._camera = camera;
 
                     this._keyboardAxis.camera = camera;
@@ -14628,6 +14663,8 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
                     this._mouseOrbit.active = value;
                     this._keyboardPan.active = value;
                     this._mousePan.active = value;
+                    this._mousePickObject.active = value;
+                    this._cameraFly.active = value;
 
                     /**
                      * Fired whenever this CameraControl's {{#crossLink "CameraControl/active:property"}}{{/crossLink}} property changes.
@@ -14652,6 +14689,8 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
             this._mousePan.destroy();
             this._keyboardZoom.destroy();
             this._mouseZoom.destroy();
+            this._mousePickObject.destroy();
+            this._cameraFly.destroy();
 
             this.active = false;
         }
@@ -16018,6 +16057,263 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
 })();
 ;/**
+ A **MousePickObject** lets you add or remove {{#crossLink "Object"}}Objects{{/crossLink}} to and from an {{#crossLink "ObjectSet"}}ObjectSet{{/crossLink}} by clicking them with the mouse.
+
+ ## Overview
+
+ <ul>
+ <li>A MousePickObject adds {{#crossLink "Object"}}Objects{{/crossLink}} to the {{#crossLink "ObjectSet"}}{{/crossLink}} as you
+ click them with the mouse, removing them again when you click them a second time.</li>
+ <li>Typically a MousePickObject will share an {{#crossLink "ObjectSet"}}{{/crossLink}} with one or
+ more {{#crossLink "MousePickObject"}}MousePickObjects{{/crossLink}}, in order to select which {{#crossLink "Object"}}Objects{{/crossLink}} are influenced by the {{#crossLink "MousePickObject"}}MousePickObjects{{/crossLink}}.</li>
+ <li>A MousePickObject will provide its own {{#crossLink "ObjectSet"}}{{/crossLink}} by default.</li>
+ <li>Hold down SHIFT while clicking to multi-select.</li>
+ </ul>
+
+ ## Example
+
+ #### Clicking Objects to add them to a highlighted ObjectSet
+
+ In this example, we view four {{#crossLink "Objects"}}Objects{{/crossLink}} with a {{#crossLink "Camera"}}{{/crossLink}}, which we manipulate with a {{#crossLink "CameraControl"}}{{/crossLink}}.
+ <br>We also use a {{#crossLink "MousePickObject"}}{{/crossLink}} to add and remove
+ the {{#crossLink "Objects"}}Objects{{/crossLink}} to an {{#crossLink "ObjectSet"}}{{/crossLink}}, to which we're applying
+ a {{#crossLink "HighlightMousePickObject"}}{{/crossLink}}.
+ <br><br>
+ Click on the {{#crossLink "Objects"}}Objects{{/crossLink}} to select and highlight them - hold down SHIFT to multi-select.
+
+ <iframe style="width: 600px; height: 400px" src="../../examples/control_MousePickObject_HighlightMousePickObject.html"></iframe>
+
+ ````Javascript
+ // Create a Viewer
+ var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
+
+ // Create a Camera
+ var camera = new BIMSURFER.Camera(viewer, {
+    eye: [10, 10, -10]
+ });
+
+ // Create a CameraControl
+ var cameraControl = new BIMSURFER.CameraControl(viewer, {
+    camera: camera
+ });
+
+ // Create a Geometry
+ var geometry = new BIMSURFER.TeapotGeometry(viewer);
+
+ // Create some Objects
+ // Share the Geometry among them
+
+ var object1 = new BIMSURFER.Object(viewer, {
+    id: "object1",
+    type: "IfcRoof",
+    geometries: [ geometry ],
+    matrix: BIMSURFER.math.translationMat4v([-3, 0, -3])
+ });
+
+ var object2 = new BIMSURFER.Object(viewer, {
+    id: "object2",
+    type: "IfcDistributionFlowElement",
+    geometries: [ geometry ],
+    matrix: BIMSURFER.math.translationMat4v([3, 0, -3])
+ });
+
+ var object3 = new BIMSURFER.Object(viewer, {
+    id: "object3",
+    type: "IfcDistributionFlowElement",
+    geometries: [ geometry ],
+    matrix: BIMSURFER.math.translationMat4v([-3, 0, 3])
+ });
+
+ var object4 = new BIMSURFER.Object(viewer, {
+    id: "object4",
+    type: "IfcRoof",
+    geometries: [ geometry ],
+    matrix: BIMSURFER.math.translationMat4v([3, 0, 3])
+ });
+
+ // Create an ObjectSet
+ var objectSet = new BIMSURFER.ObjectSet(viewer);
+
+ // Apply a highlight MousePickObject to the ObjectSet
+ var highlightMousePickObject = new BIMSURFER.HighlightMousePickObject(viewer, {
+    objectSet: objectSet
+ });
+
+ // Create a MousePickObject
+ var mousePickObject = new BIMSURFER.MousePickObject(viewer, {
+
+    // We want the 3D World-space coordinates of
+    // each location we pick
+    rayPick: true
+ });
+
+ // Handle when Object is picked
+ mousePickObject.on("pick", function(e) {
+        alert("Picked: " + JSON.stringify(e));
+ });
+
+ // Handle when nothing is picked
+ mousePickObject.on("nopick", function(e) {
+        alert("Mothing picked");
+ });
+ ````
+
+ @class MousePickObject
+ @module BIMSURFER
+ @submodule control
+ @constructor
+ @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
+ @param [cfg] {*} Configs
+ @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Camera.
+ @param [rayPick=false] {Boolean} Indicates whether this MousePickObject will find the 3D ray intersection whenever it picks a
+ {{#crossLink "Object"}}Objects{{/crossLink}}.
+ @param [active=true] {Boolean} Indicates whether or not this MousePickObject is active.
+ @see {Object}
+ @see {ObjectSet}
+ @extends Component
+ */
+(function () {
+
+    "use strict";
+
+    BIMSURFER.MousePickObject = BIMSURFER.Component.extend({
+
+        /**
+         JavaScript class name for this Component.
+
+         @property className
+         @type String
+         @final
+         */
+        className: "BIMSURFER.MousePickObject",
+
+        _init: function (cfg) {
+
+            this.rayPick = cfg.rayPick;
+
+            this.active = cfg.active !== false;
+        },
+
+        _props: {
+
+            /**
+             * Flag which indicates whether this MousePickObject is active or not.
+             *
+             * Fires a {{#crossLink "MousePickObject/active:event"}}{{/crossLink}} event on change.
+             *
+             * @property active
+             * @type Boolean
+             */
+            active: {
+
+                set: function (value) {
+
+                    if (this._active === value) {
+                        return;
+                    }
+
+                    if (value) {
+
+                        var self = this;
+
+                        var input = this.viewer.input;
+
+                        var lastX;
+                        var lastY;
+
+                        this._onMouseDown = input.on("mousedown",
+                            function (e) {
+
+                                lastX = e[0];
+                                lastY = e[1];
+                            });
+
+                        this._onMouseUp = input.on("mouseup",
+                            function (e) {
+
+                                if (((e[0] > lastX) ? (e[0] - lastX < 5) : (lastX - e[0] < 5)) &&
+                                    ((e[1] > lastY) ? (e[1] - lastY < 5) : (lastY - e[1] < 5))) {
+
+                                    var hit = self.viewer.pick(lastX, lastY, {
+                                        rayPick: self._rayPick
+                                    });
+
+                                    if (hit) {
+
+                                        self.fire("pick", hit);
+
+                                    } else {
+
+                                        self.fire("nopick", {
+                                            canvasPos: e
+                                        });
+                                    }
+                                }
+                            });
+
+                    } else {
+
+                        input.off(this._onMouseDown);
+                        input.off(this._onMouseUp);
+                    }
+
+                    /**
+                     * Fired whenever this MousePickObject's {{#crossLink "MousePickObject/active:property"}}{{/crossLink}} property changes.
+                     * @event active
+                     * @param value The property's new value
+                     */
+                    this.fire('active', this._active = value);
+                },
+
+                get: function () {
+                    return this._active;
+                }
+            },
+
+            /**
+             * Indicates whether this MousePickObject will find the 3D ray intersection whenever it picks a
+             * {{#crossLink "Object"}}Objects{{/crossLink}}.
+             *
+             * When true, this MousePickObject returns the 3D World-space intersection in each
+             * {{#crossLink "MousePickObject/picked:event"}}{{/crossLink}} event.
+             *
+             * Fires a {{#crossLink "MousePickObject/rayPick:event"}}{{/crossLink}} event on change.
+             *
+             * @property rayPick
+             * @type Boolean
+             */
+            rayPick: {
+
+                set: function (value) {
+
+                    value = !!value;
+
+                    if (this._rayPick === value) {
+                        return;
+                    }
+
+                    this._dirty = false;
+
+                    /**
+                     * Fired whenever this MousePickObject's {{#crossLink "MousePickObject/rayPick:property"}}{{/crossLink}} property changes.
+                     * @event rayPick
+                     * @param value The property's new value
+                     */
+                    this.fire('rayPick', this._rayPick = value);
+                },
+
+                get: function () {
+                    return this._rayPick;
+                }
+            }
+        },
+
+        _destroy: function () {
+            this.active = false;
+        }
+    });
+})();;/**
  A **ClickSelectObjects** lets you add or remove {{#crossLink "Object"}}Objects{{/crossLink}} to and from an {{#crossLink "ObjectSet"}}ObjectSet{{/crossLink}} by clicking them with the mouse.
 
  ## Overview
@@ -16908,8 +17204,6 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
             this._dist = 0;
 
-            this._duration = 0;
-
             this._flying = false;
 
             this._ok = null;
@@ -16929,6 +17223,10 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
             this._time1 = null;
             this._time2 = null;
+
+            this.easing = cfg.easing !== false;
+
+            this.duration = cfg.duration || 0.5;
         },
 
         /**
@@ -16948,7 +17246,6 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
          * @param [params.eye] {Array of Number} Position to fly the {{#crossLink "Camera/eye:property"}}Camera's eye{{/crossLink}} position to.
          * @param [params.look] {Array of Number} Position to fly the {{#crossLink "Camera/look:property"}}Camera's look{{/crossLink}} position to.
          * @param [params.up] {Array of Number} Position to fly the {{#crossLink "Camera/up:property"}}Camera's up{{/crossLink}} vector to.
-         * @param [params.velocity=0] {Number} Flight speed factor.
          * @param [ok] {Function} Callback fired on arrival
          */
         flyTo: function (params, ok) {
@@ -17083,20 +17380,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
             var eyeDist = Math.abs(BIMSURFER.math.lenVec3(BIMSURFER.math.subVec3(this._eye2, this._eye1, [])));
 
-            this._dist = lookDist < eyeDist ? lookDist : eyeDist;
-
-
-            // Duration of travel
-
-            var velocity = params.velocity || this._velocity;
-
-            if (velocity < 0) {
-                velocity = 0;
-            }
-
-            this._velocity = velocity < 0 ? 1.0 : velocity;
-
-            this._duration = 1 + (1000.0 * (this._dist / this._velocity)); // extra seconds to ensure arrival
+            this._dist = lookDist > eyeDist ? lookDist : eyeDist;
 
 
             this.fire("started", params, true);
@@ -17126,34 +17410,28 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
             var t = (time - this._time1) / (this._time2 - this._time1);
 
             if (t > 1) {
+                //  this.stop();
+                return;
+            }
+
+            t = this.easing ? this._ease(t, 0, 1, 1) : t;
+
+            if (t > 1.0) {
                 this.stop();
                 return;
             }
 
-            var easedTime = this.easing ? this._easeOut(t, 0, 1, 2) : t;
-
-            easedTime = this.easing ? this._easeIn(easedTime, 0, 1, 2) : easedTime;
-
-            if (easedTime > 0.8) {
-                this.stop();
-                return;
-            }
-
-            this._camera.eye = BIMSURFER.math.lerpVec3(easedTime, 0, 1, this._eye1, this._eye2, []);
-            this._camera.look = BIMSURFER.math.lerpVec3(easedTime, 0, 1, this._look1, this._look2, []);
-            //this._camera.up = BIMSURFER.math.lerpVec3(easedTime, 0, 1, this._up1, this._up2, []);
+            this._camera.eye = BIMSURFER.math.lerpVec3(t, 0, 1, this._eye1, this._eye2, []);
+            this._camera.look = BIMSURFER.math.lerpVec3(t, 0, 1, this._look1, this._look2, []);
+            this._camera.up = BIMSURFER.math.lerpVec3(t, 0, 1, this._up1, this._up2, []);
         },
 
-        _easeOut: function (t, b, c, d) {
-            var ts = (t /= d) * t;
-            var tc = ts * t;
-            return b + c * (-1 * ts * ts + 4 * tc + -6 * ts + 4 * t);
-        },
+        // Quadratic easing out - decelerating to zero velocity
+        // http://gizma.com/easing
 
-        _easeIn: function (t, b, c, d) {
-            var ts = (t /= d) * t;
-            var tc = ts * t;
-            return b + c * (tc * ts);
+        _ease: function (t, b, c, d) {
+            t /= d;
+            return -c * t*(t-2) + b;
         },
 
         stop: function () {
@@ -17168,7 +17446,6 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
             this._time1 = null;
             this._time2 = null;
-            this._duration = null;
 
             this.fire("stopped", true, true);
 
@@ -17191,6 +17468,18 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
                 get: function () {
                     return this._camera;
+                }
+            },
+
+            duration: {
+
+                set: function (value) {
+                    this._duration = value * 1000.0;
+                    this.stop();
+                },
+
+                get: function () {
+                    return this._duration * 0.001;
                 }
             }
         },

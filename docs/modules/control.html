@@ -71,6 +71,7 @@
                                 <li><a href="../classes/math.html">math</a></li>
                                 <li><a href="../classes/MouseOrbitCamera.html">MouseOrbitCamera</a></li>
                                 <li><a href="../classes/MousePanCamera.html">MousePanCamera</a></li>
+                                <li><a href="../classes/MousePickObject.html">MousePickObject</a></li>
                                 <li><a href="../classes/MouseZoomCamera.html">MouseZoomCamera</a></li>
                                 <li><a href="../classes/Object.html">Object</a></li>
                                 <li><a href="../classes/ObjectSet.html">ObjectSet</a></li>
@@ -161,7 +162,10 @@ var cameraControl = new BIMSURFER.CameraControl(viewer, {
        camera: camera
    });
 
-var teapot = new BIMSURFER.TeapotObject(viewer);
+// Create a RandomObjects
+var randomObjects = new BIMSURFER.RandomObjects(viewer, {
+       numObjects: 55
+   });
 </code></pre>
 
 </div>
@@ -210,6 +214,11 @@ var teapot = new BIMSURFER.TeapotObject(viewer);
                 <li class="module-class">
                     <a href="../classes/MousePanCamera.html">
                         MousePanCamera
+                    </a>
+                </li>
+                <li class="module-class">
+                    <a href="../classes/MousePickObject.html">
+                        MousePickObject
                     </a>
                 </li>
                 <li class="module-class">

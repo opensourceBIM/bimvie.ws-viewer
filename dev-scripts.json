@@ -49,6 +49,7 @@
         "src/core/control/mousePanCamera.js",
         "src/core/control/keyboardPanCamera.js",
         "src/core/control/keyboardAxisCamera.js",
+        "src/core/control/mousePickObject.js",
 
         "src/core/control/clickSelectObjects.js",
 

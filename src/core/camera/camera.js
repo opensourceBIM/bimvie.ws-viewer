@@ -119,6 +119,9 @@
 
             this._tickSub = null;
 
+
+            // TODO: compute/orthogolalize 'up'
+
             this.eye = cfg.eye;
             this.look = cfg.look;
             this.up = cfg.up;

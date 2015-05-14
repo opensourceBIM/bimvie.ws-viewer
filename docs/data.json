@@ -113,6 +113,15 @@
             "fors": {},
             "namespaces": {}
         },
+        "src/core/control/mousePickObject.js": {
+            "name": "src/core/control/mousePickObject.js",
+            "modules": {},
+            "classes": {
+                "MousePickObject": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
         "src/core/control/mouseZoomCamera.js": {
             "name": "src/core/control/mouseZoomCamera.js",
             "modules": {},
@@ -435,6 +444,7 @@
                 "KeyboardZoomCamera": 1,
                 "MouseOrbitCamera": 1,
                 "MousePanCamera": 1,
+                "MousePickObject": 1,
                 "MouseZoomCamera": 1,
                 "Debug": 1,
                 "Effect": 1,
@@ -520,6 +530,7 @@
                 "KeyboardZoomCamera": 1,
                 "MouseOrbitCamera": 1,
                 "MousePanCamera": 1,
+                "MousePickObject": 1,
                 "MouseZoomCamera": 1
             },
             "fors": {},
@@ -527,7 +538,7 @@
             "namespaces": {},
             "module": "BIMSURFER",
             "namespace": "",
-            "description": "A **CameraControl** allows you to pan, rotate and zoom a {{#crossLink \"Camera\"}}{{/crossLink}} using the mouse and keyboard,\nas well as switch it between preset left, right, anterior, posterior, superior and inferior views.\n\n## Overview\n\n<ul>\n<li>You can have multiple CameraControls within the same {{#crossLink \"Viewer\"}}{{/crossLink}}.</li>\n<li>Multiple CameraControls can drive the same {{#crossLink \"Camera\"}}{{/crossLink}}, or can each drive their own separate {{#crossLink \"Camera\"}}Cameras{{/crossLink}}.</li>\n<li>At any instant, the CameraControl we're driving is the one whose {{#crossLink \"Camera/active:property\"}}active{{/crossLink}} property is true.</li>\n<li>You can switch a CameraControl to a different {{#crossLink \"Camera\"}}{{/crossLink}} at any time.</li>\n</ul>\n\n## Example\n\n#### Controlling a Camera\n\nIn this example we're viewing a {{#crossLink \"TeapotObject\"}}{{/crossLink}} with a {{#crossLink \"Camera\"}}{{/crossLink}} that's controlled by a CameraControl.\n\n<iframe style=\"width: 600px; height: 400px\" src=\"../../examples/control_CameraControl.html\"></iframe>\n\n````Javascript\nvar viewer = new BIMSURFER.Viewer({ element: \"myDiv\" });\n\nvar camera = new BIMSURFER.Camera(viewer, {\n       eye: [5, 5, -5]\n   });\n\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n       camera: camera\n   });\n\nvar teapot = new BIMSURFER.TeapotObject(viewer);\n\n\n````",
+            "description": "A **CameraControl** allows you to pan, rotate and zoom a {{#crossLink \"Camera\"}}{{/crossLink}} using the mouse and keyboard,\nas well as switch it between preset left, right, anterior, posterior, superior and inferior views.\n\n## Overview\n\n<ul>\n<li>You can have multiple CameraControls within the same {{#crossLink \"Viewer\"}}{{/crossLink}}.</li>\n<li>Multiple CameraControls can drive the same {{#crossLink \"Camera\"}}{{/crossLink}}, or can each drive their own separate {{#crossLink \"Camera\"}}Cameras{{/crossLink}}.</li>\n<li>At any instant, the CameraControl we're driving is the one whose {{#crossLink \"Camera/active:property\"}}active{{/crossLink}} property is true.</li>\n<li>You can switch a CameraControl to a different {{#crossLink \"Camera\"}}{{/crossLink}} at any time.</li>\n</ul>\n\n## Example\n\n#### Controlling a Camera\n\nIn this example we're viewing a {{#crossLink \"TeapotObject\"}}{{/crossLink}} with a {{#crossLink \"Camera\"}}{{/crossLink}} that's controlled by a CameraControl.\n\n<iframe style=\"width: 600px; height: 400px\" src=\"../../examples/control_CameraControl.html\"></iframe>\n\n````Javascript\nvar viewer = new BIMSURFER.Viewer({ element: \"myDiv\" });\n\nvar camera = new BIMSURFER.Camera(viewer, {\n       eye: [5, 5, -5]\n   });\n\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n       camera: camera\n   });\n\n// Create a RandomObjects\nvar randomObjects = new BIMSURFER.RandomObjects(viewer, {\n       numObjects: 55\n   });\n\n\n````",
             "file": "src/core/control/mouseZoomCamera.js",
             "line": 1
         },
@@ -751,7 +762,7 @@
             "namespace": "",
             "file": "src/core/control/cameraControl.js",
             "line": 1,
-            "description": "A **CameraControl** allows you to pan, rotate and zoom a {{#crossLink \"Camera\"}}{{/crossLink}} using the mouse and keyboard,\nas well as switch it between preset left, right, anterior, posterior, superior and inferior views.\n\n## Overview\n\n<ul>\n<li>You can have multiple CameraControls within the same {{#crossLink \"Viewer\"}}{{/crossLink}}.</li>\n<li>Multiple CameraControls can drive the same {{#crossLink \"Camera\"}}{{/crossLink}}, or can each drive their own separate {{#crossLink \"Camera\"}}Cameras{{/crossLink}}.</li>\n<li>At any instant, the CameraControl we're driving is the one whose {{#crossLink \"Camera/active:property\"}}active{{/crossLink}} property is true.</li>\n<li>You can switch a CameraControl to a different {{#crossLink \"Camera\"}}{{/crossLink}} at any time.</li>\n</ul>\n\n## Example\n\n#### Controlling a Camera\n\nIn this example we're viewing a {{#crossLink \"TeapotObject\"}}{{/crossLink}} with a {{#crossLink \"Camera\"}}{{/crossLink}} that's controlled by a CameraControl.\n\n<iframe style=\"width: 600px; height: 400px\" src=\"../../examples/control_CameraControl.html\"></iframe>\n\n````Javascript\nvar viewer = new BIMSURFER.Viewer({ element: \"myDiv\" });\n\nvar camera = new BIMSURFER.Camera(viewer, {\n       eye: [5, 5, -5]\n   });\n\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n       camera: camera\n   });\n\nvar teapot = new BIMSURFER.TeapotObject(viewer);\n\n\n````",
+            "description": "A **CameraControl** allows you to pan, rotate and zoom a {{#crossLink \"Camera\"}}{{/crossLink}} using the mouse and keyboard,\nas well as switch it between preset left, right, anterior, posterior, superior and inferior views.\n\n## Overview\n\n<ul>\n<li>You can have multiple CameraControls within the same {{#crossLink \"Viewer\"}}{{/crossLink}}.</li>\n<li>Multiple CameraControls can drive the same {{#crossLink \"Camera\"}}{{/crossLink}}, or can each drive their own separate {{#crossLink \"Camera\"}}Cameras{{/crossLink}}.</li>\n<li>At any instant, the CameraControl we're driving is the one whose {{#crossLink \"Camera/active:property\"}}active{{/crossLink}} property is true.</li>\n<li>You can switch a CameraControl to a different {{#crossLink \"Camera\"}}{{/crossLink}} at any time.</li>\n</ul>\n\n## Example\n\n#### Controlling a Camera\n\nIn this example we're viewing a {{#crossLink \"TeapotObject\"}}{{/crossLink}} with a {{#crossLink \"Camera\"}}{{/crossLink}} that's controlled by a CameraControl.\n\n<iframe style=\"width: 600px; height: 400px\" src=\"../../examples/control_CameraControl.html\"></iframe>\n\n````Javascript\nvar viewer = new BIMSURFER.Viewer({ element: \"myDiv\" });\n\nvar camera = new BIMSURFER.Camera(viewer, {\n       eye: [5, 5, -5]\n   });\n\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n       camera: camera\n   });\n\n// Create a RandomObjects\nvar randomObjects = new BIMSURFER.RandomObjects(viewer, {\n       numObjects: 55\n   });\n\n\n````",
             "submodule": "control",
             "is_constructor": 1,
             "params": [
@@ -1148,6 +1159,69 @@
                     "type": "Camera",
                     "optional": true
                 }
+            ],
+            "extends": "Component"
+        },
+        "MousePickObject": {
+            "name": "MousePickObject",
+            "shortname": "MousePickObject",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "BIMSURFER",
+            "namespace": "",
+            "file": "src/core/control/mousePickObject.js",
+            "line": 1,
+            "description": "A **MousePickObject** lets you add or remove {{#crossLink \"Object\"}}Objects{{/crossLink}} to and from an {{#crossLink \"ObjectSet\"}}ObjectSet{{/crossLink}} by clicking them with the mouse.\n\n## Overview\n\n<ul>\n<li>A MousePickObject adds {{#crossLink \"Object\"}}Objects{{/crossLink}} to the {{#crossLink \"ObjectSet\"}}{{/crossLink}} as you\nclick them with the mouse, removing them again when you click them a second time.</li>\n<li>Typically a MousePickObject will share an {{#crossLink \"ObjectSet\"}}{{/crossLink}} with one or\nmore {{#crossLink \"MousePickObject\"}}MousePickObjects{{/crossLink}}, in order to select which {{#crossLink \"Object\"}}Objects{{/crossLink}} are influenced by the {{#crossLink \"MousePickObject\"}}MousePickObjects{{/crossLink}}.</li>\n<li>A MousePickObject will provide its own {{#crossLink \"ObjectSet\"}}{{/crossLink}} by default.</li>\n<li>Hold down SHIFT while clicking to multi-select.</li>\n</ul>\n\n## Example\n\n#### Clicking Objects to add them to a highlighted ObjectSet\n\nIn this example, we view four {{#crossLink \"Objects\"}}Objects{{/crossLink}} with a {{#crossLink \"Camera\"}}{{/crossLink}}, which we manipulate with a {{#crossLink \"CameraControl\"}}{{/crossLink}}.\n<br>We also use a {{#crossLink \"MousePickObject\"}}{{/crossLink}} to add and remove\nthe {{#crossLink \"Objects\"}}Objects{{/crossLink}} to an {{#crossLink \"ObjectSet\"}}{{/crossLink}}, to which we're applying\na {{#crossLink \"HighlightMousePickObject\"}}{{/crossLink}}.\n<br><br>\nClick on the {{#crossLink \"Objects\"}}Objects{{/crossLink}} to select and highlight them - hold down SHIFT to multi-select.\n\n<iframe style=\"width: 600px; height: 400px\" src=\"../../examples/control_MousePickObject_HighlightMousePickObject.html\"></iframe>\n\n````Javascript\n// Create a Viewer\nvar viewer = new BIMSURFER.Viewer({ element: \"myDiv\" });\n\n// Create a Camera\nvar camera = new BIMSURFER.Camera(viewer, {\n   eye: [10, 10, -10]\n});\n\n// Create a CameraControl\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n   camera: camera\n});\n\n// Create a Geometry\nvar geometry = new BIMSURFER.TeapotGeometry(viewer);\n\n// Create some Objects\n// Share the Geometry among them\n\nvar object1 = new BIMSURFER.Object(viewer, {\n   id: \"object1\",\n   type: \"IfcRoof\",\n   geometries: [ geometry ],\n   matrix: BIMSURFER.math.translationMat4v([-3, 0, -3])\n});\n\nvar object2 = new BIMSURFER.Object(viewer, {\n   id: \"object2\",\n   type: \"IfcDistributionFlowElement\",\n   geometries: [ geometry ],\n   matrix: BIMSURFER.math.translationMat4v([3, 0, -3])\n});\n\nvar object3 = new BIMSURFER.Object(viewer, {\n   id: \"object3\",\n   type: \"IfcDistributionFlowElement\",\n   geometries: [ geometry ],\n   matrix: BIMSURFER.math.translationMat4v([-3, 0, 3])\n});\n\nvar object4 = new BIMSURFER.Object(viewer, {\n   id: \"object4\",\n   type: \"IfcRoof\",\n   geometries: [ geometry ],\n   matrix: BIMSURFER.math.translationMat4v([3, 0, 3])\n});\n\n// Create an ObjectSet\nvar objectSet = new BIMSURFER.ObjectSet(viewer);\n\n// Apply a highlight MousePickObject to the ObjectSet\nvar highlightMousePickObject = new BIMSURFER.HighlightMousePickObject(viewer, {\n   objectSet: objectSet\n});\n\n// Create a MousePickObject\nvar mousePickObject = new BIMSURFER.MousePickObject(viewer, {\n\n   // We want the 3D World-space coordinates of\n   // each location we pick\n   rayPick: true\n});\n\n// Handle when Object is picked\nmousePickObject.on(\"pick\", function(e) {\n       alert(\"Picked: \" + JSON.stringify(e));\n});\n\n// Handle when nothing is picked\nmousePickObject.on(\"nopick\", function(e) {\n       alert(\"Mothing picked\");\n});\n````",
+            "submodule": "control",
+            "is_constructor": 1,
+            "params": [
+                {
+                    "name": "viewer",
+                    "description": "Parent {{#crossLink \"Viewer\"}}{{/crossLink}}.",
+                    "type": "Viewer",
+                    "optional": true
+                },
+                {
+                    "name": "cfg",
+                    "description": "Configs",
+                    "type": "*",
+                    "optional": true,
+                    "props": [
+                        {
+                            "name": "id",
+                            "description": "Optional ID, unique among all components in the parent viewer, generated automatically when omitted.",
+                            "type": "String",
+                            "optional": true
+                        },
+                        {
+                            "name": "meta",
+                            "description": "Optional map of user-defined metadata to attach to this Camera.",
+                            "type": "String:Object",
+                            "optional": true
+                        }
+                    ]
+                },
+                {
+                    "name": "rayPick",
+                    "description": "Indicates whether this MousePickObject will find the 3D ray intersection whenever it picks a\n{{#crossLink \"Object\"}}Objects{{/crossLink}}.",
+                    "type": "Boolean",
+                    "optional": true,
+                    "optdefault": "false"
+                },
+                {
+                    "name": "active",
+                    "description": "Indicates whether or not this MousePickObject is active.",
+                    "type": "Boolean",
+                    "optional": true,
+                    "optdefault": "true"
+                }
+            ],
+            "see": [
+                "{Object}",
+                "{ObjectSet}"
             ],
             "extends": "Component"
         },
@@ -2804,7 +2878,7 @@
         },
         {
             "file": "src/core/animate/cameraFlyAnimation.js",
-            "line": 84,
+            "line": 86,
             "description": "Begins flying this CameraFlyAnimation's {{#crossLink \"Camera\"}}{{/crossLink}} to the given target.\n\n<ul>\n    <li>When the target is a boundary, the {{#crossLink \"Camera\"}}{{/crossLink}} will fly towards the target\n    and stop when the target fills most of the canvas.</li>\n    <li>When the target is an explicit {{#crossLink \"Camera\"}}{{/crossLink}} position, given as ````eye````, ````look```` and ````up````\n     vectors, then this CameraFlyAnimation will interpolate the {{#crossLink \"Camera\"}}{{/crossLink}} to that target and stop there.</li>",
             "itemtype": "method",
             "name": "flyTo",
@@ -2844,13 +2918,6 @@
                             "description": "Position to fly the {{#crossLink \"Camera/up:property\"}}Camera's up{{/crossLink}} vector to.",
                             "type": "Array of Number",
                             "optional": true
-                        },
-                        {
-                            "name": "velocity",
-                            "description": "Flight speed factor.",
-                            "type": "Number",
-                            "optional": true,
-                            "optdefault": "0"
                         }
                     ]
                 },
@@ -2919,7 +2986,7 @@
         },
         {
             "file": "src/core/camera/camera.js",
-            "line": 134,
+            "line": 137,
             "description": "Rotate 'eye' about 'look', around the 'up' vector",
             "params": [
                 {
@@ -2934,7 +3001,7 @@
         },
         {
             "file": "src/core/camera/camera.js",
-            "line": 154,
+            "line": 157,
             "description": "Rotate 'eye' about 'look' around the X-axis",
             "params": [
                 {
@@ -2949,7 +3016,7 @@
         },
         {
             "file": "src/core/camera/camera.js",
-            "line": 180,
+            "line": 183,
             "description": "Rotate 'look' about 'eye', around the 'up' vector\n\n<p>Applies constraints added with {@link #addConstraint}.</p>",
             "params": [
                 {
@@ -2964,7 +3031,7 @@
         },
         {
             "file": "src/core/camera/camera.js",
-            "line": 202,
+            "line": 205,
             "description": "Rotate 'eye' about 'look' around the X-axis",
             "params": [
                 {
@@ -2979,7 +3046,7 @@
         },
         {
             "file": "src/core/camera/camera.js",
-            "line": 228,
+            "line": 231,
             "description": "Pans the camera along X and Y axis.",
             "params": [
                 {
@@ -2993,7 +3060,7 @@
         },
         {
             "file": "src/core/camera/camera.js",
-            "line": 282,
+            "line": 285,
             "description": "Increments/decrements zoom factor, ie. distance between eye and look.",
             "params": [
                 {
@@ -3007,7 +3074,7 @@
         },
         {
             "file": "src/core/camera/camera.js",
-            "line": 300,
+            "line": 303,
             "description": "Flag which indicates whether this Camera is active or not.\n\nFires an {{#crossLink \"Camera/active:event\"}}{{/crossLink}} event on change.",
             "itemtype": "property",
             "name": "active",
@@ -3018,7 +3085,7 @@
         },
         {
             "file": "src/core/camera/camera.js",
-            "line": 374,
+            "line": 377,
             "description": "Fired whenever this Camera's {{#crossLink \"Camera/active:property\"}}{{/crossLink}} property changes.",
             "itemtype": "event",
             "name": "active",
@@ -3034,7 +3101,7 @@
         },
         {
             "file": "src/core/camera/camera.js",
-            "line": 399,
+            "line": 402,
             "description": "Position of the eye.\nFires an {{#crossLink \"Camera/eye:event\"}}{{/crossLink}} event on change.",
             "itemtype": "property",
             "name": "eye",
@@ -3046,7 +3113,7 @@
         },
         {
             "file": "src/core/camera/camera.js",
-            "line": 424,
+            "line": 427,
             "description": "Position of the point-of-interest.\nFires a {{#crossLink \"Camera/look:event\"}}{{/crossLink}} event on change.",
             "itemtype": "property",
             "name": "look",
@@ -3058,7 +3125,7 @@
         },
         {
             "file": "src/core/camera/camera.js",
-            "line": 449,
+            "line": 452,
             "description": "Direction of the \"up\" vector.\nFires an {{#crossLink \"Camera/up:event\"}}{{/crossLink}} event on change.",
             "itemtype": "property",
             "name": "up",
@@ -3218,7 +3285,7 @@
         },
         {
             "file": "src/core/control/cameraControl.js",
-            "line": 55,
+            "line": 58,
             "description": "JavaScript class name for this Component.",
             "itemtype": "property",
             "name": "className",
@@ -3230,7 +3297,7 @@
         },
         {
             "file": "src/core/control/cameraControl.js",
-            "line": 114,
+            "line": 144,
             "description": "The {{#crossLink \"Camera\"}}{{/crossLink}} being controlled.",
             "itemtype": "property",
             "name": "camera",
@@ -3241,7 +3308,7 @@
         },
         {
             "file": "src/core/control/cameraControl.js",
-            "line": 161,
+            "line": 193,
             "description": "Flag which indicates whether this CameraControl is active or not.\n\nFires an {{#crossLink \"CameraControl/active:event\"}}{{/crossLink}} event on change.",
             "itemtype": "property",
             "name": "active",
@@ -3252,7 +3319,7 @@
         },
         {
             "file": "src/core/control/cameraControl.js",
-            "line": 182,
+            "line": 216,
             "description": "Fired whenever this CameraControl's {{#crossLink \"CameraControl/active:property\"}}{{/crossLink}} property changes.",
             "itemtype": "event",
             "name": "active",
@@ -3536,6 +3603,72 @@
                 }
             ],
             "class": "MousePanCamera",
+            "module": "BIMSURFER",
+            "submodule": "control"
+        },
+        {
+            "file": "src/core/control/mousePickObject.js",
+            "line": 124,
+            "description": "JavaScript class name for this Component.",
+            "itemtype": "property",
+            "name": "className",
+            "type": "String",
+            "final": 1,
+            "class": "MousePickObject",
+            "module": "BIMSURFER",
+            "submodule": "control"
+        },
+        {
+            "file": "src/core/control/mousePickObject.js",
+            "line": 142,
+            "description": "Flag which indicates whether this MousePickObject is active or not.\n\nFires a {{#crossLink \"MousePickObject/active:event\"}}{{/crossLink}} event on change.",
+            "itemtype": "property",
+            "name": "active",
+            "type": "Boolean",
+            "class": "MousePickObject",
+            "module": "BIMSURFER",
+            "submodule": "control"
+        },
+        {
+            "file": "src/core/control/mousePickObject.js",
+            "line": 203,
+            "description": "Fired whenever this MousePickObject's {{#crossLink \"MousePickObject/active:property\"}}{{/crossLink}} property changes.",
+            "itemtype": "event",
+            "name": "active",
+            "params": [
+                {
+                    "name": "value",
+                    "description": "The property's new value"
+                }
+            ],
+            "class": "MousePickObject",
+            "module": "BIMSURFER",
+            "submodule": "control"
+        },
+        {
+            "file": "src/core/control/mousePickObject.js",
+            "line": 216,
+            "description": "Indicates whether this MousePickObject will find the 3D ray intersection whenever it picks a\n{{#crossLink \"Object\"}}Objects{{/crossLink}}.\n\nWhen true, this MousePickObject returns the 3D World-space intersection in each\n{{#crossLink \"MousePickObject/picked:event\"}}{{/crossLink}} event.\n\nFires a {{#crossLink \"MousePickObject/rayPick:event\"}}{{/crossLink}} event on change.",
+            "itemtype": "property",
+            "name": "rayPick",
+            "type": "Boolean",
+            "class": "MousePickObject",
+            "module": "BIMSURFER",
+            "submodule": "control"
+        },
+        {
+            "file": "src/core/control/mousePickObject.js",
+            "line": 240,
+            "description": "Fired whenever this MousePickObject's {{#crossLink \"MousePickObject/rayPick:property\"}}{{/crossLink}} property changes.",
+            "itemtype": "event",
+            "name": "rayPick",
+            "params": [
+                {
+                    "name": "value",
+                    "description": "The property's new value"
+                }
+            ],
+            "class": "MousePickObject",
             "module": "BIMSURFER",
             "submodule": "control"
         },
@@ -8386,27 +8519,27 @@
         },
         {
             "message": "Missing item type\nRotate 'eye' about 'look', around the 'up' vector",
-            "line": " src/core/camera/camera.js:134"
+            "line": " src/core/camera/camera.js:137"
         },
         {
             "message": "Missing item type\nRotate 'eye' about 'look' around the X-axis",
-            "line": " src/core/camera/camera.js:154"
+            "line": " src/core/camera/camera.js:157"
         },
         {
             "message": "Missing item type\nRotate 'look' about 'eye', around the 'up' vector\n\n<p>Applies constraints added with {@link #addConstraint}.</p>",
-            "line": " src/core/camera/camera.js:180"
+            "line": " src/core/camera/camera.js:183"
         },
         {
             "message": "Missing item type\nRotate 'eye' about 'look' around the X-axis",
-            "line": " src/core/camera/camera.js:202"
+            "line": " src/core/camera/camera.js:205"
         },
         {
             "message": "Missing item type\nPans the camera along X and Y axis.",
-            "line": " src/core/camera/camera.js:228"
+            "line": " src/core/camera/camera.js:231"
         },
         {
             "message": "Missing item type\nIncrements/decrements zoom factor, ie. distance between eye and look.",
-            "line": " src/core/camera/camera.js:282"
+            "line": " src/core/camera/camera.js:285"
         },
         {
             "message": "Missing item type\nCreates a canvas",
