@@ -58,8 +58,6 @@
 
             this._dist = 0;
 
-            this._duration = 0;
-
             this._flying = false;
 
             this._ok = null;
@@ -79,6 +77,10 @@
 
             this._time1 = null;
             this._time2 = null;
+
+            this.easing = cfg.easing !== false;
+
+            this.duration = cfg.duration || 0.5;
         },
 
         /**
@@ -98,7 +100,6 @@
          * @param [params.eye] {Array of Number} Position to fly the {{#crossLink "Camera/eye:property"}}Camera's eye{{/crossLink}} position to.
          * @param [params.look] {Array of Number} Position to fly the {{#crossLink "Camera/look:property"}}Camera's look{{/crossLink}} position to.
          * @param [params.up] {Array of Number} Position to fly the {{#crossLink "Camera/up:property"}}Camera's up{{/crossLink}} vector to.
-         * @param [params.velocity=0] {Number} Flight speed factor.
          * @param [ok] {Function} Callback fired on arrival
          */
         flyTo: function (params, ok) {
@@ -233,20 +234,7 @@
 
             var eyeDist = Math.abs(BIMSURFER.math.lenVec3(BIMSURFER.math.subVec3(this._eye2, this._eye1, [])));
 
-            this._dist = lookDist < eyeDist ? lookDist : eyeDist;
-
-
-            // Duration of travel
-
-            var velocity = params.velocity || this._velocity;
-
-            if (velocity < 0) {
-                velocity = 0;
-            }
-
-            this._velocity = velocity < 0 ? 1.0 : velocity;
-
-            this._duration = 1 + (1000.0 * (this._dist / this._velocity)); // extra seconds to ensure arrival
+            this._dist = lookDist > eyeDist ? lookDist : eyeDist;
 
 
             this.fire("started", params, true);
@@ -276,34 +264,28 @@
             var t = (time - this._time1) / (this._time2 - this._time1);
 
             if (t > 1) {
+                //  this.stop();
+                return;
+            }
+
+            t = this.easing ? this._ease(t, 0, 1, 1) : t;
+
+            if (t > 1.0) {
                 this.stop();
                 return;
             }
 
-            var easedTime = this.easing ? this._easeOut(t, 0, 1, 2) : t;
-
-            easedTime = this.easing ? this._easeIn(easedTime, 0, 1, 2) : easedTime;
-
-            if (easedTime > 0.8) {
-                this.stop();
-                return;
-            }
-
-            this._camera.eye = BIMSURFER.math.lerpVec3(easedTime, 0, 1, this._eye1, this._eye2, []);
-            this._camera.look = BIMSURFER.math.lerpVec3(easedTime, 0, 1, this._look1, this._look2, []);
-            //this._camera.up = BIMSURFER.math.lerpVec3(easedTime, 0, 1, this._up1, this._up2, []);
+            this._camera.eye = BIMSURFER.math.lerpVec3(t, 0, 1, this._eye1, this._eye2, []);
+            this._camera.look = BIMSURFER.math.lerpVec3(t, 0, 1, this._look1, this._look2, []);
+            this._camera.up = BIMSURFER.math.lerpVec3(t, 0, 1, this._up1, this._up2, []);
         },
 
-        _easeOut: function (t, b, c, d) {
-            var ts = (t /= d) * t;
-            var tc = ts * t;
-            return b + c * (-1 * ts * ts + 4 * tc + -6 * ts + 4 * t);
-        },
+        // Quadratic easing out - decelerating to zero velocity
+        // http://gizma.com/easing
 
-        _easeIn: function (t, b, c, d) {
-            var ts = (t /= d) * t;
-            var tc = ts * t;
-            return b + c * (tc * ts);
+        _ease: function (t, b, c, d) {
+            t /= d;
+            return -c * t*(t-2) + b;
         },
 
         stop: function () {
@@ -318,7 +300,6 @@
 
             this._time1 = null;
             this._time2 = null;
-            this._duration = null;
 
             this.fire("stopped", true, true);
 
@@ -341,6 +322,18 @@
 
                 get: function () {
                     return this._camera;
+                }
+            },
+
+            duration: {
+
+                set: function (value) {
+                    this._duration = value * 1000.0;
+                    this.stop();
+                },
+
+                get: function () {
+                    return this._duration * 0.001;
                 }
             }
         },
