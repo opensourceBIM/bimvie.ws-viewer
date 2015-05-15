@@ -40,12 +40,6 @@
 
         _init: function (cfg) {
 
-            var self = this;
-
-            this._camera = null;
-
-            this._arc = 0.0;
-
             this._look1 = [0, 0, 0];
             this._eye1 = [0, 0, 0];
             this._up1 = [0, 0, 0];
@@ -73,14 +67,14 @@
 
             this._stopFOV = 55;
 
-            this._velocity = 1.0;
-
             this._time1 = null;
             this._time2 = null;
 
             this.easing = cfg.easing !== false;
 
             this.duration = cfg.duration || 0.5;
+
+            this.camera = cfg.camera;
         },
 
         /**
@@ -228,17 +222,7 @@
                 }
             }
 
-            // Distance to travel
-
-            var lookDist = Math.abs(BIMSURFER.math.lenVec3(BIMSURFER.math.subVec3(this._look2, this._look1, [])));
-
-            var eyeDist = Math.abs(BIMSURFER.math.lenVec3(BIMSURFER.math.subVec3(this._eye2, this._eye1, [])));
-
-            this._dist = lookDist > eyeDist ? lookDist : eyeDist;
-
-
             this.fire("started", params, true);
-
 
             var self = this;
 
@@ -264,16 +248,11 @@
             var t = (time - this._time1) / (this._time2 - this._time1);
 
             if (t > 1) {
-                //  this.stop();
+                this.stop();
                 return;
             }
 
             t = this.easing ? this._ease(t, 0, 1, 1) : t;
-
-            if (t > 1.0) {
-                this.stop();
-                return;
-            }
 
             this._camera.eye = BIMSURFER.math.lerpVec3(t, 0, 1, this._eye1, this._eye2, []);
             this._camera.look = BIMSURFER.math.lerpVec3(t, 0, 1, this._look1, this._look2, []);
@@ -285,7 +264,7 @@
 
         _ease: function (t, b, c, d) {
             t /= d;
-            return -c * t*(t-2) + b;
+            return -c * t * (t - 2) + b;
         },
 
         stop: function () {
