@@ -258,6 +258,11 @@
          */
         this.components = {};
 
+        /**
+         * Map of components that have an 'exclusive' property. This is used to ensure that
+         * only one of these component types is active within this Viewer at a time.
+         */
+        this._onComponentActive = {};
 
         /**
          * The {{#crossLink "Component"}}Components{{/crossLink}} within this Viewer, mapped to their class names.
@@ -348,7 +353,28 @@
          */
         this.input = new BIMSURFER.Input(this);
 
+        /**
+         * Cursor icon control for this Viewer.
+         * @property cursor
+         * @final
+         * @type {BIMSURFER.Cursor}
+         */
+        this.cursor = new BIMSURFER.Cursor(this);
 
+        /**
+         * The default {{#crossLink "Camera"}}{{/crossLink}} for this Viewer.
+         *
+         * This {{#crossLink "Camera"}}{{/crossLink}} is active by default, and becomes inactive
+         * as soon as you activate some other {{#crossLink "Camera"}}{{/crossLink}} in this Viewer.
+         *
+         * Any components that you create for this Viewer, that require a {{#crossLink "Camera"}}{{/crossLink}},
+         * will fall back on this one by default.
+         *
+         * @property camera
+         * @final
+         * @type {BIMSURFER.Camera}
+         */
+        this.camera = new BIMSURFER.Camera(this);
 
         /**
          * The number of {{#crossLink "Objects"}}{{/crossLink}} within this ObjectSet.
@@ -415,12 +441,45 @@
             typeComponents[id] = component;
         }
 
+        var self = this;
+
+        // When the component has an 'exclusive' property set true, then only one instance of that component
+        // type may be active within the Viewer at a time. When a component is activated, that has a true value
+        // for this flag, then any other active component of the same type will be deactivated first.
+
+        if (component.exclusive === true) {
+
+            if (component.active) {
+                self.deactivateOthers(component);
+            }
+
+            this._onComponentActive[component.id] = component.on("active",
+                function (active) {
+
+                    if (active) {
+                        self._deactivateOthers(component);
+                    }
+                });
+        }
+
+        this._boundaryDirty = true;
+
         /**
          * Fired whenever a Component has been created within this Viewer.
          * @event componentCreated
          * @param {Component} value The component that was created
          */
         this.fire("componentCreated", component, true);
+    };
+
+    // Deactivates all other components within this Viewer, that have same className as that given.
+    BIMSURFER.Viewer.prototype._deactivateOthers = function (component) {
+        this.withClasses([component.className],
+            function (otherComponent) {
+                if (otherComponent.id !== component.id) {
+                    otherComponent.active = false;
+                }
+            });
     };
 
     /**
@@ -448,7 +507,14 @@
             delete this.types[component.type][id];
         }
 
+        this._boundaryDirty = true;
+
         this._componentIDMap.removeItem(id);
+
+        if (component.exclusive === true) {
+            component.off(this._onComponentActive[component.id]);
+            delete this._onComponentActive[component.id];
+        }
 
         /**
          * Fired whenever a component within this Viewer has been destroyed.
@@ -494,7 +560,7 @@
     });
 
     /**
-     * Boundary of all components in this Viewer.
+     * Boundary of all bounded components in this Viewer.
      *
      * @property boundary
      * @final
@@ -502,7 +568,7 @@
      */
     Object.defineProperty(BIMSURFER.Viewer.prototype, "boundary", {
 
-        get: function() {
+        get: function () {
 
             if (this._boundaryDirty) {
                 this._rebuildBoundary();
@@ -515,7 +581,7 @@
     });
 
     /**
-     * center of all components in this Viewer.
+     * Center of all bounded components in this Viewer.
      *
      * @property center
      * @final
@@ -523,7 +589,7 @@
      */
     Object.defineProperty(BIMSURFER.Viewer.prototype, "center", {
 
-        get: function() {
+        get: function () {
 
             if (this._boundaryDirty) {
                 this._rebuildBoundary();
@@ -535,70 +601,79 @@
         enumerable: true
     });
 
+
     BIMSURFER.Viewer.prototype._rebuildBoundary = function () {
 
-//        if (!this._boundaryDirty) {
-//            return;
-//        }
-//
-//        // For an empty selection, boundary is zero volume and centered at the origin
-//
-//        if (this.numObjects === 0) {
-//            this._boundary.xmin = -1.0;
-//            this._boundary.ymin = -1.0;
-//            this._boundary.zmin = -1.0;
-//            this._boundary.xmax =  1.0;
-//            this._boundary.ymax =  1.0;
-//            this._boundary.zmax =  1.0;
-//
-//        } else {
-//
-//            // Set boundary inside-out, ready to expand by each selected object
-//
-//            this._boundary.xmin = 1000000.0;
-//            this._boundary.ymin = 1000000.0;
-//            this._boundary.zmin = 1000000.0;
-//            this._boundary.xmax = -1000000.0;
-//            this._boundary.ymax = -1000000.0;
-//            this._boundary.zmax = -1000000.0;
-//
-//            var object;
-//            var boundary;
-//
-//            for (var objectId in this.objects) {
-//                if (this.objects.hasOwnProperty(objectId)) {
-//
-//                    object = this.objects[objectId];
-//
-//                    boundary = object.boundary;
-//
-//                    if (boundary.xmin < this._boundary.xmin) {
-//                        this._boundary.xmin = boundary.xmin;
-//                    }
-//                    if (boundary.ymin < this._boundary.ymin) {
-//                        this._boundary.ymin = boundary.ymin;
-//                    }
-//                    if (boundary.zmin < this._boundary.zmin) {
-//                        this._boundary.zmin = boundary.zmin;
-//                    }
-//                    if (boundary.xmax > this._boundary.xmax) {
-//                        this._boundary.xmax = boundary.xmax;
-//                    }
-//                    if (boundary.ymax > this._boundary.ymax) {
-//                        this._boundary.ymax = boundary.ymax;
-//                    }
-//                    if (boundary.zmax > this._boundary.zmax) {
-//                        this._boundary.zmax = boundary.zmax;
-//                    }
-//                }
-//            }
-//        }
-//
-//        this._center[0] = (this._boundary.xmax + this._boundary.xmin) * 0.5;
-//        this._center[1] = (this._boundary.ymax + this._boundary.ymin) * 0.5;
-//        this._center[2] = (this._boundary.zmax + this._boundary.zmin) * 0.5;
-//
-//        this._boundaryDirty = false;
+        if (!this._boundaryDirty) {
+            return;
+        }
+
+        // For an empty selection, boundary is zero volume and centered at the origin
+
+        if (this.numObjects === 0) {
+            this._boundary.xmin = -1.0;
+            this._boundary.ymin = -1.0;
+            this._boundary.zmin = -1.0;
+            this._boundary.xmax = 1.0;
+            this._boundary.ymax = 1.0;
+            this._boundary.zmax = 1.0;
+
+        } else {
+
+            // Set boundary inside-out, ready to expand by each selected object
+
+            this._boundary.xmin = 1000000.0;
+            this._boundary.ymin = 1000000.0;
+            this._boundary.zmin = 1000000.0;
+            this._boundary.xmax = -1000000.0;
+            this._boundary.ymax = -1000000.0;
+            this._boundary.zmax = -1000000.0;
+
+            var component;
+            var boundary;
+
+            for (var componentId in this.components) {
+                if (this.components.hasOwnProperty(componentId)) {
+
+                    component = this.components[componentId];
+
+                    boundary = component.boundary;
+
+                    if (boundary) {
+
+                        if (boundary.xmin < this._boundary.xmin) {
+                            this._boundary.xmin = boundary.xmin;
+                        }
+
+                        if (boundary.ymin < this._boundary.ymin) {
+                            this._boundary.ymin = boundary.ymin;
+                        }
+
+                        if (boundary.zmin < this._boundary.zmin) {
+                            this._boundary.zmin = boundary.zmin;
+                        }
+
+                        if (boundary.xmax > this._boundary.xmax) {
+                            this._boundary.xmax = boundary.xmax;
+                        }
+
+                        if (boundary.ymax > this._boundary.ymax) {
+                            this._boundary.ymax = boundary.ymax;
+                        }
+
+                        if (boundary.zmax > this._boundary.zmax) {
+                            this._boundary.zmax = boundary.zmax;
+                        }
+                    }
+                }
+            }
+        }
+
+        this._center[0] = (this._boundary.xmax + this._boundary.xmin) * 0.5;
+        this._center[1] = (this._boundary.ymax + this._boundary.ymin) * 0.5;
+        this._center[2] = (this._boundary.zmax + this._boundary.zmin) * 0.5;
+
+        this._boundaryDirty = false;
     };
 
     /**
