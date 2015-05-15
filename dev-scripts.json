@@ -56,7 +56,9 @@
         "src/core/label/position.js",
         "src/core/label/label.js",
 
-        "src/core/animate/cameraFlyAnimation.js"
+        "src/core/animate/cameraFlyAnimation.js",
+
+        "src/core/cursor.js"
     ],
 
     "extras": [
