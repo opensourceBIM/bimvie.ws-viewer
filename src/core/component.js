@@ -183,6 +183,14 @@
          */
         className: "BIMSURFER.Component",
 
+        /**
+         * When true, indicates that only one instance of this component type may be active within
+         * its {{#crossLink "Viewer"}}{{/crossLink}} at a time. When a component is activated, that has
+         * a true value for this flag, then any other active component of the same type will be
+         * deactivated first.
+         */
+        exclusive: false,
+
 
         getClassName: function() {
 
