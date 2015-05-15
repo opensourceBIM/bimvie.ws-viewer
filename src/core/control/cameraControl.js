@@ -34,8 +34,6 @@
  var randomObjects = new BIMSURFER.RandomObjects(viewer, {
         numObjects: 55
     });
-
-
  ````
 
  @class CameraControl
@@ -64,42 +62,62 @@
          */
         className: "BIMSURFER.CameraControl",
 
+        /**
+          Indicates that only one instance of a CameraControl may be active within
+          its {{#crossLink "Viewer"}}{{/crossLink}} at a time. When a CameraControl is activated, that has
+          a true value for this flag, then any other active CameraControl will be deactivated first.
+
+         @property exclusive
+         @type Boolean
+         @final
+         */
+        exclusive: true,
+        
         _init: function (cfg) {
 
             var self = this;
 
-            var viewer = this.viewer;
+            var viewer = this.viewer;            
 
-            this._keyboardAxis = new BIMSURFER.KeyboardAxisCamera(viewer);
+            this._keyboardAxis = new BIMSURFER.KeyboardAxisCamera(viewer, {
+                camera: cfg.camera
+            });
 
-            this._keyboardOrbit = new BIMSURFER.KeyboardOrbitCamera(viewer);
-
-            this._mouseOrbit = new BIMSURFER.MouseOrbitCamera(viewer);
+            this._keyboardOrbit = new BIMSURFER.KeyboardOrbitCamera(viewer, {
+                camera: cfg.camera
+            });
+            
+            this._mouseOrbit = new BIMSURFER.MouseOrbitCamera(viewer, {
+                camera: cfg.camera
+            });
 
             this._keyboardPan = new BIMSURFER.KeyboardPanCamera(viewer, {
-                sensitivity: 1
+                sensitivity: 1,
+                camera: cfg.camera
             });
 
             this._mousePan = new BIMSURFER.MousePanCamera(viewer, {
-                sensitivity: 1
+                sensitivity: 1,
+                camera: cfg.camera
             });
 
             this._keyboardZoom = new BIMSURFER.KeyboardZoomCamera(viewer, {
-                sensitivity: 1
+                sensitivity: 1,
+                camera: cfg.camera
             });
 
             this._mouseZoom = new BIMSURFER.MouseZoomCamera(viewer, {
-                sensitivity: 1
+                sensitivity: 1,
+                camera: cfg.camera
             });
 
-            this.camera = cfg.camera;
-
             this._mousePickObject = new BIMSURFER.MousePickObject(viewer, {
-                rayPick: true
+                rayPick: true,
+                camera: cfg.camera
             });
 
             this._cameraFly = new BIMSURFER.CameraFlyAnimation(viewer, {
-                camera: this.camera
+                camera: cfg.camera
             });
 
             this._mousePickObject.on("pick",
@@ -118,7 +136,8 @@
                 // alert("Mothing picked");
             });
 
-
+            this.camera = cfg.camera;
+            
             this.firstPerson = cfg.firstPerson;
 
             this.active = cfg.active !== false;
@@ -144,6 +163,10 @@
             /**
              * The {{#crossLink "Camera"}}{{/crossLink}} being controlled.
              *
+             * Must be within the same {{#crossLink "Viewer"}}{{/crossLink}} as this Object. Defaults to the parent
+             * {{#crossLink "Viewer"}}Viewer's{{/crossLink}} default {{#crossLink "Viewer/camera:property"}}camera{{/crossLink}} when set to
+             * a null or undefined value.
+             *
              * @property camera
              * @type Camera
              */
@@ -167,6 +190,11 @@
                             this.error("camera", "Value is not a BIMSURFER.Camera");
                             return;
                         }
+
+                    } else {
+
+                        // Default to Viewer's default Camera
+                        camera = this.viewer.camera;
                     }
 
                     //   this._cameraFly.camera = camera;
