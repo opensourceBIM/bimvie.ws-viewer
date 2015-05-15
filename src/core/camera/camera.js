@@ -104,6 +104,18 @@
          */
         className: "BIMSURFER.Camera",
 
+        /**
+         Indicates that only one instance of a Camera may be active within
+         its {{#crossLink "Viewer"}}{{/crossLink}} at a time. When a Camera is activated, that has
+         a true value for this flag, then any other active Camera will be deactivated first.
+
+         @property exclusive
+         @type Boolean
+         @final
+         */
+        exclusive: true,
+
+        
         _init: function (cfg) {
 
             // The ViewerJS nodes that this Camera controls

@@ -46,6 +46,10 @@
 
             this._onKeyDown = null;
 
+            this._cameraFly = new BIMSURFER.CameraFlyAnimation(viewer, {
+                camera: this.camera
+            });
+
             this.active = cfg.active !== false;
         },
 
@@ -63,9 +67,13 @@
 
                 set: function (value) {
 
+                    value = !!value;
+
                     if (this._active === value) {
                         return;
                     }
+
+                    this._cameraFly.active = value;
 
                     var self = this;
 
@@ -80,9 +88,14 @@
                                     return;
                                 }
 
-                                var camera = self._camera;
+                                var center = self.viewer.center;
 
-                                var center = [0,0,0];
+                                var dist;
+                                var elev;
+
+                                var eye;
+                                var look;
+                                var up;
 
                                 switch (keyCode) {
 
@@ -90,12 +103,12 @@
 
                                         // Right view
 
-                                        var dist = 10;
-                                        var elev = 0;
+                                        dist = 100;
+                                        elev = 0;
 
-                                        camera.look = center;
-                                        camera.eye = [-dist, elev, 0];
-                                        camera.up = [ 0, 1, 0 ];
+                                        look = center;
+                                        eye = [-dist, elev, 0];
+                                        up = [ 0, 1, 0 ];
 
                                         break;
 
@@ -103,12 +116,12 @@
 
                                         // Left view
 
-                                        var dist = 10;
-                                        var elev = 0;
+                                        dist = 100;
+                                        elev = 0;
 
-                                        camera.look = center;
-                                        camera.eye = [dist, elev, 0];
-                                        camera.up = [ 0, 1, 0 ];
+                                        look = center;
+                                        eye = [dist, elev, 0];
+                                        up = [ 0, 1, 0 ];
 
                                         break;
 
@@ -116,12 +129,12 @@
 
                                         // Front view
 
-                                        var dist = 10;
-                                        var elev = 0;
+                                        dist = 100;
+                                        elev = 0;
 
-                                        camera.look = center;
-                                        camera.eye = [0, elev, -dist];
-                                        camera.up = [ 0, 1, 0 ];
+                                        look = center;
+                                        eye = [0, elev, -dist];
+                                        up = [ 0, 1, 0 ];
 
                                         break;
 
@@ -129,12 +142,12 @@
 
                                         // Back view
 
-                                        var dist = 10;
-                                        var elev = 0;
+                                        dist = 100;
+                                        elev = 0;
 
-                                        camera.look = center;
-                                        camera.eye = [0, elev, dist];
-                                        camera.up = [ 0, 1, 0 ];
+                                        look = center;
+                                        eye = [0, elev, dist];
+                                        up = [ 0, 1, 0 ];
 
                                         break;
 
@@ -142,12 +155,12 @@
 
                                         // Top view
 
-                                        var dist = 10;
-                                        var elev = 0;
+                                        dist = 100;
+                                        elev = 0;
 
-                                        camera.look = center;
-                                        camera.eye = [0, elev - dist, 0];
-                                        camera.up = [ 0, 0, 1 ];
+                                        look = center;
+                                        eye = [0, elev - dist, 0];
+                                        up = [ 0, 0, 1 ];
 
                                         break;
 
@@ -155,14 +168,23 @@
 
                                         // Bottom view
 
-                                        var dist = 10;
-                                        var elev = 0;
+                                        dist = 100;
+                                        elev = 0;
 
-                                        camera.look = [0, elev, 0 ];
-                                        camera.eye = [0, elev + dist, 0];
-                                        camera.up = [ 0, 0, -1 ];
+                                        look = [0, elev, 0 ];
+                                        eye = [0, elev + dist, 0];
+                                        up = [ 0, 0, -1 ];
 
                                         break;
+                                }
+
+                                if (look) {
+
+                                    self._cameraFly.flyTo({
+                                        look: look,
+                                        eye: eye,
+                                        up: up
+                                    });
                                 }
                             });
 
@@ -212,6 +234,8 @@
 
         _destroy: function () {
             this.active = false;
+
+            this._cameraFly.destroy();
         }
     });
 
