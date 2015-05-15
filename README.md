@@ -3,7 +3,7 @@
 An extensible and modular WebGL-based 3D viewer for BIMSurfer.  
 
  * [API Documentation](http://opensourcebim.github.io/bimvie.ws-viewer/docs/)
- * [Live Examples](http://opensourcebim.github.io/bimvie.ws-viewer/examples/#object_RandomObjects)
+ * [Live Examples](http://opensourcebim.github.io/bimvie.ws-viewer/examples/#control_CameraControl)
  * [Issues](https://github.com/opensourceBIM/bimvie.ws-viewer/issues)
 
 ## Features
@@ -48,7 +48,7 @@ Emphasise your objects using these modular effects components:
  
 **Lights**
 
-Create an unlimited number of ambient, directional and point lights in your Viewer, using these light source components:
+Create an unlimited number of dynamic light sources in your Viewer, using these components:
 
  * [AmbientLight](http://opensourcebim.github.io/bimvie.ws-viewer/examples/#light_AmbientLight)
  * [DirLight](http://opensourcebim.github.io/bimvie.ws-viewer/examples/#light_DirLight)
