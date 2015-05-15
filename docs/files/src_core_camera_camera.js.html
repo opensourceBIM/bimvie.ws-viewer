@@ -42,7 +42,7 @@
                                 <li><a href="../classes/Anaglyph.html">Anaglyph</a></li>
                                 <li><a href="../classes/BIMSURFER.html">BIMSURFER</a></li>
                                 <li><a href="../classes/BIMSURFER.constants.html">BIMSURFER.constants</a></li>
-                                <li><a href="../classes/BIMSURFER.Viewer.html">BIMSURFER.Viewer</a></li>
+                                <li><a href="../classes/BIMSURFER.Cursor.html">BIMSURFER.Cursor</a></li>
                                 <li><a href="../classes/BoxGeometry.html">BoxGeometry</a></li>
                                 <li><a href="../classes/BoxObject.html">BoxObject</a></li>
                                 <li><a href="../classes/Camera.html">Camera</a></li>
@@ -52,12 +52,12 @@
                                 <li><a href="../classes/ClickSelectObjects.html">ClickSelectObjects</a></li>
                                 <li><a href="../classes/Component.html">Component</a></li>
                                 <li><a href="../classes/Configs.html">Configs</a></li>
-                                <li><a href="../classes/Debug.html">Debug</a></li>
                                 <li><a href="../classes/DepthOfField.html">DepthOfField</a></li>
                                 <li><a href="../classes/DirLight.html">DirLight</a></li>
                                 <li><a href="../classes/Effect.html">Effect</a></li>
                                 <li><a href="../classes/FrameEffect.html">FrameEffect</a></li>
                                 <li><a href="../classes/Geometry.html">Geometry</a></li>
+                                <li><a href="../classes/GridGeometry.html">GridGeometry</a></li>
                                 <li><a href="../classes/HighlightEffect.html">HighlightEffect</a></li>
                                 <li><a href="../classes/Input.html">Input</a></li>
                                 <li><a href="../classes/IsolateEffect.html">IsolateEffect</a></li>
@@ -80,6 +80,7 @@
                                 <li><a href="../classes/RandomObjects.html">RandomObjects</a></li>
                                 <li><a href="../classes/TeapotGeometry.html">TeapotGeometry</a></li>
                                 <li><a href="../classes/TeapotObject.html">TeapotObject</a></li>
+                                <li><a href="../classes/Viewer.html">Viewer</a></li>
                                 <li><a href="../classes/XRayEffect.html">XRayEffect</a></li>
                             </ul>
                 
@@ -88,7 +89,6 @@
                                 <li><a href="../modules/BIMSURFER.html">BIMSURFER</a></li>
                                 <li><a href="../modules/camera.html">camera</a></li>
                                 <li><a href="../modules/control.html">control</a></li>
-                                <li><a href="../modules/debug.html">debug</a></li>
                                 <li><a href="../modules/effect.html">effect</a></li>
                                 <li><a href="../modules/geometry.html">geometry</a></li>
                                 <li><a href="../modules/input.html">input</a></li>
@@ -235,6 +235,18 @@
          */
         className: &quot;BIMSURFER.Camera&quot;,
 
+        /**
+         Indicates that only one instance of a Camera may be active within
+         its {{#crossLink &quot;Viewer&quot;}}{{/crossLink}} at a time. When a Camera is activated, that has
+         a true value for this flag, then any other active Camera will be deactivated first.
+
+         @property exclusive
+         @type Boolean
+         @final
+         */
+        exclusive: true,
+
+        
         _init: function (cfg) {
 
             // The ViewerJS nodes that this Camera controls

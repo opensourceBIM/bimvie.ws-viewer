@@ -42,7 +42,7 @@
                                 <li><a href="../classes/Anaglyph.html">Anaglyph</a></li>
                                 <li><a href="../classes/BIMSURFER.html">BIMSURFER</a></li>
                                 <li><a href="../classes/BIMSURFER.constants.html">BIMSURFER.constants</a></li>
-                                <li><a href="../classes/BIMSURFER.Viewer.html">BIMSURFER.Viewer</a></li>
+                                <li><a href="../classes/BIMSURFER.Cursor.html">BIMSURFER.Cursor</a></li>
                                 <li><a href="../classes/BoxGeometry.html">BoxGeometry</a></li>
                                 <li><a href="../classes/BoxObject.html">BoxObject</a></li>
                                 <li><a href="../classes/Camera.html">Camera</a></li>
@@ -52,12 +52,12 @@
                                 <li><a href="../classes/ClickSelectObjects.html">ClickSelectObjects</a></li>
                                 <li><a href="../classes/Component.html">Component</a></li>
                                 <li><a href="../classes/Configs.html">Configs</a></li>
-                                <li><a href="../classes/Debug.html">Debug</a></li>
                                 <li><a href="../classes/DepthOfField.html">DepthOfField</a></li>
                                 <li><a href="../classes/DirLight.html">DirLight</a></li>
                                 <li><a href="../classes/Effect.html">Effect</a></li>
                                 <li><a href="../classes/FrameEffect.html">FrameEffect</a></li>
                                 <li><a href="../classes/Geometry.html">Geometry</a></li>
+                                <li><a href="../classes/GridGeometry.html">GridGeometry</a></li>
                                 <li><a href="../classes/HighlightEffect.html">HighlightEffect</a></li>
                                 <li><a href="../classes/Input.html">Input</a></li>
                                 <li><a href="../classes/IsolateEffect.html">IsolateEffect</a></li>
@@ -80,6 +80,7 @@
                                 <li><a href="../classes/RandomObjects.html">RandomObjects</a></li>
                                 <li><a href="../classes/TeapotGeometry.html">TeapotGeometry</a></li>
                                 <li><a href="../classes/TeapotObject.html">TeapotObject</a></li>
+                                <li><a href="../classes/Viewer.html">Viewer</a></li>
                                 <li><a href="../classes/XRayEffect.html">XRayEffect</a></li>
                             </ul>
                 
@@ -88,7 +89,6 @@
                                 <li><a href="../modules/BIMSURFER.html">BIMSURFER</a></li>
                                 <li><a href="../modules/camera.html">camera</a></li>
                                 <li><a href="../modules/control.html">control</a></li>
-                                <li><a href="../modules/debug.html">debug</a></li>
                                 <li><a href="../modules/effect.html">effect</a></li>
                                 <li><a href="../modules/geometry.html">geometry</a></li>
                                 <li><a href="../modules/input.html">input</a></li>
@@ -165,8 +165,6 @@
  var randomObjects = new BIMSURFER.RandomObjects(viewer, {
         numObjects: 55
     });
-
-
  &#x60;&#x60;&#x60;&#x60;
 
  @class CameraControl
@@ -195,42 +193,62 @@
          */
         className: &quot;BIMSURFER.CameraControl&quot;,
 
+        /**
+          Indicates that only one instance of a CameraControl may be active within
+          its {{#crossLink &quot;Viewer&quot;}}{{/crossLink}} at a time. When a CameraControl is activated, that has
+          a true value for this flag, then any other active CameraControl will be deactivated first.
+
+         @property exclusive
+         @type Boolean
+         @final
+         */
+        exclusive: true,
+        
         _init: function (cfg) {
 
             var self = this;
 
-            var viewer = this.viewer;
+            var viewer = this.viewer;            
 
-            this._keyboardAxis = new BIMSURFER.KeyboardAxisCamera(viewer);
+            this._keyboardAxis = new BIMSURFER.KeyboardAxisCamera(viewer, {
+                camera: cfg.camera
+            });
 
-            this._keyboardOrbit = new BIMSURFER.KeyboardOrbitCamera(viewer);
-
-            this._mouseOrbit = new BIMSURFER.MouseOrbitCamera(viewer);
+            this._keyboardOrbit = new BIMSURFER.KeyboardOrbitCamera(viewer, {
+                camera: cfg.camera
+            });
+            
+            this._mouseOrbit = new BIMSURFER.MouseOrbitCamera(viewer, {
+                camera: cfg.camera
+            });
 
             this._keyboardPan = new BIMSURFER.KeyboardPanCamera(viewer, {
-                sensitivity: 1
+                sensitivity: 1,
+                camera: cfg.camera
             });
 
             this._mousePan = new BIMSURFER.MousePanCamera(viewer, {
-                sensitivity: 1
+                sensitivity: 1,
+                camera: cfg.camera
             });
 
             this._keyboardZoom = new BIMSURFER.KeyboardZoomCamera(viewer, {
-                sensitivity: 1
+                sensitivity: 1,
+                camera: cfg.camera
             });
 
             this._mouseZoom = new BIMSURFER.MouseZoomCamera(viewer, {
-                sensitivity: 1
+                sensitivity: 1,
+                camera: cfg.camera
             });
 
-            this.camera = cfg.camera;
-
             this._mousePickObject = new BIMSURFER.MousePickObject(viewer, {
-                rayPick: true
+                rayPick: true,
+                camera: cfg.camera
             });
 
             this._cameraFly = new BIMSURFER.CameraFlyAnimation(viewer, {
-                camera: this.camera
+                camera: cfg.camera
             });
 
             this._mousePickObject.on(&quot;pick&quot;,
@@ -249,7 +267,8 @@
                 // alert(&quot;Mothing picked&quot;);
             });
 
-
+            this.camera = cfg.camera;
+            
             this.firstPerson = cfg.firstPerson;
 
             this.active = cfg.active !== false;
@@ -275,6 +294,10 @@
             /**
              * The {{#crossLink &quot;Camera&quot;}}{{/crossLink}} being controlled.
              *
+             * Must be within the same {{#crossLink &quot;Viewer&quot;}}{{/crossLink}} as this Object. Defaults to the parent
+             * {{#crossLink &quot;Viewer&quot;}}Viewer&#x27;s{{/crossLink}} default {{#crossLink &quot;Viewer/camera:property&quot;}}camera{{/crossLink}} when set to
+             * a null or undefined value.
+             *
              * @property camera
              * @type Camera
              */
@@ -298,6 +321,11 @@
                             this.error(&quot;camera&quot;, &quot;Value is not a BIMSURFER.Camera&quot;);
                             return;
                         }
+
+                    } else {
+
+                        // Default to Viewer&#x27;s default Camera
+                        camera = this.viewer.camera;
                     }
 
                     //   this._cameraFly.camera = camera;

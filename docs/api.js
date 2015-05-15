@@ -4,7 +4,7 @@ YUI.add("yuidoc-meta", function(Y) {
         "AmbientLight",
         "Anaglyph",
         "BIMSURFER",
-        "BIMSURFER.Viewer",
+        "BIMSURFER.Cursor",
         "BIMSURFER.constants",
         "BoxGeometry",
         "BoxObject",
@@ -15,12 +15,12 @@ YUI.add("yuidoc-meta", function(Y) {
         "ClickSelectObjects",
         "Component",
         "Configs",
-        "Debug",
         "DepthOfField",
         "DirLight",
         "Effect",
         "FrameEffect",
         "Geometry",
+        "GridGeometry",
         "HighlightEffect",
         "Input",
         "IsolateEffect",
@@ -42,6 +42,7 @@ YUI.add("yuidoc-meta", function(Y) {
         "RandomObjects",
         "TeapotGeometry",
         "TeapotObject",
+        "Viewer",
         "XRayEffect",
         "math"
     ],
@@ -50,7 +51,6 @@ YUI.add("yuidoc-meta", function(Y) {
         "animate",
         "camera",
         "control",
-        "debug",
         "effect",
         "geometry",
         "input"
@@ -74,12 +74,7 @@ YUI.add("yuidoc-meta", function(Y) {
         {
             "displayName": "control",
             "name": "control",
-            "description": "A **CameraControl** allows you to pan, rotate and zoom a {{#crossLink \"Camera\"}}{{/crossLink}} using the mouse and keyboard,\nas well as switch it between preset left, right, anterior, posterior, superior and inferior views.\n\n## Overview\n\n<ul>\n<li>You can have multiple CameraControls within the same {{#crossLink \"Viewer\"}}{{/crossLink}}.</li>\n<li>Multiple CameraControls can drive the same {{#crossLink \"Camera\"}}{{/crossLink}}, or can each drive their own separate {{#crossLink \"Camera\"}}Cameras{{/crossLink}}.</li>\n<li>At any instant, the CameraControl we're driving is the one whose {{#crossLink \"Camera/active:property\"}}active{{/crossLink}} property is true.</li>\n<li>You can switch a CameraControl to a different {{#crossLink \"Camera\"}}{{/crossLink}} at any time.</li>\n</ul>\n\n## Example\n\n#### Controlling a Camera\n\nIn this example we're viewing a {{#crossLink \"TeapotObject\"}}{{/crossLink}} with a {{#crossLink \"Camera\"}}{{/crossLink}} that's controlled by a CameraControl.\n\n<iframe style=\"width: 600px; height: 400px\" src=\"../../examples/control_CameraControl.html\"></iframe>\n\n````Javascript\nvar viewer = new BIMSURFER.Viewer({ element: \"myDiv\" });\n\nvar camera = new BIMSURFER.Camera(viewer, {\n       eye: [5, 5, -5]\n   });\n\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n       camera: camera\n   });\n\n// Create a RandomObjects\nvar randomObjects = new BIMSURFER.RandomObjects(viewer, {\n       numObjects: 55\n   });\n\n\n````"
-        },
-        {
-            "displayName": "debug",
-            "name": "debug",
-            "description": "var debug = viewer.debug;\n\n debug.color = [1,0,0];\n debug.addPoint(1,2,3);\n debug.addPoint(2,3,4);\n debug.line();"
+            "description": "A **CameraControl** allows you to pan, rotate and zoom a {{#crossLink \"Camera\"}}{{/crossLink}} using the mouse and keyboard,\nas well as switch it between preset left, right, anterior, posterior, superior and inferior views.\n\n## Overview\n\n<ul>\n<li>You can have multiple CameraControls within the same {{#crossLink \"Viewer\"}}{{/crossLink}}.</li>\n<li>Multiple CameraControls can drive the same {{#crossLink \"Camera\"}}{{/crossLink}}, or can each drive their own separate {{#crossLink \"Camera\"}}Cameras{{/crossLink}}.</li>\n<li>At any instant, the CameraControl we're driving is the one whose {{#crossLink \"Camera/active:property\"}}active{{/crossLink}} property is true.</li>\n<li>You can switch a CameraControl to a different {{#crossLink \"Camera\"}}{{/crossLink}} at any time.</li>\n</ul>\n\n## Example\n\n#### Controlling a Camera\n\nIn this example we're viewing a {{#crossLink \"TeapotObject\"}}{{/crossLink}} with a {{#crossLink \"Camera\"}}{{/crossLink}} that's controlled by a CameraControl.\n\n<iframe style=\"width: 600px; height: 400px\" src=\"../../examples/control_CameraControl.html\"></iframe>\n\n````Javascript\nvar viewer = new BIMSURFER.Viewer({ element: \"myDiv\" });\n\nvar camera = new BIMSURFER.Camera(viewer, {\n       eye: [5, 5, -5]\n   });\n\nvar cameraControl = new BIMSURFER.CameraControl(viewer, {\n       camera: camera\n   });\n\n// Create a RandomObjects\nvar randomObjects = new BIMSURFER.RandomObjects(viewer, {\n       numObjects: 55\n   });\n````"
         },
         {
             "displayName": "effect",

@@ -4,7 +4,7 @@
  * A WebGL-based IFC Viewer for BIMSurfer
  * http://bimwiews.org/
  *
- * Built on 2015-05-14
+ * Built on 2015-05-15
  *
  * todo
  * Copyright 2015, todo
@@ -2159,6 +2159,14 @@ BIMSURFER.constants.clamp = function (s, min, max) {
          */
         className: "BIMSURFER.Component",
 
+        /**
+         * When true, indicates that only one instance of this component type may be active within
+         * its {{#crossLink "Viewer"}}{{/crossLink}} at a time. When a component is activated, that has
+         * a true value for this flag, then any other active component of the same type will be
+         * deactivated first.
+         */
+        exclusive: false,
+
 
         getClassName: function() {
 
@@ -3837,6 +3845,11 @@ var viewer = new BIMSURFER.Viewer(...);
          */
         this.components = {};
 
+        /**
+         * Map of components that have an 'exclusive' property. This is used to ensure that
+         * only one of these component types is active within this Viewer at a time.
+         */
+        this._onComponentActive = {};
 
         /**
          * The {{#crossLink "Component"}}Components{{/crossLink}} within this Viewer, mapped to their class names.
@@ -3927,7 +3940,28 @@ var viewer = new BIMSURFER.Viewer(...);
          */
         this.input = new BIMSURFER.Input(this);
 
+        /**
+         * Cursor icon control for this Viewer.
+         * @property cursor
+         * @final
+         * @type {BIMSURFER.Cursor}
+         */
+        this.cursor = new BIMSURFER.Cursor(this);
 
+        /**
+         * The default {{#crossLink "Camera"}}{{/crossLink}} for this Viewer.
+         *
+         * This {{#crossLink "Camera"}}{{/crossLink}} is active by default, and becomes inactive
+         * as soon as you activate some other {{#crossLink "Camera"}}{{/crossLink}} in this Viewer.
+         *
+         * Any components that you create for this Viewer, that require a {{#crossLink "Camera"}}{{/crossLink}},
+         * will fall back on this one by default.
+         *
+         * @property camera
+         * @final
+         * @type {BIMSURFER.Camera}
+         */
+        this.camera = new BIMSURFER.Camera(this);
 
         /**
          * The number of {{#crossLink "Objects"}}{{/crossLink}} within this ObjectSet.
@@ -3994,12 +4028,45 @@ var viewer = new BIMSURFER.Viewer(...);
             typeComponents[id] = component;
         }
 
+        var self = this;
+
+        // When the component has an 'exclusive' property set true, then only one instance of that component
+        // type may be active within the Viewer at a time. When a component is activated, that has a true value
+        // for this flag, then any other active component of the same type will be deactivated first.
+
+        if (component.exclusive === true) {
+
+            if (component.active) {
+                self.deactivateOthers(component);
+            }
+
+            this._onComponentActive[component.id] = component.on("active",
+                function (active) {
+
+                    if (active) {
+                        self._deactivateOthers(component);
+                    }
+                });
+        }
+
+        this._boundaryDirty = true;
+
         /**
          * Fired whenever a Component has been created within this Viewer.
          * @event componentCreated
          * @param {Component} value The component that was created
          */
         this.fire("componentCreated", component, true);
+    };
+
+    // Deactivates all other components within this Viewer, that have same className as that given.
+    BIMSURFER.Viewer.prototype._deactivateOthers = function (component) {
+        this.withClasses([component.className],
+            function (otherComponent) {
+                if (otherComponent.id !== component.id) {
+                    otherComponent.active = false;
+                }
+            });
     };
 
     /**
@@ -4027,7 +4094,14 @@ var viewer = new BIMSURFER.Viewer(...);
             delete this.types[component.type][id];
         }
 
+        this._boundaryDirty = true;
+
         this._componentIDMap.removeItem(id);
+
+        if (component.exclusive === true) {
+            component.off(this._onComponentActive[component.id]);
+            delete this._onComponentActive[component.id];
+        }
 
         /**
          * Fired whenever a component within this Viewer has been destroyed.
@@ -4073,7 +4147,7 @@ var viewer = new BIMSURFER.Viewer(...);
     });
 
     /**
-     * Boundary of all components in this Viewer.
+     * Boundary of all bounded components in this Viewer.
      *
      * @property boundary
      * @final
@@ -4081,7 +4155,7 @@ var viewer = new BIMSURFER.Viewer(...);
      */
     Object.defineProperty(BIMSURFER.Viewer.prototype, "boundary", {
 
-        get: function() {
+        get: function () {
 
             if (this._boundaryDirty) {
                 this._rebuildBoundary();
@@ -4094,7 +4168,7 @@ var viewer = new BIMSURFER.Viewer(...);
     });
 
     /**
-     * center of all components in this Viewer.
+     * Center of all bounded components in this Viewer.
      *
      * @property center
      * @final
@@ -4102,7 +4176,7 @@ var viewer = new BIMSURFER.Viewer(...);
      */
     Object.defineProperty(BIMSURFER.Viewer.prototype, "center", {
 
-        get: function() {
+        get: function () {
 
             if (this._boundaryDirty) {
                 this._rebuildBoundary();
@@ -4114,70 +4188,79 @@ var viewer = new BIMSURFER.Viewer(...);
         enumerable: true
     });
 
+
     BIMSURFER.Viewer.prototype._rebuildBoundary = function () {
 
-//        if (!this._boundaryDirty) {
-//            return;
-//        }
-//
-//        // For an empty selection, boundary is zero volume and centered at the origin
-//
-//        if (this.numObjects === 0) {
-//            this._boundary.xmin = -1.0;
-//            this._boundary.ymin = -1.0;
-//            this._boundary.zmin = -1.0;
-//            this._boundary.xmax =  1.0;
-//            this._boundary.ymax =  1.0;
-//            this._boundary.zmax =  1.0;
-//
-//        } else {
-//
-//            // Set boundary inside-out, ready to expand by each selected object
-//
-//            this._boundary.xmin = 1000000.0;
-//            this._boundary.ymin = 1000000.0;
-//            this._boundary.zmin = 1000000.0;
-//            this._boundary.xmax = -1000000.0;
-//            this._boundary.ymax = -1000000.0;
-//            this._boundary.zmax = -1000000.0;
-//
-//            var object;
-//            var boundary;
-//
-//            for (var objectId in this.objects) {
-//                if (this.objects.hasOwnProperty(objectId)) {
-//
-//                    object = this.objects[objectId];
-//
-//                    boundary = object.boundary;
-//
-//                    if (boundary.xmin < this._boundary.xmin) {
-//                        this._boundary.xmin = boundary.xmin;
-//                    }
-//                    if (boundary.ymin < this._boundary.ymin) {
-//                        this._boundary.ymin = boundary.ymin;
-//                    }
-//                    if (boundary.zmin < this._boundary.zmin) {
-//                        this._boundary.zmin = boundary.zmin;
-//                    }
-//                    if (boundary.xmax > this._boundary.xmax) {
-//                        this._boundary.xmax = boundary.xmax;
-//                    }
-//                    if (boundary.ymax > this._boundary.ymax) {
-//                        this._boundary.ymax = boundary.ymax;
-//                    }
-//                    if (boundary.zmax > this._boundary.zmax) {
-//                        this._boundary.zmax = boundary.zmax;
-//                    }
-//                }
-//            }
-//        }
-//
-//        this._center[0] = (this._boundary.xmax + this._boundary.xmin) * 0.5;
-//        this._center[1] = (this._boundary.ymax + this._boundary.ymin) * 0.5;
-//        this._center[2] = (this._boundary.zmax + this._boundary.zmin) * 0.5;
-//
-//        this._boundaryDirty = false;
+        if (!this._boundaryDirty) {
+            return;
+        }
+
+        // For an empty selection, boundary is zero volume and centered at the origin
+
+        if (this.numObjects === 0) {
+            this._boundary.xmin = -1.0;
+            this._boundary.ymin = -1.0;
+            this._boundary.zmin = -1.0;
+            this._boundary.xmax = 1.0;
+            this._boundary.ymax = 1.0;
+            this._boundary.zmax = 1.0;
+
+        } else {
+
+            // Set boundary inside-out, ready to expand by each selected object
+
+            this._boundary.xmin = 1000000.0;
+            this._boundary.ymin = 1000000.0;
+            this._boundary.zmin = 1000000.0;
+            this._boundary.xmax = -1000000.0;
+            this._boundary.ymax = -1000000.0;
+            this._boundary.zmax = -1000000.0;
+
+            var component;
+            var boundary;
+
+            for (var componentId in this.components) {
+                if (this.components.hasOwnProperty(componentId)) {
+
+                    component = this.components[componentId];
+
+                    boundary = component.boundary;
+
+                    if (boundary) {
+
+                        if (boundary.xmin < this._boundary.xmin) {
+                            this._boundary.xmin = boundary.xmin;
+                        }
+
+                        if (boundary.ymin < this._boundary.ymin) {
+                            this._boundary.ymin = boundary.ymin;
+                        }
+
+                        if (boundary.zmin < this._boundary.zmin) {
+                            this._boundary.zmin = boundary.zmin;
+                        }
+
+                        if (boundary.xmax > this._boundary.xmax) {
+                            this._boundary.xmax = boundary.xmax;
+                        }
+
+                        if (boundary.ymax > this._boundary.ymax) {
+                            this._boundary.ymax = boundary.ymax;
+                        }
+
+                        if (boundary.zmax > this._boundary.zmax) {
+                            this._boundary.zmax = boundary.zmax;
+                        }
+                    }
+                }
+            }
+        }
+
+        this._center[0] = (this._boundary.xmax + this._boundary.xmin) * 0.5;
+        this._center[1] = (this._boundary.ymax + this._boundary.ymin) * 0.5;
+        this._center[2] = (this._boundary.zmax + this._boundary.zmin) * 0.5;
+
+        this._boundaryDirty = false;
     };
 
     /**
@@ -6197,6 +6280,18 @@ var randomObjects = new BIMSURFER.RandomObjects(viewer, {
          */
         className: "BIMSURFER.Camera",
 
+        /**
+         Indicates that only one instance of a Camera may be active within
+         its {{#crossLink "Viewer"}}{{/crossLink}} at a time. When a Camera is activated, that has
+         a true value for this flag, then any other active Camera will be deactivated first.
+
+         @property exclusive
+         @type Boolean
+         @final
+         */
+        exclusive: true,
+
+        
         _init: function (cfg) {
 
             // The ViewerJS nodes that this Camera controls
@@ -14487,8 +14582,6 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
  var randomObjects = new BIMSURFER.RandomObjects(viewer, {
         numObjects: 55
     });
-
-
  ````
 
  @class CameraControl
@@ -14517,42 +14610,62 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
          */
         className: "BIMSURFER.CameraControl",
 
+        /**
+          Indicates that only one instance of a CameraControl may be active within
+          its {{#crossLink "Viewer"}}{{/crossLink}} at a time. When a CameraControl is activated, that has
+          a true value for this flag, then any other active CameraControl will be deactivated first.
+
+         @property exclusive
+         @type Boolean
+         @final
+         */
+        exclusive: true,
+        
         _init: function (cfg) {
 
             var self = this;
 
-            var viewer = this.viewer;
+            var viewer = this.viewer;            
 
-            this._keyboardAxis = new BIMSURFER.KeyboardAxisCamera(viewer);
+            this._keyboardAxis = new BIMSURFER.KeyboardAxisCamera(viewer, {
+                camera: cfg.camera
+            });
 
-            this._keyboardOrbit = new BIMSURFER.KeyboardOrbitCamera(viewer);
-
-            this._mouseOrbit = new BIMSURFER.MouseOrbitCamera(viewer);
+            this._keyboardOrbit = new BIMSURFER.KeyboardOrbitCamera(viewer, {
+                camera: cfg.camera
+            });
+            
+            this._mouseOrbit = new BIMSURFER.MouseOrbitCamera(viewer, {
+                camera: cfg.camera
+            });
 
             this._keyboardPan = new BIMSURFER.KeyboardPanCamera(viewer, {
-                sensitivity: 1
+                sensitivity: 1,
+                camera: cfg.camera
             });
 
             this._mousePan = new BIMSURFER.MousePanCamera(viewer, {
-                sensitivity: 1
+                sensitivity: 1,
+                camera: cfg.camera
             });
 
             this._keyboardZoom = new BIMSURFER.KeyboardZoomCamera(viewer, {
-                sensitivity: 1
+                sensitivity: 1,
+                camera: cfg.camera
             });
 
             this._mouseZoom = new BIMSURFER.MouseZoomCamera(viewer, {
-                sensitivity: 1
+                sensitivity: 1,
+                camera: cfg.camera
             });
 
-            this.camera = cfg.camera;
-
             this._mousePickObject = new BIMSURFER.MousePickObject(viewer, {
-                rayPick: true
+                rayPick: true,
+                camera: cfg.camera
             });
 
             this._cameraFly = new BIMSURFER.CameraFlyAnimation(viewer, {
-                camera: this.camera
+                camera: cfg.camera
             });
 
             this._mousePickObject.on("pick",
@@ -14571,7 +14684,8 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
                 // alert("Mothing picked");
             });
 
-
+            this.camera = cfg.camera;
+            
             this.firstPerson = cfg.firstPerson;
 
             this.active = cfg.active !== false;
@@ -14597,6 +14711,10 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
             /**
              * The {{#crossLink "Camera"}}{{/crossLink}} being controlled.
              *
+             * Must be within the same {{#crossLink "Viewer"}}{{/crossLink}} as this Object. Defaults to the parent
+             * {{#crossLink "Viewer"}}Viewer's{{/crossLink}} default {{#crossLink "Viewer/camera:property"}}camera{{/crossLink}} when set to
+             * a null or undefined value.
+             *
              * @property camera
              * @type Camera
              */
@@ -14620,6 +14738,11 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
                             this.error("camera", "Value is not a BIMSURFER.Camera");
                             return;
                         }
+
+                    } else {
+
+                        // Default to Viewer's default Camera
+                        camera = this.viewer.camera;
                     }
 
                     //   this._cameraFly.camera = camera;
@@ -15886,6 +16009,10 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
             this._onKeyDown = null;
 
+            this._cameraFly = new BIMSURFER.CameraFlyAnimation(viewer, {
+                camera: this.camera
+            });
+
             this.active = cfg.active !== false;
         },
 
@@ -15903,9 +16030,13 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
                 set: function (value) {
 
+                    value = !!value;
+
                     if (this._active === value) {
                         return;
                     }
+
+                    this._cameraFly.active = value;
 
                     var self = this;
 
@@ -15920,9 +16051,14 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
                                     return;
                                 }
 
-                                var camera = self._camera;
+                                var center = self.viewer.center;
 
-                                var center = [0,0,0];
+                                var dist;
+                                var elev;
+
+                                var eye;
+                                var look;
+                                var up;
 
                                 switch (keyCode) {
 
@@ -15930,12 +16066,12 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
                                         // Right view
 
-                                        var dist = 10;
-                                        var elev = 0;
+                                        dist = 100;
+                                        elev = 0;
 
-                                        camera.look = center;
-                                        camera.eye = [-dist, elev, 0];
-                                        camera.up = [ 0, 1, 0 ];
+                                        look = center;
+                                        eye = [-dist, elev, 0];
+                                        up = [ 0, 1, 0 ];
 
                                         break;
 
@@ -15943,12 +16079,12 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
                                         // Left view
 
-                                        var dist = 10;
-                                        var elev = 0;
+                                        dist = 100;
+                                        elev = 0;
 
-                                        camera.look = center;
-                                        camera.eye = [dist, elev, 0];
-                                        camera.up = [ 0, 1, 0 ];
+                                        look = center;
+                                        eye = [dist, elev, 0];
+                                        up = [ 0, 1, 0 ];
 
                                         break;
 
@@ -15956,12 +16092,12 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
                                         // Front view
 
-                                        var dist = 10;
-                                        var elev = 0;
+                                        dist = 100;
+                                        elev = 0;
 
-                                        camera.look = center;
-                                        camera.eye = [0, elev, -dist];
-                                        camera.up = [ 0, 1, 0 ];
+                                        look = center;
+                                        eye = [0, elev, -dist];
+                                        up = [ 0, 1, 0 ];
 
                                         break;
 
@@ -15969,12 +16105,12 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
                                         // Back view
 
-                                        var dist = 10;
-                                        var elev = 0;
+                                        dist = 100;
+                                        elev = 0;
 
-                                        camera.look = center;
-                                        camera.eye = [0, elev, dist];
-                                        camera.up = [ 0, 1, 0 ];
+                                        look = center;
+                                        eye = [0, elev, dist];
+                                        up = [ 0, 1, 0 ];
 
                                         break;
 
@@ -15982,12 +16118,12 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
                                         // Top view
 
-                                        var dist = 10;
-                                        var elev = 0;
+                                        dist = 100;
+                                        elev = 0;
 
-                                        camera.look = center;
-                                        camera.eye = [0, elev - dist, 0];
-                                        camera.up = [ 0, 0, 1 ];
+                                        look = center;
+                                        eye = [0, elev - dist, 0];
+                                        up = [ 0, 0, 1 ];
 
                                         break;
 
@@ -15995,14 +16131,23 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
                                         // Bottom view
 
-                                        var dist = 10;
-                                        var elev = 0;
+                                        dist = 100;
+                                        elev = 0;
 
-                                        camera.look = [0, elev, 0 ];
-                                        camera.eye = [0, elev + dist, 0];
-                                        camera.up = [ 0, 0, -1 ];
+                                        look = [0, elev, 0 ];
+                                        eye = [0, elev + dist, 0];
+                                        up = [ 0, 0, -1 ];
 
                                         break;
+                                }
+
+                                if (look) {
+
+                                    self._cameraFly.flyTo({
+                                        look: look,
+                                        eye: eye,
+                                        up: up
+                                    });
                                 }
                             });
 
@@ -16052,6 +16197,8 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
         _destroy: function () {
             this.active = false;
+
+            this._cameraFly.destroy();
         }
     });
 
@@ -17186,12 +17333,6 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
         _init: function (cfg) {
 
-            var self = this;
-
-            this._camera = null;
-
-            this._arc = 0.0;
-
             this._look1 = [0, 0, 0];
             this._eye1 = [0, 0, 0];
             this._up1 = [0, 0, 0];
@@ -17219,14 +17360,14 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
             this._stopFOV = 55;
 
-            this._velocity = 1.0;
-
             this._time1 = null;
             this._time2 = null;
 
             this.easing = cfg.easing !== false;
 
             this.duration = cfg.duration || 0.5;
+
+            this.camera = cfg.camera;
         },
 
         /**
@@ -17374,17 +17515,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
                 }
             }
 
-            // Distance to travel
-
-            var lookDist = Math.abs(BIMSURFER.math.lenVec3(BIMSURFER.math.subVec3(this._look2, this._look1, [])));
-
-            var eyeDist = Math.abs(BIMSURFER.math.lenVec3(BIMSURFER.math.subVec3(this._eye2, this._eye1, [])));
-
-            this._dist = lookDist > eyeDist ? lookDist : eyeDist;
-
-
             this.fire("started", params, true);
-
 
             var self = this;
 
@@ -17410,16 +17541,11 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
             var t = (time - this._time1) / (this._time2 - this._time1);
 
             if (t > 1) {
-                //  this.stop();
+                this.stop();
                 return;
             }
 
             t = this.easing ? this._ease(t, 0, 1, 1) : t;
-
-            if (t > 1.0) {
-                this.stop();
-                return;
-            }
 
             this._camera.eye = BIMSURFER.math.lerpVec3(t, 0, 1, this._eye1, this._eye2, []);
             this._camera.look = BIMSURFER.math.lerpVec3(t, 0, 1, this._look1, this._look2, []);
@@ -17431,7 +17557,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
         _ease: function (t, b, c, d) {
             t /= d;
-            return -c * t*(t-2) + b;
+            return -c * t * (t - 2) + b;
         },
 
         stop: function () {
@@ -17488,5 +17614,71 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
             this.stop();
         }
     });
+
+})();
+;/**
+ Manages the cursor icon for a {{#crossLink "Viewer"}}Viewer{{/crossLink}}.
+
+ ## Overview
+
+ TODO
+
+ ## Example
+
+ TODO
+
+ ```` javascript
+
+ ````
+
+ @class Cursor
+ @module BIMSURFER
+ @constructor
+ @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}, creates this Configs within the
+ default {{#crossLink "Viewer"}}Viewer{{/crossLink}} when omitted
+ @extends Object
+ */
+(function () {
+
+    "use strict";
+
+    BIMSURFER.Cursor = function (viewer) {
+        this._element = viewer.element;
+        this._element = $("body");
+        this._stack = [];
+        this._stackLen = 0;
+    };
+
+    BIMSURFER.Cursor.prototype.push = function (state) {
+        this._element.css("cursor", state);
+        this._stack[this._stackLen++] = state;
+    };
+
+    BIMSURFER.Cursor.prototype.pop = function () {
+
+        if (this._stackLen <= 0) {
+
+            // Unexpected pop
+
+            this._element.css("cursor", "default");
+            this._stackLen = 0;
+            return;
+        }
+
+        if (this._stackLen === 1) {
+
+            // Last state in stack
+
+            this._element.css("cursor", "default");
+            this._stackLen = 0;
+            return;
+        }
+
+        // Revert to previous stacked state
+
+        --this._stackLen;
+
+        this._element.css("cursor", this._stack[this._stackLen - 1]);
+    };
 
 })();

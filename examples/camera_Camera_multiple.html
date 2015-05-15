@@ -24,7 +24,7 @@
 
     <link href="css/styles.css" rel="stylesheet"/>
 
-    <script src="lib/utils.js"></script>
+
 
     <script src="../lib/jquery-2.1.3.min.js"></script>
     <script src="../lib/scenejs.js"></script>
@@ -78,22 +78,16 @@
         })
     ];
 
-    // Periodically switch between the Cameras
+    // Periodically switch between the Cameras.
+    // The Viewer will ensure that only one Camera is active at a time.
 
     var i = -1;
-    var last = -1;
 
     setInterval(function () {
-
-        if (last > -1) {
-            cameras[last].active = false
-        }
 
         i = (i + 1) % (cameras.length - 1);
 
         cameras[i].active = true;
-
-        last = i;
 
     }, 1000);
 

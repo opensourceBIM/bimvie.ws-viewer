@@ -112,11 +112,11 @@
     // Handle when Object is picked
     mousePickObject.on("pick", function(e) {
 
-    //    alert("Picked: " + JSON.stringify(e));
+        var diff = BIMSURFER.math.subVec3(self._cameraFly.camera.eye, self._cameraFly.camera.look, []);
 
-        fly.flyTo({
+        self._cameraFly.flyTo({
             look: e.worldPos,
-            velocity: 20
+            eye: [e.worldPos[0] + diff[0], e.worldPos[1] + diff[1], e.worldPos[2] + diff[2]]
         });
 
     });
