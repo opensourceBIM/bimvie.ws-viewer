@@ -4689,7 +4689,10 @@ var viewer = new BIMSURFER.Viewer(...);
             });
 
             this._flagsNode = this._enableNode.addNode({
-                type: "flags"
+                type: "flags",
+                flags: {
+                    backfaces: false
+                }
             });
 
             this._materialNode = this._flagsNode.addNode({
