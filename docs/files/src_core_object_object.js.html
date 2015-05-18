@@ -247,7 +247,10 @@
             });
 
             this._flagsNode = this._enableNode.addNode({
-                type: &quot;flags&quot;
+                type: &quot;flags&quot;,
+                flags: {
+                    backfaces: false
+                }
             });
 
             this._materialNode = this._flagsNode.addNode({
