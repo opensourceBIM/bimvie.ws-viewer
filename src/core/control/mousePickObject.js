@@ -161,36 +161,20 @@
 
                         var input = this.viewer.input;
 
-                        var lastX;
-                        var lastY;
+                        this._onMouseUp = input.on("dblclick",
+                            function (coords) {
 
-                        this._onMouseDown = input.on("mousedown",
-                            function (e) {
+                                var hit = self.viewer.pick(coords[0], coords[1], {
+                                    rayPick: self._rayPick
+                                });
 
-                                lastX = e[0];
-                                lastY = e[1];
-                            });
+                                if (hit) {
+                                    self.fire("pick", hit);
 
-                        this._onMouseUp = input.on("mouseup",
-                            function (e) {
-
-                                if (((e[0] > lastX) ? (e[0] - lastX < 5) : (lastX - e[0] < 5)) &&
-                                    ((e[1] > lastY) ? (e[1] - lastY < 5) : (lastY - e[1] < 5))) {
-
-                                    var hit = self.viewer.pick(lastX, lastY, {
-                                        rayPick: self._rayPick
+                                } else {
+                                    self.fire("nopick", {
+                                        canvasPos: e
                                     });
-
-                                    if (hit) {
-
-                                        self.fire("pick", hit);
-
-                                    } else {
-
-                                        self.fire("nopick", {
-                                            canvasPos: e
-                                        });
-                                    }
                                 }
                             });
 
