@@ -37,6 +37,7 @@
         "src/core/effect/effect.js",
         "src/core/effect/labelEffect.js",
         "src/core/effect/highlightEffect.js",
+        "src/core/effect/desaturateEffect.js",
         "src/core/effect/isolateEffect.js",
         "src/core/effect/xrayEffect.js",
         "src/core/effect/frameEffect.js",

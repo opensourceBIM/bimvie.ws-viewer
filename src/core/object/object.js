@@ -453,6 +453,10 @@
 
                     this._highlighted = value;
 
+                    if (value) {
+                        this._desaturated = false;
+                    }
+
                     this._materialNode.setColor(
                         this._highlighted
                             ? { r: 0.7, g: 0.7, b: 0.3 }
@@ -461,6 +465,38 @@
 
                 get: function () {
                     return this._highlighted;
+                }
+            },
+
+            /**
+             Whether this Object is desaturated.
+
+             @property desaturated
+             @default false
+             @type Boolean
+             */
+            desaturate: {
+
+                set: function (value) {
+
+                    if (this._desaturated === value) {
+                        return;
+                    }
+
+                    this._desaturated = value;
+
+                    if (value) {
+                        this._highlighted = false;
+                    }
+
+                    this._materialNode.setColor(
+                        this._desaturated
+                            ? { r: 0.4, g: 0.4, b: 0.4 }
+                            : { r: this._color[0], g: this._color[1], b: this._color[2] });
+                },
+
+                get: function () {
+                    return this._desaturated;
                 }
             },
 
