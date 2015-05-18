@@ -53,6 +53,7 @@
                                 <li><a href="../classes/Component.html">Component</a></li>
                                 <li><a href="../classes/Configs.html">Configs</a></li>
                                 <li><a href="../classes/DepthOfField.html">DepthOfField</a></li>
+                                <li><a href="../classes/DesaturateEffect.html">DesaturateEffect</a></li>
                                 <li><a href="../classes/DirLight.html">DirLight</a></li>
                                 <li><a href="../classes/Effect.html">Effect</a></li>
                                 <li><a href="../classes/FrameEffect.html">FrameEffect</a></li>
@@ -137,13 +138,106 @@
 
 
 <div class="box intro">
-    <p>An <strong>Effect</strong> is a the base class for visual effects that are applied to <a href="../classes/ObjectSet.html" class="crosslink">ObjectSets</a>.</p>
+    <p>A <strong>DesaturateEffect</strong> is an <a href="../classes/Effect.html" class="crosslink">Effect</a> that desaturates the colours of
+Object within an <a href="../classes/ObjectSet.html" class="crosslink">ObjectSet</a>.</p>
 <h2 id="overview">Overview</h2>
-<ul>
-<li>Effect is subclassed by <a href="../classes/HighlightEffect.html" class="crosslink">HighlightEffect</a>, <a href="../classes/IsolateEffect.html" class="crosslink">IsolateEffect</a> and <a href="../classes/XRayEffect.html" class="crosslink">XRayEffect</a>.</li>
-<li>Multiple Effects can share the same <a href="../classes/ObjectSet.html" class="crosslink">ObjectSet</a> if required.</li>
-<li>An Effect will provide its own default <a href="../classes/ObjectSet.html" class="crosslink">ObjectSet</a> when you don&#39;t configure it with one.</li>
-</ul>
+<p>TODO</p>
+<h2 id="example">Example</h2>
+<h4 id="desaturating-an-objectset">Desaturating an ObjectSet</h4>
+<p>In this example we create four Object, then add two of them to an <a href="../classes/ObjectSet.html" class="crosslink">ObjectSet</a>.
+<br> Then we apply a <a href="../classes/DesaturateEffect.html" class="crosslink">DesaturateEffect</a> to the <a href="../classes/ObjectSet.html" class="crosslink">ObjectSet</a>, causing the colour of
+it&#39;s Object to become desaturated while the other two Object remain normal.</p>
+<iframe style="width: 600px; height: 400px" src="../../examples/effect_DesaturateEffect.html"></iframe>
+
+<pre class="code prettyprint"><code class="lang-javascript">
+// Create a Viewer
+var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
+
+// Create a Camera
+var camera = new BIMSURFER.Camera(viewer, {
+       eye: [30, 20, -30]
+   });
+
+// Spin the camera
+viewer.on("tick", function () {
+       camera.rotateEyeY(0.2);
+   });
+
+// Create a CameraControl so we can move the Camera
+var cameraControl = new BIMSURFER.CameraControl(viewer, {
+       camera: camera
+   });
+
+// Create an AmbientLight
+var ambientLight = new BIMSURFER.AmbientLight(viewer, {
+       color: [0.7, 0.7, 0.7]
+   });
+
+// Create a DirLight
+var dirLight1 = new BIMSURFER.DirLight(viewer, {
+       color: [0.6, 0.9, 0.9],
+       dir: [1.0, 0.0, 0.0],
+       space: "view"
+   });
+
+// Create a DirLight
+var dirLight2 = new BIMSURFER.DirLight(viewer, {
+       color: [0.6, 0.9, 0.9],
+       dir: [-0.5, 0.0, -1.0],
+       space: "view"
+   });
+
+// Create a BoxGeometry
+var geometry = new BIMSURFER.BoxGeometry(viewer, {
+       id: "myGeometry"
+   });
+
+// Create some Objects
+// Share the BoxGeometry among them
+
+var object1 = new BIMSURFER.Object(viewer, {
+       type: "IfcRoof",
+       geometries: [ geometry ],
+       matrix: BIMSURFER.math.translationMat4v([-8, 0, -8])
+   });
+
+var object2 = new BIMSURFER.Object(viewer, {
+       type: "IfcDistributionFlowElement",
+       geometries: [ geometry ],
+       matrix: BIMSURFER.math.translationMat4v([8, 0, -8])
+   });
+
+var object3 = new BIMSURFER.Object(viewer, {
+       type: "IfcRailing",
+       geometries: [ geometry ],
+       matrix: BIMSURFER.math.translationMat4v([-8, 0, 8])
+   });
+
+var object4 = new BIMSURFER.Object(viewer, {
+       type: "IfcRoof",
+       geometries: [ geometry ],
+       matrix: BIMSURFER.math.translationMat4v([8, 0, 8])
+   });
+
+// Create an ObjectSet that initially contains one of our Objects
+
+var objectSet = new BIMSURFER.ObjectSet(viewer, {
+       objects: [object1 ]
+   });
+
+// Apply a Desaturate effect to the ObjectSet, which causes the
+// Object in the ObjectSet to become desaturated.
+
+var desaturate = new BIMSURFER.DesaturateEffect(viewer, {
+       objectSet: objectSet
+   });
+
+// Add a second Object to the ObjectSet, causing the Desaturate to now render
+// that Object as desaturated also
+
+objectSet.addObjects([object3]);
+</code></pre>
+
 </div>
 
 
@@ -152,6 +246,11 @@
             <p>This module provides the following classes:</p>
 
             <ul class="module-classes">
+                <li class="module-class">
+                    <a href="../classes/DesaturateEffect.html">
+                        DesaturateEffect
+                    </a>
+                </li>
                 <li class="module-class">
                     <a href="../classes/Effect.html">
                         Effect
