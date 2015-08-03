@@ -1,0 +1,220 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>bimvie.ws dojo example</title>
+    <script>
+
+        // Typically these modules would correspond to the file system, preferably git submodules, but they can also be referenced from CDNs.
+
+        var dojoConfig = {
+            packages: [
+                {name: "dojo", location: "https://ajax.googleapis.com/ajax/libs/dojo/1.10.4/dojo/"},
+                {name: "dijit", location: "https://ajax.googleapis.com/ajax/libs/dojo/1.10.4/dijit/"},
+                {name: 'dgrid', location: 'https://cdn.rawgit.com/SitePen/dgrid/v0.4.0'},
+                {name: 'dstore', location: 'https://cdn.rawgit.com/SitePen/dstore/v1.0.0'},
+                {name: 'put-selector', location: 'https://cdn.rawgit.com/kriszyp/put-selector/master'},
+                {name: 'xstyle', location: 'https://cdn.rawgit.com/kriszyp/xstyle/master'}
+            ]
+        };
+    </script>
+
+    <script src="lib/dojo/dojo.js"></script>
+    <script src="lib/scenejs.js"></script>
+    <script src="build/bimviews.js"></script>
+
+    <style>
+
+
+        @import "lib/dojo/dojo.css";
+        @import "lib/dojo/dijit.css";
+        @import "lib/dojo/claro.css";
+        @import "lib/dojo/skins/claro.css";
+
+        /* Some boiler-plate css is necessary to have a reasonably functional and clean interface */
+
+        body, html, #main {
+            width: 100%;
+            height: 100%;
+        }
+
+        h1 {
+            margin: 0;
+            padding: 0;
+        }
+
+        .claro .dijitContentPane, .claro .dijitBorderContainer {
+            border: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .claro .dijitContentPane {
+            padding: 10px;
+        }
+
+        #header {
+            border-bottom: solid 1px #ccc;
+        }
+
+        .claro .dijitSplitterV {
+            border: solid 1px #ccc;
+            border-width: 0 1px 0 1px;
+        }
+
+        #treeContainer {
+            width: 200px;
+        }
+
+        .claro .dgrid {
+            border: none;
+            cursor: pointer;
+        }
+
+        .claro .dgrid-header {
+            background: #fff;
+            border-bottom: 2px #ddd;
+        }
+
+        .claro .dgrid-cell {
+            border-color: #eee;
+            border-width: 0 0 1px 0;
+        }
+    </style>
+    <script>
+        require([
+                    "dojo/_base/declare",
+                    "dojo/parser",
+                    "dgrid/OnDemandGrid",
+                    "dgrid/Tree",
+                    "dstore/Memory",
+                    "dstore/Tree",
+                    "dojo/domReady!",
+                    "dijit/layout/BorderContainer",
+                    "dijit/layout/ContentPane"
+                ],
+                function (declare, parser, Grid, Tree, Memory, TreeStore) {
+
+                    // The parser turns the type-annotated divs in the body into full-fledged interactive objects.
+
+                    parser.parse();
+
+                    // declare() is dojo's way of declaring a new class, superclasses go into the first array argument.
+                    // Multiple inheritance is very common in dojo.
+
+                    var Viewer = declare([BIMSURFER.Viewer], {
+                        constructor: function (domNode) {
+
+                            // Obviously your <canvas> goes here.
+                            this.domNode = document.getElementById(domNode);
+                        },
+                        selectElement: function (id) {
+
+                            // Just some stupid thing to simulate some interactivity between the components.
+                            this.domNode.style.background = [
+                                "LightCyan",
+                                "LightGoldenRodYellow",
+                                "LightGray",
+                                "LightGreen",
+                                "LightPink",
+                                "LightSalmon",
+                                "LightSeaGreen",
+                                "LightSkyBlue",
+                                "LightSlateGray",
+                                "LightSteelBlue",
+                                "LightYellow"][id]
+                        }
+                    });
+
+                    var viewer = new Viewer({element: 'viewerContainer'});
+
+                    var cameraControl = new BIMSURFER.CameraControl(viewer, {
+                        camera: new BIMSURFER.Camera(viewer, {
+                            eye: [80, 40, -80]
+                        })
+                    });
+
+                    // Some coloured boxes
+                    new BIMSURFER.RandomObjects(viewer, {
+                        numObjects: 55
+                    });
+
+                    // Your API proposal does not have to change at all I think, this is more of an UI example.
+                    // var download = new Download();
+
+                    // Dojo uses MVC concepts and separates the data model (store) from the view (tree). Obviously this
+                    // tree needs to fetch data from the BIMserver. Lazily loaded stores are also an option.
+
+                    var store = new declare([Memory, TreeStore])();
+
+                    store.add({node: 'project', id: 1, parent: null, hasChildren: true});
+
+                    store.add({node: 'site', id: 2, parent: 1, hasChildren: true});
+
+                    store.add({node: 'building', id: 3, parent: 2, hasChildren: true});
+
+                    store.add({node: 'storey1', id: 4, parent: 3, hasChildren: true});
+                    store.add({node: 'storey2', id: 5, parent: 3, hasChildren: true});
+
+                    store.add({node: 'window', id: 6, parent: 4, hasChildren: false});
+                    store.add({node: 'wall', id: 7, parent: 4, hasChildren: false});
+                    store.add({node: 'stairs', id: 8, parent: 5, hasChildren: false});
+                    store.add({node: 'door', id: 9, parent: 5, hasChildren: false});
+                    store.add({node: 'slab', id: 10, parent: 5, hasChildren: false});
+
+                    // Preferably all these different modules would be separated over different files and required as
+                    // dependencies, but in order to have a self-contained example they are all inlined.
+
+                    var tree = new declare([Grid, Tree])({
+                        className: "dgrid-autoheight",
+                        collection: store.getRootCollection(),
+                        columns: [
+                            {field: 'node', label: 'IFC decomposition', renderExpando: true}
+                        ],
+                        shouldExpand: function () {
+                            return true;
+                        }
+                    }, 'tree');
+
+                    tree.on(".dgrid-row:click", function (evt) {
+                        var row;
+                        if (row = tree.row(evt)) {
+                            // Would be better to use the dojo/Evented mechanism to link events together
+                            viewer.selectElement(row.data.id);
+                        }
+                    });
+
+                    tree.startup();
+                });
+    </script>
+</head>
+
+<body class='claro'>
+
+<div data-dojo-type='dijit/layout/LayoutContainer' id='main'>
+    <div data-dojo-type='dijit/layout/ContentPane'
+         data-dojo-props="region: 'top', splitter: false, gutters: false"
+         id='header'>
+        <h1>bimvie.ws dojo tree example</h1>
+    </div>
+
+    <div data-dojo-type='dijit/layout/BorderContainer'
+         data-dojo-props="region: 'center'">
+
+        <div data-dojo-type='dijit/layout/ContentPane'
+             data-dojo-props="region: 'left', splitter: true"
+             id='treeContainer'>
+            <div id='tree'></div>
+        </div>
+
+        <div data-dojo-type='dijit/layout/ContentPane'
+             data-dojo-props="region: 'center', splitter: true"
+             style="height:100%; width:100%; padding:0; margin:0;"
+             id='viewerContainer'>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>
