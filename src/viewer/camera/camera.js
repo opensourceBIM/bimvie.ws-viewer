@@ -84,6 +84,10 @@
  @param [cfg.eye=[0,0,-10]] {Array of Number} Eye position.
  @param [cfg.look=[0,0,0]] {Array of Number} The position of the point-of-interest we're looking at.
  @param [cfg.up=[0,1,0]] {Array of Number} The "up" vector.
+ @param [cfg.fovy=60.0] {Number} Field-of-view angle, in degrees, on Y-axis.
+ @param [cfg.aspect=1.0] {Number} Aspect ratio.
+ @param [cfg.near=0.1] {Number} Position of the near plane on the View-space Z-axis.
+ @param [cfg.far=10000] {Number} Position of the far plane on the View-space Z-axis.
  @extends Component
  */
 (function () {
@@ -486,11 +490,25 @@
                 }
             },
 
+            /**
+             * Field-of-view angle on Y-axis.
+             * Fires an {{#crossLink "Camera/fovy:event"}}{{/crossLink}} event on change.
+             * @property up
+             * @default 60
+             * @type Number
+             */
             fovy: {
 
                 set: function (value) {
                     this._fovy = value || 60;
                     this._cameraNodeDirty = true;
+
+                    /**
+                     * Fired whenever this Camera's {{#crossLink "Camera/fovy:property"}}{{/crossLink}} property changes.
+                     * @event fovy
+                     * @param value The property's new value
+                     */
+                    this.fire('fovy', this._fovy);
                 },
 
                 get: function () {
@@ -498,11 +516,25 @@
                 }
             },
 
+            /**
+             * Distance to near clip plane in normalized device coordinates [0..1].
+             * Fires an {{#crossLink "Camera/near:event"}}{{/crossLink}} event on change.
+             * @property near
+             * @default 0.1
+             * @type Number
+             */
             near: {
 
                 set: function (value) {
                     this._near = value || 0.1;
                     this._cameraNodeDirty = true;
+
+                    /**
+                     * Fired whenever this Camera's {{#crossLink "Camera/near:property"}}{{/crossLink}} property changes.
+                     * @event near
+                     * @param value The property's new value
+                     */
+                    this.fire('near', this._near);
                 },
 
                 get: function () {
@@ -510,6 +542,13 @@
                 }
             },
 
+            /**
+             * Distance to far clip plane in normalized device coordinates [0..1].
+             * Fires an {{#crossLink "Camera/far:event"}}{{/crossLink}} event on change.
+             * @property far
+             * @default 10000
+             * @type Number
+             */
             far: {
 
                 set: function (value) {
@@ -518,9 +557,16 @@
                 },
 
                 get: function () {
+
+                    /**
+                     * Fired whenever this Camera's {{#crossLink "Camera/far:property"}}{{/crossLink}} property changes.
+                     * @event far
+                     * @param value The property's new value
+                     */
                     return this._far;
                 }
             },
+
 
             screenPan: {
 

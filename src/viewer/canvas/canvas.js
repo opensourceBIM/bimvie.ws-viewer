@@ -1,13 +1,13 @@
 /**
- A **Canvas** manages a {{#crossLink "Scene"}}Scene{{/crossLink}}'s HTML canvas and its WebGL context.
+ A **Canvas** manages a {{#crossLink "Viewer"}}Viewer{{/crossLink}}'s HTML canvas and its WebGL context.
 
  ## Overview
 
  <ul>
 
- <li>Each {{#crossLink "Scene"}}Scene{{/crossLink}} provides a Canvas as a read-only property on itself.</li>
+ <li>Each {{#crossLink "Viewer"}}Viewer{{/crossLink}} provides a Canvas as a read-only property on itself.</li>
 
- <li>When a {{#crossLink "Scene"}}Scene{{/crossLink}} is configured with the ID of
+ <li>When a {{#crossLink "Viewer"}}Viewer{{/crossLink}} is configured with the ID of
  an existing <a href="http://www.w3.org/TR/html5/scripting-1.html#the-canvas-element">HTMLCanvasElement</a>, then
  the Canvas will bind to that, otherwise the Canvas will automatically create its own.</li>
 
@@ -20,7 +20,7 @@
  <li>A Canvas also fires a {{#crossLink "Canvas/webglContextLost:event"}}{{/crossLink}} event when the WebGL context is
  lost, and a {{#crossLink "Canvas/webglContextRestored:event"}}{{/crossLink}} when it is restored again.</li>
 
- <li>The various components within the parent {{#crossLink "Scene"}}Scene{{/crossLink}} will transparently recover on
+ <li>The various components within the parent {{#crossLink "Viewer"}}Viewer{{/crossLink}} will transparently recover on
  the {{#crossLink "Canvas/webglContextRestored:event"}}{{/crossLink}} event.</li>
 
  </ul>
@@ -29,17 +29,17 @@
 
  ## Example
 
- In the example below, we're creating a {{#crossLink "Scene"}}Scene{{/crossLink}} without specifying an HTML canvas element
- for it. This causes the {{#crossLink "Scene"}}Scene{{/crossLink}}'s Canvas component to create its own default element
+ In the example below, we're creating a {{#crossLink "Viewer"}}Viewer{{/crossLink}} without specifying an HTML canvas element
+ for it. This causes the {{#crossLink "Viewer"}}Viewer{{/crossLink}}'s Canvas component to create its own default element
  within the page. Then we subscribe to various events fired by that Canvas component.
 
  ```` javascript
- var scene = new BIMSURFER.Scene();
+ var viewer = new BIMSURFER.Viewer();
 
- // Get the Canvas off the Scene
- // Since we did not configure the Scene with the ID of a DOM canvas element,
+ // Get the Canvas off the Viewer
+ // Since we did not configure the Viewer with the ID of a DOM canvas element,
  // the Canvas will create its own canvas element in the DOM
- var canvas = scene.canvas;
+ var canvas = viewer.canvas;
 
  // Get the WebGL context off the Canvas
  var gl = canvas.gl;
@@ -64,23 +64,10 @@
      });
  ````
 
- When we want to bind the Canvas to an existing HTML canvas element, configure the
- {{#crossLink "Scene"}}{{/crossLink}} with the ID of the element, like this:
-
- ```` javascript
- // Create a Scene, this time configuting it with the
- // ID of an existing DOM canvas element
- var scene = new BIMSURFER.Scene({
-          canvasId: "myCanvas"
-     });
-
- // ..and the rest of this example can be the same as the previous example.
-
- ````
  @class Canvas
  @module BIMSURFER
  @static
- @param {Scene} scene Parent scene
+ @param {Viewer} viewer Parent viewer
  @extends Component
  */
 (function () {
@@ -91,7 +78,7 @@
 
         className: "BIMSURFER.Canvas",
 
-        _init: function (cfg) {
+        _init: function () {
 
             /**
              * The HTML canvas. When this BIMSURFER.Canvas was configured with the ID of an existing canvas within the DOM,
@@ -108,10 +95,6 @@
 
             this.canvas.width = this.canvas.clientWidth;
             this.canvas.height = this.canvas.clientHeight;
-
-            // Get WebGL context
-
-            this._initWebGL();
 
             // Bind context loss and recovery handlers
 
@@ -143,14 +126,18 @@
                 },
                 false);
 
-            // Publish canvas size changes on each scene tick
+            // Publish canvas size changes on each viewer tick
 
             var lastWidth = this.canvas.width;
             var lastHeight = this.canvas.height;
-            this._tick = this.scene.on("tick",
+
+            this._tick = this.viewer.on("tick",
                 function () {
+
                     var canvas = self.canvas;
+
                     if (canvas.width !== lastWidth || canvas.height !== lastHeight) {
+
                         lastWidth = canvas.width;
                         lastHeight = canvas.height;
 
@@ -172,7 +159,7 @@
 
         /**
          * Attempts to pick a {{#crossLink "GameObject"}}GameObject{{/crossLink}} at the given Canvas-space coordinates within the
-         * parent {{#crossLink "Scene"}}Scene{{/crossLink}}.
+         * parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}.
          *
          * Ignores {{#crossLink "GameObject"}}GameObjects{{/crossLink}} that are attached
          * to either a {{#crossLink "Stage"}}Stage{{/crossLink}} with {{#crossLink "Stage/pickable:property"}}pickable{{/crossLink}}
@@ -191,61 +178,17 @@
 
             /**
              * Fired whenever the {{#crossLink "Canvas/pick:method"}}{{/crossLink}} method succeeds in picking
-             * a {{#crossLink "GameObject"}}GameObject{{/crossLink}} in the parent {{#crossLink "Scene"}}Scene{{/crossLink}}.
+             * a {{#crossLink "GameObject"}}GameObject{{/crossLink}} in the parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}.
              * @event picked
-             * @param {String} objectId The ID of the picked {{#crossLink "GameObject"}}GameObject{{/crossLink}} within the parent {{#crossLink "Scene"}}Scene{{/crossLink}}.
+             * @param {String} objectId The ID of the picked {{#crossLink "GameObject"}}GameObject{{/crossLink}} within the parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}.
              * @param {Number} canvasX The X-axis Canvas coordinate that was picked.
              * @param {Number} canvasY The Y-axis Canvas coordinate that was picked.
              */
 
         },
 
-        /**
-         * Creates a canvas
-         * @private
-         */
-        _createCanvas: function () {
-            var canvasId = "canvas-" + this.id;
-            var body = document.getElementsByTagName("body")[0];
-            var div = document.createElement('div');
-            var style = div.style;
-            style.height = "100%";
-            style.width = "100%";
-            style.padding = "0";
-            style.margin = "0";
-            style.left = "0";
-            style.top = "0";
-            style.position = "absolute";
-            // style["z-index"] = "10000";
-            div.innerHTML += '<canvas id="' + canvasId + '" style="width: 100%; height: 100%; margin: 0; padding: 0;"></canvas>';
-            body.appendChild(div);
-            this.canvas = document.getElementById(canvasId);
-        },
-
-        /**
-         * Initialises the WebGL context
-         */
-        _initWebGL: function () {
-            for (var i = 0; !this.gl && i < this._WEBGL_CONTEXT_NAMES.length; i++) {
-                try {
-                    this.gl = this.canvas.getContext(this._WEBGL_CONTEXT_NAMES[i], this.contextAttr);
-                } catch (e) { // Try with next context name
-                }
-            }
-            if (!this.gl) {
-                this.error('Failed to get a WebGL context');
-
-                /**
-                 * Fired whenever the canvas failed to get a WebGL context, which probably means that WebGL
-                 * is either unsupported or has been disabled.
-                 * @event webglContextFailed
-                 */
-                this.fire("webglContextFailed", true, true);
-            }
-        },
-
         _destroy: function () {
-            this.scene.off(this._tick);
+            this.viewer.off(this._tick);
         }
     });
 

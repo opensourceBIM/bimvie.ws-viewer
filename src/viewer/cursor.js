@@ -26,7 +26,7 @@
 
     BIMSURFER.Cursor = function (viewer) {
         this._element = viewer.element;
-        this._element = $("body");
+        this._element = document.body;
         this._stack = [];
         this._stackLen = 0;
     };

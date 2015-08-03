@@ -17,9 +17,8 @@
  @constructor
  @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}.
  @param [cfg] {*} Fly configuration
-
  @param [cfg.id] {String} Optional ID, unique among all components in the parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}, generated automatically when omitted.
- @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Fly.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this CameraFlyAnimation.
  @param [cfg.camera] {Camera} Camera to control
  @extends Component
  */

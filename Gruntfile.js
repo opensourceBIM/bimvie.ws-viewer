@@ -88,7 +88,7 @@ module.exports = function (grunt) {
                 version: '<%= pkg.version %>',
                 url: '<%= pkg.homepage %>',
                 options: {
-                    paths: ['src/core'],
+                    paths: ['src/viewer'],
                     outdir: './docs/',
                     exclude : "renderer, utils, webgl"
                 },
@@ -119,18 +119,9 @@ module.exports = function (grunt) {
 
     grunt.registerTask("compile", ["clean", "concat", "uglify", "copy"]);
     grunt.registerTask("build", ["test", "compile"]);
-//    grunt.registerTask("test", [ ]);
-//    grunt.registerTask("test", ["qunit"]);
-//    grunt.registerTask("test", ["jshint", "qunit"]);
     grunt.registerTask("docs", ["clean", "yuidoc"]);
     grunt.registerTask("default", "test");
     grunt.registerTask("all", ["build", "docs"]);
 
     grunt.registerTask("snapshot", ["concat", "uglify", "copy"]);
-
-//    grunt.registerTask('snapshot', 'Deploy snapshot builds',
-//        function () {
-//            grunt.task.run('all');
-//            grunt.file.copy("<%= build_dir %>/<%= pkg.name %>-<%= version %>.min.js", "<%= pkg.name %>-<%= version %>.min.js");
-//        });
 };

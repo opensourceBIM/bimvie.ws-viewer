@@ -286,10 +286,10 @@
                         var y = projPos[1];
                         var w = projPos[3];
 
-                        var canvas = this.viewer.canvas;
+                        var canvas = this.viewer.canvas.canvas;
 
-                        this._canvasPos[0] = Math.round((1 + x / w) * canvas.width() / 2);
-                        this._canvasPos[1] = Math.round((1 - y / w) * canvas.height() / 2);
+                        this._canvasPos[0] = Math.round((1 + x / w) * canvas.width / 2);
+                        this._canvasPos[1] = Math.round((1 - y / w) * canvas.height / 2);
 
                         this._canvasPosDirty = false;
                     }

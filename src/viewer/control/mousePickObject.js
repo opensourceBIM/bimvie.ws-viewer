@@ -107,7 +107,7 @@
  @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
  @param [cfg] {*} Configs
  @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
- @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Camera.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this MousePickObject.
  @param [rayPick=false] {Boolean} Indicates whether this MousePickObject will find the 3D ray intersection whenever it picks a
  {{#crossLink "Object"}}Objects{{/crossLink}}.
  @param [active=true] {Boolean} Indicates whether or not this MousePickObject is active.
@@ -198,8 +198,8 @@
             },
 
             /**
-             * Indicates whether this MousePickObject will find the 3D ray intersection whenever it picks a
-             * {{#crossLink "Object"}}Objects{{/crossLink}}.
+             * Indicates whether this MousePickObject will find the 3D ray intersection whenever it picks an
+             * {{#crossLink "Object"}}Object{{/crossLink}}.
              *
              * When true, this MousePickObject returns the 3D World-space intersection in each
              * {{#crossLink "MousePickObject/picked:event"}}{{/crossLink}} event.

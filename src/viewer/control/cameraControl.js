@@ -15,7 +15,7 @@
 
  #### Controlling a Camera
 
- In this example we're viewing a {{#crossLink "TeapotObject"}}{{/crossLink}} with a {{#crossLink "Camera"}}{{/crossLink}} that's controlled by a CameraControl.
+ In this example we're viewing a {{#crossLink "RandomObjects"}}{{/crossLink}} with a {{#crossLink "Camera"}}{{/crossLink}} that's controlled by a CameraControl.
 
  <iframe style="width: 800px; height: 600px" src="../../examples/control_CameraControl.html"></iframe>
 
@@ -43,7 +43,7 @@
  @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
  @param [cfg] {*} Configs
  @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
- @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Camera.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this CameraControl.
  @param [camera] {Camera} The Camera to control.
  @extends Component
  */

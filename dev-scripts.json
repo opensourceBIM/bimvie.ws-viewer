@@ -1,68 +1,59 @@
 {
     "core": [
 
-        "src/core/BIMSURFER.js",
+        "src/BIMSURFER.js",
 
-        "src/core/util/inheritance.js",
-        "src/core/util/utils.js",
-        "src/core/util/map.js",
+        "src/api/api.js",
+        "src/api/eventRegistry.js",
+        "src/api/model.js",
+        "src/api/promise.js",
+        "src/api/socket.js",
+        "src/api/synchronizer.js",
+        "src/api/variable.js",
 
-        "src/core/math/math.js",
-
-        "src/core/constants.js",
-
-        "src/core/component.js",
-
-        "src/core/input/input.js",
-
-        "src/core/viewer.js",
-
-        "src/core/object/object.js",
-        "src/core/object/boxObject.js",
-        "src/core/object/teapotObject.js",
-        "src/core/object/randomObjects.js",
-        "src/core/object/objectSet.js",
-
-        "src/core/camera/camera.js",
-
-        "src/core/light/light.js",
-        "src/core/light/ambientLight.js",
-        "src/core/light/pointLight.js",
-        "src/core/light/dirLight.js",
-
-        "src/core/geometry/geometry.js",
-        "src/core/geometry/boxGeometry.js",
-        "src/core/geometry/teapotGeometry.js",
-
-        "src/core/effect/effect.js",
-        "src/core/effect/labelEffect.js",
-        "src/core/effect/highlightEffect.js",
-        "src/core/effect/desaturateEffect.js",
-        "src/core/effect/isolateEffect.js",
-        "src/core/effect/xrayEffect.js",
-        "src/core/effect/frameEffect.js",
-
-        "src/core/control/cameraControl.js",
-        "src/core/control/mouseOrbitCamera.js",
-        "src/core/control/keyboardOrbitCamera.js",
-        "src/core/control/mouseZoomCamera.js",
-        "src/core/control/keyboardZoomCamera.js",
-        "src/core/control/mousePanCamera.js",
-        "src/core/control/keyboardPanCamera.js",
-        "src/core/control/keyboardAxisCamera.js",
-        "src/core/control/mousePickObject.js",
-
-        "src/core/control/clickSelectObjects.js",
-
-        "src/core/label/position.js",
-        "src/core/label/label.js",
-
-        "src/core/animate/cameraFlyAnimation.js",
-
-        "src/core/cursor.js"
-    ],
-
-    "extras": [
-
+        "src/viewer/util/inheritance.js",
+        "src/viewer/util/utils.js",
+        "src/viewer/util/map.js",
+        "src/viewer/math/math.js",
+        "src/viewer/constants.js",
+        "src/viewer/component.js",
+        "src/viewer/input/input.js",
+        "src/viewer/io/download.js",
+        "src/viewer/viewer.js",
+        "src/viewer/canvas/canvas.js",
+        "src/viewer/object/object.js",
+        "src/viewer/object/boxObject.js",
+        "src/viewer/object/teapotObject.js",
+        "src/viewer/object/randomObjects.js",
+        "src/viewer/object/objectSet.js",
+        "src/viewer/camera/camera.js",
+        "src/viewer/light/light.js",
+        "src/viewer/light/ambientLight.js",
+        "src/viewer/light/pointLight.js",
+        "src/viewer/light/dirLight.js",
+        "src/viewer/geometry/geometry.js",
+        "src/viewer/geometry/boxGeometry.js",
+        "src/viewer/geometry/teapotGeometry.js",
+        "src/viewer/effect/effect.js",
+        "src/viewer/effect/labelEffect.js",
+        "src/viewer/effect/highlightEffect.js",
+        "src/viewer/effect/desaturateEffect.js",
+        "src/viewer/effect/isolateEffect.js",
+        "src/viewer/effect/xrayEffect.js",
+        "src/viewer/effect/frameEffect.js",
+        "src/viewer/control/cameraControl.js",
+        "src/viewer/control/mouseOrbitCamera.js",
+        "src/viewer/control/keyboardOrbitCamera.js",
+        "src/viewer/control/mouseZoomCamera.js",
+        "src/viewer/control/keyboardZoomCamera.js",
+        "src/viewer/control/mousePanCamera.js",
+        "src/viewer/control/keyboardPanCamera.js",
+        "src/viewer/control/keyboardAxisCamera.js",
+        "src/viewer/control/mousePickObject.js",
+        "src/viewer/control/clickSelectObjects.js",
+        "src/viewer/label/position.js",
+        "src/viewer/label/label.js",
+        "src/viewer/animate/cameraFlyAnimation.js",
+        "src/viewer/cursor.js"
     ]
 }

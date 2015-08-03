@@ -91,16 +91,8 @@
         }
 
         if (typeof element == 'string') {
-            element = jQuery('div#' + element)[0];
+            element = document.getElementById(element);
         }
-
-        if (!jQuery(element).is('div')) {
-            throw "Can't find div element";
-        }
-
-        // Clear container element
-
-        jQuery(element).empty();
 
         /**
          * The HTML element ocupied by the Viewer
@@ -110,7 +102,6 @@
          * @type {HTMLElement}
          */
         this.element = element;
-
 
         /**
          * The BIMServer API
@@ -124,17 +115,25 @@
 
         this.SYSTEM = this;
 
+        var canvasId = "canvas-" + BIMSURFER.math.createUUID();
+        var body = document.getElementsByTagName("body")[0];
+        var div = document.createElement('div');
 
-        /**
-         * Servers connected to this Viewer.
-         *
-         * @property connectedServers
-         * @type {Array of BIMSURFER.Server}
-         */
-        this.connectedServers = [];
+        var style = div.style;
+        style.height = "100%";
+        style.width = "100%";
+        style.padding = "0";
+        style.margin = "0";
+        style.background = "black";
+        style.float = "left";
+        //style.left = "0";
+        //style.top = "0";
+        // style.position = "absolute";
+        // style["z-index"] = "10000";
 
+        div.innerHTML += '<canvas id="' + canvasId + '" style="width: 100%; height: 100%; float: left; margin: 0; padding: 0;"></canvas>';
 
-        var canvasId = jQuery(this.element).attr('id') + "-canvas";
+        element.appendChild(div);
 
         /**
          * The HTML Canvas that this Viewer renders to. This is inserted into the element we configured this Viewer with.
@@ -143,14 +142,7 @@
          * @type {HTMLCanvasElement}
          * @final
          */
-        this.canvas = jQuery('<canvas />')
-            .attr('id', canvasId)
-            .attr('width', jQuery(this.element).width())
-            .attr('height', jQuery(this.element).height())
-            .html('<p>This application requires a browser that supports the <a href="http://www.w3.org/html/wg/html5/">HTML5</a> &lt;canvas&gt; feature.</p>')
-            .addClass(this.className.replace(/\./g, "-"))
-            .appendTo(this.element);
-
+        this._canvas = document.getElementById(canvasId);
 
         /**
          * The SceneJS scene graph that renders 3D content for this Viewer.
@@ -198,9 +190,18 @@
 
                                     nodes: [
 
-                                        // Content is appended below this node
+                                        // Origin translation
                                         {
-                                            id: "contentRoot"
+                                            type: "translate",
+                                            id: "theOrigin",
+
+                                            nodes: [
+
+                                                // Content is appended below this node
+                                                {
+                                                    id: "contentRoot"
+                                                }
+                                            ]
                                         }
                                     ]
                                 }
@@ -246,6 +247,7 @@
                 self.fire('projMatrix', matrix);
             });
 
+        this._originNode = this.scene.getNode('theOrigin');
 
         // Pool where we'll keep all component IDs
         this._componentIDMap = new BIMSURFER.utils.Map();
@@ -345,6 +347,17 @@
                     });
             });
 
+
+        // Add components here
+
+        /**
+         * Canvas manager for this Viewer.
+         * @property canvas
+         * @final
+         * @type {BIMSURFER.Canvas}
+         */
+        this.canvas = new BIMSURFER.Canvas(this);
+
         /**
          * Input handling for this Viewer.
          * @property input
@@ -384,10 +397,12 @@
          */
         this.numObjects = 0;
 
-        this._boundary = {xmin: 0.0, ymin: 0.0, zmin: 0.0, xmax: 0.0, ymax: 0.0, zmax: 0.0 };
+        this._boundary = {xmin: 0.0, ymin: 0.0, zmin: 0.0, xmax: 0.0, ymax: 0.0, zmax: 0.0};
         this._center = [0, 0, 0];
 
         this._boundaryDirty = true;
+
+        this.origin = cfg.origin;
     };
 
     /**
@@ -525,6 +540,28 @@
     };
 
     /**
+     * World-space origin.
+     *
+     * @property origin
+     * @final
+     * @type {*}
+     */
+    Object.defineProperty(BIMSURFER.Viewer.prototype, "origin", {
+
+        get: function () {
+            return this._origin;
+        },
+
+        set: function (origin) {
+            this._origin = origin || [0, 0, 0];
+            this._originNode.setXYZ(this._origin);
+            this._boundaryDirty = true;
+        },
+
+        enumerable: true
+    });
+
+    /**
      * This Viewer's view transformation matrix.
      *
      * @property viewMatrix
@@ -534,7 +571,7 @@
      */
     Object.defineProperty(BIMSURFER.Viewer.prototype, "viewMatrix", {
 
-        get: function() {
+        get: function () {
             return this._lookatNode.getMatrix();
         },
 
@@ -552,7 +589,7 @@
      */
     Object.defineProperty(BIMSURFER.Viewer.prototype, "projMatrix", {
 
-        get: function() {
+        get: function () {
             return this._cameraNode.getMatrix();
         },
 
@@ -699,23 +736,14 @@
     };
 
     /**
-     * Stores a connection to a server for later use.
-     *
-     * @param {BIMSURFER.Server} server The server connection to store.
-     */
-    BIMSURFER.Viewer.prototype.addConnectedServer = function (server) {
-        if (this.connectedServers.indexOf(server) == -1) {
-            this.connectedServers.push(server);
-        }
-    };
-
-    /**
      * Resizes the viewport and updates the aspect ratio
      *
      * @param {Number} width The new width in px
      * @param {Number} height The new height in px
      */
     BIMSURFER.Viewer.prototype.resize = function (width, height) {
+
+        return;
 
         if (!this.canvas) {
             // TODO: log
@@ -731,30 +759,8 @@
 
         var cameraNode = this.scene.getNode("theCamera");
         var optics = cameraNode.getOptics();
-        optics.aspect = jQuery(this.canvas).width() / jQuery(this.canvas).height();
+        optics.aspect = this.canvas.width() / this.canvas.height();
         cameraNode.setOptics(optics);
-    };
-
-    /**
-     * Loads and shows the geometry of the revisions that are in the load queue
-     */
-    BIMSURFER.Viewer.prototype.loadGeometry = function (geometryLoader) {
-
-        var self = this;
-
-        this.geometryLoaders.push(geometryLoader);
-
-        // TODO limit to something useful
-
-        if (this.geometryLoaders.length <= 20) {
-            geometryLoader.progressListeners.push(
-                function (progress) {
-                    if (progress == "done") {
-                        removeA(self.geometryLoaders, geometryLoader);
-                    }
-                });
-            geometryLoader.start();
-        }
     };
 
     /**

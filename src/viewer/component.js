@@ -318,7 +318,7 @@
          * {{#crossLink "Component/once:method"}}{{/crossLink}}.
          *
          * @method off
-         * @param {String} handle Publication handle
+         * @param {String} handle Subscription handle
          */
         off: function (handle) {
             var event = this._handleLocs[handle];
@@ -397,7 +397,7 @@
          */
         destroy: function () {
 
-            // Remove from Viewer
+            // Remove from parent
             this.viewer._removeComponent(this);
 
             if (this._destroy) {

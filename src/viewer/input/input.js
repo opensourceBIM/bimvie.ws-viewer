@@ -144,7 +144,7 @@ var viewer = new BIMSURFER.Viewer(...);
              */
             this.enabled = true;
 
-            var canvas = this.viewer.canvas[0];
+            var canvas = this.viewer._canvas;
 
 
             // Disable context menu events so we can use right-click for things like panning
@@ -311,7 +311,7 @@ var viewer = new BIMSURFER.Viewer(...);
                 });
 
             canvas.addEventListener("mousewheel",
-                this._mouseWheelListener = function (event, d) {
+                this._mouseWheelListener = function (e, d) {
                     if (!self.enabled) {
                         return;
                     }

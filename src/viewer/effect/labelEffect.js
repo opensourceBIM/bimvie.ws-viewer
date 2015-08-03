@@ -1,5 +1,5 @@
 /**
- A **FrameEffect** is an {{#crossLink "Effect"}}{{/crossLink}} that highlights the {{#crossLink "Object"}}Objects{{/crossLink}} within an {{#crossLink "ObjectSet"}}{{/crossLink}}.
+ A **LabelEffect** is an {{#crossLink "Effect"}}{{/crossLink}} that labels on the {{#crossLink "Object"}}Objects{{/crossLink}} within an {{#crossLink "ObjectSet"}}{{/crossLink}}.
 
  ## Overview
 
@@ -7,13 +7,14 @@
 
  ## Example
 
- #### Highlighting an ObjectSet
+ #### Labelling an ObjectSet
 
  In this example we create four {{#crossLink "Object"}}Objects{{/crossLink}}, then add two of them to an {{#crossLink "ObjectSet"}}{{/crossLink}}.
- <br> Then we apply a {{#crossLink "FrameEffect"}}{{/crossLink}} to the {{#crossLink "ObjectSet"}}{{/crossLink}}, causing
- it's {{#crossLink "Object"}}Objects{{/crossLink}} to become highlighted while the other two {{#crossLink "Object"}}Objects{{/crossLink}} remain un-highlighted.
+ <br> Then we apply a {{#crossLink "LabelEffect"}}{{/crossLink}} to the {{#crossLink "ObjectSet"}}{{/crossLink}}, causing
+ it's {{#crossLink "Object"}}Objects{{/crossLink}} to become labeled, while the other
+ two {{#crossLink "Object"}}Objects{{/crossLink}} remain without labels.
 
- <iframe style="width: 600px; height: 400px" src="../../examples/effect_HighlightEffect.html"></iframe>
+ <iframe style="width: 600px; height: 400px" src="../../examples/effect_LabelEffect.html"></iframe>
 
  ````javascript
 
@@ -92,36 +93,47 @@
         objects: [object1 ]
     });
 
- // Apply a Highlight effect to the ObjectSet, which causes the
- // Object in the ObjectSet to become highlighted.
+ // Apply a Labels effect to the ObjectSet, which causes the
+ // Object in the ObjectSet to become labelsed.
 
- var highlight = new BIMSURFER.FrameEffect(viewer, {
+ var labels = new BIMSURFER.LabelEffect(viewer, {
         objectSet: objectSet
     });
 
- // Add a second Object to the ObjectSet, causing the Highlight to now render
- // that Object as highlighted also
+ // Add a second Object to the ObjectSet, causing the Labels to now render
+ // that Object as labelsed also
 
  objectSet.addObjects([object3]);
 
  ````
 
- @class FrameEffect
+ @class LabelEffect
  @module BIMSURFER
  @submodule effect
  @constructor
  @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
  @param [cfg] {*} Configs
  @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
- @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this FrameEffect.
- @param [cfg.objectSet] {ObjectSet} The {{#crossLink "ObjectSet"}}{{/crossLink}} to apply this FrameEffect to.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this LabelEffect.
+ @param [cfg.objectSet] {ObjectSet} The {{#crossLink "ObjectSet"}}{{/crossLink}} to apply this LabelEffect to.
  @extends Effect
  */
 (function () {
 
     "use strict";
 
-    BIMSURFER.FrameEffect = BIMSURFER.Effect.extend({
+    var labelPool = [];
+    var lenLabelPool = 0;
+
+    function getLabel() {
+        return lenLabelPool > 0 ? labelPool[--lenLabelPool] : new Label();
+    }
+
+    function putLabel(label) {
+        labelPool.push(label);
+    }
+
+    BIMSURFER.LabelEffect = BIMSURFER.Effect.extend({
 
         /**
          JavaScript class name for this Component.
@@ -130,28 +142,17 @@
          @type String
          @final
          */
-        className: "BIMSURFER.FrameEffect",
+        className: "BIMSURFER.LabelEffect",
 
         _init: function (cfg) {
-
             this._super(cfg);
-
-            this._fly = new BIMSURFER.CameraFlyAnimation(viewer, {
-                camera: cfg.camera
-            });
         },
 
-        _apply: function () {
-
-            this._fly.flyTo({
-                boundary: this.objectSet.boundary,
-                arc: 0.0,
-                velocity: 40
-            });
-        },
-
-        _destroy: function() {
-            this._fly.destroy();
+        _applyObject: function (object) {
+            var selected = this.objectSet.objects[object.id];
+            object.label = this.invert ? !selected : !!selected;
         }
     });
+
+
 })();

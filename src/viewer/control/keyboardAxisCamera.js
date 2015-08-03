@@ -46,7 +46,7 @@
 
             this._onKeyDown = null;
 
-            this._cameraFly = new BIMSURFER.CameraFlyAnimation(viewer, {
+            this._cameraFly = new BIMSURFER.CameraFlyAnimation(this.viewer, {
                 camera: this.camera
             });
 
