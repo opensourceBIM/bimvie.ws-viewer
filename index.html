@@ -23,8 +23,15 @@
     <script src="lib/scenejs.js"></script>
     <script src="build/bimviews.js"></script>
 
-    <style>
+    <!-- Remove these when you've got a dojo dialog box -->
+    <script type="text/javascript" src="lib/jquery-1.10.2/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="lib/jquery-1.10.2/jquery.cookie.js"></script>
+    <link rel="stylesheet" href="lib/jquery-ui-1.10.3.custom/css/custom-theme/jquery-ui-1.10.3.custom.css">
+    <script type="text/javascript" src="lib/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.js"></script>
+    <script src="lib/dialog.js"></script>
+    <!------------------>
 
+    <style>
 
         @import "lib/dojo/dojo.css";
         @import "lib/dojo/dijit.css";
@@ -126,65 +133,113 @@
                         }
                     });
 
+                    // Create 3D viewer with a test pattern and a user-controlled camera
+
                     var viewer = new Viewer({element: 'viewerContainer'});
 
+                    var camera = new BIMSURFER.Camera(viewer, {
+                        eye: [80, 40, -80]
+                    });
+
                     var cameraControl = new BIMSURFER.CameraControl(viewer, {
-                        camera: new BIMSURFER.Camera(viewer, {
-                            eye: [80, 40, -80]
-                        })
+                        camera: camera
                     });
 
-                    // Some coloured boxes
-                    new BIMSURFER.RandomObjects(viewer, {
-                        numObjects: 55
+                    var testPattern = new BIMSURFER.RandomObjects(viewer, {
+                        numObjects: 20
                     });
 
-                    // Your API proposal does not have to change at all I think, this is more of an UI example.
-                    // var download = new Download();
-
-                    // Dojo uses MVC concepts and separates the data model (store) from the view (tree). Obviously this
-                    // tree needs to fetch data from the BIMserver. Lazily loaded stores are also an option.
+                    // Initialise tree view store
 
                     var store = new declare([Memory, TreeStore])();
 
-                    store.add({node: 'project', id: 1, parent: null, hasChildren: true});
+                    // Throw up a login dialog
 
-                    store.add({node: 'site', id: 2, parent: 1, hasChildren: true});
+                    loginDialog(connectToServer);
 
-                    store.add({node: 'building', id: 3, parent: 2, hasChildren: true});
 
-                    store.add({node: 'storey1', id: 4, parent: 3, hasChildren: true});
-                    store.add({node: 'storey2', id: 5, parent: 3, hasChildren: true});
+                    // Logs into server
 
-                    store.add({node: 'window', id: 6, parent: 4, hasChildren: false});
-                    store.add({node: 'wall', id: 7, parent: 4, hasChildren: false});
-                    store.add({node: 'stairs', id: 8, parent: 5, hasChildren: false});
-                    store.add({node: 'door', id: 9, parent: 5, hasChildren: false});
-                    store.add({node: 'slab', id: 10, parent: 5, hasChildren: false});
+                    function connectToServer(serverURL, email, password) {
 
-                    // Preferably all these different modules would be separated over different files and required as
-                    // dependencies, but in order to have a self-contained example they are all inlined.
+                        api = new BIMSURFER.api.API(serverURL, null);
 
-                    var tree = new declare([Grid, Tree])({
-                        className: "dgrid-autoheight",
-                        collection: store.getRootCollection(),
-                        columns: [
-                            {field: 'node', label: 'IFC decomposition', renderExpando: true}
-                        ],
-                        shouldExpand: function () {
-                            return true;
-                        }
-                    }, 'tree');
+                        api.init(function (_api, serverInfo) {
 
-                    tree.on(".dgrid-row:click", function (evt) {
-                        var row;
-                        if (row = tree.row(evt)) {
-                            // Would be better to use the dojo/Evented mechanism to link events together
-                            viewer.selectElement(row.data.id);
-                        }
-                    });
+                            var errorMessage = serverInfo.errorMessage;
+                            var oid = serverInfo.oid;
+                            var rid = serverInfo.rid;
+                            var serverState = serverInfo.serverState; // Hopefully "RUNNING"
+                            var version = serverInfo.version;
 
-                    tree.startup();
+                            api.login(email, password, false,
+                                    function () {
+
+                                        getProjects();
+                                    });
+                        });
+                    }
+
+                    // Gets projects from server and lists them in the tree view
+
+                    function getProjects() {
+
+                        api.call("Bimsie1ServiceInterface", "getAllProjects", {
+                                    onlyActive: true,
+                                    onlyTopLevel: false
+                                },
+                                function (projects) {
+
+                                    projects.forEach(
+                                            function (project) {
+
+                                               // if (project.lastRevisionId != -1) {
+
+                                                    store.add({
+                                                        node: project.name,
+                                                        id: project.id,
+                                                        parent: null,
+                                                        hasChildren: true
+                                                    });
+
+
+//                    store.add({node: 'site', id: 2, parent: 1, hasChildren: true});
+//
+//                    store.add({node: 'building', id: 3, parent: 2, hasChildren: true});
+//
+//                    store.add({node: 'storey1', id: 4, parent: 3, hasChildren: true});
+//                    store.add({node: 'storey2', id: 5, parent: 3, hasChildren: true});
+//
+//                    store.add({node: 'window', id: 6, parent: 4, hasChildren: false});
+//                    store.add({node: 'wall', id: 7, parent: 4, hasChildren: false});
+//                    store.add({node: 'stairs', id: 8, parent: 5, hasChildren: false});
+//                    store.add({node: 'door', id: 9, parent: 5, hasChildren: false});
+//                    store.add({node: 'slab', id: 10, parent: 5, hasChildren: false});
+                                               // }
+                                            });
+
+                                    var tree = new declare([Grid, Tree])({
+                                        className: "dgrid-autoheight",
+                                        collection: store.getRootCollection(),
+                                        columns: [
+                                            {field: 'node', label: 'IFC decomposition', renderExpando: true}
+                                        ],
+                                        shouldExpand: function () {
+                                            return true;
+                                        }
+                                    }, 'tree');
+
+                                    tree.on(".dgrid-row:click", function (evt) {
+                                        var row;
+                                        if (row = tree.row(evt)) {
+                                            // Would be better to use the dojo/Evented mechanism to link events together
+                                            viewer.selectElement(row.data.id);
+                                        }
+                                    });
+
+                                    tree.startup();
+                                });
+                    }
                 });
     </script>
 </head>
