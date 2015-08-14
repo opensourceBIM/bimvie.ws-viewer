@@ -66,6 +66,7 @@
 
  @class Canvas
  @module BIMSURFER
+ @submodule canvas
  @static
  @param {Viewer} viewer Parent viewer
  @extends Component

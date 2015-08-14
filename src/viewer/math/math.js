@@ -1,6 +1,7 @@
 /**
  * Math functions, used within BIMSURFER, but also available for you to use in your application code.
  * @module BIMSURFER
+ * @submodule math
  * @class math
  * @static
  */

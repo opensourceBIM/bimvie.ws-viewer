@@ -57,7 +57,7 @@ module.exports = function (grunt) {
                 options: {
                     browser: true,
                     globals: {
-                        XEO: true
+                        BIMSURFER: true
                     }
                 },
                 src: [

@@ -21,7 +21,7 @@
  Every Component has an ID that's unique within the parent {{#crossLink "Viewer"}}{{/crossLink}}. the {{#crossLink "Viewer"}}{{/crossLink}} generates
  the IDs automatically by default, however you can also specify them yourself. In the example below, we're creating a
  viewer comprised of {{#crossLink "Viewer"}}{{/crossLink}}, {{#crossLink "Material"}}{{/crossLink}}, {{#crossLink "Geometry"}}{{/crossLink}} and
- {{#crossLink "GameObject"}}{{/crossLink}} components, while letting xeoEngine generate its own ID for
+ {{#crossLink "GameObject"}}{{/crossLink}} components, while letting BIMSURFER generate its own ID for
  the {{#crossLink "Geometry"}}{{/crossLink}}:
 
  ````javascript
@@ -30,7 +30,7 @@
 
  ## <a name="componentProps">Properties</a>
 
- Almost every property on a xeoEngine Component fires a change event when you update it. For example, we can subscribe
+ Almost every property in a Viewer Component fires a change event when you update it. For example, we can subscribe
  to the {{#crossLink "Material/diffuse:event"}}{{/crossLink}} event that a
  {{#crossLink "Material"}}{{/crossLink}} fires when its {{#crossLink "Material/diffuse:property"}}{{/crossLink}}
  property is updated, like so:
