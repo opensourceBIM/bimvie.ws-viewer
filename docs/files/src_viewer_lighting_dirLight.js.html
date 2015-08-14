@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>src/viewer/lighting/dirLight.js - bimviews</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="icon" href="../assets/favicon.ico">
+    <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="doc">
+    <div id="hd" class="yui3-g header">
+        <div class="yui3-u-3-4">
+                <h1><img src="../../assets/images/logo.png" title="bimviews"></h1>
+        </div>
+        <div class="yui3-u-1-4 version">
+            <em>API Docs for: 2.0.0</em>
+        </div>
+    </div>
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+                    <h2 class="off-left">APIs</h2>
+                    <div id="api-tabview" class="tabview">
+                        <ul class="tabs">
+                            <li><a href="#api-classes">Classes</a></li>
+                            <li><a href="#api-modules">Modules</a></li>
+                        </ul>
+                
+                        <div id="api-tabview-filter">
+                            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+                        </div>
+                
+                        <div id="api-tabview-panel">
+                            <ul id="api-classes" class="apis classes">
+                                <li><a href="../classes/AmbientLight.html">AmbientLight</a></li>
+                                <li><a href="../classes/Anaglyph.html">Anaglyph</a></li>
+                                <li><a href="../classes/BIMSURFER.constants.html">BIMSURFER.constants</a></li>
+                                <li><a href="../classes/BoxGeometry.html">BoxGeometry</a></li>
+                                <li><a href="../classes/BoxObject.html">BoxObject</a></li>
+                                <li><a href="../classes/Camera.html">Camera</a></li>
+                                <li><a href="../classes/CameraControl.html">CameraControl</a></li>
+                                <li><a href="../classes/CameraFlyAnimation.html">CameraFlyAnimation</a></li>
+                                <li><a href="../classes/Canvas.html">Canvas</a></li>
+                                <li><a href="../classes/ClickSelectObjects.html">ClickSelectObjects</a></li>
+                                <li><a href="../classes/Component.html">Component</a></li>
+                                <li><a href="../classes/Configs.html">Configs</a></li>
+                                <li><a href="../classes/Cursor.html">Cursor</a></li>
+                                <li><a href="../classes/DepthOfField.html">DepthOfField</a></li>
+                                <li><a href="../classes/DesaturateEffect.html">DesaturateEffect</a></li>
+                                <li><a href="../classes/DirLight.html">DirLight</a></li>
+                                <li><a href="../classes/Download.html">Download</a></li>
+                                <li><a href="../classes/Effect.html">Effect</a></li>
+                                <li><a href="../classes/Geometry.html">Geometry</a></li>
+                                <li><a href="../classes/HighlightEffect.html">HighlightEffect</a></li>
+                                <li><a href="../classes/Input.html">Input</a></li>
+                                <li><a href="../classes/IsolateEffect.html">IsolateEffect</a></li>
+                                <li><a href="../classes/KeyboardAxisCamera.html">KeyboardAxisCamera</a></li>
+                                <li><a href="../classes/KeyboardOrbitCamera.html">KeyboardOrbitCamera</a></li>
+                                <li><a href="../classes/KeyboardPanCamera.html">KeyboardPanCamera</a></li>
+                                <li><a href="../classes/KeyboardZoomCamera.html">KeyboardZoomCamera</a></li>
+                                <li><a href="../classes/Label.html">Label</a></li>
+                                <li><a href="../classes/LabelEffect.html">LabelEffect</a></li>
+                                <li><a href="../classes/Light.html">Light</a></li>
+                                <li><a href="../classes/math.html">math</a></li>
+                                <li><a href="../classes/MouseOrbitCamera.html">MouseOrbitCamera</a></li>
+                                <li><a href="../classes/MousePanCamera.html">MousePanCamera</a></li>
+                                <li><a href="../classes/MousePickObject.html">MousePickObject</a></li>
+                                <li><a href="../classes/MouseZoomCamera.html">MouseZoomCamera</a></li>
+                                <li><a href="../classes/Object.html">Object</a></li>
+                                <li><a href="../classes/ObjectSet.html">ObjectSet</a></li>
+                                <li><a href="../classes/PointLight.html">PointLight</a></li>
+                                <li><a href="../classes/Position.html">Position</a></li>
+                                <li><a href="../classes/RandomObjects.html">RandomObjects</a></li>
+                                <li><a href="../classes/Task.html">Task</a></li>
+                                <li><a href="../classes/Tasks.html">Tasks</a></li>
+                                <li><a href="../classes/TeapotGeometry.html">TeapotGeometry</a></li>
+                                <li><a href="../classes/TeapotObject.html">TeapotObject</a></li>
+                                <li><a href="../classes/Viewer.html">Viewer</a></li>
+                                <li><a href="../classes/XRayEffect.html">XRayEffect</a></li>
+                            </ul>
+                
+                            <ul id="api-modules" class="apis modules">
+                                <li><a href="../modules/animation.html">animation</a></li>
+                                <li><a href="../modules/BIMSURFER.html">BIMSURFER</a></li>
+                                <li><a href="../modules/camera.html">camera</a></li>
+                                <li><a href="../modules/canvas.html">canvas</a></li>
+                                <li><a href="../modules/configs.html">configs</a></li>
+                                <li><a href="../modules/effect.html">effect</a></li>
+                                <li><a href="../modules/effects.html">effects</a></li>
+                                <li><a href="../modules/geometry.html">geometry</a></li>
+                                <li><a href="../modules/input.html">input</a></li>
+                                <li><a href="../modules/labelling.html">labelling</a></li>
+                                <li><a href="../modules/lighting.html">lighting</a></li>
+                                <li><a href="../modules/loading.html">loading</a></li>
+                                <li><a href="../modules/math.html">math</a></li>
+                                <li><a href="../modules/objects.html">objects</a></li>
+                                <li><a href="../modules/reporting.html">reporting</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+                <div id="api-options">
+                    Show:
+                    <label for="api-show-inherited">
+                        <input type="checkbox" id="api-show-inherited" checked>
+                        Inherited
+                    </label>
+            
+                    <label for="api-show-protected">
+                        <input type="checkbox" id="api-show-protected">
+                        Protected
+                    </label>
+            
+                    <label for="api-show-private">
+                        <input type="checkbox" id="api-show-private">
+                        Private
+                    </label>
+                    <label for="api-show-deprecated">
+                        <input type="checkbox" id="api-show-deprecated">
+                        Deprecated
+                    </label>
+            
+                </div>
+            
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+<h1 class="file-heading">File: src/viewer/lighting/dirLight.js</h1>
+
+<div class="file">
+    <pre class="code prettyprint linenums">
+/**
+ A **DirLight** is a {{#crossLink &quot;Light&quot;}}{{/crossLink}} that defines a directional light source that originates from a single point and spreads outward in all directions.
+
+ ## Overview
+
+ &lt;ul&gt;
+
+ &lt;li&gt;DirLights have a position, but no direction.&lt;/li&gt;
+
+ &lt;li&gt;DirLights may be defined in either **World** or **View** coordinate space. When in World-space, their position
+ is relative to the World coordinate system, and will appear to move as the {{#crossLink &quot;Camera&quot;}}{{/crossLink}} moves.
+ When in View-space, their position is relative to the View coordinate system, and will behave as if fixed to the viewer&#x27;s
+ head as the {{#crossLink &quot;Camera&quot;}}{{/crossLink}} moves.&lt;/li&gt;
+
+ &lt;li&gt;Within bIMSurfer&#x27;s&#x27;s Phong lighting calculations, DirLight {{#crossLink &quot;DirLight/diffuse:property&quot;}}{{/crossLink}} and
+ {{#crossLink &quot;DirLight/specular:property&quot;}}{{/crossLink}}.&lt;/li&gt;
+
+ &lt;li&gt;DirLights have {{#crossLink &quot;DirLight/constantAttenuation:property&quot;}}{{/crossLink}}, {{#crossLink &quot;DirLight/linearAttenuation:property&quot;}}{{/crossLink}} and
+ {{#crossLink &quot;DirLight/quadraticAttenuation:property&quot;}}{{/crossLink}} factors, which indicate how their intensity attenuates over distance.&lt;/li&gt;
+
+
+ &lt;/ul&gt;
+
+
+ ## Example
+
+ In the example below we&#x27;re illuminating a {{#crossLink &quot;TeapotObject&quot;}}{{/crossLink}} with a single DirLight.
+
+ &lt;iframe style=&quot;width: 600px; height: 400px&quot; src=&quot;../../examples/light_DirLight.html&quot;&gt;&lt;/iframe&gt;
+
+ &#x60;&#x60;&#x60;&#x60; javascript
+ // Create a Viewer
+ var viewer = new BIMSURFER.Viewer({ element: &quot;myDiv&quot; });
+
+ // Create a Camera
+ var camera = new BIMSURFER.Camera(viewer, {
+      eye: [5, 5, -5]
+ });
+
+ // Create a camera orbit control
+ var control = new BIMSURFER.CameraControl(viewer, {
+        camera: camera
+    });
+
+ // Create a TeapotObject
+ var teapot = new BIMSURFER.TeapotObject(viewer);
+
+ // Create a DirLight
+ var dirLight = new BIMSURFER.DirLight(viewer, {
+        color: [0.9, 0.9, 0.9],
+        dir: [1.0, 0.0, -.5],
+        space: &quot;view&quot;
+    });
+ &#x60;&#x60;&#x60;&#x60;
+
+ @class DirLight
+ @module BIMSURFER
+ @submodule lighting
+ @constructor
+ @extends Light
+ @param [viewer] {Viewer} Parent {{#crossLink &quot;Viewer&quot;}}Viewer{{/crossLink}}.
+ @param [cfg] {*} The DirLight configuration
+ @param [cfg.id] {String} Optional ID, unique among all components in the parent {{#crossLink &quot;Viewer&quot;}}Viewer{{/crossLink}}, generated automatically when omitted.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this DirLight.
+ @param [cfg.dir=[ 1.0, 1.0, 1.0 ]] {Array(Number)} Direction, in either World or View space, depending on the value of the **space** parameter.
+ @param [cfg.color=[0.7, 0.7, 0.8 ]] {Array(Number)} Diffuse color of this DirLight.
+ @param [cfg.space=&quot;view&quot;] {String} The coordinate system this DirLight is defined in - &quot;view&quot; or &quot;space&quot;.
+ */
+(function () {
+
+    &quot;use strict&quot;;
+
+    BIMSURFER.DirLight = BIMSURFER.Light.extend({
+
+        className: &quot;BIMSURFER.DirLight&quot;,
+
+        _init: function (cfg) {
+
+            this._super(BIMSURFER._apply({ mode: &quot;dir&quot; }, cfg));
+
+            this.dir = cfg.dir;
+            this.color = cfg.color;
+            this.space = cfg.space;
+        },
+
+        _props: {
+
+            /**
+             The direction of this DirLight.
+
+             This will be either World- or View-space, depending on the value of {{#crossLink &quot;DirLight/space:property&quot;}}{{/crossLink}}.
+
+             @property dir
+             @default [1.0, 1.0, 1.0]
+             @type Array(Number)
+             */
+            dir: {
+
+                set: function (value) {
+                    this._dir = value;
+                    this._update({
+                        dir: { x: value[0], y: value[1], z: value[2] }
+                    });
+                },
+
+                get: function () {
+                    return this._dir;
+                }
+            },
+
+            /**
+             The color of this DirLight.
+
+             @property color
+             @default [0.7, 0.7, 0.8]
+             @type Array(Number)
+             */
+            color: {
+
+                set: function (value) {
+                    this._color = value;
+                    this._update({
+                        color: { r: value[0], g: value[1], b: value[2] }
+                    });
+                },
+
+                get: function () {
+                    return this._color;
+                }
+            },
+
+            /**
+             Indicates which coordinate space this DirLight is in.
+
+             Supported values are:
+
+             &lt;ul&gt;
+             &lt;li&gt;&quot;view&quot; - View space, aligned within the view volume as if fixed to the viewer&#x27;s head&lt;/li&gt;
+             &lt;li&gt;&quot;world&quot; - World space, fixed within the world, moving within the view volume with respect to camera&lt;/li&gt;
+             &lt;/ul&gt;
+
+             @property space
+             @default &quot;view&quot;
+             @type String
+             */
+            space: {
+
+                set: function (value) {
+                    this._update({
+                        space: this._space = value
+                    });
+                },
+
+                get: function () {
+                    return this._space;
+                }
+            }
+        }
+    });
+
+})();
+
+    </pre>
+</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+<script src="../assets/js/yui-prettify.js"></script>
+<script src="../assets/../api.js"></script>
+<script src="../assets/js/api-filter.js"></script>
+<script src="../assets/js/api-list.js"></script>
+<script src="../assets/js/api-search.js"></script>
+<script src="../assets/js/apidocs.js"></script>
+</body>
+</html>

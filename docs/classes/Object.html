@@ -40,9 +40,7 @@
                             <ul id="api-classes" class="apis classes">
                                 <li><a href="../classes/AmbientLight.html">AmbientLight</a></li>
                                 <li><a href="../classes/Anaglyph.html">Anaglyph</a></li>
-                                <li><a href="../classes/BIMSURFER.html">BIMSURFER</a></li>
                                 <li><a href="../classes/BIMSURFER.constants.html">BIMSURFER.constants</a></li>
-                                <li><a href="../classes/BIMSURFER.Cursor.html">BIMSURFER.Cursor</a></li>
                                 <li><a href="../classes/BoxGeometry.html">BoxGeometry</a></li>
                                 <li><a href="../classes/BoxObject.html">BoxObject</a></li>
                                 <li><a href="../classes/Camera.html">Camera</a></li>
@@ -52,13 +50,13 @@
                                 <li><a href="../classes/ClickSelectObjects.html">ClickSelectObjects</a></li>
                                 <li><a href="../classes/Component.html">Component</a></li>
                                 <li><a href="../classes/Configs.html">Configs</a></li>
+                                <li><a href="../classes/Cursor.html">Cursor</a></li>
                                 <li><a href="../classes/DepthOfField.html">DepthOfField</a></li>
                                 <li><a href="../classes/DesaturateEffect.html">DesaturateEffect</a></li>
                                 <li><a href="../classes/DirLight.html">DirLight</a></li>
+                                <li><a href="../classes/Download.html">Download</a></li>
                                 <li><a href="../classes/Effect.html">Effect</a></li>
-                                <li><a href="../classes/FrameEffect.html">FrameEffect</a></li>
                                 <li><a href="../classes/Geometry.html">Geometry</a></li>
-                                <li><a href="../classes/GridGeometry.html">GridGeometry</a></li>
                                 <li><a href="../classes/HighlightEffect.html">HighlightEffect</a></li>
                                 <li><a href="../classes/Input.html">Input</a></li>
                                 <li><a href="../classes/IsolateEffect.html">IsolateEffect</a></li>
@@ -79,6 +77,8 @@
                                 <li><a href="../classes/PointLight.html">PointLight</a></li>
                                 <li><a href="../classes/Position.html">Position</a></li>
                                 <li><a href="../classes/RandomObjects.html">RandomObjects</a></li>
+                                <li><a href="../classes/Task.html">Task</a></li>
+                                <li><a href="../classes/Tasks.html">Tasks</a></li>
                                 <li><a href="../classes/TeapotGeometry.html">TeapotGeometry</a></li>
                                 <li><a href="../classes/TeapotObject.html">TeapotObject</a></li>
                                 <li><a href="../classes/Viewer.html">Viewer</a></li>
@@ -86,13 +86,21 @@
                             </ul>
                 
                             <ul id="api-modules" class="apis modules">
-                                <li><a href="../modules/animate.html">animate</a></li>
+                                <li><a href="../modules/animation.html">animation</a></li>
                                 <li><a href="../modules/BIMSURFER.html">BIMSURFER</a></li>
                                 <li><a href="../modules/camera.html">camera</a></li>
-                                <li><a href="../modules/control.html">control</a></li>
+                                <li><a href="../modules/canvas.html">canvas</a></li>
+                                <li><a href="../modules/configs.html">configs</a></li>
                                 <li><a href="../modules/effect.html">effect</a></li>
+                                <li><a href="../modules/effects.html">effects</a></li>
                                 <li><a href="../modules/geometry.html">geometry</a></li>
                                 <li><a href="../modules/input.html">input</a></li>
+                                <li><a href="../modules/labelling.html">labelling</a></li>
+                                <li><a href="../modules/lighting.html">lighting</a></li>
+                                <li><a href="../modules/loading.html">loading</a></li>
+                                <li><a href="../modules/math.html">math</a></li>
+                                <li><a href="../modules/objects.html">objects</a></li>
+                                <li><a href="../modules/reporting.html">reporting</a></li>
                             </ul>
                         </div>
                     </div>
@@ -134,10 +142,11 @@
         </div>
 
         <div class="foundat">
-            Defined in: <a href="../files/src_core_object_object.js.html#l1"><code>src&#x2F;core&#x2F;object&#x2F;object.js:1</code></a>
+            Defined in: <a href="../files/src_viewer_objects_object.js.html#l1"><code>src&#x2F;viewer&#x2F;objects&#x2F;object.js:1</code></a>
         </div>
 
-            Module: <a href="../modules/BIMSURFER.html">BIMSURFER</a>
+            Module: <a href="../modules/objects.html">objects</a><br>
+            Parent Module: <a href="../modules/BIMSURFER.html">BIMSURFER</a>
 
 </div>
 
@@ -226,7 +235,7 @@ var foo = wallObjects["moObject1"];
             <div class="meta">
                         <p>
                         Defined in
-                <a href="../files/src_core_object_object.js.html#l1"><code>src&#x2F;core&#x2F;object&#x2F;object.js:1</code></a>
+                <a href="../files/src_viewer_objects_object.js.html#l1"><code>src&#x2F;viewer&#x2F;objects&#x2F;object.js:1</code></a>
                 </p>
         
         
@@ -489,6 +498,10 @@ var foo = wallObjects["moObject1"];
                                 <a href="#property_id">id</a>
 
                             </li>
+                            <li class="index-item property inherited">
+                                <a href="#property_Items in this map">Items in this map</a>
+
+                            </li>
                             <li class="index-item property">
                                 <a href="#property_label">label</a>
 
@@ -555,7 +568,7 @@ var foo = wallObjects["moObject1"];
     <div class="meta">
                 <p>Inherited from
                 <a href="../classes/Component.html#method_destroy">Component</a>:
-        <a href="../files/src_core_component.js.html#l389"><code>src&#x2F;core&#x2F;component.js:389</code></a>
+        <a href="../files/src_viewer_component.js.html#l389"><code>src&#x2F;viewer&#x2F;component.js:389</code></a>
         </p>
 
 
@@ -594,7 +607,7 @@ var foo = wallObjects["moObject1"];
     <div class="meta">
                 <p>Inherited from
                 <a href="../classes/Component.html#method_error">Component</a>:
-        <a href="../files/src_core_component.js.html#l365"><code>src&#x2F;core&#x2F;component.js:365</code></a>
+        <a href="../files/src_viewer_component.js.html#l365"><code>src&#x2F;viewer&#x2F;component.js:365</code></a>
         </p>
 
 
@@ -655,7 +668,7 @@ var foo = wallObjects["moObject1"];
     <div class="meta">
                 <p>Inherited from
                 <a href="../classes/Component.html#method_fire">Component</a>:
-        <a href="../files/src_core_component.js.html#l259"><code>src&#x2F;core&#x2F;component.js:259</code></a>
+        <a href="../files/src_viewer_component.js.html#l259"><code>src&#x2F;viewer&#x2F;component.js:259</code></a>
         </p>
 
 
@@ -734,7 +747,7 @@ any subsequent notifications on that location as they are made.</p>
     <div class="meta">
                 <p>Inherited from
                 <a href="../classes/Component.html#method_log">Component</a>:
-        <a href="../files/src_core_component.js.html#l353"><code>src&#x2F;core&#x2F;component.js:353</code></a>
+        <a href="../files/src_viewer_component.js.html#l353"><code>src&#x2F;viewer&#x2F;component.js:353</code></a>
         </p>
 
 
@@ -789,7 +802,7 @@ any subsequent notifications on that location as they are made.</p>
     <div class="meta">
                 <p>Inherited from
                 <a href="../classes/Component.html#method_off">Component</a>:
-        <a href="../files/src_core_component.js.html#l316"><code>src&#x2F;core&#x2F;component.js:316</code></a>
+        <a href="../files/src_viewer_component.js.html#l316"><code>src&#x2F;viewer&#x2F;component.js:316</code></a>
         </p>
 
 
@@ -812,7 +825,7 @@ any subsequent notifications on that location as they are made.</p>
 
 
                     <div class="param-description">
-                        <p>Publication handle</p>
+                        <p>Subscription handle</p>
 
                     </div>
 
@@ -853,7 +866,7 @@ any subsequent notifications on that location as they are made.</p>
     <div class="meta">
                 <p>Inherited from
                 <a href="../classes/Component.html#method_on">Component</a>:
-        <a href="../files/src_core_component.js.html#l286"><code>src&#x2F;core&#x2F;component.js:286</code></a>
+        <a href="../files/src_viewer_component.js.html#l286"><code>src&#x2F;viewer&#x2F;component.js:286</code></a>
         </p>
 
 
@@ -946,7 +959,7 @@ any subsequent notifications on that location as they are made.</p>
     <div class="meta">
                 <p>Inherited from
                 <a href="../classes/Component.html#method_once">Component</a>:
-        <a href="../files/src_core_component.js.html#l335"><code>src&#x2F;core&#x2F;component.js:335</code></a>
+        <a href="../files/src_viewer_component.js.html#l335"><code>src&#x2F;viewer&#x2F;component.js:335</code></a>
         </p>
 
 
@@ -1023,7 +1036,7 @@ any subsequent notifications on that location as they are made.</p>
     <div class="meta">
                 <p>Inherited from
                 <a href="../classes/Component.html#method_warn">Component</a>:
-        <a href="../files/src_core_component.js.html#l377"><code>src&#x2F;core&#x2F;component.js:377</code></a>
+        <a href="../files/src_viewer_component.js.html#l377"><code>src&#x2F;viewer&#x2F;component.js:377</code></a>
         </p>
 
 
@@ -1073,7 +1086,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_object_object.js.html#l376"><code>src&#x2F;core&#x2F;object&#x2F;object.js:376</code></a>
+                            <a href="../files/src_viewer_objects_object.js.html#l377"><code>src&#x2F;viewer&#x2F;objects&#x2F;object.js:377</code></a>
                             </p>
                     
                     
@@ -1099,7 +1112,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_object_object.js.html#l619"><code>src&#x2F;core&#x2F;object&#x2F;object.js:619</code></a>
+                            <a href="../files/src_viewer_objects_object.js.html#l620"><code>src&#x2F;viewer&#x2F;objects&#x2F;object.js:620</code></a>
                             </p>
                     
                     
@@ -1124,7 +1137,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_object_object.js.html#l643"><code>src&#x2F;core&#x2F;object&#x2F;object.js:643</code></a>
+                            <a href="../files/src_viewer_objects_object.js.html#l644"><code>src&#x2F;viewer&#x2F;objects&#x2F;object.js:644</code></a>
                             </p>
                     
                     
@@ -1153,7 +1166,7 @@ any subsequent notifications on that location as they are made.</p>
                                     Component
                                 </a>
                                 but overwritten in
-                            <a href="../files/src_core_object_object.js.html#l94"><code>src&#x2F;core&#x2F;object&#x2F;object.js:94</code></a>
+                            <a href="../files/src_viewer_objects_object.js.html#l95"><code>src&#x2F;viewer&#x2F;objects&#x2F;object.js:95</code></a>
                             </p>
                     
                     
@@ -1178,7 +1191,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_object_object.js.html#l535"><code>src&#x2F;core&#x2F;object&#x2F;object.js:535</code></a>
+                            <a href="../files/src_viewer_objects_object.js.html#l536"><code>src&#x2F;viewer&#x2F;objects&#x2F;object.js:536</code></a>
                             </p>
                     
                     
@@ -1204,7 +1217,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_object_object.js.html#l474"><code>src&#x2F;core&#x2F;object&#x2F;object.js:474</code></a>
+                            <a href="../files/src_viewer_objects_object.js.html#l475"><code>src&#x2F;viewer&#x2F;objects&#x2F;object.js:475</code></a>
                             </p>
                     
                     
@@ -1230,7 +1243,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>Inherited from
                                     <a href="../classes/Component.html#property_destroyed">Component</a>:
-                            <a href="../files/src_core_component.js.html#l229"><code>src&#x2F;core&#x2F;component.js:229</code></a>
+                            <a href="../files/src_viewer_component.js.html#l229"><code>src&#x2F;viewer&#x2F;component.js:229</code></a>
                             </p>
                     
                     
@@ -1255,7 +1268,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_object_object.js.html#l442"><code>src&#x2F;core&#x2F;object&#x2F;object.js:442</code></a>
+                            <a href="../files/src_viewer_objects_object.js.html#l443"><code>src&#x2F;viewer&#x2F;objects&#x2F;object.js:443</code></a>
                             </p>
                     
                     
@@ -1282,7 +1295,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>Inherited from
                                     <a href="../classes/Component.html#property_id">Component</a>:
-                            <a href="../files/src_core_component.js.html#l220"><code>src&#x2F;core&#x2F;component.js:220</code></a>
+                            <a href="../files/src_viewer_component.js.html#l220"><code>src&#x2F;viewer&#x2F;component.js:220</code></a>
                             </p>
                     
                     
@@ -1291,6 +1304,30 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="description">
                             <p>Unique ID for this Component within its parent <a href="../classes/Viewer.html" class="crosslink">Viewer</a>.</p>
                     
+                        </div>
+                    
+                    
+                    
+                    </div>
+                    <div id="property_Items in this map" class="property item inherited">
+                        <h3 class="name"><code>Items in this map</code></h3>
+                        <span class="type">Unknown</span>
+                    
+                    
+                    
+                    
+                    
+                        <div class="meta">
+                                    <p>Inherited from
+                                    <a href="../classes/Component.html#property_Items in this map">Component</a>:
+                            <a href="../files/src_viewer_utils_map.js.html#l13"><code>src&#x2F;viewer&#x2F;utils&#x2F;map.js:13</code></a>
+                            </p>
+                    
+                    
+                        </div>
+                    
+                        <div class="description">
+                            
                         </div>
                     
                     
@@ -1307,7 +1344,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_object_object.js.html#l667"><code>src&#x2F;core&#x2F;object&#x2F;object.js:667</code></a>
+                            <a href="../files/src_viewer_objects_object.js.html#l668"><code>src&#x2F;viewer&#x2F;objects&#x2F;object.js:668</code></a>
                             </p>
                     
                     
@@ -1332,7 +1369,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_object_object.js.html#l594"><code>src&#x2F;core&#x2F;object&#x2F;object.js:594</code></a>
+                            <a href="../files/src_viewer_objects_object.js.html#l595"><code>src&#x2F;viewer&#x2F;objects&#x2F;object.js:595</code></a>
                             </p>
                     
                     
@@ -1358,7 +1395,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>Inherited from
                                     <a href="../classes/Component.html#property_metadata">Component</a>:
-                            <a href="../files/src_core_component.js.html#l212"><code>src&#x2F;core&#x2F;component.js:212</code></a>
+                            <a href="../files/src_viewer_component.js.html#l212"><code>src&#x2F;viewer&#x2F;component.js:212</code></a>
                             </p>
                     
                     
@@ -1383,7 +1420,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_object_object.js.html#l568"><code>src&#x2F;core&#x2F;object&#x2F;object.js:568</code></a>
+                            <a href="../files/src_viewer_objects_object.js.html#l569"><code>src&#x2F;viewer&#x2F;objects&#x2F;object.js:569</code></a>
                             </p>
                     
                     
@@ -1412,7 +1449,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_object_object.js.html#l413"><code>src&#x2F;core&#x2F;object&#x2F;object.js:413</code></a>
+                            <a href="../files/src_viewer_objects_object.js.html#l414"><code>src&#x2F;viewer&#x2F;objects&#x2F;object.js:414</code></a>
                             </p>
                     
                     
@@ -1439,7 +1476,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>Inherited from
                                     <a href="../classes/Component.html#property_viewer">Component</a>:
-                            <a href="../files/src_core_component.js.html#l203"><code>src&#x2F;core&#x2F;component.js:203</code></a>
+                            <a href="../files/src_viewer_component.js.html#l203"><code>src&#x2F;viewer&#x2F;component.js:203</code></a>
                             </p>
                     
                     
@@ -1464,7 +1501,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_object_object.js.html#l506"><code>src&#x2F;core&#x2F;object&#x2F;object.js:506</code></a>
+                            <a href="../files/src_viewer_objects_object.js.html#l507"><code>src&#x2F;viewer&#x2F;objects&#x2F;object.js:507</code></a>
                             </p>
                     
                     
@@ -1496,7 +1533,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_object_object.js.html#l400"><code>src&#x2F;core&#x2F;object&#x2F;object.js:400</code></a>
+                            <a href="../files/src_viewer_objects_object.js.html#l401"><code>src&#x2F;viewer&#x2F;objects&#x2F;object.js:401</code></a>
                             </p>
                     
                     
@@ -1538,7 +1575,7 @@ any subsequent notifications on that location as they are made.</p>
                         <div class="meta">
                                     <p>Inherited from
                                     <a href="../classes/Component.html#event_destroyed">Component</a>:
-                            <a href="../files/src_core_component.js.html#l409"><code>src&#x2F;core&#x2F;component.js:409</code></a>
+                            <a href="../files/src_viewer_component.js.html#l409"><code>src&#x2F;viewer&#x2F;component.js:409</code></a>
                             </p>
                     
                     

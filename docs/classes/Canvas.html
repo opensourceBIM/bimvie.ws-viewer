@@ -40,9 +40,7 @@
                             <ul id="api-classes" class="apis classes">
                                 <li><a href="../classes/AmbientLight.html">AmbientLight</a></li>
                                 <li><a href="../classes/Anaglyph.html">Anaglyph</a></li>
-                                <li><a href="../classes/BIMSURFER.html">BIMSURFER</a></li>
                                 <li><a href="../classes/BIMSURFER.constants.html">BIMSURFER.constants</a></li>
-                                <li><a href="../classes/BIMSURFER.Cursor.html">BIMSURFER.Cursor</a></li>
                                 <li><a href="../classes/BoxGeometry.html">BoxGeometry</a></li>
                                 <li><a href="../classes/BoxObject.html">BoxObject</a></li>
                                 <li><a href="../classes/Camera.html">Camera</a></li>
@@ -52,13 +50,13 @@
                                 <li><a href="../classes/ClickSelectObjects.html">ClickSelectObjects</a></li>
                                 <li><a href="../classes/Component.html">Component</a></li>
                                 <li><a href="../classes/Configs.html">Configs</a></li>
+                                <li><a href="../classes/Cursor.html">Cursor</a></li>
                                 <li><a href="../classes/DepthOfField.html">DepthOfField</a></li>
                                 <li><a href="../classes/DesaturateEffect.html">DesaturateEffect</a></li>
                                 <li><a href="../classes/DirLight.html">DirLight</a></li>
+                                <li><a href="../classes/Download.html">Download</a></li>
                                 <li><a href="../classes/Effect.html">Effect</a></li>
-                                <li><a href="../classes/FrameEffect.html">FrameEffect</a></li>
                                 <li><a href="../classes/Geometry.html">Geometry</a></li>
-                                <li><a href="../classes/GridGeometry.html">GridGeometry</a></li>
                                 <li><a href="../classes/HighlightEffect.html">HighlightEffect</a></li>
                                 <li><a href="../classes/Input.html">Input</a></li>
                                 <li><a href="../classes/IsolateEffect.html">IsolateEffect</a></li>
@@ -79,6 +77,8 @@
                                 <li><a href="../classes/PointLight.html">PointLight</a></li>
                                 <li><a href="../classes/Position.html">Position</a></li>
                                 <li><a href="../classes/RandomObjects.html">RandomObjects</a></li>
+                                <li><a href="../classes/Task.html">Task</a></li>
+                                <li><a href="../classes/Tasks.html">Tasks</a></li>
                                 <li><a href="../classes/TeapotGeometry.html">TeapotGeometry</a></li>
                                 <li><a href="../classes/TeapotObject.html">TeapotObject</a></li>
                                 <li><a href="../classes/Viewer.html">Viewer</a></li>
@@ -86,13 +86,21 @@
                             </ul>
                 
                             <ul id="api-modules" class="apis modules">
-                                <li><a href="../modules/animate.html">animate</a></li>
+                                <li><a href="../modules/animation.html">animation</a></li>
                                 <li><a href="../modules/BIMSURFER.html">BIMSURFER</a></li>
                                 <li><a href="../modules/camera.html">camera</a></li>
-                                <li><a href="../modules/control.html">control</a></li>
+                                <li><a href="../modules/canvas.html">canvas</a></li>
+                                <li><a href="../modules/configs.html">configs</a></li>
                                 <li><a href="../modules/effect.html">effect</a></li>
+                                <li><a href="../modules/effects.html">effects</a></li>
                                 <li><a href="../modules/geometry.html">geometry</a></li>
                                 <li><a href="../modules/input.html">input</a></li>
+                                <li><a href="../modules/labelling.html">labelling</a></li>
+                                <li><a href="../modules/lighting.html">lighting</a></li>
+                                <li><a href="../modules/loading.html">loading</a></li>
+                                <li><a href="../modules/math.html">math</a></li>
+                                <li><a href="../modules/objects.html">objects</a></li>
+                                <li><a href="../modules/reporting.html">reporting</a></li>
                             </ul>
                         </div>
                     </div>
@@ -134,22 +142,23 @@
         </div>
 
         <div class="foundat">
-            Defined in: <a href="../files/src_core_canvas_canvas.js.html#l1"><code>src&#x2F;core&#x2F;canvas&#x2F;canvas.js:1</code></a>
+            Defined in: <a href="../files/src_viewer_canvas_canvas.js.html#l1"><code>src&#x2F;viewer&#x2F;canvas&#x2F;canvas.js:1</code></a>
         </div>
 
-            Module: <a href="../modules/BIMSURFER.html">BIMSURFER</a>
+            Module: <a href="../modules/canvas.html">canvas</a><br>
+            Parent Module: <a href="../modules/BIMSURFER.html">BIMSURFER</a>
 
 </div>
 
 
 <div class="box intro">
-    <p>A <strong>Canvas</strong> manages a Scene&#39;s HTML canvas and its WebGL context.</p>
+    <p>A <strong>Canvas</strong> manages a <a href="../classes/Viewer.html" class="crosslink">Viewer</a>&#39;s HTML canvas and its WebGL context.</p>
 <h2 id="overview">Overview</h2>
 <ul>
 
-<li>Each Scene provides a Canvas as a read-only property on itself.</li>
+<li>Each <a href="../classes/Viewer.html" class="crosslink">Viewer</a> provides a Canvas as a read-only property on itself.</li>
 
-<li>When a Scene is configured with the ID of
+<li>When a <a href="../classes/Viewer.html" class="crosslink">Viewer</a> is configured with the ID of
 an existing <a href="http://www.w3.org/TR/html5/scripting-1.html#the-canvas-element">HTMLCanvasElement</a>, then
 the Canvas will bind to that, otherwise the Canvas will automatically create its own.</li>
 
@@ -162,22 +171,22 @@ the <a href="http://www.w3.org/TR/html5/scripting-1.html#the-canvas-element">HTM
 <li>A Canvas also fires a <a href="../classes/Canvas.html#event_webglContextLost" class="crosslink">webglContextLost</a> event when the WebGL context is
 lost, and a <a href="../classes/Canvas.html#event_webglContextRestored" class="crosslink">webglContextRestored</a> when it is restored again.</li>
 
-<li>The various components within the parent Scene will transparently recover on
+<li>The various components within the parent <a href="../classes/Viewer.html" class="crosslink">Viewer</a> will transparently recover on
 the <a href="../classes/Canvas.html#event_webglContextRestored" class="crosslink">webglContextRestored</a> event.</li>
 
 </ul>
 
 <p><img src="http://www.gliffy.com/go/publish/image/7103211/L.png"></img></p>
 <h2 id="example">Example</h2>
-<p>In the example below, we&#39;re creating a Scene without specifying an HTML canvas element
-for it. This causes the Scene&#39;s Canvas component to create its own default element
+<p>In the example below, we&#39;re creating a <a href="../classes/Viewer.html" class="crosslink">Viewer</a> without specifying an HTML canvas element
+for it. This causes the <a href="../classes/Viewer.html" class="crosslink">Viewer</a>&#39;s Canvas component to create its own default element
 within the page. Then we subscribe to various events fired by that Canvas component.</p>
-<pre class="code prettyprint"><code class="lang-javascript">var scene = new BIMSURFER.Scene();
+<pre class="code prettyprint"><code class="lang-javascript">var viewer = new BIMSURFER.Viewer();
 
-// Get the Canvas off the Scene
-// Since we did not configure the Scene with the ID of a DOM canvas element,
+// Get the Canvas off the Viewer
+// Since we did not configure the Viewer with the ID of a DOM canvas element,
 // the Canvas will create its own canvas element in the DOM
-var canvas = scene.canvas;
+var canvas = viewer.canvas;
 
 // Get the WebGL context off the Canvas
 var gl = canvas.gl;
@@ -200,16 +209,6 @@ canvas.on("webglContextRestored", function(gl) {
        var newContext = gl;
        //...
     });
-</code></pre>
-<p>When we want to bind the Canvas to an existing HTML canvas element, configure the
-Scene with the ID of the element, like this:</p>
-<pre class="code prettyprint"><code class="lang-javascript">// Create a Scene, this time configuting it with the
-// ID of an existing DOM canvas element
-var scene = new BIMSURFER.Scene({
-         canvasId: "myCanvas"
-    });
-
-// ..and the rest of this example can be the same as the previous example.
 </code></pre>
 
 </div>
@@ -292,6 +291,10 @@ var scene = new BIMSURFER.Scene({
 
                             </li>
                             <li class="index-item property inherited">
+                                <a href="#property_Items in this map">Items in this map</a>
+
+                            </li>
+                            <li class="index-item property inherited">
                                 <a href="#property_metadata">metadata</a>
 
                             </li>
@@ -317,10 +320,6 @@ var scene = new BIMSURFER.Scene({
                             </li>
                             <li class="index-item event">
                                 <a href="#event_resized">resized</a>
-
-                            </li>
-                            <li class="index-item event">
-                                <a href="#event_webglContextFailed">webglContextFailed</a>
 
                             </li>
                             <li class="index-item event">
@@ -353,7 +352,7 @@ var scene = new BIMSURFER.Scene({
     <div class="meta">
                 <p>Inherited from
                 <a href="../classes/Component.html#method_destroy">Component</a>:
-        <a href="../files/src_core_component.js.html#l389"><code>src&#x2F;core&#x2F;component.js:389</code></a>
+        <a href="../files/src_viewer_component.js.html#l389"><code>src&#x2F;viewer&#x2F;component.js:389</code></a>
         </p>
 
 
@@ -392,7 +391,7 @@ var scene = new BIMSURFER.Scene({
     <div class="meta">
                 <p>Inherited from
                 <a href="../classes/Component.html#method_error">Component</a>:
-        <a href="../files/src_core_component.js.html#l365"><code>src&#x2F;core&#x2F;component.js:365</code></a>
+        <a href="../files/src_viewer_component.js.html#l365"><code>src&#x2F;viewer&#x2F;component.js:365</code></a>
         </p>
 
 
@@ -453,7 +452,7 @@ var scene = new BIMSURFER.Scene({
     <div class="meta">
                 <p>Inherited from
                 <a href="../classes/Component.html#method_fire">Component</a>:
-        <a href="../files/src_core_component.js.html#l259"><code>src&#x2F;core&#x2F;component.js:259</code></a>
+        <a href="../files/src_viewer_component.js.html#l259"><code>src&#x2F;viewer&#x2F;component.js:259</code></a>
         </p>
 
 
@@ -532,7 +531,7 @@ any subsequent notifications on that location as they are made.</p>
     <div class="meta">
                 <p>Inherited from
                 <a href="../classes/Component.html#method_log">Component</a>:
-        <a href="../files/src_core_component.js.html#l353"><code>src&#x2F;core&#x2F;component.js:353</code></a>
+        <a href="../files/src_viewer_component.js.html#l353"><code>src&#x2F;viewer&#x2F;component.js:353</code></a>
         </p>
 
 
@@ -587,7 +586,7 @@ any subsequent notifications on that location as they are made.</p>
     <div class="meta">
                 <p>Inherited from
                 <a href="../classes/Component.html#method_off">Component</a>:
-        <a href="../files/src_core_component.js.html#l316"><code>src&#x2F;core&#x2F;component.js:316</code></a>
+        <a href="../files/src_viewer_component.js.html#l316"><code>src&#x2F;viewer&#x2F;component.js:316</code></a>
         </p>
 
 
@@ -610,7 +609,7 @@ any subsequent notifications on that location as they are made.</p>
 
 
                     <div class="param-description">
-                        <p>Publication handle</p>
+                        <p>Subscription handle</p>
 
                     </div>
 
@@ -651,7 +650,7 @@ any subsequent notifications on that location as they are made.</p>
     <div class="meta">
                 <p>Inherited from
                 <a href="../classes/Component.html#method_on">Component</a>:
-        <a href="../files/src_core_component.js.html#l286"><code>src&#x2F;core&#x2F;component.js:286</code></a>
+        <a href="../files/src_viewer_component.js.html#l286"><code>src&#x2F;viewer&#x2F;component.js:286</code></a>
         </p>
 
 
@@ -744,7 +743,7 @@ any subsequent notifications on that location as they are made.</p>
     <div class="meta">
                 <p>Inherited from
                 <a href="../classes/Component.html#method_once">Component</a>:
-        <a href="../files/src_core_component.js.html#l335"><code>src&#x2F;core&#x2F;component.js:335</code></a>
+        <a href="../files/src_viewer_component.js.html#l335"><code>src&#x2F;viewer&#x2F;component.js:335</code></a>
         </p>
 
 
@@ -827,7 +826,7 @@ any subsequent notifications on that location as they are made.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_core_canvas_canvas.js.html#l173"><code>src&#x2F;core&#x2F;canvas&#x2F;canvas.js:173</code></a>
+        <a href="../files/src_viewer_canvas_canvas.js.html#l161"><code>src&#x2F;viewer&#x2F;canvas&#x2F;canvas.js:161</code></a>
         </p>
 
 
@@ -836,7 +835,7 @@ any subsequent notifications on that location as they are made.</p>
 
     <div class="description">
         <p>Attempts to pick a GameObject at the given Canvas-space coordinates within the
-parent Scene.</p>
+parent <a href="../classes/Viewer.html" class="crosslink">Viewer</a>.</p>
 <p>Ignores GameObject that are attached
 to either a Stage with Stage/pickable:property
 set <em>false</em> or a Modes with Modes/picking:property set <em>false</em>.</p>
@@ -923,7 +922,7 @@ a separate GameObject/picked:event event on the target GameObject.</p>
     <div class="meta">
                 <p>Inherited from
                 <a href="../classes/Component.html#method_warn">Component</a>:
-        <a href="../files/src_core_component.js.html#l377"><code>src&#x2F;core&#x2F;component.js:377</code></a>
+        <a href="../files/src_viewer_component.js.html#l377"><code>src&#x2F;viewer&#x2F;component.js:377</code></a>
         </p>
 
 
@@ -974,7 +973,7 @@ a separate GameObject/picked:event event on the target GameObject.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_canvas_canvas.js.html#l96"><code>src&#x2F;core&#x2F;canvas&#x2F;canvas.js:96</code></a>
+                            <a href="../files/src_viewer_canvas_canvas.js.html#l84"><code>src&#x2F;viewer&#x2F;canvas&#x2F;canvas.js:84</code></a>
                             </p>
                     
                     
@@ -1002,7 +1001,7 @@ a separate GameObject/picked:event event on the target GameObject.</p>
                         <div class="meta">
                                     <p>Inherited from
                                     <a href="../classes/Component.html#property_className">Component</a>:
-                            <a href="../files/src_core_component.js.html#l177"><code>src&#x2F;core&#x2F;component.js:177</code></a>
+                            <a href="../files/src_viewer_component.js.html#l177"><code>src&#x2F;viewer&#x2F;component.js:177</code></a>
                             </p>
                     
                     
@@ -1027,7 +1026,7 @@ a separate GameObject/picked:event event on the target GameObject.</p>
                         <div class="meta">
                                     <p>Inherited from
                                     <a href="../classes/Component.html#property_destroyed">Component</a>:
-                            <a href="../files/src_core_component.js.html#l229"><code>src&#x2F;core&#x2F;component.js:229</code></a>
+                            <a href="../files/src_viewer_component.js.html#l229"><code>src&#x2F;viewer&#x2F;component.js:229</code></a>
                             </p>
                     
                     
@@ -1053,7 +1052,7 @@ a separate GameObject/picked:event event on the target GameObject.</p>
                         <div class="meta">
                                     <p>Inherited from
                                     <a href="../classes/Component.html#property_id">Component</a>:
-                            <a href="../files/src_core_component.js.html#l220"><code>src&#x2F;core&#x2F;component.js:220</code></a>
+                            <a href="../files/src_viewer_component.js.html#l220"><code>src&#x2F;viewer&#x2F;component.js:220</code></a>
                             </p>
                     
                     
@@ -1062,6 +1061,30 @@ a separate GameObject/picked:event event on the target GameObject.</p>
                         <div class="description">
                             <p>Unique ID for this Component within its parent <a href="../classes/Viewer.html" class="crosslink">Viewer</a>.</p>
                     
+                        </div>
+                    
+                    
+                    
+                    </div>
+                    <div id="property_Items in this map" class="property item inherited">
+                        <h3 class="name"><code>Items in this map</code></h3>
+                        <span class="type">Unknown</span>
+                    
+                    
+                    
+                    
+                    
+                        <div class="meta">
+                                    <p>Inherited from
+                                    <a href="../classes/Component.html#property_Items in this map">Component</a>:
+                            <a href="../files/src_viewer_utils_map.js.html#l13"><code>src&#x2F;viewer&#x2F;utils&#x2F;map.js:13</code></a>
+                            </p>
+                    
+                    
+                        </div>
+                    
+                        <div class="description">
+                            
                         </div>
                     
                     
@@ -1078,7 +1101,7 @@ a separate GameObject/picked:event event on the target GameObject.</p>
                         <div class="meta">
                                     <p>Inherited from
                                     <a href="../classes/Component.html#property_metadata">Component</a>:
-                            <a href="../files/src_core_component.js.html#l212"><code>src&#x2F;core&#x2F;component.js:212</code></a>
+                            <a href="../files/src_viewer_component.js.html#l212"><code>src&#x2F;viewer&#x2F;component.js:212</code></a>
                             </p>
                     
                     
@@ -1104,7 +1127,7 @@ a separate GameObject/picked:event event on the target GameObject.</p>
                         <div class="meta">
                                     <p>Inherited from
                                     <a href="../classes/Component.html#property_viewer">Component</a>:
-                            <a href="../files/src_core_component.js.html#l203"><code>src&#x2F;core&#x2F;component.js:203</code></a>
+                            <a href="../files/src_viewer_component.js.html#l203"><code>src&#x2F;viewer&#x2F;component.js:203</code></a>
                             </p>
                     
                     
@@ -1135,7 +1158,7 @@ a separate GameObject/picked:event event on the target GameObject.</p>
                         <div class="meta">
                                     <p>Inherited from
                                     <a href="../classes/Component.html#event_destroyed">Component</a>:
-                            <a href="../files/src_core_component.js.html#l409"><code>src&#x2F;core&#x2F;component.js:409</code></a>
+                            <a href="../files/src_viewer_component.js.html#l409"><code>src&#x2F;viewer&#x2F;component.js:409</code></a>
                             </p>
                     
                     
@@ -1160,7 +1183,7 @@ a separate GameObject/picked:event event on the target GameObject.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_canvas_canvas.js.html#l192"><code>src&#x2F;core&#x2F;canvas&#x2F;canvas.js:192</code></a>
+                            <a href="../files/src_viewer_canvas_canvas.js.html#l180"><code>src&#x2F;viewer&#x2F;canvas&#x2F;canvas.js:180</code></a>
                             </p>
                     
                     
@@ -1168,7 +1191,7 @@ a separate GameObject/picked:event event on the target GameObject.</p>
                     
                         <div class="description">
                             <p>Fired whenever the <a href="../classes/Canvas.html#method_pick" class="crosslink">pick</a> method succeeds in picking
-                    a GameObject in the parent Scene.</p>
+                    a GameObject in the parent <a href="../classes/Viewer.html" class="crosslink">Viewer</a>.</p>
                     
                         </div>
                     
@@ -1182,7 +1205,7 @@ a separate GameObject/picked:event event on the target GameObject.</p>
                     
                     
                                         <div class="param-description">
-                                            <p>The ID of the picked GameObject within the parent Scene.</p>
+                                            <p>The ID of the picked GameObject within the parent <a href="../classes/Viewer.html" class="crosslink">Viewer</a>.</p>
                     
                                         </div>
                     
@@ -1225,7 +1248,7 @@ a separate GameObject/picked:event event on the target GameObject.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_canvas_canvas.js.html#l157"><code>src&#x2F;core&#x2F;canvas&#x2F;canvas.js:157</code></a>
+                            <a href="../files/src_viewer_canvas_canvas.js.html#l145"><code>src&#x2F;viewer&#x2F;canvas&#x2F;canvas.js:145</code></a>
                             </p>
                     
                     
@@ -1278,32 +1301,6 @@ a separate GameObject/picked:event event on the target GameObject.</p>
                     
                     
                     </div>
-                    <div id="event_webglContextFailed" class="events item">
-                        <h3 class="name"><code>webglContextFailed</code></h3>
-                        <span class="type"></span>
-                    
-                    
-                    
-                    
-                    
-                        <div class="meta">
-                                    <p>
-                                    Defined in
-                            <a href="../files/src_core_canvas_canvas.js.html#l238"><code>src&#x2F;core&#x2F;canvas&#x2F;canvas.js:238</code></a>
-                            </p>
-                    
-                    
-                        </div>
-                    
-                        <div class="description">
-                            <p>Fired whenever the canvas failed to get a WebGL context, which probably means that WebGL
-                    is either unsupported or has been disabled.</p>
-                    
-                        </div>
-                    
-                    
-                    
-                    </div>
                     <div id="event_webglContextLost" class="events item">
                         <h3 class="name"><code>webglContextLost</code></h3>
                         <span class="type"></span>
@@ -1315,7 +1312,7 @@ a separate GameObject/picked:event event on the target GameObject.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_canvas_canvas.js.html#l123"><code>src&#x2F;core&#x2F;canvas&#x2F;canvas.js:123</code></a>
+                            <a href="../files/src_viewer_canvas_canvas.js.html#l107"><code>src&#x2F;viewer&#x2F;canvas&#x2F;canvas.js:107</code></a>
                             </p>
                     
                     
@@ -1340,7 +1337,7 @@ a separate GameObject/picked:event event on the target GameObject.</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_core_canvas_canvas.js.html#l136"><code>src&#x2F;core&#x2F;canvas&#x2F;canvas.js:136</code></a>
+                            <a href="../files/src_viewer_canvas_canvas.js.html#l120"><code>src&#x2F;viewer&#x2F;canvas&#x2F;canvas.js:120</code></a>
                             </p>
                     
                     

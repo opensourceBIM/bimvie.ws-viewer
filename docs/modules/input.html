@@ -40,9 +40,7 @@
                             <ul id="api-classes" class="apis classes">
                                 <li><a href="../classes/AmbientLight.html">AmbientLight</a></li>
                                 <li><a href="../classes/Anaglyph.html">Anaglyph</a></li>
-                                <li><a href="../classes/BIMSURFER.html">BIMSURFER</a></li>
                                 <li><a href="../classes/BIMSURFER.constants.html">BIMSURFER.constants</a></li>
-                                <li><a href="../classes/BIMSURFER.Cursor.html">BIMSURFER.Cursor</a></li>
                                 <li><a href="../classes/BoxGeometry.html">BoxGeometry</a></li>
                                 <li><a href="../classes/BoxObject.html">BoxObject</a></li>
                                 <li><a href="../classes/Camera.html">Camera</a></li>
@@ -52,13 +50,13 @@
                                 <li><a href="../classes/ClickSelectObjects.html">ClickSelectObjects</a></li>
                                 <li><a href="../classes/Component.html">Component</a></li>
                                 <li><a href="../classes/Configs.html">Configs</a></li>
+                                <li><a href="../classes/Cursor.html">Cursor</a></li>
                                 <li><a href="../classes/DepthOfField.html">DepthOfField</a></li>
                                 <li><a href="../classes/DesaturateEffect.html">DesaturateEffect</a></li>
                                 <li><a href="../classes/DirLight.html">DirLight</a></li>
+                                <li><a href="../classes/Download.html">Download</a></li>
                                 <li><a href="../classes/Effect.html">Effect</a></li>
-                                <li><a href="../classes/FrameEffect.html">FrameEffect</a></li>
                                 <li><a href="../classes/Geometry.html">Geometry</a></li>
-                                <li><a href="../classes/GridGeometry.html">GridGeometry</a></li>
                                 <li><a href="../classes/HighlightEffect.html">HighlightEffect</a></li>
                                 <li><a href="../classes/Input.html">Input</a></li>
                                 <li><a href="../classes/IsolateEffect.html">IsolateEffect</a></li>
@@ -79,6 +77,8 @@
                                 <li><a href="../classes/PointLight.html">PointLight</a></li>
                                 <li><a href="../classes/Position.html">Position</a></li>
                                 <li><a href="../classes/RandomObjects.html">RandomObjects</a></li>
+                                <li><a href="../classes/Task.html">Task</a></li>
+                                <li><a href="../classes/Tasks.html">Tasks</a></li>
                                 <li><a href="../classes/TeapotGeometry.html">TeapotGeometry</a></li>
                                 <li><a href="../classes/TeapotObject.html">TeapotObject</a></li>
                                 <li><a href="../classes/Viewer.html">Viewer</a></li>
@@ -86,13 +86,21 @@
                             </ul>
                 
                             <ul id="api-modules" class="apis modules">
-                                <li><a href="../modules/animate.html">animate</a></li>
+                                <li><a href="../modules/animation.html">animation</a></li>
                                 <li><a href="../modules/BIMSURFER.html">BIMSURFER</a></li>
                                 <li><a href="../modules/camera.html">camera</a></li>
-                                <li><a href="../modules/control.html">control</a></li>
+                                <li><a href="../modules/canvas.html">canvas</a></li>
+                                <li><a href="../modules/configs.html">configs</a></li>
                                 <li><a href="../modules/effect.html">effect</a></li>
+                                <li><a href="../modules/effects.html">effects</a></li>
                                 <li><a href="../modules/geometry.html">geometry</a></li>
                                 <li><a href="../modules/input.html">input</a></li>
+                                <li><a href="../modules/labelling.html">labelling</a></li>
+                                <li><a href="../modules/lighting.html">lighting</a></li>
+                                <li><a href="../modules/loading.html">loading</a></li>
+                                <li><a href="../modules/math.html">math</a></li>
+                                <li><a href="../modules/objects.html">objects</a></li>
+                                <li><a href="../modules/reporting.html">reporting</a></li>
                             </ul>
                         </div>
                     </div>
@@ -131,91 +139,14 @@
 
 
         <div class="foundat">
-            Defined in: <a href="../files/src_core_input_input.js.html#l1"><code>src&#x2F;core&#x2F;input&#x2F;input.js:1</code></a>
+            Defined in: <a href="../files/src_viewer_input_mouseZoomCamera.js.html#l1"><code>src&#x2F;viewer&#x2F;input&#x2F;mouseZoomCamera.js:1</code></a>
         </div>
 
 </div>
 
 
 <div class="box intro">
-    <p>Publishes key and mouse events that occur on the parent <a href="../classes/Viewer.html" class="crosslink">Viewer</a>&#39;s <a href="../classes/Canvas.html" class="crosslink">Canvas</a>.</p>
-<h2 id="overview">Overview</h2>
-<ul>
-<li>Each <a href="../classes/Viewer.html" class="crosslink">Viewer</a> provides an Input on itself as a read-only property.</li>
-</ul>
-
-<h2 id="example">Example</h2>
-<p>In this example, we&#39;re subscribing to some mouse and key events that will occur on
-a <a href="../classes/Viewer.html" class="crosslink">Viewer&#39;s</a> <a href="../classes/Canvas.html" class="crosslink">Canvas</a>.</p>
-<pre class="code prettyprint"><code class="lang-javascript">var viewer = new BIMSURFER.Viewer(...);
-
-var input = viewer.input;
-
-// We&#39;ll save a handle to this subscription
-// to show how to unsubscribe, further down
-var handle = input.on("mousedown", function(coords) {
-      console.log("Mouse down at: x=" + coords[0] + ", y=" + coords[1]);
-});
-
-input.on("mouseup", function(coords) {
-      console.log("Mouse up at: x=" + coords[0] + ", y=" + coords[1]);
-});
-
-input.on("mouseclicked", function(coords) {
-     console.log("Mouse clicked at: x=" + coords[0] + ", y=" + coords[1]);
-});
-
-input.on("dblclick", function(coords) {
-      console.log("Double-click at: x=" + coords[0] + ", y=" + coords[1]);
-});
-
-input.on("keydown", function(keyCode) {
-       switch (keyCode) {
-
-           case this.KEY_A:
-              console.log("The &#39;A&#39; key is down");
-              break;
-
-           case this.KEY_B:
-              console.log("The &#39;B&#39; key is down");
-              break;
-
-           case this.KEY_C:
-              console.log("The &#39;C&#39; key is down");
-              break;
-
-           default:
-              console.log("Some other key is down");
-      }
-    });
-
-input.on("keyup", function(keyCode) {
-       switch (keyCode) {
-
-           case this.KEY_A:
-              console.log("The &#39;A&#39; key is up");
-              break;
-
-           case this.KEY_B:
-              console.log("The &#39;B&#39; key is up");
-              break;
-
-           case this.KEY_C:
-              console.log("The &#39;C&#39; key is up");
-              break;
-
-           default:
-              console.log("Some other key is up");
-       }
-    });
-
-// TODO: ALT and CTRL keys etc
-</code></pre>
-<h3 id="unsubscribing-from-events">Unsubscribing from Events</h3>
-<p>In the snippet above, we saved a handle to one of our event subscriptions.</p>
-<p>We can then use that handle to unsubscribe again, like this:</p>
-<pre class="code prettyprint"><code class="lang-javascript">input.off(handle);
-</code></pre>
+    <p>Components for handling user interaction.</p>
 
 </div>
 
@@ -226,8 +157,58 @@ input.on("keyup", function(keyCode) {
 
             <ul class="module-classes">
                 <li class="module-class">
+                    <a href="../classes/CameraControl.html">
+                        CameraControl
+                    </a>
+                </li>
+                <li class="module-class">
+                    <a href="../classes/ClickSelectObjects.html">
+                        ClickSelectObjects
+                    </a>
+                </li>
+                <li class="module-class">
                     <a href="../classes/Input.html">
                         Input
+                    </a>
+                </li>
+                <li class="module-class">
+                    <a href="../classes/KeyboardAxisCamera.html">
+                        KeyboardAxisCamera
+                    </a>
+                </li>
+                <li class="module-class">
+                    <a href="../classes/KeyboardOrbitCamera.html">
+                        KeyboardOrbitCamera
+                    </a>
+                </li>
+                <li class="module-class">
+                    <a href="../classes/KeyboardPanCamera.html">
+                        KeyboardPanCamera
+                    </a>
+                </li>
+                <li class="module-class">
+                    <a href="../classes/KeyboardZoomCamera.html">
+                        KeyboardZoomCamera
+                    </a>
+                </li>
+                <li class="module-class">
+                    <a href="../classes/MouseOrbitCamera.html">
+                        MouseOrbitCamera
+                    </a>
+                </li>
+                <li class="module-class">
+                    <a href="../classes/MousePanCamera.html">
+                        MousePanCamera
+                    </a>
+                </li>
+                <li class="module-class">
+                    <a href="../classes/MousePickObject.html">
+                        MousePickObject
+                    </a>
+                </li>
+                <li class="module-class">
+                    <a href="../classes/MouseZoomCamera.html">
+                        MouseZoomCamera
                     </a>
                 </li>
             </ul>

@@ -40,9 +40,7 @@
                             <ul id="api-classes" class="apis classes">
                                 <li><a href="../classes/AmbientLight.html">AmbientLight</a></li>
                                 <li><a href="../classes/Anaglyph.html">Anaglyph</a></li>
-                                <li><a href="../classes/BIMSURFER.html">BIMSURFER</a></li>
                                 <li><a href="../classes/BIMSURFER.constants.html">BIMSURFER.constants</a></li>
-                                <li><a href="../classes/BIMSURFER.Cursor.html">BIMSURFER.Cursor</a></li>
                                 <li><a href="../classes/BoxGeometry.html">BoxGeometry</a></li>
                                 <li><a href="../classes/BoxObject.html">BoxObject</a></li>
                                 <li><a href="../classes/Camera.html">Camera</a></li>
@@ -52,13 +50,13 @@
                                 <li><a href="../classes/ClickSelectObjects.html">ClickSelectObjects</a></li>
                                 <li><a href="../classes/Component.html">Component</a></li>
                                 <li><a href="../classes/Configs.html">Configs</a></li>
+                                <li><a href="../classes/Cursor.html">Cursor</a></li>
                                 <li><a href="../classes/DepthOfField.html">DepthOfField</a></li>
                                 <li><a href="../classes/DesaturateEffect.html">DesaturateEffect</a></li>
                                 <li><a href="../classes/DirLight.html">DirLight</a></li>
+                                <li><a href="../classes/Download.html">Download</a></li>
                                 <li><a href="../classes/Effect.html">Effect</a></li>
-                                <li><a href="../classes/FrameEffect.html">FrameEffect</a></li>
                                 <li><a href="../classes/Geometry.html">Geometry</a></li>
-                                <li><a href="../classes/GridGeometry.html">GridGeometry</a></li>
                                 <li><a href="../classes/HighlightEffect.html">HighlightEffect</a></li>
                                 <li><a href="../classes/Input.html">Input</a></li>
                                 <li><a href="../classes/IsolateEffect.html">IsolateEffect</a></li>
@@ -79,6 +77,8 @@
                                 <li><a href="../classes/PointLight.html">PointLight</a></li>
                                 <li><a href="../classes/Position.html">Position</a></li>
                                 <li><a href="../classes/RandomObjects.html">RandomObjects</a></li>
+                                <li><a href="../classes/Task.html">Task</a></li>
+                                <li><a href="../classes/Tasks.html">Tasks</a></li>
                                 <li><a href="../classes/TeapotGeometry.html">TeapotGeometry</a></li>
                                 <li><a href="../classes/TeapotObject.html">TeapotObject</a></li>
                                 <li><a href="../classes/Viewer.html">Viewer</a></li>
@@ -86,13 +86,21 @@
                             </ul>
                 
                             <ul id="api-modules" class="apis modules">
-                                <li><a href="../modules/animate.html">animate</a></li>
+                                <li><a href="../modules/animation.html">animation</a></li>
                                 <li><a href="../modules/BIMSURFER.html">BIMSURFER</a></li>
                                 <li><a href="../modules/camera.html">camera</a></li>
-                                <li><a href="../modules/control.html">control</a></li>
+                                <li><a href="../modules/canvas.html">canvas</a></li>
+                                <li><a href="../modules/configs.html">configs</a></li>
                                 <li><a href="../modules/effect.html">effect</a></li>
+                                <li><a href="../modules/effects.html">effects</a></li>
                                 <li><a href="../modules/geometry.html">geometry</a></li>
                                 <li><a href="../modules/input.html">input</a></li>
+                                <li><a href="../modules/labelling.html">labelling</a></li>
+                                <li><a href="../modules/lighting.html">lighting</a></li>
+                                <li><a href="../modules/loading.html">loading</a></li>
+                                <li><a href="../modules/math.html">math</a></li>
+                                <li><a href="../modules/objects.html">objects</a></li>
+                                <li><a href="../modules/reporting.html">reporting</a></li>
                             </ul>
                         </div>
                     </div>
@@ -131,81 +139,14 @@
 
 
         <div class="foundat">
-            Defined in: <a href="../files/src_core_camera_camera.js.html#l1"><code>src&#x2F;core&#x2F;camera&#x2F;camera.js:1</code></a>
+            Defined in: <a href="../files/src_viewer_camera_camera.js.html#l1"><code>src&#x2F;viewer&#x2F;camera&#x2F;camera.js:1</code></a>
         </div>
 
 </div>
 
 
 <div class="box intro">
-    <p>A <strong>Camera</strong> defines a viewpoint within a <a href="../classes/Viewer.html" class="crosslink">Viewer</a>.</p>
-<h2 id="overview">Overview</h2>
-<ul>
-<li>You can have an unlimited number of Cameras in a <a href="../classes/Viewer.html" class="crosslink">Viewer</a>.</li>
-<li>At any instant, the Camera we&#39;re looking through is the one whose <a href="../classes/Camera.html#property_active" class="crosslink">active</a> property is true.</li>
-<li>Cameras can be controlled with controls such as <a href="../classes/CameraControl.html" class="crosslink">CameraControl</a>, <a href="../classes/KeyboardAxisCamera.html" class="crosslink">KeyboardAxisCamera</a>,
-<a href="../classes/KeyboardOrbitCamera.html" class="crosslink">KeyboardOrbitCamera</a>, <a href="../classes/KeyboardPanCamera.html" class="crosslink">KeyboardPanCamera</a>, <a href="../classes/KeyboardZoomCamera.html" class="crosslink">KeyboardZoomCamera</a>,
-<a href="../classes/MouseOrbitCamera.html" class="crosslink">MouseOrbitCamera</a>, <a href="../classes/MousePanCamera.html" class="crosslink">MousePanCamera</a> and <a href="../classes/MouseZoomCamera.html" class="crosslink">MouseZoomCamera</a>.</li>
-</ul>
-
-<h2 id="example">Example</h2>
-<p>In this example we define multiple Cameras looking at a <a href="../classes/TeapotObject.html" class="crosslink">TeapotObject</a>, then periodically switch between the Cameras.</p>
-<iframe style="width: 600px; height: 400px" src="../../examples/camera_Camera_multiple.html"></iframe>
-
-<pre class="code prettyprint"><code class="lang-Javascript">// Create a Viewer
-var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
-
-// Create an object
-var box = new BIMSURFER.TeapotObject(viewer);
-
-// Create some Cameras
-var cameras = [
-
-new BIMSURFER.Camera(viewer, {
-       eye: [5, 5, 5],
-       active: false
-   }),
-
-new BIMSURFER.Camera(viewer, {
-       eye: [-5, 5, 5],
-       active: false
-   }),
-
-new BIMSURFER.Camera(viewer, {
-       eye: [5, -5, 5],
-       active: false
-   }),
-
-new BIMSURFER.Camera(viewer, {
-       eye: [5, 5, -5],
-       active: false
-   }),
-
-new BIMSURFER.Camera(viewer, {
-       eye: [-5, -5, 5],
-       active: false
-   })
-];
-
-// Periodically switch between the Cameras
-
-var i = -1;
-var last = -1;
-
-setInterval(function () {
-
-       if (last &gt; -1) {
-           cameras[last].active = false
-       }
-
-       i = (i + 1) % (cameras.length - 1);
-
-       cameras[i].active = true;
-
-       last = i;
-
-   }, 1000);
-</code></pre>
+    <p>Camera components.</p>
 
 </div>
 

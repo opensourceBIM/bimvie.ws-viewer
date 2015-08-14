@@ -1,0 +1,1379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>DesaturateEffect - bimviews</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="icon" href="../assets/favicon.ico">
+    <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="doc">
+    <div id="hd" class="yui3-g header">
+        <div class="yui3-u-3-4">
+                <h1><img src="../../assets/images/logo.png" title="bimviews"></h1>
+        </div>
+        <div class="yui3-u-1-4 version">
+            <em>API Docs for: 2.0.0</em>
+        </div>
+    </div>
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+                    <h2 class="off-left">APIs</h2>
+                    <div id="api-tabview" class="tabview">
+                        <ul class="tabs">
+                            <li><a href="#api-classes">Classes</a></li>
+                            <li><a href="#api-modules">Modules</a></li>
+                        </ul>
+                
+                        <div id="api-tabview-filter">
+                            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+                        </div>
+                
+                        <div id="api-tabview-panel">
+                            <ul id="api-classes" class="apis classes">
+                                <li><a href="../classes/AmbientLight.html">AmbientLight</a></li>
+                                <li><a href="../classes/Anaglyph.html">Anaglyph</a></li>
+                                <li><a href="../classes/BIMSURFER.constants.html">BIMSURFER.constants</a></li>
+                                <li><a href="../classes/BoxGeometry.html">BoxGeometry</a></li>
+                                <li><a href="../classes/BoxObject.html">BoxObject</a></li>
+                                <li><a href="../classes/Camera.html">Camera</a></li>
+                                <li><a href="../classes/CameraControl.html">CameraControl</a></li>
+                                <li><a href="../classes/CameraFlyAnimation.html">CameraFlyAnimation</a></li>
+                                <li><a href="../classes/Canvas.html">Canvas</a></li>
+                                <li><a href="../classes/ClickSelectObjects.html">ClickSelectObjects</a></li>
+                                <li><a href="../classes/Component.html">Component</a></li>
+                                <li><a href="../classes/Configs.html">Configs</a></li>
+                                <li><a href="../classes/Cursor.html">Cursor</a></li>
+                                <li><a href="../classes/DepthOfField.html">DepthOfField</a></li>
+                                <li><a href="../classes/DesaturateEffect.html">DesaturateEffect</a></li>
+                                <li><a href="../classes/DirLight.html">DirLight</a></li>
+                                <li><a href="../classes/Download.html">Download</a></li>
+                                <li><a href="../classes/Effect.html">Effect</a></li>
+                                <li><a href="../classes/Geometry.html">Geometry</a></li>
+                                <li><a href="../classes/HighlightEffect.html">HighlightEffect</a></li>
+                                <li><a href="../classes/Input.html">Input</a></li>
+                                <li><a href="../classes/IsolateEffect.html">IsolateEffect</a></li>
+                                <li><a href="../classes/KeyboardAxisCamera.html">KeyboardAxisCamera</a></li>
+                                <li><a href="../classes/KeyboardOrbitCamera.html">KeyboardOrbitCamera</a></li>
+                                <li><a href="../classes/KeyboardPanCamera.html">KeyboardPanCamera</a></li>
+                                <li><a href="../classes/KeyboardZoomCamera.html">KeyboardZoomCamera</a></li>
+                                <li><a href="../classes/Label.html">Label</a></li>
+                                <li><a href="../classes/LabelEffect.html">LabelEffect</a></li>
+                                <li><a href="../classes/Light.html">Light</a></li>
+                                <li><a href="../classes/math.html">math</a></li>
+                                <li><a href="../classes/MouseOrbitCamera.html">MouseOrbitCamera</a></li>
+                                <li><a href="../classes/MousePanCamera.html">MousePanCamera</a></li>
+                                <li><a href="../classes/MousePickObject.html">MousePickObject</a></li>
+                                <li><a href="../classes/MouseZoomCamera.html">MouseZoomCamera</a></li>
+                                <li><a href="../classes/Object.html">Object</a></li>
+                                <li><a href="../classes/ObjectSet.html">ObjectSet</a></li>
+                                <li><a href="../classes/PointLight.html">PointLight</a></li>
+                                <li><a href="../classes/Position.html">Position</a></li>
+                                <li><a href="../classes/RandomObjects.html">RandomObjects</a></li>
+                                <li><a href="../classes/Task.html">Task</a></li>
+                                <li><a href="../classes/Tasks.html">Tasks</a></li>
+                                <li><a href="../classes/TeapotGeometry.html">TeapotGeometry</a></li>
+                                <li><a href="../classes/TeapotObject.html">TeapotObject</a></li>
+                                <li><a href="../classes/Viewer.html">Viewer</a></li>
+                                <li><a href="../classes/XRayEffect.html">XRayEffect</a></li>
+                            </ul>
+                
+                            <ul id="api-modules" class="apis modules">
+                                <li><a href="../modules/animation.html">animation</a></li>
+                                <li><a href="../modules/BIMSURFER.html">BIMSURFER</a></li>
+                                <li><a href="../modules/camera.html">camera</a></li>
+                                <li><a href="../modules/canvas.html">canvas</a></li>
+                                <li><a href="../modules/configs.html">configs</a></li>
+                                <li><a href="../modules/effect.html">effect</a></li>
+                                <li><a href="../modules/effects.html">effects</a></li>
+                                <li><a href="../modules/geometry.html">geometry</a></li>
+                                <li><a href="../modules/input.html">input</a></li>
+                                <li><a href="../modules/labelling.html">labelling</a></li>
+                                <li><a href="../modules/lighting.html">lighting</a></li>
+                                <li><a href="../modules/loading.html">loading</a></li>
+                                <li><a href="../modules/math.html">math</a></li>
+                                <li><a href="../modules/objects.html">objects</a></li>
+                                <li><a href="../modules/reporting.html">reporting</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+                <div id="api-options">
+                    Show:
+                    <label for="api-show-inherited">
+                        <input type="checkbox" id="api-show-inherited" checked>
+                        Inherited
+                    </label>
+            
+                    <label for="api-show-protected">
+                        <input type="checkbox" id="api-show-protected">
+                        Protected
+                    </label>
+            
+                    <label for="api-show-private">
+                        <input type="checkbox" id="api-show-private">
+                        Private
+                    </label>
+                    <label for="api-show-deprecated">
+                        <input type="checkbox" id="api-show-deprecated">
+                        Deprecated
+                    </label>
+            
+                </div>
+            
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+<h1>DesaturateEffect Class</h1>
+<div class="box meta">
+
+        <div class="extends">
+            Extends <a href="../classes/Effect.html" class="crosslink">Effect</a>
+        </div>
+
+        <div class="foundat">
+            Defined in: <a href="../files/src_viewer_effects_desaturateEffect.js.html#l1"><code>src&#x2F;viewer&#x2F;effects&#x2F;desaturateEffect.js:1</code></a>
+        </div>
+
+            Module: <a href="../modules/effect.html">effect</a><br>
+            Parent Module: <a href="../modules/BIMSURFER.html">BIMSURFER</a>
+
+</div>
+
+
+<div class="box intro">
+    <p>A <strong>DesaturateEffect</strong> is an <a href="../classes/Effect.html" class="crosslink">Effect</a> that desaturates the colours of
+Object within an <a href="../classes/ObjectSet.html" class="crosslink">ObjectSet</a>.</p>
+<h2 id="overview">Overview</h2>
+<p>TODO</p>
+<h2 id="example">Example</h2>
+<h4 id="desaturating-an-objectset">Desaturating an ObjectSet</h4>
+<p>In this example we create four Object, then add two of them to an <a href="../classes/ObjectSet.html" class="crosslink">ObjectSet</a>.
+<br> Then we apply a <a href="../classes/DesaturateEffect.html" class="crosslink">DesaturateEffect</a> to the <a href="../classes/ObjectSet.html" class="crosslink">ObjectSet</a>, causing the colour of
+it&#39;s Object to become desaturated while the other two Object remain normal.</p>
+<iframe style="width: 600px; height: 400px" src="../../examples/effect_DesaturateEffect.html"></iframe>
+
+<pre class="code prettyprint"><code class="lang-javascript">
+// Create a Viewer
+var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
+
+// Create a Camera
+var camera = new BIMSURFER.Camera(viewer, {
+       eye: [30, 20, -30]
+   });
+
+// Spin the camera
+viewer.on("tick", function () {
+       camera.rotateEyeY(0.2);
+   });
+
+// Create a CameraControl so we can move the Camera
+var cameraControl = new BIMSURFER.CameraControl(viewer, {
+       camera: camera
+   });
+
+// Create an AmbientLight
+var ambientLight = new BIMSURFER.AmbientLight(viewer, {
+       color: [0.7, 0.7, 0.7]
+   });
+
+// Create a DirLight
+var dirLight1 = new BIMSURFER.DirLight(viewer, {
+       color: [0.6, 0.9, 0.9],
+       dir: [1.0, 0.0, 0.0],
+       space: "view"
+   });
+
+// Create a DirLight
+var dirLight2 = new BIMSURFER.DirLight(viewer, {
+       color: [0.6, 0.9, 0.9],
+       dir: [-0.5, 0.0, -1.0],
+       space: "view"
+   });
+
+// Create a BoxGeometry
+var geometry = new BIMSURFER.BoxGeometry(viewer, {
+       id: "myGeometry"
+   });
+
+// Create some Objects
+// Share the BoxGeometry among them
+
+var object1 = new BIMSURFER.Object(viewer, {
+       type: "IfcRoof",
+       geometries: [ geometry ],
+       matrix: BIMSURFER.math.translationMat4v([-8, 0, -8])
+   });
+
+var object2 = new BIMSURFER.Object(viewer, {
+       type: "IfcDistributionFlowElement",
+       geometries: [ geometry ],
+       matrix: BIMSURFER.math.translationMat4v([8, 0, -8])
+   });
+
+var object3 = new BIMSURFER.Object(viewer, {
+       type: "IfcRailing",
+       geometries: [ geometry ],
+       matrix: BIMSURFER.math.translationMat4v([-8, 0, 8])
+   });
+
+var object4 = new BIMSURFER.Object(viewer, {
+       type: "IfcRoof",
+       geometries: [ geometry ],
+       matrix: BIMSURFER.math.translationMat4v([8, 0, 8])
+   });
+
+// Create an ObjectSet that initially contains one of our Objects
+
+var objectSet = new BIMSURFER.ObjectSet(viewer, {
+       objects: [object1 ]
+   });
+
+// Apply a Desaturate effect to the ObjectSet, which causes the
+// Object in the ObjectSet to become desaturated.
+
+var desaturate = new BIMSURFER.DesaturateEffect(viewer, {
+       objectSet: objectSet
+   });
+
+// Add a second Object to the ObjectSet, causing the Desaturate to now render
+// that Object as desaturated also
+
+objectSet.addObjects([object3]);
+</code></pre>
+
+</div>
+
+    <div class="constructor">
+        <h2>Constructor</h2>
+        <div id="method_DesaturateEffect" class="method item">
+            <h3 class="name"><code>DesaturateEffect</code></h3>
+        
+                <div class="args">
+                    <span class="paren">(</span><ul class="args-list inline commas">
+                        <li class="arg">
+                                <code class="optional">[viewer]</code>
+                        </li>
+                        <li class="arg">
+                                <code class="optional">[cfg]</code>
+                        </li>
+                    </ul><span class="paren">)</span>
+                </div>
+        
+        
+        
+        
+        
+        
+        
+        
+            <div class="meta">
+                        <p>
+                        Defined in
+                <a href="../files/src_viewer_effects_desaturateEffect.js.html#l1"><code>src&#x2F;viewer&#x2F;effects&#x2F;desaturateEffect.js:1</code></a>
+                </p>
+        
+        
+        
+            </div>
+        
+            <div class="description">
+                
+            </div>
+        
+                <div class="params">
+                    <h4>Parameters:</h4>
+        
+                    <ul class="params-list">
+                        <li class="param">
+                                <code class="param-name optional">[viewer]</code>
+                                <span class="type"><a href="../classes/Viewer.html" class="crosslink">Viewer</a></span>
+                                <span class="flag optional" title="This parameter is optional.">optional</span>
+        
+        
+                            <div class="param-description">
+                                <p>Parent <a href="../classes/Viewer.html" class="crosslink">Viewer</a>.</p>
+        
+                            </div>
+        
+                        </li>
+                        <li class="param">
+                                <code class="param-name optional">[cfg]</code>
+                                <span class="type"></span>
+                                <span class="flag optional" title="This parameter is optional.">optional</span>
+        
+        
+                            <div class="param-description">
+                                <p>Configs</p>
+        
+                            </div>
+        
+                                <ul class="params-list">
+                                    <li class="param">
+                                            <code class="param-name optional">[id]</code>
+                                            <span class="type">String</span>
+                                            <span class="flag optional" title="This parameter is optional.">optional</span>
+        
+                                        <div class="param-description">
+                                            <p>Optional ID, unique among all components in the parent viewer, generated automatically when omitted.</p>
+        
+                                        </div>
+        
+                                    </li>
+                                    <li class="param">
+                                            <code class="param-name optional">[meta]</code>
+                                            <span class="type">String:Object</span>
+                                            <span class="flag optional" title="This parameter is optional.">optional</span>
+        
+                                        <div class="param-description">
+                                            <p>Optional map of user-defined metadata to attach to this DesaturateEffect.</p>
+        
+                                        </div>
+        
+                                    </li>
+                                    <li class="param">
+                                            <code class="param-name optional">[objectSet]</code>
+                                            <span class="type"><a href="../classes/ObjectSet.html" class="crosslink">ObjectSet</a></span>
+                                            <span class="flag optional" title="This parameter is optional.">optional</span>
+        
+                                        <div class="param-description">
+                                            <p>The <a href="../classes/ObjectSet.html" class="crosslink">ObjectSet</a> to apply this DesaturateEffect to.</p>
+        
+                                        </div>
+        
+                                    </li>
+                                </ul>
+                        </li>
+                    </ul>
+                </div>
+        
+        
+        
+        </div>
+    </div>
+
+<div id="classdocs" class="tabview">
+    <ul class="api-class-tabs">
+        <li class="api-class-tab index"><a href="#index">Index</a></li>
+
+            <li class="api-class-tab methods"><a href="#methods">Methods</a></li>
+            <li class="api-class-tab properties"><a href="#properties">Properties</a></li>
+            <li class="api-class-tab events"><a href="#events">Events</a></li>
+    </ul>
+
+    <div>
+        <div id="index" class="api-class-tabpanel index">
+            <h2 class="off-left">Item Index</h2>
+
+                <div class="index-section methods">
+                    <h3>Methods</h3>
+
+                    <ul class="index-list methods extends">
+                            <li class="index-item method inherited">
+                                <a href="#method_destroy">destroy</a>
+
+                            </li>
+                            <li class="index-item method inherited">
+                                <a href="#method_error">error</a>
+
+                            </li>
+                            <li class="index-item method inherited">
+                                <a href="#method_fire">fire</a>
+
+                            </li>
+                            <li class="index-item method inherited">
+                                <a href="#method_log">log</a>
+
+                            </li>
+                            <li class="index-item method inherited">
+                                <a href="#method_off">off</a>
+
+                            </li>
+                            <li class="index-item method inherited">
+                                <a href="#method_on">on</a>
+
+                            </li>
+                            <li class="index-item method inherited">
+                                <a href="#method_once">once</a>
+
+                            </li>
+                            <li class="index-item method inherited">
+                                <a href="#method_warn">warn</a>
+
+                            </li>
+                    </ul>
+                </div>
+
+                <div class="index-section properties">
+                    <h3>Properties</h3>
+
+                    <ul class="index-list properties extends">
+                            <li class="index-item property inherited">
+                                <a href="#property_active">active</a>
+
+                            </li>
+                            <li class="index-item property inherited">
+                                <a href="#property_className">className</a>
+
+                            </li>
+                            <li class="index-item property inherited">
+                                <a href="#property_destroyed">destroyed</a>
+
+                            </li>
+                            <li class="index-item property inherited">
+                                <a href="#property_id">id</a>
+
+                            </li>
+                            <li class="index-item property inherited">
+                                <a href="#property_invert">invert</a>
+
+                            </li>
+                            <li class="index-item property inherited">
+                                <a href="#property_Items in this map">Items in this map</a>
+
+                            </li>
+                            <li class="index-item property inherited">
+                                <a href="#property_metadata">metadata</a>
+
+                            </li>
+                            <li class="index-item property inherited">
+                                <a href="#property_objectSet">objectSet</a>
+
+                            </li>
+                            <li class="index-item property inherited">
+                                <a href="#property_viewer">viewer</a>
+
+                            </li>
+                    </ul>
+                </div>
+
+
+                <div class="index-section events">
+                    <h3>Events</h3>
+
+                    <ul class="index-list events extends">
+                            <li class="index-item event inherited">
+                                <a href="#event_active">active</a>
+
+                            </li>
+                            <li class="index-item event inherited">
+                                <a href="#event_destroyed">destroyed</a>
+
+                            </li>
+                            <li class="index-item event inherited">
+                                <a href="#event_invert">invert</a>
+
+                            </li>
+                    </ul>
+                </div>
+        </div>
+
+            <div id="methods" class="api-class-tabpanel">
+                <h2 class="off-left">Methods</h2>
+
+<div id="method_destroy" class="method item inherited">
+    <h3 class="name"><code>destroy</code></h3>
+
+        <span class="paren">()</span>
+
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>Inherited from
+                <a href="../classes/Component.html#method_destroy">Component</a>:
+        <a href="../files/src_viewer_component.js.html#l389"><code>src&#x2F;viewer&#x2F;component.js:389</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Destroys this component.</p>
+<p>Removes this Component from its <a href="../classes/Viewer.html" class="crosslink">Viewer</a>.</p>
+<p>Fires a <a href="../classes/Component.html#event_destroyed" class="crosslink">destroyed</a> event on this Component.</p>
+
+    </div>
+
+
+
+
+</div>
+<div id="method_error" class="method item inherited">
+    <h3 class="name"><code>error</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>message</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>Inherited from
+                <a href="../classes/Component.html#method_error">Component</a>:
+        <a href="../files/src_viewer_component.js.html#l365"><code>src&#x2F;viewer&#x2F;component.js:365</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Logs an error for this component to the JavaScript console.</p>
+<p>The console message will have this format: <em><code>[ERROR] &lt;component id&gt;: &lt;message&gt;</code></em></p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">message</code>
+                        <span class="type">String</span>
+
+
+                    <div class="param-description">
+                        <p>The message to log</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+
+
+</div>
+<div id="method_fire" class="method item inherited">
+    <h3 class="name"><code>fire</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>event</code>
+                </li>
+                <li class="arg">
+                        <code>value</code>
+                </li>
+                <li class="arg">
+                        <code class="optional">[forget=false]</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>Inherited from
+                <a href="../classes/Component.html#method_fire">Component</a>:
+        <a href="../files/src_viewer_component.js.html#l259"><code>src&#x2F;viewer&#x2F;component.js:259</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Fires an event on this component.</p>
+<p>Notifies existing subscribers to the event, retains the event to give to
+any subsequent notifications on that location as they are made.</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">event</code>
+                        <span class="type">String</span>
+
+
+                    <div class="param-description">
+                        <p>The event type name</p>
+
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">value</code>
+                        <span class="type">Object</span>
+
+
+                    <div class="param-description">
+                        <p>The event</p>
+
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name optional">[forget=false]</code>
+                        <span class="type">Boolean</span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+
+
+                    <div class="param-description">
+                        <p>When true, does not retain for subsequent subscribers</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+
+
+</div>
+<div id="method_log" class="method item inherited">
+    <h3 class="name"><code>log</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>message</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>Inherited from
+                <a href="../classes/Component.html#method_log">Component</a>:
+        <a href="../files/src_viewer_component.js.html#l353"><code>src&#x2F;viewer&#x2F;component.js:353</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Logs a console debugging message for this component.</p>
+<p>The console message will have this format: <em><code>[LOG] &lt;component id&gt;: &lt;message&gt;</code></em></p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">message</code>
+                        <span class="type">String</span>
+
+
+                    <div class="param-description">
+                        <p>The message to log</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+
+
+</div>
+<div id="method_off" class="method item inherited">
+    <h3 class="name"><code>off</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>handle</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>Inherited from
+                <a href="../classes/Component.html#method_off">Component</a>:
+        <a href="../files/src_viewer_component.js.html#l316"><code>src&#x2F;viewer&#x2F;component.js:316</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Cancels an event subscription that was previously made with <a href="../classes/Component.html#method_on" class="crosslink">on</a> or
+<a href="../classes/Component.html#method_once" class="crosslink">once</a>.</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">handle</code>
+                        <span class="type">String</span>
+
+
+                    <div class="param-description">
+                        <p>Subscription handle</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+
+
+</div>
+<div id="method_on" class="method item inherited">
+    <h3 class="name"><code>on</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>event</code>
+                </li>
+                <li class="arg">
+                        <code>callback</code>
+                </li>
+                <li class="arg">
+                        <code class="optional">[scope=this]</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type">String</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>Inherited from
+                <a href="../classes/Component.html#method_on">Component</a>:
+        <a href="../files/src_viewer_component.js.html#l286"><code>src&#x2F;viewer&#x2F;component.js:286</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Subscribes to an event on this component.</p>
+<p>The callback is be called with this component as scope.</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">event</code>
+                        <span class="type">String</span>
+
+
+                    <div class="param-description">
+                        <p>Publication event</p>
+
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">callback</code>
+                        <span class="type">Function</span>
+
+
+                    <div class="param-description">
+                        <p>Called when fresh data is available at the event</p>
+
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name optional">[scope=this]</code>
+                        <span class="type">Object</span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+
+
+                    <div class="param-description">
+                        <p>Scope for the callback</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">String</span>:
+                    <p>Handle to the subscription, which may be used to unsubscribe with {@link #off}.</p>
+
+            </div>
+        </div>
+
+
+</div>
+<div id="method_once" class="method item inherited">
+    <h3 class="name"><code>once</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>event</code>
+                </li>
+                <li class="arg">
+                        <code>callback</code>
+                </li>
+                <li class="arg">
+                        <code class="optional">[scope=this]</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>Inherited from
+                <a href="../classes/Component.html#method_once">Component</a>:
+        <a href="../files/src_viewer_component.js.html#l335"><code>src&#x2F;viewer&#x2F;component.js:335</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Subscribes to the next occurrence of the given event, then un-subscribes as soon as the event is handled.</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">event</code>
+                        <span class="type">String</span>
+
+
+                    <div class="param-description">
+                        <p>Data event to listen to</p>
+
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">callback</code>
+                        <span class="type">Function(data)</span>
+
+
+                    <div class="param-description">
+                        <p>Called when fresh data is available at the event</p>
+
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name optional">[scope=this]</code>
+                        <span class="type">Object</span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+
+
+                    <div class="param-description">
+                        <p>Scope for the callback</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+
+
+</div>
+<div id="method_warn" class="method item inherited">
+    <h3 class="name"><code>warn</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>message</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>Inherited from
+                <a href="../classes/Component.html#method_warn">Component</a>:
+        <a href="../files/src_viewer_component.js.html#l377"><code>src&#x2F;viewer&#x2F;component.js:377</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Logs a warning for this component to the JavaScript console.</p>
+<p>The console message will have this format: <em><code>[WARN] &lt;component id&gt;: &lt;message&gt;</code></em></p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">message</code>
+                        <span class="type">String</span>
+
+
+                    <div class="param-description">
+                        <p>The message to log</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+
+
+</div>
+            </div>
+
+            <div id="properties" class="api-class-tabpanel">
+                <h2 class="off-left">Properties</h2>
+
+                    <div id="property_active" class="property item inherited">
+                        <h3 class="name"><code>active</code></h3>
+                        <span class="type">Boolean</span>
+                    
+                    
+                    
+                    
+                    
+                        <div class="meta">
+                                    <p>Inherited from
+                                    <a href="../classes/Effect.html#property_active">Effect</a>:
+                            <a href="../files/src_viewer_effects_effect.js.html#l64"><code>src&#x2F;viewer&#x2F;effects&#x2F;effect.js:64</code></a>
+                            </p>
+                    
+                    
+                        </div>
+                    
+                        <div class="description">
+                            <p>Flag which indicates whether this Effect is active or not.</p>
+                    <p>Fires an <a href="../classes/Effect.html#event_active" class="crosslink">active</a> event on change.</p>
+                    
+                        </div>
+                    
+                    
+                    
+                    </div>
+                    <div id="property_className" class="property item">
+                        <h3 class="name"><code>className</code></h3>
+                        <span class="type">String</span>
+                    
+                    
+                    
+                            <span class="flag final">final</span>
+                    
+                    
+                        <div class="meta">
+                                <p>Inherited from
+                                <a href="../classes/Component.html#property_className">
+                                    Component
+                                </a>
+                                but overwritten in
+                            <a href="../files/src_viewer_effects_desaturateEffect.js.html#l127"><code>src&#x2F;viewer&#x2F;effects&#x2F;desaturateEffect.js:127</code></a>
+                            </p>
+                    
+                    
+                        </div>
+                    
+                        <div class="description">
+                            <p>JavaScript class name for this Component.</p>
+                    
+                        </div>
+                    
+                    
+                    
+                    </div>
+                    <div id="property_destroyed" class="property item inherited">
+                        <h3 class="name"><code>destroyed</code></h3>
+                        <span class="type">Boolean</span>
+                    
+                    
+                    
+                    
+                    
+                        <div class="meta">
+                                    <p>Inherited from
+                                    <a href="../classes/Component.html#property_destroyed">Component</a>:
+                            <a href="../files/src_viewer_component.js.html#l229"><code>src&#x2F;viewer&#x2F;component.js:229</code></a>
+                            </p>
+                    
+                    
+                        </div>
+                    
+                        <div class="description">
+                            <p>True as soon as this Component has been destroyed</p>
+                    
+                        </div>
+                    
+                    
+                    
+                    </div>
+                    <div id="property_id" class="property item inherited">
+                        <h3 class="name"><code>id</code></h3>
+                        <span class="type">String</span>
+                    
+                    
+                    
+                            <span class="flag final">final</span>
+                    
+                    
+                        <div class="meta">
+                                    <p>Inherited from
+                                    <a href="../classes/Component.html#property_id">Component</a>:
+                            <a href="../files/src_viewer_component.js.html#l220"><code>src&#x2F;viewer&#x2F;component.js:220</code></a>
+                            </p>
+                    
+                    
+                        </div>
+                    
+                        <div class="description">
+                            <p>Unique ID for this Component within its parent <a href="../classes/Viewer.html" class="crosslink">Viewer</a>.</p>
+                    
+                        </div>
+                    
+                    
+                    
+                    </div>
+                    <div id="property_invert" class="property item inherited">
+                        <h3 class="name"><code>invert</code></h3>
+                        <span class="type">Boolean</span>
+                    
+                    
+                    
+                    
+                    
+                        <div class="meta">
+                                    <p>Inherited from
+                                    <a href="../classes/Effect.html#property_invert">Effect</a>:
+                            <a href="../files/src_viewer_effects_effect.js.html#l133"><code>src&#x2F;viewer&#x2F;effects&#x2F;effect.js:133</code></a>
+                            </p>
+                    
+                    
+                        </div>
+                    
+                        <div class="description">
+                            <p>Flag which inverts the Object that this Effect applies to.</p>
+                    <ul>
+                        <li>When true, this Effect applies to Object that are in
+                        the <a href="../classes/Component.html#property_viewer" class="crosslink">viewer</a> but <strong>not</strong> in the <a href="../classes/Effect.html#property_objectSet" class="crosslink">objectSet</a>.</li>
+                    
+                        <li>When false, this Effect applies to Object that are in
+                        the <a href="../classes/Component.html#property_viewer" class="crosslink">viewer</a> and <strong>also</strong> in the <a href="../classes/Effect.html#property_objectSet" class="crosslink">objectSet</a>.</li>
+                    </ul>
+                    
+                    <p>Fires an <a href="../classes/Effect.html#event_invert" class="crosslink">invert</a> event on change.</p>
+                    
+                        </div>
+                    
+                    
+                    
+                    </div>
+                    <div id="property_Items in this map" class="property item inherited">
+                        <h3 class="name"><code>Items in this map</code></h3>
+                        <span class="type">Unknown</span>
+                    
+                    
+                    
+                    
+                    
+                        <div class="meta">
+                                    <p>Inherited from
+                                    <a href="../classes/Component.html#property_Items in this map">Component</a>:
+                            <a href="../files/src_viewer_utils_map.js.html#l13"><code>src&#x2F;viewer&#x2F;utils&#x2F;map.js:13</code></a>
+                            </p>
+                    
+                    
+                        </div>
+                    
+                        <div class="description">
+                            
+                        </div>
+                    
+                    
+                    
+                    </div>
+                    <div id="property_metadata" class="property item inherited">
+                        <h3 class="name"><code>metadata</code></h3>
+                        <span class="type">Object</span>
+                    
+                    
+                    
+                    
+                    
+                        <div class="meta">
+                                    <p>Inherited from
+                                    <a href="../classes/Component.html#property_metadata">Component</a>:
+                            <a href="../files/src_viewer_component.js.html#l212"><code>src&#x2F;viewer&#x2F;component.js:212</code></a>
+                            </p>
+                    
+                    
+                        </div>
+                    
+                        <div class="description">
+                            <p>Metadata on this component.</p>
+                    
+                        </div>
+                    
+                    
+                    
+                    </div>
+                    <div id="property_objectSet" class="property item inherited">
+                        <h3 class="name"><code>objectSet</code></h3>
+                        <span class="type"><a href="../classes/ObjectSet.html" class="crosslink">ObjectSet</a></span>
+                    
+                    
+                    
+                    
+                    
+                        <div class="meta">
+                                    <p>Inherited from
+                                    <a href="../classes/Effect.html#property_objectSet">Effect</a>:
+                            <a href="../files/src_viewer_effects_effect.js.html#l40"><code>src&#x2F;viewer&#x2F;effects&#x2F;effect.js:40</code></a>
+                            </p>
+                    
+                    
+                        </div>
+                    
+                        <div class="description">
+                            <p>The <a href="../classes/ObjectSet.html" class="crosslink">ObjectSet</a> that this Effect applies to.</p>
+                    
+                        </div>
+                    
+                    
+                    
+                    </div>
+                    <div id="property_viewer" class="property item inherited">
+                        <h3 class="name"><code>viewer</code></h3>
+                        <span class="type"><a href="../classes/Viewer.html" class="crosslink">Viewer</a></span>
+                    
+                    
+                    
+                            <span class="flag final">final</span>
+                    
+                    
+                        <div class="meta">
+                                    <p>Inherited from
+                                    <a href="../classes/Component.html#property_viewer">Component</a>:
+                            <a href="../files/src_viewer_component.js.html#l203"><code>src&#x2F;viewer&#x2F;component.js:203</code></a>
+                            </p>
+                    
+                    
+                        </div>
+                    
+                        <div class="description">
+                            <p>The <a href="../classes/Viewer.html" class="crosslink">Viewer</a> that contains this Component.</p>
+                    
+                        </div>
+                    
+                    
+                    
+                    </div>
+            </div>
+
+
+            <div id="events" class="api-class-tabpanel">
+                <h2 class="off-left">Events</h2>
+
+                    <div id="event_active" class="events item inherited">
+                        <h3 class="name"><code>active</code></h3>
+                        <span class="type"></span>
+                    
+                    
+                    
+                    
+                    
+                        <div class="meta">
+                                    <p>Inherited from
+                                    <a href="../classes/Effect.html#event_active">Effect</a>:
+                            <a href="../files/src_viewer_effects_effect.js.html#l118"><code>src&#x2F;viewer&#x2F;effects&#x2F;effect.js:118</code></a>
+                            </p>
+                    
+                    
+                        </div>
+                    
+                        <div class="description">
+                            <p>Fired whenever this Effect&#39;s <a href="../classes/Effect.html#property_active" class="crosslink">active</a> property changes.</p>
+                    
+                        </div>
+                    
+                            <div class="params">
+                                <h4>Event Payload:</h4>
+                    
+                                <ul class="params-list">
+                                    <li class="param">
+                                            <code class="param-name">value</code>
+                                            <span class="type">Object</span>
+                    
+                    
+                                        <div class="param-description">
+                                            <p>The property&#39;s new value</p>
+                    
+                                        </div>
+                    
+                                    </li>
+                                </ul>
+                            </div>
+                    
+                    
+                    </div>
+                    <div id="event_destroyed" class="events item inherited">
+                        <h3 class="name"><code>destroyed</code></h3>
+                        <span class="type"></span>
+                    
+                    
+                    
+                    
+                    
+                        <div class="meta">
+                                    <p>Inherited from
+                                    <a href="../classes/Component.html#event_destroyed">Component</a>:
+                            <a href="../files/src_viewer_component.js.html#l409"><code>src&#x2F;viewer&#x2F;component.js:409</code></a>
+                            </p>
+                    
+                    
+                        </div>
+                    
+                        <div class="description">
+                            <p>Fired when this Component is destroyed.</p>
+                    
+                        </div>
+                    
+                    
+                    
+                    </div>
+                    <div id="event_invert" class="events item inherited">
+                        <h3 class="name"><code>invert</code></h3>
+                        <span class="type"></span>
+                    
+                    
+                    
+                    
+                    
+                        <div class="meta">
+                                    <p>Inherited from
+                                    <a href="../classes/Effect.html#event_invert">Effect</a>:
+                            <a href="../files/src_viewer_effects_effect.js.html#l161"><code>src&#x2F;viewer&#x2F;effects&#x2F;effect.js:161</code></a>
+                            </p>
+                    
+                    
+                        </div>
+                    
+                        <div class="description">
+                            <p>Fired whenever this Effect&#39;s <a href="../classes/Effect.html#property_invert" class="crosslink">invert</a> property changes.</p>
+                    
+                        </div>
+                    
+                            <div class="params">
+                                <h4>Event Payload:</h4>
+                    
+                                <ul class="params-list">
+                                    <li class="param">
+                                            <code class="param-name">value</code>
+                                            <span class="type">Object</span>
+                    
+                    
+                                        <div class="param-description">
+                                            <p>The property&#39;s new value</p>
+                    
+                                        </div>
+                    
+                                    </li>
+                                </ul>
+                            </div>
+                    
+                    
+                    </div>
+            </div>
+    </div>
+</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+<script src="../assets/js/yui-prettify.js"></script>
+<script src="../assets/../api.js"></script>
+<script src="../assets/js/api-filter.js"></script>
+<script src="../assets/js/api-list.js"></script>
+<script src="../assets/js/api-search.js"></script>
+<script src="../assets/js/apidocs.js"></script>
+</body>
+</html>
