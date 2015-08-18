@@ -25,8 +25,7 @@
     downloadType: "types",
     roid: "xyz",
     types: ["", "", ""],
-    schema: "",
-    autoDestroy: true // default
+    schema: ""
  });
 
  // Subscribe to progress updates
@@ -158,7 +157,6 @@
             this._schema = cfg.schema;
             this._types = cfg.types;
             this._oids = cfg.oids;
-            this._autoDestroy = cfg.autoDestroy;
 
             // API handle
 
@@ -173,6 +171,12 @@
             // Queus of incoming data packets
 
             this._dataPackets = [];
+
+            // Components created for this Download
+            // Destroyed when this Download is destroyed
+
+            this._geometries = [];
+            this._objects = [];
 
 
             var self = this;
@@ -267,19 +271,19 @@
 
                     while (data != null) {
 
-                        var inputStream = new BIMSURFER.DataInputStreamReader(null, data);
-                        var channel = inputStream.readInt();
-                        var numMessages = inputStream.readInt();
+                        var stream = new BIMSURFER.DataInputStreamReader(null, data);
+                        var channel = stream.readInt();
+                        var numMessages = stream.readInt();
 
                         for (var i = 0; i < numMessages; i++) {
 
-                            var messageType = inputStream.readByte();
+                            var messageType = stream.readByte();
 
                             if (messageType === 0) {
-                                self._readStart(inputStream);
+                                self._readStart(stream);
 
                             } else {
-                                self._readObject(inputStream, messageType);
+                                self._readObject(stream, messageType);
                             }
                         }
 
@@ -341,16 +345,16 @@
             });
         },
 
-        _readStart: function (data) {
+        _readStart: function (stream) {
 
-            var start = data.readUTF8();
+            var start = stream.readUTF8();
 
             if (start != "BGS") {
                 this.error("Stream does not start with BGS (" + start + ")");
                 return false;
             }
 
-            var version = data.readByte();
+            var version = stream.readByte();
 
             if (version != 4 && version != 5 && version != 6) {
                 this.error("Unimplemented version");
@@ -360,9 +364,9 @@
                 this._version = version;
             }
 
-            data.align4();
+            stream.align4();
 
-            var modelBounds = data.readFloatArray(6);
+            var modelBounds = stream.readFloatArray(6);
 
             modelBounds = {
                 min: {x: modelBounds[0], y: modelBounds[1], z: modelBounds[2]},
@@ -405,7 +409,7 @@
                 camera.fovy = 37.8493;
             }
 
-            this._numObjects = data.readInt();
+            this._numObjects = stream.readInt();
 
             this._notifyProgress();
         },
@@ -459,25 +463,21 @@
                     },
                     function () {
                     });
-
-                if (this._autoDestroy) {
-                    this.destroy();
-                }
             }
         },
 
         /**
-         * Reads an object from binary data packet.
+         * Reads an object from binary stream.
          *
-         * @param data The binary data packet.
+         * @param stream The binary stream.
          * @param geometryType Type of geometry to read.
          * @private
          */
-        _readObject: function (data, geometryType) {
+        _readObject: function (stream, geometryType) {
 
-            var type = data.readUTF8();
-            var roid = data.readLong();
-            var objectId = data.readLong();
+            var type = stream.readUTF8();
+            var roid = stream.readLong();
+            var objectId = stream.readLong();
 
             var geometryId;
             var geometryIds = [];
@@ -493,22 +493,22 @@
             var numColors;
             var colors;
 
-            data.align4();
+            stream.align4();
 
-            var matrix = data.readFloatArray(16);
+            var matrix = stream.readFloatArray(16);
 
             if (geometryType == 1) {
 
-                objectBounds = data.readFloatArray(6);
-                geometryId = data.readLong();
-                numIndices = data.readInt();
-                indices = data.readIntArray(numIndices);
-                numPositions = data.readInt();
-                positions = data.readFloatArray(numPositions);
-                numNormals = data.readInt();
-                normals = data.readFloatArray(numNormals);
-                numColors = data.readInt();
-                colors = data.readFloatArray(numColors);
+                objectBounds = stream.readFloatArray(6);
+                geometryId = stream.readLong();
+                numIndices = stream.readInt();
+                indices = stream.readIntArray(numIndices);
+                numPositions = stream.readInt();
+                positions = stream.readFloatArray(numPositions);
+                numNormals = stream.readInt();
+                normals = stream.readFloatArray(numNormals);
+                numColors = stream.readInt();
+                colors = stream.readFloatArray(numColors);
 
                 this._createGeometry(geometryId, positions, normals, colors, indices);
 
@@ -516,27 +516,27 @@
 
             } else if (geometryType == 2) {
 
-                geometryId = data.readLong();
+                geometryId = stream.readLong();
 
                 this._createObject(roid, objectId, objectId, [geometryId], type, matrix);
 
             } else if (geometryType == 3) {
 
-                numParts = data.readInt();
+                numParts = stream.readInt();
 
                 for (var i = 0; i < numParts; i++) {
 
                     // Object contains multiple geometries
 
-                    geometryId = data.readLong();
-                    numIndices = data.readInt();
-                    indices = data.readIntArray(numIndices);
-                    numPositions = data.readInt();
-                    positions = data.readFloatArray(numPositions);
-                    numNormals = data.readInt();
-                    normals = data.readFloatArray(numNormals);
-                    numColors = data.readInt();
-                    colors = data.readFloatArray(numColors);
+                    geometryId = stream.readLong();
+                    numIndices = stream.readInt();
+                    indices = stream.readIntArray(numIndices);
+                    numPositions = stream.readInt();
+                    positions = stream.readFloatArray(numPositions);
+                    numNormals = stream.readInt();
+                    normals = stream.readFloatArray(numNormals);
+                    numColors = stream.readInt();
+                    colors = stream.readFloatArray(numColors);
 
                     this._createGeometry(geometryId, positions, normals, colors, indices);
 
@@ -549,11 +549,11 @@
 
                 // Object contains multiple instances of geometries
 
-                numGeometries = data.readInt();
+                numGeometries = stream.readInt();
                 geometryIds = [];
 
                 for (var i = 0; i < numGeometries; i++) {
-                    geometryIds.push(data.readLong());
+                    geometryIds.push(stream.readLong());
                 }
 
                 this._createObject(roid, objectId, objectId, geometryIds, type, matrix);
@@ -567,7 +567,7 @@
 
         _createGeometry: function (geometryId, positions, normals, colors, indices) {
 
-            new BIMSURFER.Geometry(this.viewer, {
+            var g = new BIMSURFER.Geometry(this.viewer, {
                 id: geometryId,
                 positions: positions,
                 normals: normals,
@@ -575,6 +575,8 @@
                 indices: indices,
                 primitive: "triangles"
             });
+
+            this._geometries.push(g);
         },
 
         _createObject: function (roid, oid, objectId, geometryIds, type, matrix) {
@@ -589,7 +591,7 @@
             this._models[roid].get(oid,
                 function (object) {
 
-                    new BIMSURFER.Object(self.viewer, {
+                    var o = new BIMSURFER.Object(self.viewer, {
                         id: objectId,
                         type: type,
                         geometries: geometryIds,
@@ -597,15 +599,29 @@
                         active: object.trans.mode === 0
                     });
 
-                    this._numObjectsLoaded++;
+                    self._objects.push(o);
 
-                    this._notifyProgress();
+                    self._numObjectsLoaded++;
+
+                    self._notifyProgress();
                 });
         },
 
         _destroy: function () {
+
             if (this._tick) {
                 this.viewer.off(this._tick);
+            }
+
+            var i;
+            var len;
+
+            for (i = 0, len = this._objects.length; i < len; i++) {
+                this._objects[i].destroy();
+            }
+
+            for (i = 0, len = this._geometries.length; i < len; i++) {
+                this._geometries[i].destroy();
             }
         }
     });
