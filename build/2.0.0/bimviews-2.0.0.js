@@ -4,7 +4,7 @@
  * A WebGL-based IFC Viewer for BIMSurfer
  * http://bimwiews.org/
  *
- * Built on 2015-05-18
+ * Built on 2015-08-14
  *
  * todo
  * Copyright 2015, todo
@@ -116,6 +116,1882 @@ var BIMSURFER = {
 
 
 
+;BIMSURFER.api = {};
+
+BIMSURFER.api.API = function (baseUrl, notifier) {
+
+    if (typeof jQuery !== 'undefined' && $ !== jQuery)
+        var $ = jQuery;
+
+    var self = this;
+
+    this.interfaceMapping = {
+        "ServiceInterface": "org.bimserver.ServiceInterface",
+        "AuthInterface": "org.bimserver.AuthInterface",
+        "SettingsInterface": "org.bimserver.SettingsInterface",
+        "AdminInterface": "org.bimserver.AdminInterface",
+        "PluginInterface": "org.bimserver.PluginInterface",
+        "MetaInterface": "org.bimserver.MetaInterface",
+        "Bimsie1LowLevelInterface": "org.buildingsmart.bimsie1.Bimsie1LowLevelInterface",
+        "Bimsie1NotificationRegistryInterface": "org.buildingsmart.bimsie1.Bimsie1NotificationRegistryInterface",
+        "Bimsie1AuthInterface": "org.buildingsmart.bimsie1.Bimsie1AuthInterface",
+        "Bimsie1ServiceInterface": "org.buildingsmart.bimsie1.Bimsie1ServiceInterface"
+    };
+
+    this.jsonSerializerFetcher = new BIMSURFER.api.Synchronizer(function (callback) {
+        self.call("PluginInterface", "getSerializerByPluginClassName", {pluginClassName: "org.bimserver.serializers.JsonSerializerPlugin"}, function (serializer) {
+            callback(serializer.oid);
+        });
+    });
+
+    this.translations = {
+        GETDATAOBJECTSBYTYPE_BUSY: "Loading objects",
+        REQUESTPASSWORDCHANGE_BUSY: "Busy sending password reset e-mail",
+        REQUESTPASSWORDCHANGE_DONE: "A password reset e-mail has been sent",
+        SETSERVERSETTINGS_DONE: "Server settings successfully updated",
+        ENABLEPLUGIN_DONE: "Plugin successfully enabled",
+        DISABLEPLUGIN_DONE: "Plugin successfully disabled",
+        SETDEFAULTWEBMODULE_DONE: "Default webmodule changed",
+        SETDEFAULTQUERYENGINE_DONE: "Default Query Engine successfully changed",
+        SETDEFAULTMODELMERGER_DONE: "Default Model Merger successfully changed",
+        SETDEFAULTSERIALIZER_DONE: "Default Serializer successfully changed",
+        SETDEFAULTOBJECTIDM_DONE: "Default ObjectIDM successfully changed",
+        SETDEFAULTRENDERENGINE_DONE: "Default Render Engine successfully changed",
+        SETDEFAULTMODELCOMPARE_DONE: "Default Model Compare successfully changed",
+        LOGIN_BUSY: "Trying to login",
+        CHANGEUSERTYPE_DONE: "Type of user successfully changed",
+        ADDUSER_DONE: "User successfully added",
+        UPDATEINTERNALSERVICE_DONE: "Internal service successfully updated",
+        UPDATEMODELCOMPARE_DONE: "Model compare plugin successfully updated",
+        UPDATEMODELMERGER_DONE: "Model merger successfully updated",
+        UPDATEQUERYENGINE_DONE: "Query engine plugin successfully updated",
+        UPDATEOBJECTIDM_DONE: "ObjectIDM succesfully updated",
+        UPDATEDESERIALIZER_DONE: "Serializer succesfully updated",
+        ADDUSERTOPROJECT_DONE: "User successfully added to project",
+        REMOVEUSERFROMPROJECT_DONE: "User successfully removed from project",
+        UNDELETEPROJECT_DONE: "Project successfully undeleted",
+        DELETEPROJECT_DONE: "Project successfully deleted",
+        ADDPROJECT_DONE: "Project successfully added",
+        DOWNLOAD_BUSY: "Busy downloading...",
+        VALIDATEACCOUNT_DONE: "Account successfully validated, you can now login",
+        ADDPROJECTASSUBPROJECT_DONE: "Sub project added successfully",
+        DOWNLOADBYJSONQUERY_BUSY: "Downloading BIM",
+        CHECKINFROMURL_DONE: "Done checking in from URL",
+        GETLOGGEDINUSER_BUSY: "Getting user details",
+        SETPLUGINSETTINGS_DONE: "Plugin settings successfully saved",
+        GETSERVERINFO_BUSY: "Getting server info",
+        GETVERSION_BUSY: "Getting server version",
+        GETPROJECTBYPOID_BUSY: "Getting project details",
+        GETALLRELATEDPROJECTS_BUSY: "Getting related project's details",
+        GETSERIALIZERBYPLUGINCLASSNAME_BUSY: "Getting serializer info",
+        CLEANUPLONGACTION_BUSY: "Cleaning up",
+        GETREVISIONSUMMARY_BUSY: "Getting revision summary",
+        DOWNLOADBYOIDS_BUSY: "Downloading model data",
+        REGISTERPROGRESSHANDLER_BUSY: "Registering for updates on progress",
+        GETALLREVISIONSOFPROJECT_BUSY: "Getting all revisions of project",
+        GETPLUGINDESCRIPTOR_BUSY: "Getting plugin information",
+        GETUSERSETTINGS_BUSY: "Getting user settings",
+        GETALLQUERYENGINES_BUSY: "Getting query engines",
+        REGISTERNEWPROJECTHANDLER_BUSY: "Registering for updates on new projects"
+    };
+
+    this.token = null;
+    this.baseUrl = baseUrl;
+    if (this.baseUrl.substring(this.baseUrl.length - 1) == "/") {
+        this.baseUrl = this.baseUrl.substring(0, this.baseUrl.length - 1);
+    }
+    this.address = this.baseUrl + "/json";
+    this.notifier = notifier;
+    if (this.notifier == null) {
+        this.notifier = {
+            setInfo: function (message, timeout) {
+            },
+            setSuccess: function (message, timeout) {
+            },
+            setError: function () {
+            },
+            resetStatus: function () {
+            },
+            resetStatusQuick: function () {
+            },
+            clear: function () {
+            }
+        };
+    }
+    this.server = new BIMSURFER.api.Socket(baseUrl, this);
+    this.user = null;
+    this.listeners = {};
+    this.autoLoginTried = false;
+    this.serializersByPluginClassName = [];
+    this.debug = false;
+    this.classes = {};
+    this.binaryDataListener = {};
+    this.schemas = {};
+
+    this.init = function (callback) {
+        self.call("AdminInterface", "getServerInfo", {}, function (serverInfo) {
+            self.version = serverInfo.version;
+            var versionString = self.version.major + "." + self.version.minor + "." + self.version.revision;
+
+            // Let's do the callback here, saves us 2 roundtrips to the server, and no body is going to use the schema's that soon... (we hope)
+            callback(this, serverInfo);
+            $.ajax({
+                dataType: "json",
+                url: self.baseUrl + "/js/ifc2x3tc1.js?_v=" + versionString,
+                cache: true,
+                success: function (result) {
+                    self.schemas["ifc2x3tc1"] = result.classes;
+                    self.addSubtypesToSchema(result.classes);
+                    $.ajax({
+                        dataType: "json",
+                        url: self.baseUrl + "/js/ifc4.js?_v=" + versionString,
+                        cache: true,
+                        success: function (result) {
+                            self.schemas["ifc4"] = result.classes;
+                            self.addSubtypesToSchema(result.classes);
+                        }
+                    });
+                }
+            });
+        });
+    };
+
+    this.addSubtypesToSchema = function (classes) {
+        for (var typeName in classes) {
+            var type = classes[typeName];
+            if (type.superclasses != null) {
+                type.superclasses.forEach(function (superClass) {
+                    var directSubClasses = classes[superClass].directSubClasses;
+                    if (directSubClasses == null) {
+                        directSubClasses = [];
+                        classes[superClass].directSubClasses = directSubClasses;
+                    }
+                    directSubClasses.push(typeName);
+                });
+            }
+        }
+    };
+
+    this.getAllSubTypes = function (schema, typeName, callback) {
+        var type = schema[typeName];
+        if (type.directSubClasses != null) {
+            type.directSubClasses.forEach(function (subTypeName) {
+                callback(subTypeName);
+                self.getAllSubTypes(schema, subTypeName, callback);
+            });
+        }
+    };
+
+    this.log = function (message, message2) {
+        if (this.debug) {
+            console.log(message, message2);
+        }
+    };
+
+    this.translate = function (key) {
+        key = key.toUpperCase();
+        if (this.translations[key] != null) {
+            return this.translations[key];
+        }
+        this.log("translation for " + key + " not found");
+        return key;
+    };
+
+    this.login = function (username, password, rememberme, callback, errorCallback, options) {
+        var request = {
+            username: username,
+            password: password
+        };
+        this.call("Bimsie1AuthInterface", "login", request, function (data) {
+            self.token = data;
+            if (rememberme) {
+                $.cookie("autologin" + window.document.location.port, self.token, {expires: 31, path: "/"});
+                $.cookie("address" + window.document.location.port, self.baseUrl, {expires: 31, path: "/"});
+            } else {
+                $.cookie("autologin" + window.document.location.port, self.token, {path: "/"});
+                $.cookie("address" + window.document.location.port, self.baseUrl, {path: "/"});
+            }
+            self.notifier.setInfo("Login successful", 2000);
+            self.resolveUser();
+            self.server.connect(callback);
+        }, errorCallback);
+    };
+
+    this.downloadViaWebsocket = function (msg) {
+        msg.action = "download";
+        msg.token = this.token;
+        this.server.send(msg);
+    };
+
+    this.setBinaryDataListener = function (channelId, listener) {
+        this.binaryDataListener[channelId] = listener;
+    };
+
+    this.processNotification = function (message) {
+        if (message instanceof ArrayBuffer) {
+            var view = new DataView(message, 0, 4);
+            var channelId = view.getInt32(0);
+            var listener = this.binaryDataListener[channelId];
+            listener(message);
+        } else {
+            var intf = message["interface"];
+            if (this.listeners[intf] != null) {
+                if (this.listeners[intf][message.method] != null) {
+                    var ar = null;
+                    this.listeners[intf][message.method].forEach(function (listener) {
+                        if (ar == null) {
+                            // Only parse the arguments once, or when there are no listeners, not even once
+                            ar = [];
+                            var i = 0;
+                            for (var key in message.parameters) {
+                                ar[i++] = message.parameters[key];
+                            }
+                        }
+                        listener.apply(null, ar);
+                    });
+                } else {
+                    console.log("No listeners on interface " + intf + " for method " + message.method);
+                }
+            } else {
+                console.log("No listeners for interface " + intf);
+            }
+        }
+    };
+
+    this.resolveUser = function (callback) {
+        this.call("AuthInterface", "getLoggedInUser", {}, function (data) {
+            this.user = data;
+            if (callback != null) {
+                callback(this.user);
+            }
+        });
+    };
+
+    this.logout = function (callback) {
+        $.removeCookie("autologin" + window.document.location.port, {path: "/"});
+        this.call("Bimsie1AuthInterface", "logout", {}, function () {
+            this.notifier.setInfo("Logout successful");
+            callback();
+        });
+    };
+
+    this.generateRevisionDownloadUrl = function (settings) {
+        return this.baseUrl + "/download?token=" + this.token + "&longActionId=" + settings.laid + (settings.zip ? "&zip=on" : "") + "&serializerOid=" + settings.serializerOid + "&topicId=" + settings.topicId;
+    };
+
+    this.generateExtendedDataDownloadUrl = function (edid) {
+        return this.baseUrl + "/download?token=" + this.token + "&action=extendeddata&edid=" + edid;
+    };
+
+    this.getSerializerByPluginClassName = function (pluginClassName, callback) {
+        if (this.serializersByPluginClassName[name] == null) {
+            this.call("PluginInterface", "getSerializerByPluginClassName", {pluginClassName: pluginClassName}, function (serializer) {
+                self.serializersByPluginClassName[name] = serializer;
+                callback(serializer);
+            });
+        } else {
+            callback(this.serializersByPluginClassName[name]);
+        }
+    },
+
+        this.getMessagingSerializerByPluginClassName = function (pluginClassName, callback) {
+            if (this.serializersByPluginClassName[name] == null) {
+                this.call("PluginInterface", "getMessagingSerializerByPluginClassName", {pluginClassName: pluginClassName}, function (serializer) {
+                    self.serializersByPluginClassName[name] = serializer;
+                    callback(serializer);
+                });
+            } else {
+                callback(this.serializersByPluginClassName[name]);
+            }
+        },
+
+        this.register = function (interfaceName, methodName, callback, registerCallback) {
+            if (callback == null) {
+                throw "Cannot register null callback";
+            }
+            if (this.listeners[interfaceName] == null) {
+                this.listeners[interfaceName] = {};
+            }
+            if (this.listeners[interfaceName][methodName] == null) {
+                this.listeners[interfaceName][methodName] = [];
+            }
+            this.listeners[interfaceName][methodName].push(callback);
+            if (registerCallback != null) {
+                registerCallback();
+            }
+        };
+
+    this.registerNewRevisionOnSpecificProjectHandler = function (poid, handler, callback) {
+        this.register("Bimsie1NotificationInterface", "newRevision", handler, function () {
+            self.call("Bimsie1NotificationRegistryInterface", "registerNewRevisionOnSpecificProjectHandler", {
+                endPointId: self.server.endPointId,
+                poid: poid
+            }, function () {
+                if (callback != null) {
+                    callback();
+                }
+            });
+        });
+    };
+
+    this.registerNewExtendedDataOnRevisionHandler = function (roid, handler, callback) {
+        this.register("Bimsie1NotificationInterface", "newExtendedData", handler, function () {
+            self.call("Bimsie1NotificationRegistryInterface", "registerNewExtendedDataOnRevisionHandler", {
+                endPointId: self.server.endPointId,
+                roid: roid
+            }, function () {
+                if (callback != null) {
+                    callback();
+                }
+            });
+        });
+    };
+
+    this.registerNewUserHandler = function (handler, callback) {
+        this.register("Bimsie1NotificationInterface", "newUser", handler, function () {
+            self.call("Bimsie1NotificationRegistryInterface", "registerNewUserHandler", {endPointId: self.server.endPointId}, function () {
+                if (callback != null) {
+                    callback();
+                }
+            });
+        });
+    };
+
+    this.unregisterNewUserHandler = function (handler, callback) {
+        this.unregister(handler);
+        this.call("Bimsie1NotificationRegistryInterface", "unregisterNewUserHandler", {endPointId: self.server.endPointId}, function () {
+            if (callback != null) {
+                callback();
+            }
+        });
+    };
+
+    this.unregisterChangeProgressProjectHandler = function (poid, newHandler, closedHandler, callback) {
+        this.unregister(newHandler);
+        this.unregister(closedHandler);
+        this.call("Bimsie1NotificationRegistryInterface", "unregisterChangeProgressOnProject", {
+            poid: poid,
+            endPointId: this.server.endPointId
+        }, callback);
+    };
+
+    this.registerChangeProgressProjectHandler = function (poid, newHandler, closedHandler, callback) {
+        this.register("Bimsie1NotificationInterface", "newProgressOnProjectTopic", newHandler, function () {
+            self.register("Bimsie1NotificationInterface", "closedProgressOnProjectTopic", closedHandler, function () {
+                self.call("Bimsie1NotificationRegistryInterface", "registerChangeProgressOnProject", {
+                    poid: poid,
+                    endPointId: self.server.endPointId
+                }, function () {
+                    if (callback != null) {
+                        callback();
+                    }
+                });
+            });
+        });
+    }
+
+    this.unregisterChangeProgressServerHandler = function (newHandler, closedHandler, callback) {
+        this.unregister(newHandler);
+        this.unregister(closedHandler);
+        if (self.server.endPointId != null) {
+            self.call("Bimsie1NotificationRegistryInterface", "unregisterChangeProgressOnServer", {endPointId: self.server.endPointId}, callback);
+        }
+    };
+
+    this.registerChangeProgressServerHandler = function (newHandler, closedHandler, callback) {
+        this.register("Bimsie1NotificationInterface", "newProgressOnServerTopic", newHandler, function () {
+            self.register("Bimsie1NotificationInterface", "closedProgressOnServerTopic", closedHandler, function () {
+                self.call("Bimsie1NotificationRegistryInterface", "registerChangeProgressOnServer", {endPointId: self.server.endPointId}, function () {
+                    if (callback != null) {
+                        callback();
+                    }
+                });
+            });
+        });
+    }
+
+    this.unregisterChangeProgressRevisionHandler = function (roid, newHandler, closedHandler, callback) {
+        this.unregister(newHandler);
+        this.unregister(closedHandler);
+        this.call("Bimsie1NotificationRegistryInterface", "unregisterChangeProgressOnProject", {
+            roid: roid,
+            endPointId: this.server.endPointId
+        }, callback);
+    };
+
+    this.registerChangeProgressRevisionHandler = function (poid, roid, newHandler, closedHandler, callback) {
+        this.register("Bimsie1NotificationInterface", "newProgressOnRevisionTopic", newHandler, function () {
+            self.register("Bimsie1NotificationInterface", "closedProgressOnRevisionTopic", closedHandler, function () {
+                self.call("Bimsie1NotificationRegistryInterface", "registerChangeProgressOnRevision", {
+                    poid: poid,
+                    roid: roid,
+                    endPointId: self.server.endPointId
+                }, function () {
+                    if (callback != null) {
+                        callback();
+                    }
+                });
+            });
+        });
+    }
+
+    this.registerNewProjectHandler = function (handler, callback) {
+        this.register("Bimsie1NotificationInterface", "newProject", handler, function () {
+            self.call("Bimsie1NotificationRegistryInterface", "registerNewProjectHandler", {endPointId: self.server.endPointId}, function () {
+                if (callback != null) {
+                    callback();
+                }
+            });
+        });
+    }
+
+    this.unregisterNewProjectHandler = function (handler, callback) {
+        this.unregister(handler);
+        if (this.server.endPointId != null) {
+            this.call("Bimsie1NotificationRegistryInterface", "unregisterNewProjectHandler", {endPointId: this.server.endPointId}, function () {
+                if (callback != null) {
+                    callback();
+                }
+            });
+        }
+    };
+
+    this.unregisterNewRevisionOnSpecificProjectHandler = function (poid, handler, callback) {
+        this.unregister(handler);
+        this.call("Bimsie1NotificationRegistryInterface", "unregisterNewRevisionOnSpecificProjectHandler", {
+            endPointId: this.server.endPointId,
+            poid: poid
+        }, function () {
+            if (callback != null) {
+                callback();
+            }
+        });
+    };
+
+    this.unregisterNewExtendedDataOnRevisionHandler = function (roid, handler, callback) {
+        this.unregister(handler);
+        this.call("Bimsie1NotificationRegistryInterface", "unregisterNewExtendedDataOnRevisionHandler", {
+            endPointId: this.server.endPointId,
+            roid: roid
+        }, function () {
+            if (callback != null) {
+                callback();
+            }
+        });
+    };
+
+    this.registerProgressHandler = function (topicId, handler, callback) {
+        this.register("Bimsie1NotificationInterface", "progress", handler, function () {
+            self.call("Bimsie1NotificationRegistryInterface", "registerProgressHandler", {
+                topicId: topicId,
+                endPointId: self.server.endPointId
+            }, function () {
+                if (callback != null) {
+                    callback();
+                }
+            });
+        });
+    };
+
+    this.unregisterProgressHandler = function (topicId, handler, callback) {
+        this.unregister(handler);
+        this.call("Bimsie1NotificationRegistryInterface", "unregisterProgressHandler", {
+            topicId: topicId,
+            endPointId: this.server.endPointId
+        }, function () {
+        }).done(callback);
+    };
+
+    this.unregister = function (listener) {
+        for (var i in this.listeners) {
+            for (var j in this.listeners[i]) {
+                var list = this.listeners[i][j];
+                for (var k = 0; k < list.length; k++) {
+                    if (list[k] === listener) {
+                        list.splice(k, 1);
+                        return;
+                    }
+                }
+            }
+        }
+    };
+
+    this.callWs = function (interfaceName, method, data) {
+        var requestObject = {
+            request: this.createRequest(interfaceName, method, data)
+        };
+        if (this.token != null) {
+            requestObject.token = this.token;
+        }
+        this.server.send(requestObject);
+    };
+
+    this.createRequest = function (interfaceName, method, data) {
+        var object = {};
+        object["interface"] = interfaceName;
+        object.method = method;
+        object.parameters = data;
+
+        return object;
+    };
+
+    this.multiCall = function (requests, callback, errorCallback, showBusy, showDone, showError) {
+        var promise = new BIMSURFER.api.Promise();
+        var request = null;
+        if (requests.length == 1) {
+            request = requests[0];
+            if (this.interfaceMapping[request[0]] == null) {
+                this.log("Interface " + request[0] + " not found");
+            }
+            request = {request: this.createRequest(this.interfaceMapping[request[0]], request[1], request[2])};
+        } else if (requests.length > 1) {
+            var requestObjects = [];
+            requests.forEach(function (request) {
+                requestObjects.push(self.createRequest(self.interfaceMapping[request[0]], request[1], request[2]));
+            });
+            request = {
+                requests: requestObjects
+            };
+        } else if (requests.length == 0) {
+            promise.fire();
+            callback();
+        }
+
+//		this.notifier.clear();
+
+        if (this.token != null) {
+            request.token = this.token;
+        }
+
+        var key = requests[0][1];
+        requests.forEach(function (item, index) {
+            if (index > 0) {
+                key += "_" + item;
+            }
+        });
+
+        var showedBusy = false;
+        if (showBusy) {
+            if (this.lastBusyTimeOut != null) {
+                clearTimeout(this.lastBusyTimeOut);
+                this.lastBusyTimeOut = null;
+            }
+            if (typeof window !== 'undefined' && window.setTimeout != null) {
+                this.lastBusyTimeOut = window.setTimeout(function () {
+                    this.notifier.setInfo(this.translate(key + "_BUSY"), -1);
+                    showedBusy = true;
+                }, 200);
+            }
+        }
+
+//		this.notifier.resetStatusQuick();
+
+        this.log("request", request);
+
+        $.ajax(this.address, {
+            type: "POST",
+            contentType: 'application/json; charset=UTF-8',
+            data: JSON.stringify(request),
+            dataType: "json",
+            success: function (data) {
+                self.log("response", data);
+                var errorsToReport = [];
+                if (requests.length == 1) {
+                    if (showBusy) {
+                        if (self.lastBusyTimeOut != null) {
+                            clearTimeout(self.lastBusyTimeOut);
+                        }
+                    }
+                    if (data.response.exception != null) {
+                        if (data.response.exception.message == "Invalid token" && !self.autoLoginTried && $.cookie("username" + window.document.location.port) != null && $.cookie("autologin" + window.document.location.port) != null) {
+                            self.autologin($.cookie("username" + window.document.location.port), $.cookie("autologin" + window.document.location.port), function () {
+                                self.log("Trying to connect with autologin");
+                                self.multiCall(requests, callback, errorCallback);
+                            });
+                        } else {
+                            if (showError) {
+                                if (self.lastTimeOut != null) {
+                                    clearTimeout(self.lastTimeOut);
+                                }
+                                self.notifier.setError(data.response.exception.message);
+                            } else {
+                                if (showedBusy) {
+                                    self.notifier.resetStatus();
+                                }
+                            }
+                        }
+                    } else {
+                        if (showDone) {
+                            self.notifier.setSuccess(self.translate(key + "_DONE"), 5000);
+                        } else {
+                            if (showedBusy) {
+                                self.notifier.resetStatus();
+                            }
+                        }
+                    }
+                } else if (requests.length > 1) {
+                    data.responses.forEach(function (response) {
+                        if (response.exception != null) {
+                            if (errorCallback == null) {
+                                self.notifier.setError(response.exception.message);
+                            } else {
+                                errorsToReport.push(response.exception);
+                            }
+                        }
+                    });
+                }
+                if (errorsToReport.length > 0) {
+                    errorCallback(errorsToReport);
+                } else {
+                    if (requests.length == 1) {
+                        callback(data.response);
+                    } else if (requests.length > 1) {
+                        callback(data.responses);
+                    }
+                }
+                promise.fire();
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                if (textStatus == "abort") {
+                    // ignore
+                } else {
+                    self.log(errorThrown);
+                    self.log(textStatus);
+                    self.log(jqXHR);
+                    if (self.lastTimeOut != null) {
+                        clearTimeout(self.lastTimeOut);
+                    }
+                    self.notifier.setError("ERROR_REMOTE_METHOD_CALL");
+                }
+                if (callback != null) {
+                    var result = new Object();
+                    result.error = textStatus;
+                    result.ok = false;
+                    callback(result);
+                }
+                promise.fire();
+            }
+        });
+        return promise;
+    };
+
+    this.getModel = function (poid, roid, schema, deep, callback) {
+        var model = new BIMSURFER.api.Model(this, poid, roid, schema);
+        model.load(deep, callback);
+        return model;
+    };
+
+    this.createModel = function (poid, callback) {
+        var model = new BIMSURFER.api.Model(this, poid);
+        model.init(callback);
+        return model;
+    };
+
+    this.callWithNoIndication = function (interfaceName, methodName, data, callback) {
+        return this.call(interfaceName, methodName, data, callback, null, false, false, false);
+    };
+
+    this.callWithFullIndication = function (interfaceName, methodName, data, callback) {
+        return this.call(interfaceName, methodName, data, callback, null, true, true, true);
+    };
+
+    this.callWithUserErrorIndication = function (action, data, callback) {
+        return this.call(interfaceName, methodName, data, callback, null, false, false, true);
+    };
+
+    this.callWithUserErrorAndDoneIndication = function (action, data, callback) {
+        return this.call(interfaceName, methodName, data, callback, null, false, true, true);
+    };
+
+    this.isA = function (schema, typeSubject, typeName) {
+        var isa = false;
+        if (typeSubject == typeName) {
+            return true;
+        }
+        var subject = this.schemas[schema][typeSubject];
+        if (subject == null) {
+            console.log(typeSubject, "not found");
+        }
+        subject.superclasses.some(function (superclass) {
+            if (superclass == typeName) {
+                isa = true;
+                return true;
+            }
+            if (self.isA(schema, superclass, typeName)) {
+                isa = true;
+                return true;
+            }
+            return false;
+        });
+        return isa;
+    };
+
+    this.setToken = function (token, callback, errorCallback) {
+        this.token = token;
+        this.call("AuthInterface", "getLoggedInUser", {}, function (data) {
+            self.user = data;
+            self.server.connect(callback);
+        }, function () {
+            errorCallback();
+        });
+    };
+
+    this.call = function (interfaceName, methodName, data, callback, errorCallback, showBusy, showDone, showError) {
+        var showBusy = typeof showBusy !== 'undefined' ? showBusy : true;
+        var showDone = typeof showDone !== 'undefined' ? showDone : false;
+        var showError = typeof showError !== 'undefined' ? showError : true;
+
+        return this.multiCall([[
+            interfaceName,
+            methodName,
+            data
+        ]], function (data) {
+            if (data.exception == null) {
+                if (callback != null) {
+                    callback(data.result);
+                }
+            } else {
+                if (errorCallback != null) {
+                    errorCallback(data.exception);
+                }
+            }
+        }, errorCallback, showBusy, showDone, showError);
+    };
+
+    this.server.listener = this.processNotification;
+};
+
+
+
+;BIMSURFER.api.EventRegistry = function() {
+
+    var o = this;
+
+    o.registry = [];
+
+    this.register = function (fn) {
+        var skip = false;
+        o.registry.forEach(function (existing) {
+            if (existing == fn) {
+                skip = true;
+            }
+        });
+        if (!skip) {
+            o.registry.push(fn);
+        }
+    };
+
+    this.unregister = function (fn) {
+        var len = o.registry.length;
+        while (len--) {
+            if (o.registry[len] == fn) {
+                o.registry.splice(len, 1);
+            }
+        }
+    };
+
+    this.size = function () {
+        return o.registry.length;
+    };
+
+    this.trigger = function (callback) {
+        o.registry.forEach(callback);
+    };
+
+    this.clear = function () {
+        o.registry = [];
+    };
+};
+
+;
+BIMSURFER.api.Model = function (bimServerApi, poid, roid, schema) {
+
+    if (typeof jQuery !== 'undefined' && $ !== jQuery)
+        var $ = jQuery;
+
+    var self = this;
+
+    self.schema = schema;
+    self.bimServerApi = bimServerApi;
+    self.poid = poid;
+    self.roid = roid;
+    self.waiters = [];
+
+    self.objects = {};
+    self.objectsByGuid = {};
+    self.objectsByName = {};
+
+    self.oidsFetching = {};
+    self.guidsFetching = {};
+    self.namesFetching = {};
+
+    // Those are only fully loaded types (all of them), should not be stored here if loaded partially
+    self.loadedTypes = [];
+    self.loadedDeep = false;
+    self.changedObjectOids = {};
+    self.doneCallbacks = [];
+    self.runningCalls = 0;
+    self.loading = false;
+    self.logging = true;
+
+    self.changes = 0;
+    self.changeListeners = [];
+
+    self.transactionSynchronizer = new BIMSURFER.api.Synchronizer(function (callback) {
+        bimServerApi.call("Bimsie1LowLevelInterface", "startTransaction", {poid: self.poid}, function (tid) {
+            callback(tid);
+        });
+    });
+
+    this.init = function (callback) {
+        self.incrementRunningCalls("init");
+        self.transactionSynchronizer.fetch(function () {
+            callback(self);
+            self.decrementRunningCalls("init");
+        });
+    };
+
+    this.load = function (deep, modelLoadCallback) {
+        if (deep) {
+            self.loading = true;
+            self.incrementRunningCalls("load");
+            self.bimServerApi.jsonSerializerFetcher.fetch(function (jsonSerializerOid) {
+                bimServerApi.call("Bimsie1ServiceInterface", "download", {
+                    roid: self.roid,
+                    serializerOid: jsonSerializerOid,
+                    showOwn: true,
+                    sync: true
+                }, function (laid) {
+                    var url = bimServerApi.generateRevisionDownloadUrl({
+                        laid: laid,
+                        topicId: laid,
+                        serializerOid: jsonSerializerOid
+                    });
+                    $.getJSON(url, function (data, textStatus, jqXHR) {
+                        data.objects.forEach(function (object) {
+                            self.objects[object._i] = self.createWrapper(object, object._t);
+                        });
+                        self.loading = false;
+                        self.loadedDeep = true;
+                        self.waiters.forEach(function (waiter) {
+                            waiter();
+                        });
+                        self.waiters = [];
+                        bimServerApi.call("ServiceInterface", "cleanupLongAction", {actionId: laid}, function () {
+                            if (modelLoadCallback != null) {
+                                modelLoadCallback(self);
+                            }
+                            self.decrementRunningCalls("load");
+                        });
+                    });
+                });
+            });
+        } else {
+            self.loaded = true;
+            if (modelLoadCallback != null) {
+                modelLoadCallback(self);
+            }
+        }
+    };
+
+    this.create = function (className, object, callback) {
+        self.incrementRunningCalls("create (" + className + ")");
+        self.transactionSynchronizer.fetch(function (tid) {
+            object._t = className;
+            var wrapper = self.createWrapper({}, className);
+            bimServerApi.call("Bimsie1LowLevelInterface", "createObject", {
+                tid: tid,
+                className: className
+            }, function (oid) {
+                wrapper._i = oid;
+                self.objects[object._i] = wrapper;
+                object._s = 1;
+                if (callback != null) {
+                    callback(object);
+                }
+                self.decrementRunningCalls("create (" + className + ")");
+            });
+        });
+        return object;
+    };
+
+    this.incrementRunningCalls = function (method) {
+        self.runningCalls++;
+        self.bimServerApi.log("inc", method, self.runningCalls);
+    };
+
+    this.decrementRunningCalls = function (method) {
+        self.runningCalls--;
+        self.bimServerApi.log("dec", method, self.runningCalls);
+        if (self.runningCalls == 0) {
+            self.doneCallbacks.forEach(function (cb) {
+                cb(self);
+            });
+        }
+    };
+
+    this.done = function (doneCallback) {
+        if (self.runningCalls == 0) {
+            self.bimServerApi.log("immediately done");
+            doneCallback(self);
+        } else {
+            self.doneCallbacks.push(doneCallback);
+        }
+    };
+
+    this.waitForLoaded = function (callback) {
+        if (self.loaded) {
+            callback();
+        } else {
+            self.waiters.push(callback);
+        }
+    };
+
+    this.commit = function (comment, callback) {
+        self.transactionSynchronizer.fetch(function (tid) {
+            bimServerApi.call("Bimsie1LowLevelInterface", "commitTransaction", {
+                tid: tid,
+                comment: comment
+            }, function (roid) {
+                if (callback != null) {
+                    callback(roid);
+                }
+            });
+        });
+    };
+
+    this.abort = function (callback) {
+        self.transactionSynchronizer.fetch(function (tid) {
+            bimServerApi.call("Bimsie1LowLevelInterface", "abortTransaction", {tid: tid}, function (roid) {
+                if (callback != null) {
+                    callback();
+                }
+            });
+        });
+    };
+
+    this.addChangeListener = function (changeListener) {
+        self.changeListeners.push(changeListener);
+    };
+
+    this.incrementChanges = function () {
+        self.changes++;
+        self.changeListeners.forEach(function (changeListener) {
+            changeListener(self.changes);
+        });
+    };
+
+    this.extendClass = function (wrapperClass, typeName) {
+        var realType = self.bimServerApi.schemas[self.schema][typeName];
+        realType.superclasses.forEach(function (typeName) {
+            self.extendClass(wrapperClass, typeName);
+        });
+        for (var fieldName in realType.fields) {
+            var field = realType.fields[fieldName];
+            (function (field, fieldName) {
+                if (field.reference) {
+                    wrapperClass["set" + fieldName.firstUpper() + "Wrapped"] = function (typeName, value) {
+                        var object = this.object;
+                        object[fieldName] = {_t: typeName, value: value};
+                        self.incrementRunningCalls("set" + fieldName.firstUpper() + "Wrapped");
+                        self.transactionSynchronizer.fetch(function (tid) {
+                            var type = self.bimServerApi.schema[typeName];
+                            var wrappedValueType = type.fields.wrappedValue;
+                            if (wrappedValueType.type == "string") {
+                                bimServerApi.call("Bimsie1LowLevelInterface", "setWrappedStringAttribute", {
+                                    tid: tid,
+                                    oid: object._i,
+                                    attributeName: fieldName,
+                                    type: typeName,
+                                    value: value
+                                }, function () {
+                                    if (object.changedFields == null) {
+                                        object.changedFields = {};
+                                    }
+                                    object.changedFields[fieldName] = true;
+                                    self.changedObjectOids[object.oid] = true;
+                                    self.incrementChanges();
+                                    self.decrementRunningCalls("set" + fieldName.firstUpper() + "Wrapped");
+                                });
+                            }
+                        });
+                    };
+                    wrapperClass["set" + fieldName.firstUpper()] = function (value) {
+                        var object = this.object;
+                        self.transactionSynchronizer.fetch(function (tid) {
+                            object[fieldName] = value;
+                            self.incrementRunningCalls("set" + fieldName.firstUpper());
+                            if (value == null) {
+                                bimServerApi.call("Bimsie1LowLevelInterface", "unsetReference", {
+                                    tid: tid,
+                                    oid: object._i,
+                                    referenceName: fieldName,
+                                }, function () {
+                                    self.decrementRunningCalls("set" + fieldName.firstUpper());
+                                    if (object.changedFields == null) {
+                                        object.changedFields = {};
+                                    }
+                                    object.changedFields[fieldName] = true;
+                                    self.changedObjectOids[object.oid] = true;
+                                });
+                            } else {
+                                bimServerApi.call("Bimsie1LowLevelInterface", "setReference", {
+                                    tid: tid,
+                                    oid: object._i,
+                                    referenceName: fieldName,
+                                    referenceOid: value._i
+                                }, function () {
+                                    self.decrementRunningCalls("set" + fieldName.firstUpper());
+                                    if (object.changedFields == null) {
+                                        object.changedFields = {};
+                                    }
+                                    object.changedFields[fieldName] = true;
+                                    self.changedObjectOids[object.oid] = true;
+                                });
+                            }
+                        });
+                    };
+                    wrapperClass["add" + fieldName.firstUpper()] = function (value, callback) {
+                        var object = this.object;
+                        self.transactionSynchronizer.fetch(function (tid) {
+                            if (object[fieldName] == null) {
+                                object[fieldName] = [];
+                            }
+                            object[fieldName].push(value);
+                            self.incrementRunningCalls("add" + fieldName.firstUpper());
+                            bimServerApi.call("Bimsie1LowLevelInterface", "addReference", {
+                                tid: tid,
+                                oid: object._i,
+                                referenceName: fieldName,
+                                referenceOid: value._i
+                            }, function () {
+                                self.decrementRunningCalls("add" + fieldName.firstUpper());
+                                if (object.changedFields == null) {
+                                    object.changedFields = {};
+                                }
+                                object.changedFields[fieldName] = true;
+                                self.changedObjectOids[object.oid] = true;
+                                if (callback != null) {
+                                    callback();
+                                }
+                            });
+                        });
+                    };
+                    wrapperClass["remove" + fieldName.firstUpper()] = function (value, callback) {
+                        var object = this.object;
+                        self.transactionSynchronizer.fetch(function (tid) {
+                            var list = object[fieldName];
+                            var index = list.indexOf(value);
+                            list.splice(index, 1);
+
+                            self.incrementRunningCalls("remove" + fieldName.firstUpper());
+                            bimServerApi.call("Bimsie1LowLevelInterface", "removeReference", {
+                                tid: tid,
+                                oid: object._i,
+                                referenceName: fieldName,
+                                index: index
+                            }, function () {
+                                self.decrementRunningCalls("remove" + fieldName.firstUpper());
+                                if (object.changedFields == null) {
+                                    object.changedFields = {};
+                                }
+                                object.changedFields[fieldName] = true;
+                                self.changedObjectOids[object.oid] = true;
+                                if (callback != null) {
+                                    callback();
+                                }
+                            });
+                        });
+                    };
+                    wrapperClass["get" + fieldName.firstUpper()] = function (callback) {
+                        var object = this.object;
+                        var model = this.model;
+                        var promise = new BIMSURFER.api.Promise();
+                        if (object[fieldName] != null) {
+                            if (field.many) {
+                                object[fieldName].forEach(function (item) {
+                                    callback(item);
+                                });
+                            } else {
+                                callback(object[fieldName]);
+                            }
+                            promise.fire();
+                            return promise;
+                        }
+                        var embValue = object["_e" + fieldName];
+                        if (embValue != null) {
+                            callback(embValue);
+                            promise.fire();
+                            return promise;
+                        }
+                        var value = object["_r" + fieldName];
+                        if (field.many) {
+                            if (object[fieldName] == null) {
+                                object[fieldName] = [];
+                            }
+                            if (value != null) {
+                                model.get(value, function (v) {
+                                    object[fieldName].push(v);
+                                    callback(v);
+                                }).done(function () {
+                                    promise.fire();
+                                });
+                            } else {
+                                promise.fire();
+                            }
+                        } else {
+                            if (value != null) {
+                                var ref = self.objects[value];
+                                if (value == -1) {
+                                    callback(null);
+                                    promise.fire();
+                                } else if (ref == null || ref.object._s == 0) {
+                                    model.get(value, function (v) {
+                                        object[fieldName] = v;
+                                        callback(v);
+                                    }).done(function () {
+                                        promise.fire();
+                                    });
+                                } else {
+                                    object[fieldName] = ref;
+                                    callback(ref);
+                                    promise.fire();
+                                }
+                            } else {
+                                callback(null);
+                                promise.fire();
+                            }
+                        }
+                        return promise;
+                    };
+                } else {
+                    wrapperClass["get" + fieldName.firstUpper()] = function (callback) {
+                        var object = this.object;
+                        if (field.many) {
+                            if (object[fieldName] == null) {
+                                object[fieldName] = [];
+                            }
+                            object[fieldName].push = function (val) {
+                            };
+                        }
+                        if (callback != null) {
+                            callback(object[fieldName]);
+                        }
+                        return object[fieldName];
+                    };
+                    wrapperClass["set" + fieldName.firstUpper()] = function (value) {
+                        var object = this.object;
+                        object[fieldName] = value;
+                        self.incrementRunningCalls("set" + fieldName.firstUpper());
+                        self.transactionSynchronizer.fetch(function (tid) {
+                            if (field.many) {
+                                bimServerApi.call("Bimsie1LowLevelInterface", "setDoubleAttributes", {
+                                    tid: tid,
+                                    oid: object._i,
+                                    attributeName: fieldName,
+                                    values: value
+                                }, function () {
+                                    self.decrementRunningCalls("set" + fieldName.firstUpper());
+                                });
+                            } else {
+                                if (value == null) {
+                                    bimServerApi.call("Bimsie1LowLevelInterface", "unsetAttribute", {
+                                        tid: tid,
+                                        oid: object._i,
+                                        attributeName: fieldName
+                                    }, function () {
+                                        self.decrementRunningCalls("set" + fieldName.firstUpper());
+                                    });
+                                } else if (field.type == "string") {
+                                    bimServerApi.call("Bimsie1LowLevelInterface", "setStringAttribute", {
+                                        tid: tid,
+                                        oid: object._i,
+                                        attributeName: fieldName,
+                                        value: value
+                                    }, function () {
+                                        self.decrementRunningCalls("set" + fieldName.firstUpper());
+                                    });
+                                } else if (field.type == "double") {
+                                    bimServerApi.call("Bimsie1LowLevelInterface", "setDoubleAttribute", {
+                                        tid: tid,
+                                        oid: object._i,
+                                        attributeName: fieldName,
+                                        value: value
+                                    }, function () {
+                                        self.decrementRunningCalls("set" + fieldName.firstUpper());
+                                    });
+                                } else if (field.type == "boolean") {
+                                    bimServerApi.call("Bimsie1LowLevelInterface", "setBooleanAttribute", {
+                                        tid: tid,
+                                        oid: object._i,
+                                        attributeName: fieldName,
+                                        value: value
+                                    }, function () {
+                                        self.decrementRunningCalls("set" + fieldName.firstUpper());
+                                    });
+                                } else if (field.type == "int") {
+                                    bimServerApi.call("Bimsie1LowLevelInterface", "setIntegerAttribute", {
+                                        tid: tid,
+                                        oid: object._i,
+                                        attributeName: fieldName,
+                                        value: value
+                                    }, function () {
+                                        self.decrementRunningCalls("set" + fieldName.firstUpper());
+                                    });
+                                } else if (field.type == "enum") {
+                                    bimServerApi.call("Bimsie1LowLevelInterface", "setEnumAttribute", {
+                                        tid: tid,
+                                        oid: object._i,
+                                        attributeName: fieldName,
+                                        value: value
+                                    }, function () {
+                                        self.decrementRunningCalls("set" + fieldName.firstUpper());
+                                    });
+                                } else {
+                                    self.bimServerApi.log("Unimplemented type " + typeof value);
+                                    self.decrementRunningCalls("set" + fieldName.firstUpper());
+                                }
+                                object[fieldName] = value;
+                            }
+                            if (object.changedFields == null) {
+                                object.changedFields = {};
+                            }
+                            object.changedFields[fieldName] = true;
+                            self.changedObjectOids[object.oid] = true;
+                        });
+                    };
+                }
+            })(field, fieldName);
+        }
+    };
+
+    this.dumpByType = function () {
+        var mapLoaded = {};
+        var mapNotLoaded = {};
+        for (var oid in self.objects) {
+            var object = self.objects[oid];
+            var type = object.getType();
+            var counter = mapLoaded[type];
+            if (object.object._s == 1) {
+                if (counter == null) {
+                    mapLoaded[type] = 1;
+                } else {
+                    mapLoaded[type] = counter + 1;
+                }
+            }
+            if (object.object._s == 0) {
+                var counter = mapNotLoaded[type];
+                if (counter == null) {
+                    mapNotLoaded[type] = 1;
+                } else {
+                    mapNotLoaded[type] = counter + 1;
+                }
+            }
+        }
+        console.log("LOADED");
+        for (var type in mapLoaded) {
+            console.log(type, mapLoaded[type]);
+        }
+        console.log("NOT_LOADED");
+        for (var type in mapNotLoaded) {
+            console.log(type, mapNotLoaded[type]);
+        }
+    };
+
+    this.getClass = function (typeName) {
+        if (self.bimServerApi.classes[typeName] == null) {
+            var realType = self.bimServerApi.schemas[self.schema][typeName];
+            if (realType == null) {
+                if (typeName == "GeometryInfo") {
+                    return null;
+                }
+                throw "Type " + typeName + " not found in schema " + self.schema;
+            }
+
+            var wrapperClass = {};
+
+            wrapperClass.isA = function (typeName) {
+                return self.bimServerApi.isA(self.schema, this.object._t, typeName);
+            };
+            wrapperClass.getType = function () {
+                return this.object._t;
+            };
+            wrapperClass.remove = function (removeCallback) {
+                self.incrementRunningCalls("removeObject");
+                self.transactionSynchronizer.fetch(function (tid) {
+                    bimServerApi.call("Bimsie1LowLevelInterface", "removeObject", {
+                        tid: tid,
+                        oid: this.object._i
+                    }, function () {
+                        if (removeCallback != null) {
+                            removeCallback();
+                        }
+                        delete self.objects[this.object._i];
+                        self.decrementRunningCalls("removeObject");
+                    });
+                });
+            };
+
+            self.extendClass(wrapperClass, typeName);
+
+            self.bimServerApi.classes[typeName] = wrapperClass;
+        }
+        return self.bimServerApi.classes[typeName];
+    };
+
+    this.createWrapper = function (object, typeName) {
+        if (self.objects[object._i] != null) {
+            console.log("Warning!", object);
+        }
+        object.oid = object._i;
+        var cl = self.getClass(typeName);
+        var wrapper = Object.create(cl);
+        // transient variables
+        wrapper.trans = {
+            mode: 2
+        };
+        wrapper.oid = object.oid;
+        wrapper.model = self;
+        wrapper.object = object;
+        return wrapper;
+    };
+
+    this.size = function (callback) {
+        bimServerApi.call("Bimsie1ServiceInterface", "getRevision", {roid: roid}, function (revision) {
+            callback(revision.size);
+        });
+    };
+
+    this.count = function (type, includeAllSubTypes, callback) {
+        // TODO use includeAllSubTypes
+        self.incrementRunningCalls("count (" + type + ")");
+        bimServerApi.call("Bimsie1LowLevelInterface", "count", {roid: roid, className: type}, function (size) {
+            callback(size);
+            self.decrementRunningCalls("count (" + type + ")");
+        });
+    };
+
+    this.getByX = function (methodName, keyname, fetchingMap, targetMap, interfaceMethodName, interfaceFieldName, getValueMethod, list, callback) {
+        var promise = new BIMSURFER.api.Promise();
+        self.incrementRunningCalls(methodName + "(" + list + ")");
+        if (typeof list == "string" || typeof list == "number") {
+            list = [list];
+        }
+        self.waitForLoaded(function () {
+            var len = list.length;
+            // Iterating in reverse order because we remove items from this array
+            while (len--) {
+                var item = list[len];
+                if (targetMap[item] != null) {
+                    // Already loaded? Remove from list and call callback
+                    var existingObject = targetMap[item].object;
+                    if (existingObject._s == 1) {
+                        var index = list.indexOf(item);
+                        list.splice(index, 1);
+                        callback(targetMap[item]);
+                    }
+                } else if (fetchingMap[item] != null) {
+                    // Already loading? Add the callback to the list and remove from fetching list
+                    fetchingMap[item].push(callback);
+                    var index = list.indexOf(item);
+                    list.splice(index, 1);
+                }
+            }
+            // Any left?
+            if (list.length > 0) {
+                list.forEach(function (item) {
+                    fetchingMap[item] = [];
+                });
+                self.bimServerApi.jsonSerializerFetcher.fetch(function (jsonSerializerOid) {
+                    var request = {
+                        roids: [self.roid],
+                        serializerOid: jsonSerializerOid,
+                        deep: false,
+                        sync: true
+                    };
+                    request[interfaceFieldName] = list;
+                    bimServerApi.call("Bimsie1ServiceInterface", interfaceMethodName, request, function (laid) {
+                        var url = bimServerApi.generateRevisionDownloadUrl({
+                            laid: laid,
+                            topicId: laid,
+                            serializerOid: jsonSerializerOid
+                        });
+                        $.getJSON(url, function (data, textStatus, jqXHR) {
+                            if (data.objects.length > 0) {
+                                var done = 0;
+                                data.objects.forEach(function (object) {
+                                    var wrapper = null;
+                                    if (self.objects[object._i] != null) {
+                                        wrapper = self.objects[object._i];
+                                        if (wrapper.object._s != 1) {
+                                            wrapper.object = object;
+                                        }
+                                    } else {
+                                        wrapper = self.createWrapper(object, object._t);
+                                    }
+                                    var item = getValueMethod(object);
+                                    // Checking the value again, because sometimes serializers send more objects...
+                                    if ($.inArray(item, list) != -1) {
+                                        targetMap[item] = wrapper;
+                                        if (fetchingMap[item] != null) {
+                                            fetchingMap[item].forEach(function (cb) {
+                                                cb(wrapper);
+                                            });
+                                            delete fetchingMap[item];
+                                        }
+                                        callback(wrapper);
+                                    }
+                                    done++;
+                                    if (done == data.objects.length) {
+                                        bimServerApi.call("ServiceInterface", "cleanupLongAction", {actionId: laid}, function () {
+                                            self.decrementRunningCalls(methodName + "(" + list + ")");
+                                            promise.fire();
+                                        });
+                                    }
+                                });
+                            } else {
+                                self.bimServerApi.log("Object with " + keyname + " " + list + " not found");
+                                callback(null);
+                                promise.fire();
+                            }
+                        });
+                    });
+                });
+            } else {
+                self.decrementRunningCalls(methodName + "(" + list + ")");
+                promise.fire();
+            }
+        });
+        return promise;
+    };
+
+    this.getByGuids = function (guids, callback) {
+        return self.getByX("getByGuid", "guid", self.guidsFetching, self.objectsByGuid, "downloadByGuids", "guids", function (object) {
+            return object.GlobalId
+        }, guids, callback);
+    };
+
+    this.get = function (oids, callback) {
+        return self.getByX("get", "OID", self.oidsFetching, self.objects, "downloadByOids", "oids", function (object) {
+            return object._i
+        }, oids, callback);
+    };
+
+    this.getByName = function (names, callback) {
+        return self.getByX("getByName", "name", self.namesFetching, self.objectsByName, "downloadByNames", "names", function (object) {
+            return object.getName == null ? null : object.getName()
+        }, names, callback);
+    };
+
+    this.query = function (query, callback) {
+        var promise = new BIMSURFER.api.Promise();
+        var fullTypesLoading = {};
+        query.queries.forEach(function (subQuery) {
+            if (subQuery.type != null) {
+                fullTypesLoading[subQuery.type] = true;
+                self.loadedTypes[subQuery.type] = {};
+                if (subQuery.includeAllSubTypes) {
+                    var schema = self.bimServerApi.schemas[self.schema];
+                    self.bimServerApi.getAllSubTypes(schema, subQuery.type, function (subTypeName) {
+                        fullTypesLoading[subTypeName] = true;
+                        self.loadedTypes[subTypeName] = {};
+                    });
+                }
+            }
+        });
+        self.waitForLoaded(function () {
+            self.bimServerApi.jsonSerializerFetcher.fetch(function (jsonSerializerOid) {
+                bimServerApi.callWithFullIndication("Bimsie1ServiceInterface", "downloadByJsonQuery", {
+                    roids: [self.roid],
+                    jsonQuery: JSON.stringify(query),
+                    serializerOid: jsonSerializerOid,
+                    sync: true
+                }, function (laid) {
+                    var url = bimServerApi.generateRevisionDownloadUrl({
+                        laid: laid,
+                        topicId: laid,
+                        serializerOid: jsonSerializerOid
+                    });
+                    self.bimServerApi.notifier.setInfo("Getting model data...", -1);
+                    $.getJSON(url, function (data, textStatus, jqXHR) {
+//						console.log("query", data.objects.length);
+                        data.objects.forEach(function (object) {
+                            var wrapper = self.objects[object._i];
+                            if (wrapper == null) {
+                                wrapper = self.createWrapper(object, object._t);
+                                self.objects[object._i] = wrapper;
+                                if (fullTypesLoading[object._t] != null) {
+                                    self.loadedTypes[object._t][wrapper.oid] = wrapper;
+                                }
+                            } else {
+                                if (object._s == 1) {
+                                    wrapper.object = object;
+                                }
+                            }
+//							if (self.loadedTypes[wrapper.getType()] == null) {
+//								self.loadedTypes[wrapper.getType()] = {};
+//							}
+//							self.loadedTypes[wrapper.getType()][object._i] = wrapper;
+                            if (object._s == 1) {
+                                callback(wrapper);
+                            }
+                        });
+//						self.dumpByType();
+                        bimServerApi.call("ServiceInterface", "cleanupLongAction", {actionId: laid}, function () {
+                            promise.fire();
+                            self.bimServerApi.notifier.setSuccess("Model data successfully downloaded...");
+                        });
+                    });
+                });
+            });
+        });
+        return promise;
+    };
+
+    this.getAllOfType = function (type, includeAllSubTypes, callback) {
+        var promise = new BIMSURFER.api.Promise();
+        self.incrementRunningCalls("getAllOfType");
+        self.waitForLoaded(function () {
+            if (self.loadedDeep) {
+                for (var oid in self.objects) {
+                    var object = self.objects[oid];
+                    if (object._t == type) {
+                        callback(object);
+                    }
+                }
+                self.decrementRunningCalls("getAllOfType");
+                promise.fire();
+            } else {
+                var types = [];
+                if (includeAllSubTypes) {
+                    self.bimServerApi.getAllSubTypes(self.bimServerApi.schemas[self.schema], type, function (type) {
+                        types.push(type);
+                    });
+                } else {
+                    types.push(type);
+                }
+
+                var typesToLoad = [];
+
+                types.forEach(function (type) {
+                    if (self.loadedTypes[type] != null) {
+                        for (var oid in self.loadedTypes[type]) {
+                            callback(self.loadedTypes[type][oid]);
+                        }
+                    } else {
+                        typesToLoad.push(type);
+                    }
+                });
+
+                if (typesToLoad.length > 0) {
+                    self.bimServerApi.jsonSerializerFetcher.fetch(function (jsonSerializerOid) {
+                        bimServerApi.call("Bimsie1ServiceInterface", "downloadByTypes", {
+                            roids: [self.roid],
+                            classNames: typesToLoad,
+                            schema: "ifc2x3tc1",
+                            includeAllSubtypes: false,
+                            serializerOid: jsonSerializerOid,
+                            useObjectIDM: false,
+                            deep: false,
+                            sync: true
+                        }, function (laid) {
+                            var url = bimServerApi.generateRevisionDownloadUrl({
+                                laid: laid,
+                                topicId: laid,
+                                serializerOid: jsonSerializerOid
+                            });
+                            $.getJSON(url, function (data, textStatus, jqXHR) {
+                                if (self.loadedTypes[type] == null) {
+                                    self.loadedTypes[type] = {};
+                                }
+                                data.objects.forEach(function (object) {
+                                    if (self.objects[object._i] != null) {
+                                        // Hmm we are doing a query on type, but some objects have already loaded, let's use those instead
+                                        var wrapper = self.objects[object._i];
+                                        if (wrapper.object._s == 1) {
+                                            if (wrapper.isA(type)) {
+                                                self.loadedTypes[type][object._i] = wrapper;
+                                                callback(wrapper);
+                                            }
+                                        } else {
+                                            // Replace the value with something that's LOADED
+                                            wrapper.object = object;
+                                            if (wrapper.isA(type)) {
+                                                self.loadedTypes[type][object._i] = wrapper;
+                                                callback(wrapper);
+                                            }
+                                        }
+                                    } else {
+                                        var wrapper = self.createWrapper(object, object._t);
+                                        self.objects[object._i] = wrapper;
+                                        if (wrapper.isA(type) && object._s == 1) {
+                                            self.loadedTypes[type][object._i] = wrapper;
+                                            callback(wrapper);
+                                        }
+                                    }
+                                });
+                                bimServerApi.call("ServiceInterface", "cleanupLongAction", {actionId: laid}, function () {
+                                    self.decrementRunningCalls("getAllOfType");
+                                    promise.fire();
+                                });
+                            });
+                        });
+                    });
+                } else {
+                    self.decrementRunningCalls("getAllOfType");
+                    promise.fire();
+                }
+            }
+        });
+        return promise;
+    };
+};
+
+
+;BIMSURFER.api.Promise = function(counter) {
+
+    var o = this;
+
+    o.isDone = false;
+    o.chains = [];
+    o.callback = null;
+    o.counter = counter;
+
+    this.done = function(callback){
+        if (o.isDone) {
+            callback();
+        } else {
+            if (o.callback != null) {
+                if (o.callback instanceof Array) {
+                    o.callback.push(callback);
+                } else {
+                    o.callback = [o.callback, callback];
+                }
+            } else {
+                o.callback = callback;
+            }
+        }
+        return o;
+    };
+
+    this.inc = function(){
+        if (o.counter == null) {
+            o.counter = 0;
+        }
+        o.counter++;
+    };
+
+    this.dec = function(){
+        if (o.counter == null) {
+            o.counter = 0;
+        }
+        o.counter--;
+        console.log(o.counter);
+        if (o.counter == 0) {
+            o.done = true;
+            o.fire();
+        }
+    };
+
+    this.fire = function(){
+        if (o.isDone) {
+            console.log("Promise already fired, not triggering again...");
+            return;
+        }
+        o.isDone = true;
+        if (o.callback != null) {
+            if (o.callback instanceof Array) {
+                o.callback.forEach(function(cb){
+                    cb();
+                });
+            } else {
+                o.callback();
+            }
+        }
+    };
+
+    this.chain = function(otherPromise) {
+        var promises;
+        if (otherPromise instanceof Array) {
+            promises = otherPromise;
+        } else {
+            promises = [otherPromise];
+        }
+        promises.forEach(function(promise){
+            if (!promise.isDone) {
+                o.chains.push(promise);
+                promise.done(function(){
+                    for (var i=o.chains.length-1; i>=0; i--) {
+                        if (o.chains[i] == promise) {
+                            o.chains.splice(i, 1);
+                        }
+                    }
+                    if (o.chains.length == 0) {
+                        o.fire();
+                    }
+                });
+            }
+        });
+        if (o.chains.length == 0) {
+            o.fire();
+        }
+    };
+}
+;BIMSURFER.api.Socket = function(baseUrl, bimServerApi) {
+    var othis = this;
+    this.connected = false;
+    this.openCallbacks = [];
+    this.endPointId = null;
+    this.listener = null;
+    this.tosend = [];
+    this.tosendAfterConnect = [];
+    this.messagesReceived = 0;
+
+    this.connect = function (callback) {
+        othis.openCallbacks.push(callback);
+        var location = bimServerApi.baseUrl.toString().replace('http://', 'ws://').replace('https://', 'wss://') + "/stream";
+        if ("WebSocket" in window) {
+            try {
+                this._ws = new WebSocket(location);
+                this._ws.binaryType = "arraybuffer";
+                this._ws.onopen = this._onopen;
+                this._ws.onmessage = this._onmessage;
+                this._ws.onclose = this._onclose;
+                this._ws.onerror = this._onerror;
+            } catch (err) {
+                bimServerApi.notifier.setError("WebSocket error" + (err.message != null ? (": " + err.message) : ""));
+            }
+        } else {
+            bimServerApi.notifier.setError("This browser does not support websockets <a href=\"https://github.com/opensourceBIM/bimvie.ws/wiki/Requirements\"></a>");
+        }
+    };
+
+    this._onerror = function (err) {
+        console.log(err);
+        bimServerApi.notifier.setError("WebSocket error" + (err.message != null ? (": " + err.message) : ""));
+    };
+
+    this._onopen = function () {
+        while (othis.tosendAfterConnect.length > 0 && othis._ws.readyState == 1) {
+            var messageArray = othis.tosendAfterConnect.splice(0, 1);
+            othis._sendWithoutEndPoint(messageArray[0]);
+        }
+    };
+
+    this._sendWithoutEndPoint = function (message) {
+        if (othis._ws && othis._ws.readyState == 1) {
+            othis._ws.send(message);
+        } else {
+            othis.tosendAfterConnect.push(message);
+        }
+    };
+
+    this._send = function (message) {
+        if (othis._ws && othis._ws.readyState == 1 && othis.endPointId != null) {
+            othis._ws.send(message);
+        } else {
+            console.log("Waiting", message);
+            othis.tosend.push(message);
+        }
+    };
+
+    this.send = function (object) {
+        var str = JSON.stringify(object);
+        bimServerApi.log("Sending", str);
+        othis._send(str);
+    };
+
+    this._onmessage = function (message) {
+        othis.messagesReceived++;
+        if (othis.messagesReceived % 10 == 0) {
+//			console.log(othis.messagesReceived);
+        }
+        if (message.data instanceof ArrayBuffer) {
+            othis.listener(message.data);
+        } else {
+            var incomingMessage = JSON.parse(message.data);
+            bimServerApi.log("incoming", incomingMessage);
+            if (incomingMessage.welcome != null) {
+                othis._sendWithoutEndPoint(JSON.stringify({"token": bimServerApi.token}));
+            } else if (incomingMessage.endpointid != null) {
+                othis.endPointId = incomingMessage.endpointid;
+                othis.connected = true;
+                othis.openCallbacks.forEach(function (callback) {
+                    callback();
+                });
+                while (othis.tosend.length > 0 && othis._ws.readyState == 1) {
+                    var messageArray = othis.tosend.splice(0, 1);
+                    console.log(messageArray[0]);
+                    othis._send(messageArray[0]);
+                }
+                othis.openCallbacks = [];
+            } else {
+                if (incomingMessage.request != null) {
+                    othis.listener(incomingMessage.request);
+                } else if (incomingMessage.requests != null) {
+                    incomingMessage.requests.forEach(function (request) {
+                        othis.listener(request);
+                    });
+                }
+            }
+        }
+    };
+
+    this._onclose = function (m) {
+        othis._ws = null;
+        othis.connected = false;
+        othis.openCallbacks = [];
+        othis.endpointid = null;
+    };
+}
+;BIMSURFER.api.Synchronizer = function (fetcher) {
+
+    var othis = this;
+
+    othis.result = null;
+    othis.state = "none";
+    othis.waiters = [];
+
+    this.notify = function (result) {
+        othis.result = result;
+        othis.state = "done";
+        othis.waiters.forEach(function (waiter) {
+            waiter(result);
+        });
+        othis.waiters = [];
+    };
+
+    this.fetch = function (callback) {
+        if (othis.state == "none") {
+            othis.waiters.push(callback);
+            othis.state = "fetching";
+            fetcher(othis.notify);
+        } else if (othis.state == "done") {
+            callback(othis.result);
+        } else if (othis.state == "fetching") {
+            othis.waiters.push(callback)
+        }
+    };
+};BIMSURFER.api.Variable = function(initialValue) {
+
+    var o = this;
+    o.value = initialValue;
+    o.eventRegistry = new EventRegistry();
+
+    this.set = function (value) {
+        o.value = value;
+        o.eventRegistry.trigger(function (cb) {
+            cb(value);
+        });
+    };
+
+    this.get = function () {
+        return o.value;
+    };
+
+    this.register = o.eventRegistry.register;
+    this.unregister = o.eventRegistry.unregister;
+};
 ;/*
   Based on Simple JavaScript Inheritance
   By John Resig http://ejohn.org/
@@ -286,8 +2162,14 @@ BIMSURFER.utils.removeA  = function(arr) {
     };
 
 })();;/**
+ * Math utilities.
+ *
+ * @module XEO
+ * @submodule math
+ */;/**
  * Math functions, used within BIMSURFER, but also available for you to use in your application code.
  * @module BIMSURFER
+ * @submodule math
  * @class math
  * @static
  */
@@ -1819,8 +3701,154 @@ BIMSURFER.utils.removeA  = function(arr) {
     };
 
 })();;/**
+ * Viewer configuration management.
+ *
+ * @module XEO
+ * @submodule configs
+ */;/**
+
+
+ ## Overview
+
+ TODO
+
+ ## Example
+
+ TODO
+
+ ```` javascript
+
+ ````
+
+ @class Configs
+ @module BIMSURFER
+ @constructor
+ @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}, creates this Configs within the
+ default {{#crossLink "Viewer"}}Viewer{{/crossLink}} when omitted
+ @param [cfg] {*} Configs configuration
+ @param [cfg.id] {String} Optional ID, unique among all components in the parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}, generated automatically when omitted.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Configs.
+ @extends Component
+ */
+(function () {
+
+    "use strict";
+
+    /**
+     * @constructor
+     * @param {Object} bimServerApi A BIMSurfer API
+     * @param {String|DOMelement} div The viewport div within which the canvas will be inserted in the DOM
+     * @param {Object} [options] Options
+     * @param {Boolean} [autoStart=false] Starts this Viewer automatically when true
+     */
+    BIMSURFER.configs = new (function () {
+
+        this._handleMap = new BIMSURFER.utils.Map(); // Subscription handle pool
+        this._locSubs = {}; // A [handle -> callback] map for each location name
+        this._handleLocs = {}; // Maps handles to loc names
+
+        /**
+         * The properties
+         */
+        this.props = {};
+
+        /**
+         * Fires an event on this Viewer.
+         *
+         * Notifies existing subscribers to the event, retains the event to give to
+         * any subsequent notifications on that location as they are made.
+         *
+         * @method fire
+         * @param {String} event The event type name
+         * @param {Object} value The event
+         */
+        this.set = function (event, value) {
+            this.props[event] = value; // Save notification        
+            var subsForLoc = this._locSubs[event];
+            var sub;
+            if (subsForLoc) { // Notify subscriptions
+                for (var handle in subsForLoc) {
+                    if (subsForLoc.hasOwnProperty(handle)) {
+                        sub = subsForLoc[handle];
+                        sub.callback.call(sub.scope, value);
+                    }
+                }
+            }
+        };
+
+        /**
+         * Subscribes to an event on this Viewer.
+         *
+         * The callback is be called with this Viewer as scope.
+         *
+         * @method on
+         * @param {String} event Publication event
+         * @param {Function} callback Called when fresh data is available at the event
+         * @param {Object} [scope=this] Scope for the callback
+         * @return {String} Handle to the subscription, which may be used to unsubscribe with {@link #off}.
+         */
+        this.on = function (event, callback, scope) {
+            var subsForLoc = this._locSubs[event];
+            if (!subsForLoc) {
+                subsForLoc = {};
+                this._locSubs[event] = subsForLoc;
+            }
+            var handle = this._handleMap.addItem(); // Create unique handle
+            subsForLoc[handle] = {
+                scope: scope || this,
+                callback: callback
+            };
+            this._handleLocs[handle] = event;
+            var value = this.props[event];
+            if (value) { // A publication exists, notify callback immediately
+                callback.call(scope || this, value);
+            }
+            return handle;
+        };
+
+        /**
+         * Cancels an event subscription that was previously made with {{#crossLink "Viewer/on:method"}}{{/crossLink}} or
+         * {{#crossLink "Viewer/once:method"}}{{/crossLink}}.
+         *
+         * @method off
+         * @param {String} handle Publication handle
+         */
+        this.off = function (handle) {
+            var event = this._handleLocs[handle];
+            if (event) {
+                delete this._handleLocs[handle];
+                var locSubs = this._locSubs[event];
+                if (locSubs) {
+                    delete locSubs[handle];
+                }
+                this._handleMap.removeItem(handle); // Release handle
+            }
+        };
+
+        /**
+         * Subscribes to the next occurrence of the given event on this Viewer, then un-subscribes as soon as the event is handled.
+         *
+         * @method once
+         * @param {String} event Data event to listen to
+         * @param {Function(data)} callback Called when fresh data is available at the event
+         * @param {Object} [scope=this] Scope for the callback
+         */
+        this.once = function (event, callback, scope) {
+            var self = this;
+            var handle = this.on(event,
+                function (value) {
+                    self.off(handle);
+                    callback(value);
+                },
+                scope);
+        };
+    })();
+})();
+    
+;/**
  * BIMSurfer constants.
  * @module BIMSURFER
+ * @submodule configs
  * @class constants
  * @static
  */
@@ -2294,7 +4322,7 @@ BIMSURFER.constants.clamp = function (s, min, max) {
          * {{#crossLink "Component/once:method"}}{{/crossLink}}.
          *
          * @method off
-         * @param {String} handle Publication handle
+         * @param {String} handle Subscription handle
          */
         off: function (handle) {
             var event = this._handleLocs[handle];
@@ -2373,7 +4401,7 @@ BIMSURFER.constants.clamp = function (s, min, max) {
          */
         destroy: function () {
 
-            // Remove from Viewer
+            // Remove from parent
             this.viewer._removeComponent(this);
 
             if (this._destroy) {
@@ -2392,6 +4420,11 @@ BIMSURFER.constants.clamp = function (s, min, max) {
 
 })();
 ;/**
+ * Components for handling user interaction.
+ *
+ * @module XEO
+ * @submodule input
+ */;/**
  Publishes key and mouse events that occur on the parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}'s {{#crossLink "Canvas"}}Canvas{{/crossLink}}.
 
  ## Overview
@@ -2537,7 +4570,7 @@ var viewer = new BIMSURFER.Viewer(...);
              */
             this.enabled = true;
 
-            var canvas = this.viewer.canvas[0];
+            var canvas = this.viewer._canvas;
 
 
             // Disable context menu events so we can use right-click for things like panning
@@ -2704,7 +4737,7 @@ var viewer = new BIMSURFER.Viewer(...);
                 });
 
             canvas.addEventListener("mousewheel",
-                this._mouseWheelListener = function (event, d) {
+                this._mouseWheelListener = function (e, d) {
                     if (!self.enabled) {
                         return;
                     }
@@ -3586,993 +5619,2332 @@ var viewer = new BIMSURFER.Viewer(...);
 })();
 
 ;/**
- A **Viewer** is a WebGL-based 3D viewer for the visualisation and evaluation of BIM models.
+ A **CameraControl** allows you to pan, rotate and zoom a {{#crossLink "Camera"}}{{/crossLink}} using the mouse and keyboard,
+ as well as switch it between preset left, right, anterior, posterior, superior and inferior views.
 
  ## Overview
 
  <ul>
- <li></li>
+ <li>You can have multiple CameraControls within the same {{#crossLink "Viewer"}}{{/crossLink}}.</li>
+ <li>Multiple CameraControls can drive the same {{#crossLink "Camera"}}{{/crossLink}}, or can each drive their own separate {{#crossLink "Camera"}}Cameras{{/crossLink}}.</li>
+ <li>At any instant, the CameraControl we're driving is the one whose {{#crossLink "Camera/active:property"}}active{{/crossLink}} property is true.</li>
+ <li>You can switch a CameraControl to a different {{#crossLink "Camera"}}{{/crossLink}} at any time.</li>
  </ul>
 
  ## Example
 
- In the example below we'll create a Viewer with a {{#crossLink "Camera"}}{{/crossLink}},
- a {{#crossLink "CameraControl"}}{{/crossLink}} and a {{#crossLink "TeapotGeometry"}}{{/crossLink}},
- which is used by an {{#crossLink "Object"}}{{/crossLink}}.
- <br>Finally, we make the {{#crossLink "Camera"}}{{/crossLink}} orbit on each "tick" event emitted by the Viewer.
+ #### Controlling a Camera
 
- <iframe style="width: 600px; height: 400px" src="../../examples/viewer_Viewer.html"></iframe>
+ In this example we're viewing a {{#crossLink "RandomObjects"}}{{/crossLink}} with a {{#crossLink "Camera"}}{{/crossLink}} that's controlled by a CameraControl.
 
- ````javascript
- // Create a Viewer
- var viewer = new BIMSURFER.Viewer({
+ <iframe style="width: 800px; height: 600px" src="../../examples/control_CameraControl.html"></iframe>
 
-    // ID of the DIV element
-    element: "myDiv"
- });
+ ````Javascript
+ var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
 
- // Create a Camera
  var camera = new BIMSURFER.Camera(viewer, {
         eye: [5, 5, -5]
     });
 
- // Create a CameraControl to control our Camera with mouse and keyboard
  var cameraControl = new BIMSURFER.CameraControl(viewer, {
         camera: camera
     });
 
- // Create a Geometry
- var geometry = new BIMSURFER.TeapotGeometry(viewer, {
-        id: "myGeometry"
-    });
-
- // Create an Object that uses the Geometry
- var object1 = new BIMSURFER.Object(viewer, {
-        id: "myObject1",
-        type: "IfcCovering",
-        geometries: [ geometry ]
-    });
-
- // Spin the camera
- viewer.on("tick", function () {
-        camera.rotateEyeY(0.2);
+ // Create a RandomObjects
+ var randomObjects = new BIMSURFER.RandomObjects(viewer, {
+        numObjects: 55
     });
  ````
 
- @class Viewer
+ @class CameraControl
  @module BIMSURFER
+ @submodule input
  @constructor
+ @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
  @param [cfg] {*} Configs
  @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
- @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Object.
- @param cfg.element {String|HTMLElement} ID or instance of a DIV element in the page.
- @param cfg.bimServerApi {*} The BIMServer API.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this CameraControl.
+ @param [camera] {Camera} The Camera to control.
+ @extends Component
  */
 (function () {
 
     "use strict";
 
-    BIMSURFER.Viewer = function (cfg) {
-
-        var self = this;
-
-        this.className = "BIMSURFER.Viewer";
-
-        // Event management
-
-        // Pub/sub
-        this._handleMap = new BIMSURFER.utils.Map(); // Subscription handle pool
-        this._locSubs = {}; // A [handle -> callback] map for each location name
-        this._handleLocs = {}; // Maps handles to loc names
-        this.props = {}; // Maps locations to publications
-
-
-        // Check arguments
-
-        cfg = cfg || {};
-
-        var element = cfg.element;
-
-        if (!element) {
-            throw "Param expected: element";
-        }
-
-        if (typeof element == 'string') {
-            element = jQuery('div#' + element)[0];
-        }
-
-        if (!jQuery(element).is('div')) {
-            throw "Can't find div element";
-        }
-
-        // Clear container element
-
-        jQuery(element).empty();
+    BIMSURFER.CameraControl = BIMSURFER.Component.extend({
 
         /**
-         * The HTML element ocupied by the Viewer
-         *
-         * @property element
-         * @final
-         * @type {HTMLElement}
-         */
-        this.element = element;
+         JavaScript class name for this Component.
 
+         @property className
+         @type String
+         @final
+         */
+        className: "BIMSURFER.CameraControl",
 
         /**
-         * The BIMServer API
-         *
-         * @property bimServerApi
-         * @final
-         * @type {Object}
+          Indicates that only one instance of a CameraControl may be active within
+          its {{#crossLink "Viewer"}}{{/crossLink}} at a time. When a CameraControl is activated, that has
+          a true value for this flag, then any other active CameraControl will be deactivated first.
+
+         @property exclusive
+         @type Boolean
+         @final
          */
-        this.bimServerApi = cfg.bimServerApi;
+        exclusive: true,
+        
+        _init: function (cfg) {
 
+            var self = this;
 
-        this.SYSTEM = this;
+            var viewer = this.viewer;            
 
+            this._keyboardAxis = new BIMSURFER.KeyboardAxisCamera(viewer, {
+                camera: cfg.camera
+            });
 
-        /**
-         * Servers connected to this Viewer.
-         *
-         * @property connectedServers
-         * @type {Array of BIMSURFER.Server}
-         */
-        this.connectedServers = [];
+            this._keyboardOrbit = new BIMSURFER.KeyboardOrbitCamera(viewer, {
+                camera: cfg.camera
+            });
+            
+            this._mouseOrbit = new BIMSURFER.MouseOrbitCamera(viewer, {
+                camera: cfg.camera
+            });
 
+            this._keyboardPan = new BIMSURFER.KeyboardPanCamera(viewer, {
+                sensitivity: 1,
+                camera: cfg.camera
+            });
 
-        var canvasId = jQuery(this.element).attr('id') + "-canvas";
+            this._mousePan = new BIMSURFER.MousePanCamera(viewer, {
+                sensitivity: 1,
+                camera: cfg.camera
+            });
 
-        /**
-         * The HTML Canvas that this Viewer renders to. This is inserted into the element we configured this Viewer with.
-         * @property canvas
-         * @final
-         * @type {HTMLCanvasElement}
-         * @final
-         */
-        this.canvas = jQuery('<canvas />')
-            .attr('id', canvasId)
-            .attr('width', jQuery(this.element).width())
-            .attr('height', jQuery(this.element).height())
-            .html('<p>This application requires a browser that supports the <a href="http://www.w3.org/html/wg/html5/">HTML5</a> &lt;canvas&gt; feature.</p>')
-            .addClass(this.className.replace(/\./g, "-"))
-            .appendTo(this.element);
+            this._keyboardZoom = new BIMSURFER.KeyboardZoomCamera(viewer, {
+                sensitivity: 1,
+                camera: cfg.camera
+            });
 
+            this._mouseZoom = new BIMSURFER.MouseZoomCamera(viewer, {
+                sensitivity: 1,
+                camera: cfg.camera
+            });
 
-        /**
-         * The SceneJS scene graph that renders 3D content for this Viewer.
-         * @property scene
-         * @final
-         * @type {SceneJS.Scene}
-         * @final
-         */
-        this.scene = SceneJS.createScene({
+            this._mousePickObject = new BIMSURFER.MousePickObject(viewer, {
+                rayPick: true,
+                camera: cfg.camera
+            });
 
-            canvasId: canvasId,
+            this._cameraFly = new BIMSURFER.CameraFlyAnimation(viewer, {
+                camera: cfg.camera
+            });
 
-            // Transparent canvas
-            // Less work for the GPU rendering all those background fragments.
-            // Let CSS do that work.
-            transparent: true,
+            this._mousePickObject.on("pick",
+                function (e) {
 
-            nodes: [
+                    var diff = BIMSURFER.math.subVec3(self._cameraFly.camera.eye, self._cameraFly.camera.look, []);
 
-                // Node library, where we keep sharable
-                // asset nodes, such as geometries
-                {
-                    type: "library",
-                    id: "library"
+                    self._cameraFly.flyTo({
+                        look: e.worldPos,
+                        eye: [e.worldPos[0] + diff[0], e.worldPos[1] + diff[1], e.worldPos[2] + diff[2]]
+                    });
+                });
+
+            // Handle when nothing is picked
+            this._mousePickObject.on("nopick", function (e) {
+                // alert("Mothing picked");
+            });
+
+            this.camera = cfg.camera;
+            
+            this.firstPerson = cfg.firstPerson;
+
+            this.active = cfg.active !== false;
+        },
+
+        _props: {
+
+            firstPerson: {
+
+                set: function (value) {
+
+                    this._firstPerson = value;
+
+                    this._keyboardOrbit.firstPerson = value;
+                    this._mouseOrbit.firstPerson = value;
                 },
 
-                // Viewing transform
-                {
-                    type: "lookAt",
-                    id: "theLookat",
-
-                    nodes: [
-
-                        // Projection transform
-                        {
-                            type: "camera",
-                            id: "theCamera",
-
-                            nodes: [
-
-                                // Light sources
-                                {
-                                    id: "lightsRoot",
-                                    lights: [],
-
-                                    nodes: [
-
-                                        // Content is appended below this node
-                                        {
-                                            id: "contentRoot"
-                                        }
-                                    ]
-                                }
-                            ]
-                        }
-                    ]
+                get: function () {
+                    return this._firstPerson;
                 }
-            ]
-        });
-
-        /**
-         * ID of this Viewer
-         *
-         * @property id
-         * @final
-         * @type {String}
-         */
-        this.id = this.scene.getId();
-
-        // Init events
-
-        var canvas = this.scene.getCanvas();
-
-        this.scene.on('tick',
-            function (params) {
-                self.fire('tick', {
-                    time: params.time * 0.001,
-                    elapsed: (params.time - params.prevTime) * 0.001
-                });
-            });
-
-        this._lookatNode = this.scene.getNode('theLookat');
-
-        this._lookatNode.on("matrix",
-            function (matrix) {
-                self.fire('viewMatrix', matrix);
-            });
-
-        this._cameraNode = this.scene.getNode('theCamera');
-
-        this._cameraNode.on("matrix",
-            function (matrix) {
-                self.fire('projMatrix', matrix);
-            });
-
-
-        // Pool where we'll keep all component IDs
-        this._componentIDMap = new BIMSURFER.utils.Map();
-
-        /**
-         * The {{#crossLink "Component"}}Components{{/crossLink}} within this Viewer, mapped to their IDs.
-         * @property components
-         * @final
-         * @type {{String:Component}}
-         */
-        this.components = {};
-
-        /**
-         * Map of components that have an 'exclusive' property. This is used to ensure that
-         * only one of these component types is active within this Viewer at a time.
-         */
-        this._onComponentActive = {};
-
-        /**
-         * The {{#crossLink "Component"}}Components{{/crossLink}} within this Viewer, mapped to their class names.
-         * @property classes
-         * @final
-         * @type {{String:{String:Component}}}
-         */
-        this.classes = {};
-
-
-        /**
-         * The {{#crossLink "Component"}}Components{{/crossLink}} within this Viewer, mapped to their IFC type names.
-         * @property types
-         * @final
-         * @type {{String:{String:Component}}}
-         */
-        this.types = {};
-
-
-        // Add components
-
-        var components = cfg.components;
-
-        if (components) {
-
-            var component;
-            var className;
-            var constructor;
-
-            for (var i = 0, len = components.length; i < len; i++) {
-
-                component = components[i];
-                className = component.className;
-
-                if (className) {
-                    constructor = window[className];
-
-                    if (constructor) {
-
-                        // Adds component to this Viewer via #_addComponent
-                        new constructor(this, component);
-                    }
-                }
-            }
-        }
-
-        if (BIMSURFER.utils.isset(cfg, cfg.autoStart)) {
-            if (!BIMSURFER.Util.isset(cfg.autoStart.serverUrl, cfg.autoStart.serverUsername, cfg.autoStart.serverPassword, cfg.autoStart.projectOid)) {
-                console.error('Some autostart parameters are missing');
-                return;
-            }
-            var _this = this;
-            var BIMServer = new BIMSURFER.Server(this, cfg.autoStart.serverUrl, cfg.autoStart.serverUsername, cfg.autoStart.serverPassword, false, true, true, function () {
-                if (BIMServer.loginStatus != 'loggedin') {
-                    _this.element.innerHTML = 'Something went wrong while connecting';
-                    console.error('Something went wrong while connecting');
-                    return;
-                }
-                var project = BIMServer.getProjectByOid(cfg.autoStart.projectOid);
-                project.loadScene((BIMSURFER.Util.isset(cfg.autoStart.revisionOid) ? cfg.autoStart.revisionOid : null), true);
-            });
-        }
-
-        /**
-         * Geometry loaders
-         * @property geometryLoaders
-         * @type {Array of }
-         * @final
-         */
-        this.geometryLoaders = [];
-
-        // Start the loading loop
-        // This just runs forever, polling any loaders that exist on this viewer
-
-        this.scene.on("tick",
-            function () {
-                self.geometryLoaders.forEach(
-                    function (geometryLoader) {
-                        geometryLoader.process();
-                    });
-            });
-
-        /**
-         * Input handling for this Viewer.
-         * @property input
-         * @final
-         * @type {BIMSURFER.Input}
-         */
-        this.input = new BIMSURFER.Input(this);
-
-        /**
-         * Cursor icon control for this Viewer.
-         * @property cursor
-         * @final
-         * @type {BIMSURFER.Cursor}
-         */
-        this.cursor = new BIMSURFER.Cursor(this);
-
-        /**
-         * The default {{#crossLink "Camera"}}{{/crossLink}} for this Viewer.
-         *
-         * This {{#crossLink "Camera"}}{{/crossLink}} is active by default, and becomes inactive
-         * as soon as you activate some other {{#crossLink "Camera"}}{{/crossLink}} in this Viewer.
-         *
-         * Any components that you create for this Viewer, that require a {{#crossLink "Camera"}}{{/crossLink}},
-         * will fall back on this one by default.
-         *
-         * @property camera
-         * @final
-         * @type {BIMSURFER.Camera}
-         */
-        this.camera = new BIMSURFER.Camera(this);
-
-        /**
-         * The number of {{#crossLink "Objects"}}{{/crossLink}} within this ObjectSet.
-         *
-         * @property numObjects
-         * @type Number
-         */
-        this.numObjects = 0;
-
-        this._boundary = {xmin: 0.0, ymin: 0.0, zmin: 0.0, xmax: 0.0, ymax: 0.0, zmax: 0.0 };
-        this._center = [0, 0, 0];
-
-        this._boundaryDirty = true;
-    };
-
-    /**
-     * Adds a {{#crossLink "Component"}}{{/crossLink}} to this viewer.
-     *
-     * This is called within the constructors of {{#crossLink "Component"}}{{/crossLink}} subclasses.
-     *
-     * The {{#crossLink "Component"}}{{/crossLink}} is assigned a
-     * unique {{#crossLink "Component/id:property"}}{{/crossLink}} if it does not yet have one.
-     *
-     * @private
-     * @param {BIMSURFER.Component} component The Component to add.
-     */
-    BIMSURFER.Viewer.prototype._addComponent = function (component) {
-
-        var id = component.id;
-        var className = component.className;
-
-        // Check for ID clash
-
-        if (id) {
-            if (this.components[id]) {
-                this.error("A component with this ID already exists in this Viewer: " + id);
-                return;
-            }
-        } else {
-            id = component.id = this._componentIDMap.addItem({});
-        }
-
-        // Add component to ID map
-
-        this.components[id] = component;
-
-        // Add component to className map
-
-        var classComponents = this.classes[className];
-        if (!classComponents) {
-            classComponents = this.classes[className] = {};
-        }
-        classComponents[id] = component;
-
-
-        // Add component to type map
-
-        if (component.type) {
-            var type = component.type;
-            var typeComponents = this.types[type];
-            if (!typeComponents) {
-                typeComponents = this.types[type] = {};
-            }
-            typeComponents[id] = component;
-        }
-
-        var self = this;
-
-        // When the component has an 'exclusive' property set true, then only one instance of that component
-        // type may be active within the Viewer at a time. When a component is activated, that has a true value
-        // for this flag, then any other active component of the same type will be deactivated first.
-
-        if (component.exclusive === true) {
-
-            if (component.active) {
-                self.deactivateOthers(component);
-            }
-
-            this._onComponentActive[component.id] = component.on("active",
-                function (active) {
-
-                    if (active) {
-                        self._deactivateOthers(component);
-                    }
-                });
-        }
-
-        this._boundaryDirty = true;
-
-        /**
-         * Fired whenever a Component has been created within this Viewer.
-         * @event componentCreated
-         * @param {Component} value The component that was created
-         */
-        this.fire("componentCreated", component, true);
-    };
-
-    // Deactivates all other components within this Viewer, that have same className as that given.
-    BIMSURFER.Viewer.prototype._deactivateOthers = function (component) {
-        this.withClasses([component.className],
-            function (otherComponent) {
-                if (otherComponent.id !== component.id) {
-                    otherComponent.active = false;
-                }
-            });
-    };
-
-    /**
-     * Removes a {{#crossLink "Component"}}{{/crossLink}} from this Viewer.
-     *
-     * This is called within the destructors of {{#crossLink "Component"}}{{/crossLink}} subclasses.
-     *
-     * @private
-     * @param {BIMSURFER.Component} component The component to remove
-     */
-    BIMSURFER.Viewer.prototype._removeComponent = function (component) {
-
-        var id = component.id;
-        var className = component.className;
-
-        if (!this.components[id]) {
-            console.warn("BIMSURFER.Viewer._removeComponent - Component with this ID is not within Viewer: " + id);
-            return;
-        }
-
-        delete this.components[id];
-        delete this.classes[className][id];
-
-        if (component.type) {
-            delete this.types[component.type][id];
-        }
-
-        this._boundaryDirty = true;
-
-        this._componentIDMap.removeItem(id);
-
-        if (component.exclusive === true) {
-            component.off(this._onComponentActive[component.id]);
-            delete this._onComponentActive[component.id];
-        }
-
-        /**
-         * Fired whenever a component within this Viewer has been destroyed.
-         * @event componentDestroyed
-         * @param {Component} value The component that was destroyed
-         */
-        this.fire("componentDestroyed", component, true);
-    };
-
-    /**
-     * This Viewer's view transformation matrix.
-     *
-     * @property viewMatrix
-     * @final
-     * @default [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
-     * @type {Array of Number}
-     */
-    Object.defineProperty(BIMSURFER.Viewer.prototype, "viewMatrix", {
-
-        get: function() {
-            return this._lookatNode.getMatrix();
-        },
-
-        enumerable: true
-    });
-
-
-    /**
-     * This Viewer's projection transformation matrix.
-     *
-     * @property projMatrix
-     * @final
-     * @default [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
-     * @type {Array of Number}
-     */
-    Object.defineProperty(BIMSURFER.Viewer.prototype, "projMatrix", {
-
-        get: function() {
-            return this._cameraNode.getMatrix();
-        },
-
-        enumerable: true
-    });
-
-    /**
-     * Boundary of all bounded components in this Viewer.
-     *
-     * @property boundary
-     * @final
-     * @type {*}
-     */
-    Object.defineProperty(BIMSURFER.Viewer.prototype, "boundary", {
-
-        get: function () {
-
-            if (this._boundaryDirty) {
-                this._rebuildBoundary();
-            }
-
-            return this._boundary;
-        },
-
-        enumerable: true
-    });
-
-    /**
-     * Center of all bounded components in this Viewer.
-     *
-     * @property center
-     * @final
-     * @type {*}
-     */
-    Object.defineProperty(BIMSURFER.Viewer.prototype, "center", {
-
-        get: function () {
-
-            if (this._boundaryDirty) {
-                this._rebuildBoundary();
-            }
-
-            return this._center;
-        },
-
-        enumerable: true
-    });
-
-
-    BIMSURFER.Viewer.prototype._rebuildBoundary = function () {
-
-        if (!this._boundaryDirty) {
-            return;
-        }
-
-        // For an empty selection, boundary is zero volume and centered at the origin
-
-        if (this.numObjects === 0) {
-            this._boundary.xmin = -1.0;
-            this._boundary.ymin = -1.0;
-            this._boundary.zmin = -1.0;
-            this._boundary.xmax = 1.0;
-            this._boundary.ymax = 1.0;
-            this._boundary.zmax = 1.0;
-
-        } else {
-
-            // Set boundary inside-out, ready to expand by each selected object
-
-            this._boundary.xmin = 1000000.0;
-            this._boundary.ymin = 1000000.0;
-            this._boundary.zmin = 1000000.0;
-            this._boundary.xmax = -1000000.0;
-            this._boundary.ymax = -1000000.0;
-            this._boundary.zmax = -1000000.0;
-
-            var component;
-            var boundary;
-
-            for (var componentId in this.components) {
-                if (this.components.hasOwnProperty(componentId)) {
-
-                    component = this.components[componentId];
-
-                    boundary = component.boundary;
-
-                    if (boundary) {
-
-                        if (boundary.xmin < this._boundary.xmin) {
-                            this._boundary.xmin = boundary.xmin;
-                        }
-
-                        if (boundary.ymin < this._boundary.ymin) {
-                            this._boundary.ymin = boundary.ymin;
-                        }
-
-                        if (boundary.zmin < this._boundary.zmin) {
-                            this._boundary.zmin = boundary.zmin;
-                        }
-
-                        if (boundary.xmax > this._boundary.xmax) {
-                            this._boundary.xmax = boundary.xmax;
-                        }
-
-                        if (boundary.ymax > this._boundary.ymax) {
-                            this._boundary.ymax = boundary.ymax;
-                        }
-
-                        if (boundary.zmax > this._boundary.zmax) {
-                            this._boundary.zmax = boundary.zmax;
-                        }
-                    }
-                }
-            }
-        }
-
-        this._center[0] = (this._boundary.xmax + this._boundary.xmin) * 0.5;
-        this._center[1] = (this._boundary.ymax + this._boundary.ymin) * 0.5;
-        this._center[2] = (this._boundary.zmax + this._boundary.zmin) * 0.5;
-
-        this._boundaryDirty = false;
-    };
-
-    /**
-     *
-     */
-    BIMSURFER.Viewer.prototype.pick = function (x, y, options) {
-
-        var hit = this.scene.pick(x, y, options);
-
-        if (hit) {
-
-            var objectId = hit.name;
-            var object = this.components[objectId];
-
-            if (object) {
-                return {
-                    object: object,
-                    canvasPos: hit.canvasPos,
-                    worldPos: hit.worldPos
-                }
-            }
-        }
-    };
-
-    /**
-     * Stores a connection to a server for later use.
-     *
-     * @param {BIMSURFER.Server} server The server connection to store.
-     */
-    BIMSURFER.Viewer.prototype.addConnectedServer = function (server) {
-        if (this.connectedServers.indexOf(server) == -1) {
-            this.connectedServers.push(server);
-        }
-    };
-
-    /**
-     * Resizes the viewport and updates the aspect ratio
-     *
-     * @param {Number} width The new width in px
-     * @param {Number} height The new height in px
-     */
-    BIMSURFER.Viewer.prototype.resize = function (width, height) {
-
-        if (!this.canvas) {
-            // TODO: log
-            return;
-        }
-
-        jQuery(this.canvas).width(width).height(height);
-
-        if (BIMSURFER.Util.isset(this.canvas[0])) {
-            this.canvas[0].width = width;
-            this.canvas[0].height = height;
-        }
-
-        var cameraNode = this.scene.getNode("theCamera");
-        var optics = cameraNode.getOptics();
-        optics.aspect = jQuery(this.canvas).width() / jQuery(this.canvas).height();
-        cameraNode.setOptics(optics);
-    };
-
-    /**
-     * Loads and shows the geometry of the revisions that are in the load queue
-     */
-    BIMSURFER.Viewer.prototype.loadGeometry = function (geometryLoader) {
-
-        var self = this;
-
-        this.geometryLoaders.push(geometryLoader);
-
-        // TODO limit to something useful
-
-        if (this.geometryLoaders.length <= 20) {
-            geometryLoader.progressListeners.push(
-                function (progress) {
-                    if (progress == "done") {
-                        removeA(self.geometryLoaders, geometryLoader);
-                    }
-                });
-            geometryLoader.start();
-        }
-    };
-
-    /**
-     * Iterates with a callback over Components of the given classes
-     *
-     * @param {String} classNames List of class names
-     * @param {Function} callback Callback called for each Component of the given classes
-     */
-    BIMSURFER.Viewer.prototype.withClasses = function (classNames, callback) {
-        var className;
-        for (var i = 0, len = classNames.length; i < len; i++) {
-            className = classNames[i];
-            var components = this.classes[className];
-            if (components) {
-                for (var id in components) {
-                    if (components.hasOwnProperty(id)) {
-                        callback(components[id]);
-                    }
-                }
-            }
-        }
-    };
-
-    /**
-     * Iterates with a callback over Components of the given IFC types
-     *
-     * @param {String} typeNames List of type names
-     * @param {Function} callback Callback called for each Component of the given types
-     */
-    BIMSURFER.Viewer.prototype.withTypes = function (typeNames, callback) {
-        var typeName;
-        for (var i = 0, len = typeNames.length; i < len; i++) {
-            typeName = typeNames[i];
-            var components = this.types[typeName];
-            if (components) {
-                for (var id in components) {
-                    if (components.hasOwnProperty(id)) {
-                        callback(components[id]);
-                    }
-                }
-            }
-        }
-    };
-
-    /**
-     * Shows an IFC type of a revision.
-     *
-     * @param {Array of String} typeNames Names of types to hide
-     * @param {BIMSURFER.ProjectRevision instance} revision The revision
-     */
-    BIMSURFER.Viewer.prototype.showTypes = function (typeNames, revision) {
-        this.withTypes(typeNames,
-            function (component) {
-                component.active = true;
-
-            });
-    };
-
-    /**
-     * Hides an IFC type of a revision.
-     *
-     * @param {Array of String} typeNames Names of types to hide
-     * @param {BIMSURFER.ProjectRevision instance} revision The revision
-     */
-    BIMSURFER.Viewer.prototype.hideTypes = function (typeNames, revision) {
-        this.withTypes(typeNames,
-            function (component) {
-                component.active = false;
-            });
-    };
-
-    /**
-     * Hides all the types of a revision
-     *
-     * @param {BIMSURFER.ProjectRevision} revision The revision to hide
-     */
-    BIMSURFER.Viewer.prototype.hideRevision = function (revision) {
-//        var visibleTypes = revision.visibleTypes.slice(0);
-//        for (var i = 0; i < visibleTypes.length; i++) {
-//            this.hideType(visibleTypes[i], revision);
-//        }
-    };
-
-    /**
-     * Shows a revision
-     *
-     * @param {BIMSURFER.ProjectRevision} revision The revision to show
-     * @param {Array} [types] The types to show (default = BIMSURFER.constants.defaultTypes)
-     */
-    BIMSURFER.Viewer.prototype.showRevision = function (revision, types) {
-
-        if (!types) {
-
-            types = [];
-
-            var defaultTypes = BIMSURFER.constants.defaultTypes;
-
-            if (!defaultTypes) {
-                this.warn("Property expected in BIMSURFER.constants: defaultTypes");
-
-            } else {
-                for (var i = 0; i < revision.ifcTypes.length; i++) {
-                    if (defaultTypes.indexOf(revision.ifcTypes[i]) != -1) {
-                        types.push(revision.ifcTypes[i]);
-                    }
-                }
-            }
-        }
-
-        this.showType(types, revision);
-    };
-
-    /**
-     * Fires an event on this Viewer.
-     *
-     * Notifies existing subscribers to the event, retains the event to give to
-     * any subsequent notifications on that location as they are made.
-     *
-     * @method fire
-     * @param {String} event The event type name
-     * @param {Object} value The event
-     * @param {Boolean} [forget=false] When true, does not retain for subsequent subscribers
-     */
-    BIMSURFER.Viewer.prototype.fire = function (event, value, forget) {
-        if (forget !== true) {
-            this.props[event] = value; // Save notification
-        }
-        var subsForLoc = this._locSubs[event];
-        var sub;
-        if (subsForLoc) { // Notify subscriptions
-            for (var handle in subsForLoc) {
-                if (subsForLoc.hasOwnProperty(handle)) {
-                    sub = subsForLoc[handle];
-                    sub.callback.call(sub.scope, value);
-                }
-            }
-        }
-    };
-
-    /**
-     * Subscribes to an event on this Viewer.
-     *
-     * The callback is be called with this Viewer as scope.
-     *
-     * @method on
-     * @param {String} event Publication event
-     * @param {Function} callback Called when fresh data is available at the event
-     * @param {Object} [scope=this] Scope for the callback
-     * @return {String} Handle to the subscription, which may be used to unsubscribe with {@link #off}.
-     */
-    BIMSURFER.Viewer.prototype.on = function (event, callback, scope) {
-        var subsForLoc = this._locSubs[event];
-        if (!subsForLoc) {
-            subsForLoc = {};
-            this._locSubs[event] = subsForLoc;
-        }
-        var handle = this._handleMap.addItem(); // Create unique handle
-        subsForLoc[handle] = {
-            scope: scope || this,
-            callback: callback
-        };
-        this._handleLocs[handle] = event;
-        var value = this.props[event];
-        if (value) { // A publication exists, notify callback immediately
-            callback.call(scope || this, value);
-        }
-        return handle;
-    };
-
-    /**
-     * Cancels an event subscription that was previously made with {{#crossLink "Viewer/on:method"}}{{/crossLink}} or
-     * {{#crossLink "Viewer/once:method"}}{{/crossLink}}.
-     *
-     * @method off
-     * @param {String} handle Publication handle
-     */
-    BIMSURFER.Viewer.prototype.off = function (handle) {
-        var event = this._handleLocs[handle];
-        if (event) {
-            delete this._handleLocs[handle];
-            var locSubs = this._locSubs[event];
-            if (locSubs) {
-                delete locSubs[handle];
-            }
-            this._handleMap.removeItem(handle); // Release handle
-        }
-    };
-
-    /**
-     * Subscribes to the next occurrence of the given event on this Viewer, then un-subscribes as soon as the event is handled.
-     *
-     * @method once
-     * @param {String} event Data event to listen to
-     * @param {Function(data)} callback Called when fresh data is available at the event
-     * @param {Object} [scope=this] Scope for the callback
-     */
-    BIMSURFER.Viewer.prototype.once = function (event, callback, scope) {
-        var self = this;
-        var handle = this.on(event,
-            function (value) {
-                self.off(handle);
-                callback(value);
             },
-            scope);
-    };
 
-    /**
-     * Logs a console debugging message for this View.
-     *
-     * The console message will have this format: *````[LOG] BIMSERVER.Viewer: <message>````*
-     *
-     * @method log
-     * @param {String} message The message to log
-     */
-    BIMSURFER.Viewer.prototype.log = function (message) {
-        window.console.log("[LOG] BIMSERVER.Viewer: " + message);
-    };
+            /**
+             * The {{#crossLink "Camera"}}{{/crossLink}} being controlled.
+             *
+             * Must be within the same {{#crossLink "Viewer"}}{{/crossLink}} as this Object. Defaults to the parent
+             * {{#crossLink "Viewer"}}Viewer's{{/crossLink}} default {{#crossLink "Viewer/camera:property"}}camera{{/crossLink}} when set to
+             * a null or undefined value.
+             *
+             * @property camera
+             * @type Camera
+             */
+            camera: {
 
-    /**
-     * Logs an error for this View to the JavaScript console.
-     *
-     * The console message will have this format: *````[ERROR] BIMSERVER.Viewer: <message>````*
-     *
-     * @method error
-     * @param {String} message The message to log
-     */
-    BIMSURFER.Viewer.prototype.error = function (message) {
-        window.console.error("[ERROR] BIMSERVER.Viewer: " + message);
-    };
+                set: function (value) {
+
+                    var camera = value;
+
+                    if (camera) {
+
+                        if (BIMSURFER._isString(camera)) {
+                            camera = this.viewer.components[camera];
+                            if (!camera) {
+                                this.error("camera", "Camera not found in Viewer: " + value);
+                                return;
+                            }
+                        }
+
+                        if (camera.className != "BIMSURFER.Camera") {
+                            this.error("camera", "Value is not a BIMSURFER.Camera");
+                            return;
+                        }
+
+                    } else {
+
+                        // Default to Viewer's default Camera
+                        camera = this.viewer.camera;
+                    }
+
+                    //   this._cameraFly.camera = camera;
+
+                    this._camera = camera;
+
+                    this._keyboardAxis.camera = camera;
+
+                    this._keyboardOrbit.camera = camera;
+                    this._mouseOrbit.camera = camera;
+
+                    this._keyboardPan.camera = camera;
+                    this._mousePan.camera = camera;
+
+                    this._keyboardZoom.camera = camera;
+                    this._mouseZoom.camera = camera;
+                },
+
+                get: function () {
+                    return this._camera;
+                }
+            },
+
+            /**
+             * Flag which indicates whether this CameraControl is active or not.
+             *
+             * Fires an {{#crossLink "CameraControl/active:event"}}{{/crossLink}} event on change.
+             *
+             * @property active
+             * @type Boolean
+             */
+            active: {
+
+                set: function (value) {
+
+                    if (this._active === value) {
+                        return;
+                    }
+
+                    this._keyboardOrbit.active = value;
+                    this._mouseOrbit.active = value;
+                    this._keyboardPan.active = value;
+                    this._mousePan.active = value;
+                    this._mousePickObject.active = value;
+                    this._cameraFly.active = value;
+
+                    /**
+                     * Fired whenever this CameraControl's {{#crossLink "CameraControl/active:property"}}{{/crossLink}} property changes.
+                     * @event active
+                     * @param value The property's new value
+                     */
+                    this.fire('active', this._active = value);
+                },
+
+                get: function () {
+                    return this._active;
+                }
+            }
+        },
+
+        _destroy: function () {
+
+            this._keyboardAxis.destroy();
+            this._keyboardOrbit.destroy();
+            this._mouseOrbit.destroy();
+            this._keyboardPan.destroy();
+            this._mousePan.destroy();
+            this._keyboardZoom.destroy();
+            this._mouseZoom.destroy();
+            this._mousePickObject.destroy();
+            this._cameraFly.destroy();
+
+            this.active = false;
+        }
+    });
+
+})();
+;/**
+ A **MouseOrbitCamera** lets you orbit a {{#crossLink "Camera"}}{{/crossLink}} about its point-of-interest using the mouse.
+
+ ## Overview
+
+ <ul>
+ <li>Orbiting involves rotating the {{#crossLink "Camera"}}Camera's{{/crossLink}} {{#crossLink "Camera/eye:property"}}{{/crossLink}}
+ position about its current {{#crossLink "Camera/look:property"}}{{/crossLink}} position.</li>
+ <li>The orbit is freely rotating, without gimbal-lock.</li>
+ <li>If desired, you can have multiple MouseOrbitCameras within the same {{#crossLink "Viewer"}}{{/crossLink}}.</li>
+ <li>Multiple MouseOrbitCameras can drive the same {{#crossLink "Camera"}}{{/crossLink}}, or can each drive their own separate {{#crossLink "Camera"}}Cameras{{/crossLink}}.</li>
+ <li>At any instant, the MouseOrbitCameras we're driving is the one whose {{#crossLink "MouseOrbitCamera/active:property"}}active{{/crossLink}} property is true.</li>
+ <li>You can switch a MouseOrbitCameras to a different {{#crossLink "Camera"}}{{/crossLink}} at any time.</li>
+ </ul>
+
+ TODO
+
+ ## Example
+
+ <iframe style="width: 600px; height: 400px" src="../../examples/control_MouseOrbitCamera.html"></iframe>
+
+ @class MouseOrbitCamera
+ @module BIMSURFER
+ @submodule input
+ @constructor
+ @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
+ @param [cfg] {*} Configs
+ @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this MouseOrbitCamera.
+ @param [camera] {Camera} The {{#crossLink "Camera"}}{{/crossLink}} to control.
+ @extends Component
+ */
+(function () {
+
+    "use strict";
+
+    BIMSURFER.MouseOrbitCamera = BIMSURFER.Component.extend({
+
+        /**
+         JavaScript class name for this Component.
+
+         @property className
+         @type String
+         @final
+         */
+        className: "BIMSURFER.MouseOrbitCamera",
+
+        _init: function (cfg) {
+
+            this.camera = cfg.camera;
+
+            this._onTick = null;
+
+            this._onMouseDown = null;
+            this._onMouseMove = null;
+            this._onMouseUp = null;
+
+            this.active = cfg.active !== false;
+        },
+
+        _props: {
+
+            /**
+             * Flag which indicates whether this MouseOrbitCamera is active or not.
+             *
+             * Fires an {{#crossLink "MouseOrbitCamera/active:event"}}{{/crossLink}} event on change.
+             *
+             * @property active
+             * @type Boolean
+             */
+            active: {
+
+                set: function (value) {
+
+                    if (this._active === value) {
+                        return;
+                    }
+
+                    var input = this.viewer.input;
+
+                    if (value) {
+
+                        var sensitivity = 0.20;
+                        var lastX;
+                        var lastY;
+                        var xDelta = 0;
+                        var yDelta = 0;
+                        var down = false;
+
+                        var self = this;
+
+                        this._onTick = this.viewer.on("tick",
+                            function (params) {
+
+                                if (!self._camera) {
+                                    return;
+                                }
+
+                                if (xDelta != 0) {
+                                    self._camera.rotateEyeY(-xDelta);
+                                    xDelta = 0;
+                                }
+
+                                if (yDelta != 0) {
+                                    self._camera.rotateEyeX(yDelta);
+                                    yDelta = 0;
+                                }
+                            });
+
+                        this._onMouseDown = input.on("mousedown",
+                            function (e) {
+
+                                if (input.mouseDownLeft
+                                    && !input.mouseDownRight
+                                    && !input.keyDown[input.KEY_SHIFT]
+                                    && !input.mouseDownMiddle) {
+
+                                    down = true;
+                                    lastX = e[0];
+                                    lastY = e[1];
+
+                                } else {
+                                    down = false;
+                                }
+
+                            });
+
+                        this._onMouseUp = input.on("mouseup",
+                            function (e) {
+                                down = false;
+                            });
+
+                        this._onMouseMove = input.on("mousemove",
+                            function (e) {
+                                if (down) {
+                                    xDelta += (e[0] - lastX) * sensitivity;
+                                    yDelta += (e[1] - lastY) * sensitivity;
+                                    lastX = e[0];
+                                    lastY = e[1];
+                                }
+                            });
+
+                    } else {
+
+                        input.off(this._onTick);
+
+                        input.off(this._onMouseDown);
+                        input.off(this._onMouseUp);
+                        input.off(this._onMouseMove);
+                    }
+
+                    /**
+                     * Fired whenever this MouseOrbitCamera's {{#crossLink "MouseOrbitCamera/active:property"}}{{/crossLink}} property changes.
+                     * @event active
+                     * @param value The property's new value
+                     */
+                    this.fire('active', this._active = value);
+                },
+
+                get: function () {
+                    return this._active;
+                }
+            },
+
+            camera: {
+
+                set: function (value) {
+                    var camera = value;
+                    if (camera) {
+                        if (BIMSURFER._isString(camera)) {
+                            camera = this.viewer.components[camera];
+                            if (!camera) {
+                                this.error("camera", "Camera not found in Viewer: " + value);
+                                return;
+                            }
+                        }
+                        if (camera.className != "BIMSURFER.Camera") {
+                            this.error("camera", "Value is not a BIMSURFER.Camera");
+                            return;
+                        }
+                    }
+                    this._camera = camera;
+                    this._cameraDirty = true;
+                },
+
+                get: function () {
+                    return this._camera;
+                }
+            }
+        },
+
+        _destroy: function () {
+            this.active = false;
+        }
+    });
+
+})();
+;/**
+ A **KeyboardOrbitCamera** lets you orbit a {{#crossLink "Camera"}}{{/crossLink}} about its point-of-interest using the keyboard's arrow keys.
+
+ ## Overview
+
+ <ul>
+ <li>Orbiting involves rotating the {{#crossLink "Camera"}}Camera's{{/crossLink}} {{#crossLink "Camera/eye:property"}}{{/crossLink}}
+ position about its current {{#crossLink "Camera/look:property"}}{{/crossLink}} position.</li>
+ <li>The orbit is freely rotating, without gimbal-lock.</li>
+ <li>If desired, you can have multiple KeyboardOrbitCameras within the same {{#crossLink "Viewer"}}{{/crossLink}}.</li>
+ <li>Multiple KeyboardOrbitCameras can drive the same {{#crossLink "Camera"}}{{/crossLink}}, or can each drive their own separate {{#crossLink "Camera"}}Cameras{{/crossLink}}.</li>
+ <li>At any instant, the KeyboardOrbitCameras we're driving is the one whose {{#crossLink "KeyboardOrbitCamera/active:property"}}active{{/crossLink}} property is true.</li>
+ <li>You can switch a KeyboardOrbitCameras to a different {{#crossLink "Camera"}}{{/crossLink}} at any time.</li>
+ </ul>
+
+ ## Example
+
+ <iframe style="width: 600px; height: 400px" src="../../examples/control_KeyboardOrbitCamera.html"></iframe>
+
+ @class KeyboardOrbitCamera
+ @module BIMSURFER
+ @submodule input
+ @constructor
+ @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
+ @param [cfg] {*} Configs
+ @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this KeyboardAxisCamera.
+ @param [camera] {Camera} The {{#crossLink "Camera"}}{{/crossLink}} to control.
+ @extends Component
+ */
+(function () {
+
+    "use strict";
+
+    BIMSURFER.KeyboardOrbitCamera = BIMSURFER.Component.extend({
+
+        /**
+         JavaScript class name for this Component.
+
+         @property className
+         @type String
+         @final
+         */
+        className: "BIMSURFER.KeyboardOrbitCamera",
+
+        _init: function (cfg) {
+
+            this.camera = cfg.camera;
+
+            this._onTick = null;
+
+            this.active = cfg.active !== false;
+        },
+
+        _props: {
+
+            /**
+             * Flag which indicates whether this KeyboardOrbitCamera is active or not.
+             *
+             * Fires an {{#crossLink "KeyboardOrbitCamera/active:event"}}{{/crossLink}} event on change.
+             *
+             * @property active
+             * @type Boolean
+             */
+            active: {
+
+                set: function (value) {
+
+                    if (this._active === value) {
+                        return;
+                    }
+
+                    var input = this.viewer.input;
+
+                    if (value) {
+
+                        var self = this;
+
+                        this._onTick = this.viewer.on("tick",
+                            function (params) {
+
+                                if (!self._camera) {
+                                    return;
+                                }
+
+                                var elapsed = params.elapsed;
+
+                                var yawRate = 50;
+                                var pitchRate = 50;
+
+                                if (!input.ctrlDown && !input.altDown) {
+
+                                    var left = input.keyDown[input.KEY_LEFT_ARROW];
+                                    var right = input.keyDown[input.KEY_RIGHT_ARROW];
+                                    var up = input.keyDown[input.KEY_UP_ARROW];
+                                    var down = input.keyDown[input.KEY_DOWN_ARROW];
+
+                                    if (left || right || up || down) {
+
+                                        var yaw = 0;
+                                        var pitch = 0;
+
+                                        if (right) {
+                                            yaw = -elapsed * yawRate;
+
+                                        } else if (left) {
+                                            yaw = elapsed * yawRate;
+                                        }
+
+                                        if (down) {
+                                            pitch = elapsed * pitchRate;
+
+                                        } else if (up) {
+                                            pitch = -elapsed * pitchRate;
+                                        }
+
+                                        if (Math.abs(yaw) > Math.abs(pitch)) {
+                                            pitch = 0;
+                                        } else {
+                                            yaw = 0;
+                                        }
+
+                                        if (yaw != 0) {
+                                            self._camera.rotateEyeY(yaw);
+                                        }
+
+                                        if (pitch != 0) {
+                                            self._camera.rotateEyeX(pitch);
+                                        }
+                                    }
+                                }
+                            });
+
+                    } else {
+
+                        this.viewer.off(this._onTick);
+                    }
+
+                    /**
+                     * Fired whenever this KeyboardOrbitCamera's {{#crossLink "KeyboardOrbitCamera/active:property"}}{{/crossLink}} property changes.
+                     * @event active
+                     * @param value The property's new value
+                     */
+                    this.fire('active', this._active = value);
+                },
+
+                get: function () {
+                    return this._active;
+                }
+            },
+
+            camera: {
+
+                set: function (value) {
+                    var camera = value;
+                    if (camera) {
+                        if (BIMSURFER._isString(camera)) {
+                            camera = this.viewer.components[camera];
+                            if (!camera) {
+                                this.error("camera", "Camera not found in Viewer: " + value);
+                                return;
+                            }
+                        }
+                        if (camera.className != "BIMSURFER.Camera") {
+                            this.error("camera", "Value is not a BIMSURFER.Camera");
+                            return;
+                        }
+                    }
+                    this._camera = camera;
+                },
+
+                get: function () {
+                    return this._camera;
+                }
+            }
+        },
+
+        _destroy: function () {
+            this.active = false;
+        }
+    });
+
+})();
+;/**
+ A **MouseZoomCamera** lets you zoom a {{#crossLink "Camera"}}{{/crossLink}} using the mouse wheel.
+
+ ## Overview
+
+ <ul>
+ <li>Zooming involves moving the {{#crossLink "Camera"}}Camera's{{/crossLink}} {{#crossLink "Camera/eye:property"}}{{/crossLink}} closer and farther to its {{#crossLink "Camera/look:property"}}{{/crossLink}} position.</li>
+ <li>If desired, you can have multiple MouseZoomCameras within the same {{#crossLink "Viewer"}}{{/crossLink}}.</li>
+ <li>Multiple MouseZoomCameras can drive the same {{#crossLink "Camera"}}{{/crossLink}}, or can each drive their own separate {{#crossLink "Camera"}}{{/crossLink}}.</li>
+ <li>At any instant, the MouseZoomCameras we're driving is the one whose {{#crossLink "MouseZoomCamera/active:property"}}active{{/crossLink}} property is true.</li>
+ <li>You can switch a MouseZoomCameras to a different {{#crossLink "Camera"}}{{/crossLink}} at any time.</li>
+ </ul>
+
+ TODO
+
+ ## Example
+
+ <iframe style="width: 600px; height: 400px" src="../../examples/control_MouseZoomCamera.html"></iframe>
+
+ @class MouseZoomCamera
+ @module BIMSURFER
+ @submodule input
+ @constructor
+ @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
+ @param [cfg] {*} Configs
+ @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this MouseZoomCamera.
+ @param [camera] {Camera} The {{#crossLink "Camera"}}{{/crossLink}} to control.
+ @extends Component
+ */
+(function () {
+
+    "use strict";
+
+    BIMSURFER.MouseZoomCamera = BIMSURFER.Component.extend({
+
+        /**
+         JavaScript class name for this Component.
+
+         @property className
+         @type String
+         @final
+         */
+        className: "BIMSURFER.MouseZoomCamera",
+
+        _init: function (cfg) {
+
+            var sensitivity = cfg.sensitivity;
+
+            this.sensitivity = sensitivity ? sensitivity * 1.0 : 1.0;
+
+            this.camera = cfg.camera;
+
+            this._onTick = null;
+            this._onMouseDown = null;
+            this._onMouseMove = null;
+            this._onMouseUp = null;
+
+            this.active = cfg.active !== false;
+        },
+
+        _props: {
+
+            /**
+             * Flag which indicates whether this MouseZoomCamera is active or not.
+             *
+             * Fires an {{#crossLink "MouseZoomCamera/active:event"}}{{/crossLink}} event on change.
+             *
+             * @property active
+             * @type Boolean
+             */
+            active: {
+
+                set: function (value) {
+
+                    if (this._active === value) {
+                        return;
+                    }
+
+                    var input = this.viewer.input;
+
+                    if (value) {
+
+                        var delta = 0;
+                        var target = 0;
+                        var newTarget = false;
+                        var targeting = false;
+                        var progress = 0;
+
+                        var eyeVec = BIMSURFER.math.vec3();
+                        var lookVec = BIMSURFER.math.vec3();
+                        var tempVec3 = BIMSURFER.math.vec3();
+
+                        var self = this;
+
+                        this._onMouseWheel = this.viewer.input.on("mousewheel",
+                            function (_delta) {
+
+//                                var d = params.d * 0.01;
+//
+//                                delta = -d;
+
+                                delta = _delta;
+
+                                if (delta === 0) {
+                                    targeting = false;
+                                    newTarget = false;
+                                } else {
+                                    newTarget = true;
+                                }
+                            });
+
+                        this._onTick = this.viewer.on("tick",
+                            function () {
+
+                                if (!self._camera) {
+                                    return;
+                                }
+
+                                var camera = self._camera;
+
+                                var eye = camera.eye;
+                                var look = camera.look;
+
+                                eyeVec[0] = eye[0];
+                                eyeVec[1] = eye[1];
+                                eyeVec[2] = eye[2];
+
+                                lookVec[0] = look[0];
+                                lookVec[1] = look[1];
+                                lookVec[2] = look[2];
+
+                                BIMSURFER.math.subVec3(eyeVec, lookVec, tempVec3);
+
+                                var lenLook = Math.abs(BIMSURFER.math.lenVec3(tempVec3));
+                                var lenLimits = 1000;
+                                var f = self.sensitivity * (2.0 + (lenLook / lenLimits));
+
+                                if (newTarget) {
+                                    target = delta * f;
+                                    progress = 0;
+                                    newTarget = false;
+                                    targeting = true;
+                                }
+
+                                if (targeting) {
+                                    if (delta > 0) {
+                                        progress += 0.2 * f;
+                                        if (progress > target) {
+                                            targeting = false;
+                                        }
+                                    } else if (delta < 0) {
+                                        progress -= 0.2 * f;
+                                        if (progress < target) {
+                                            targeting = false;
+                                        }
+                                    }
+                                    if (targeting) {
+                                        camera.zoom(progress);
+                                    }
+                                }
+                            });
+
+                    } else {
+
+                        input.off(this._onTick);
+                        input.off(this._onMouseWheel);
+                    }
+
+                    /**
+                     * Fired whenever this MouseZoomCamera's {{#crossLink "MouseZoomCamera/active:property"}}{{/crossLink}} property changes.
+                     * @event active
+                     * @param value The property's new value
+                     */
+                    this.fire('active', this._active = value);
+                },
+
+                get: function () {
+                    return this._active;
+                }
+            },
+
+            camera: {
+
+                set: function (value) {
+                    var camera = value;
+                    if (camera) {
+                        if (BIMSURFER._isString(camera)) {
+                            camera = this.viewer.components[camera];
+                            if (!camera) {
+                                this.error("camera", "Camera not found in Viewer: " + value);
+                                return;
+                            }
+                        }
+                        if (camera.className != "BIMSURFER.Camera") {
+                            this.error("camera", "Value is not a BIMSURFER.Camera");
+                            return;
+                        }
+                    }
+                    this._camera = camera;
+                    this._cameraDirty = true;
+                },
+
+                get: function () {
+                    return this._camera;
+                }
+            }
+        },
+
+        _destroy: function () {
+            this.active = false;
+        }
+    });
+
+})();
+;/**
+ A **KeyboardZoomCamera** lets you zoom a {{#crossLink "Camera"}}{{/crossLink}} using the + and - keys.
+
+ ## Overview
+
+ <ul>
+ <li>Zooming involves moving the {{#crossLink "Camera"}}Camera's{{/crossLink}} {{#crossLink "Camera/eye:property"}}{{/crossLink}} closer and farther to its {{#crossLink "Camera/look:property"}}{{/crossLink}} position.</li>
+ <li>If desired, you can have multiple KeyboardZoomCameras within the same {{#crossLink "Viewer"}}{{/crossLink}}.</li>
+ <li>Multiple KeyboardZoomCameras can drive the same {{#crossLink "Camera"}}{{/crossLink}}, or can each drive their own separate {{#crossLink "Camera"}}{{/crossLink}}.</li>
+ <li>At any instant, the KeyboardZoomCameras we're driving is the one whose {{#crossLink "KeyboardZoomCamera/active:property"}}active{{/crossLink}} property is true.</li>
+ <li>You can switch a KeyboardZoomCameras to a different {{#crossLink "Camera"}}{{/crossLink}} at any time.</li>
+ </ul>
+
+ TODO
+
+ ## Example
+
+ <iframe style="width: 600px; height: 400px" src="../../examples/control_KeyboardZoomCamera.html"></iframe>
+
+ @class KeyboardZoomCamera
+ @module BIMSURFER
+ @submodule input
+ @constructor
+ @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
+ @param [cfg] {*} Configs
+ @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this KeyboardZoomCamera.
+ @param [camera] {Camera} The {{#crossLink "Camera"}}{{/crossLink}} to control.
+ @extends Component
+ */
+(function () {
+
+    "use strict";
+
+    BIMSURFER.KeyboardZoomCamera = BIMSURFER.Component.extend({
+
+        /**
+         JavaScript class name for this Component.
+
+         @property className
+         @type String
+         @final
+         */
+        className: "BIMSURFER.KeyboardZoomCamera",
+
+        _init: function (cfg) {
+
+            var sensitivity = cfg.sensitivity;
+
+            this.sensitivity = sensitivity ? sensitivity * 15.0 : 15.0;
+
+            this.camera = cfg.camera;
+
+            this._onTick = null;
+
+            this.active = cfg.active !== false;
+        },
+
+        _props: {
+
+            /**
+             * Flag which indicates whether this KeyboardZoomCamera is active or not.
+             *
+             * Fires an {{#crossLink "KeyboardZoomCamera/active:event"}}{{/crossLink}} event on change.
+             *
+             * @property active
+             * @type Boolean
+             */
+            active: {
+
+                set: function (value) {
+
+                    if (this._active === value) {
+                        return;
+                    }
+
+                    var input = this.viewer.input;
+
+                    if (value) {
+
+                        var self = this;
+
+                        this._onTick = this.viewer.on("tick",
+                            function (params) {
+
+                                if (!self._camera) {
+                                    return;
+                                }
+
+                                var elapsed = params.elapsed;
+
+                                if (!input.ctrlDown && !input.altDown) {
+
+                                    var wkey = input.keyDown[input.KEY_ADD];
+                                    var skey = input.keyDown[input.KEY_SUBTRACT];
+
+                                    if (wkey || skey) {
+
+                                        var z = 0;
+
+                                        var sensitivity = self.sensitivity;
+
+                                        if (skey) {
+                                            z = elapsed * sensitivity;
+
+                                        } else if (wkey) {
+                                            z = -elapsed * sensitivity;
+                                        }
+
+                                        self._camera.zoom(z);
+                                    }
+                                }
+                            });
+
+                    } else {
+
+                        this.viewer.off(this._onTick);
+                    }
+
+                    /**
+                     * Fired whenever this KeyboardZoomCamera's {{#crossLink "KeyboardZoomCamera/active:property"}}{{/crossLink}} property changes.
+                     * @event active
+                     * @param value The property's new value
+                     */
+                    this.fire('active', this._active = value);
+                },
+
+                get: function () {
+                    return this._active;
+                }
+            },
+
+            camera: {
+
+                set: function (value) {
+                    var camera = value;
+                    if (camera) {
+                        if (BIMSURFER._isString(camera)) {
+                            camera = this.viewer.components[camera];
+                            if (!camera) {
+                                this.error("camera", "Camera not found in Viewer: " + value);
+                                return;
+                            }
+                        }
+                        if (camera.className != "BIMSURFER.Camera") {
+                            this.error("camera", "Value is not a BIMSURFER.Camera");
+                            return;
+                        }
+                    }
+                    this._camera = camera;
+                },
+
+                get: function () {
+                    return this._camera;
+                }
+            }
+        },
+
+        _destroy: function () {
+            this.active = false;
+        }
+    });
+
+})();
+;/**
+ A **MousePanCamera** lets you pan a {{#crossLink "Camera"}}{{/crossLink}} using the mouse.
+
+ ## Overview
+
+ <ul>
+ <li>Panning is done by dragging the mouse with the left and right buttons down.</li>
+ <li>Panning up and down involves moving the {{#crossLink "Camera"}}Camera's{{/crossLink}} {{#crossLink "Camera/eye:property"}}{{/crossLink}} and {{#crossLink "Camera/look:property"}}{{/crossLink}} positions along the direction of its {{#crossLink "Camera/up:property"}}{{/crossLink}} vector.</li>
+ <li>Panning left and right involves moving the {{#crossLink "Camera"}}Camera's{{/crossLink}} {{#crossLink "Camera/eye:property"}}{{/crossLink}} and {{#crossLink "Camera/look:property"}}{{/crossLink}} positions along the the vector that is perpendicular to its {{#crossLink "Camera/up:property"}}{{/crossLink}} and {{#crossLink "Camera/eye:property"}}{{/crossLink}}-{{#crossLink "Camera/look:property"}}{{/crossLink}} vector.</li>
+ <li>If desired, you can have multiple MousePanCameras within the same {{#crossLink "Viewer"}}{{/crossLink}}.</li>
+ <li>Multiple MousePanCameras can drive the same {{#crossLink "Camera"}}{{/crossLink}}, or can each drive their own separate {{#crossLink "Camera"}}{{/crossLink}}.</li>
+ <li>At any instant, the MousePanCameras we're driving is the one whose {{#crossLink "MousePanCamera/active:property"}}active{{/crossLink}} property is true.</li>
+ <li>You can switch a MousePanCameras to a different {{#crossLink "Camera"}}{{/crossLink}} at any time.</li>
+ </ul>
+
+
+ TODO
+
+ ## Example
+
+ <iframe style="width: 600px; height: 400px" src="../../examples/control_MousePanCamera.html"></iframe>
+
+ @class MousePanCamera
+ @module BIMSURFER
+ @submodule input
+ @constructor
+ @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
+ @param [cfg] {*} Configs
+ @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this MousePanCamera.
+ @param [camera] {Camera} The {{#crossLink "Camera"}}{{/crossLink}} to control.
+ @extends Component
+ */
+(function () {
+
+    "use strict";
+
+    BIMSURFER.MousePanCamera = BIMSURFER.Component.extend({
+
+        /**
+         JavaScript class name for this Component.
+
+         @property className
+         @type String
+         @final
+         */
+        className: "BIMSURFER.MousePanCamera",
+
+        _init: function (cfg) {
+
+            var sensitivity = cfg.sensitivity;
+
+            this.sensitivity = sensitivity ? sensitivity * 0.03 : 0.03;
+
+            this.camera = cfg.camera;
+
+            this._onTick = null;
+
+            this._onMouseDown = null;
+            this._onMouseMove = null;
+            this._onMouseUp = null;
+
+            this.active = cfg.active !== false;
+        },
+
+        _props: {
+
+
+            /**
+             * Flag which indicates whether this MousePanCamera is active or not.
+             *
+             * Fires an {{#crossLink "MousePanCamera/active:event"}}{{/crossLink}} event on change.
+             *
+             * @property active
+             * @type Boolean
+             */
+            active: {
+
+                set: function (value) {
+
+                    if (this._active === value) {
+                        return;
+                    }
+
+                    var input = this.viewer.input;
+
+                    if (value) {
+
+                        var lastX;
+                        var lastY;
+                        var xDelta = 0;
+                        var yDelta = 0;
+                        var down = false;
+
+                        var self = this;
+
+                        this._onTick = this.viewer.on("tick",
+                            function () {
+
+                                if (!self._camera) {
+                                    return;
+                                }
+
+                                if (xDelta != 0 || yDelta != 0) {
+
+                                    self._camera.pan([xDelta, yDelta, 0]);
+
+                                    xDelta = 0;
+                                    yDelta = 0;
+                                }
+                            });
+
+                        this._onMouseDown = input.on("mousedown",
+                            function (e) {
+
+                                if ((input.mouseDownLeft && input.mouseDownRight) ||
+                                    (input.mouseDownLeft && input.keyDown[input.KEY_SHIFT]) ||
+                                    input.mouseDownMiddle) {
+
+                                    lastX = e[0];
+                                    lastY = e[1];
+
+                                    down = true;
+
+                                } else {
+                                    down = false;
+                                }
+                            });
+
+                        this._onMouseUp = input.on("mouseup",
+                            function (e) {
+                                down = false;
+                            });
+
+                        this._onMouseMove = input.on("mousemove",
+                            function (e) {
+                                if (down) {
+                                    xDelta += (e[0] - lastX) * self.sensitivity;
+                                    yDelta += (e[1] - lastY) * self.sensitivity;
+                                    lastX = e[0];
+                                    lastY = e[1];
+                                }
+                            });
+
+                    } else {
+
+                        input.off(this._onTick);
+
+                        input.off(this._onMouseDown);
+                        input.off(this._onMouseUp);
+                        input.off(this._onMouseMove);
+                    }
+
+                    /**
+                     * Fired whenever this MousePanCamera's {{#crossLink "MousePanCamera/active:property"}}{{/crossLink}} property changes.
+                     * @event active
+                     * @param value The property's new value
+                     */
+                    this.fire('active', this._active = value);
+                },
+
+                get: function () {
+                    return this._active;
+                }
+            },
+
+            camera: {
+
+                set: function (value) {
+                    var camera = value;
+                    if (camera) {
+                        if (BIMSURFER._isString(camera)) {
+                            camera = this.viewer.components[camera];
+                            if (!camera) {
+                                this.error("camera", "Camera not found in Viewer: " + value);
+                                return;
+                            }
+                        }
+                        if (camera.className != "BIMSURFER.Camera") {
+                            this.error("camera", "Value is not a BIMSURFER.Camera");
+                            return;
+                        }
+                    }
+                    this._camera = camera;
+                },
+
+                get: function () {
+                    return this._camera;
+                }
+            }
+        },
+
+        _destroy: function () {
+            this.active = false;
+        }
+    });
+
+})();
+;/**
+ A **KeyboardPanCamera** lets you pan a {{#crossLink "Camera"}}{{/crossLink}} using the W, S, A and D keys.
+
+ ## Overview
+
+ <ul>
+ <li>Panning up and down involves moving the {{#crossLink "Camera"}}Camera's{{/crossLink}} {{#crossLink "Camera/eye:property"}}{{/crossLink}} and {{#crossLink "Camera/look:property"}}{{/crossLink}} positions along the direction of its {{#crossLink "Camera/up:property"}}{{/crossLink}} vector.</li>
+ <li>Panning backwards and forwards involves moving the {{#crossLink "Camera"}}Camera's{{/crossLink}} {{#crossLink "Camera/eye:property"}}{{/crossLink}} and {{#crossLink "Camera/look:property"}}{{/crossLink}} positions along the direction of its {{#crossLink "Camera/eye:property"}}{{/crossLink}} - {{#crossLink "Camera/look:property"}}{{/crossLink}} vector.</li>
+ <li>Panning left and right involves moving the {{#crossLink "Camera"}}Camera's{{/crossLink}} {{#crossLink "Camera/eye:property"}}{{/crossLink}} and {{#crossLink "Camera/look:property"}}{{/crossLink}} positions along the the vector that is perpendicular to its {{#crossLink "Camera/up:property"}}{{/crossLink}} and {{#crossLink "Camera/eye:property"}}{{/crossLink}}-{{#crossLink "Camera/look:property"}}{{/crossLink}} vector.</li>
+ <li>If desired, you can have multiple KeyboardPanCameras within the same {{#crossLink "Viewer"}}{{/crossLink}}.</li>
+ <li>Multiple KeyboardPanCameras can drive the same {{#crossLink "Camera"}}{{/crossLink}}, or can each drive their own separate {{#crossLink "Camera"}}{{/crossLink}}.</li>
+ <li>At any instant, the KeyboardPanCameras we're driving is the one whose {{#crossLink "KeyboardPanCamera/active:property"}}active{{/crossLink}} property is true.</li>
+ <li>You can switch a KeyboardPanCameras to a different {{#crossLink "Camera"}}{{/crossLink}} at any time.</li>
+ </ul>
+
+ ## Example
+
+ <iframe style="width: 600px; height: 400px" src="../../examples/control_KeyboardPanCamera.html"></iframe>
+
+ @class KeyboardPanCamera
+ @module BIMSURFER
+ @submodule input
+ @constructor
+ @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
+ @param [cfg] {*} Configs
+ @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this KeyboardOrbitCamera.
+ @param [camera] {Camera} The {{#crossLink "Camera"}}{{/crossLink}} to control.
+ @extends Component
+ */
+(function () {
+
+    "use strict";
+
+    BIMSURFER.KeyboardPanCamera = BIMSURFER.Component.extend({
+
+        /**
+         JavaScript class name for this Component.
+
+         @property className
+         @type String
+         @final
+         */
+        className: "BIMSURFER.KeyboardPanCamera",
+
+        _init: function (cfg) {
+
+            var sensitivity = cfg.sensitivity;
+
+            this.sensitivity = sensitivity ? sensitivity * 10.0 : 10.0;
+
+            this.camera = cfg.camera;
+
+            this._onTick = null;
+
+            this.active = cfg.active !== false;
+        },
+
+        _props: {
+
+            /**
+             * Flag which indicates whether this KeyboardPanCamera is active or not.
+             *
+             * Fires an {{#crossLink "KeyboardPanCamera/active:event"}}{{/crossLink}} event on change.
+             *
+             * @property active
+             * @type Boolean
+             */
+            active: {
+
+                set: function (value) {
+
+                    if (this._active === value) {
+                        return;
+                    }
+
+                    var input = this.viewer.input;
+
+                    if (value) {
+
+                        var self = this;
+
+                        this._onTick = this.viewer.on("tick",
+                            function (params) {
+
+                                if (!self._camera) {
+                                    return;
+                                }
+
+                                var elapsed = params.elapsed;
+
+                                if (!input.ctrlDown && !input.altDown) {
+
+                                    var wkey = input.keyDown[input.KEY_W];
+                                    var skey = input.keyDown[input.KEY_S];
+                                    var akey = input.keyDown[input.KEY_A];
+                                    var dkey = input.keyDown[input.KEY_D];
+                                    var zkey = input.keyDown[input.KEY_Z];
+                                    var xkey = input.keyDown[input.KEY_X];
+
+                                    if (wkey || skey || akey || dkey || xkey || zkey) {
+
+                                        var x = 0;
+                                        var y = 0;
+                                        var z = 0;
+
+                                        var sensitivity = self.sensitivity;
+
+                                        if (skey) {
+                                            y = elapsed * sensitivity;
+
+                                        } else if (wkey) {
+                                            y = -elapsed * sensitivity;
+                                        }
+
+                                        if (dkey) {
+                                            x = elapsed * sensitivity;
+
+                                        } else if (akey) {
+                                            x = -elapsed * sensitivity;
+                                        }
+
+                                        if (xkey) {
+                                            z = elapsed * sensitivity;
+
+                                        } else if (zkey) {
+                                            z = -elapsed * sensitivity;
+                                        }
+
+                                        self._camera.pan([x, y, z]);
+                                    }
+                                }
+                            });
+
+                    } else {
+
+                        this.viewer.off(this._onTick);
+                    }
+
+                    /**
+                     * Fired whenever this KeyboardPanCamera's {{#crossLink "KeyboardPanCamera/active:property"}}{{/crossLink}} property changes.
+                     * @event active
+                     * @param value The property's new value
+                     */
+                    this.fire('active', this._active = value);
+                },
+
+                get: function () {
+                    return this._active;
+                }
+            },
+
+            camera: {
+
+                set: function (value) {
+                    var camera = value;
+                    if (camera) {
+                        if (BIMSURFER._isString(camera)) {
+                            camera = this.viewer.components[camera];
+                            if (!camera) {
+                                this.error("camera", "Camera not found in Viewer: " + value);
+                                return;
+                            }
+                        }
+                        if (camera.className != "BIMSURFER.Camera") {
+                            this.error("camera", "Value is not a BIMSURFER.Camera");
+                            return;
+                        }
+                    }
+                    this._camera = camera;
+                },
+
+                get: function () {
+                    return this._camera;
+                }
+            }
+        },
+
+        _destroy: function () {
+            this.active = false;
+        }
+    });
+
+})();
+;/**
+ A **KeyboardAxisCamera** lets you switch a {{#crossLink "Camera"}}{{/crossLink}} between preset left, right, anterior, posterior, superior and inferior views using the keyboard.
+
+ ## Overview
+
+ <ul>
+ <li>If desired, you can have multiple KeyboardAxisCameras within the same {{#crossLink "Viewer"}}{{/crossLink}}.</li>
+ <li>Multiple KeyboardAxisCameras can drive the same {{#crossLink "Camera"}}{{/crossLink}}, or can each drive their own separate {{#crossLink "Camera"}}Cameras{{/crossLink}}.</li>
+ <li>At any instant, the KeyboardAxisCamera we're driving is the one whose {{#crossLink "Camera/active:property"}}active{{/crossLink}} property is true.</li>
+ <li>You can switch a KeyboardAxisCamera to a different {{#crossLink "Camera"}}{{/crossLink}} at any time.</li>
+ </ul>
+
+ ## Example
+
+ <iframe style="width: 600px; height: 400px" src="../../examples/control_KeyboardAxisCamera.html"></iframe>
+
+ @class KeyboardAxisCamera
+ @module BIMSURFER
+ @submodule input
+ @constructor
+ @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
+ @param [cfg] {*} Configs
+ @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this KeyboardAxisCamera.
+ @param [camera] {Camera} The {{#crossLink "Camera"}}{{/crossLink}} to control.
+ @extends Component
+ */
+(function () {
+
+    "use strict";
+
+    BIMSURFER.KeyboardAxisCamera = BIMSURFER.Component.extend({
+
+        /**
+         JavaScript class name for this Component.
+
+         @property className
+         @type String
+         @final
+         */
+        className: "BIMSURFER.KeyboardAxisCamera",
+
+        _init: function (cfg) {
+
+            this.camera = cfg.camera;
+
+            this._onKeyDown = null;
+
+            this._cameraFly = new BIMSURFER.CameraFlyAnimation(this.viewer, {
+                camera: this.camera
+            });
+
+            this.active = cfg.active !== false;
+        },
+
+        _props: {
+
+            /**
+             * Flag which indicates whether this KeyboardAxisCamera is active or not.
+             *
+             * Fires an {{#crossLink "KeyboardAxisCamera/active:event"}}{{/crossLink}} event on change.
+             *
+             * @property active
+             * @type Boolean
+             */
+            active: {
+
+                set: function (value) {
+
+                    value = !!value;
+
+                    if (this._active === value) {
+                        return;
+                    }
+
+                    this._cameraFly.active = value;
+
+                    var self = this;
+
+                    var input = this.viewer.input;
+
+                    if (value) {
+
+                        this._onKeyDown = input.on("keydown",
+                            function (keyCode) {
+
+                                if (!self._camera) {
+                                    return;
+                                }
+
+                                var center = self.viewer.center;
+
+                                var dist;
+                                var elev;
+
+                                var eye;
+                                var look;
+                                var up;
+
+                                switch (keyCode) {
+
+                                    case input.KEY_NUM_1:
+
+                                        // Right view
+
+                                        dist = 100;
+                                        elev = 0;
+
+                                        look = center;
+                                        eye = [-dist, elev, 0];
+                                        up = [ 0, 1, 0 ];
+
+                                        break;
+
+                                    case input.KEY_NUM_2:
+
+                                        // Left view
+
+                                        dist = 100;
+                                        elev = 0;
+
+                                        look = center;
+                                        eye = [dist, elev, 0];
+                                        up = [ 0, 1, 0 ];
+
+                                        break;
+
+                                    case input.KEY_NUM_3:
+
+                                        // Front view
+
+                                        dist = 100;
+                                        elev = 0;
+
+                                        look = center;
+                                        eye = [0, elev, -dist];
+                                        up = [ 0, 1, 0 ];
+
+                                        break;
+
+                                    case input.KEY_NUM_4:
+
+                                        // Back view
+
+                                        dist = 100;
+                                        elev = 0;
+
+                                        look = center;
+                                        eye = [0, elev, dist];
+                                        up = [ 0, 1, 0 ];
+
+                                        break;
+
+                                    case input.KEY_NUM_5:
+
+                                        // Top view
+
+                                        dist = 100;
+                                        elev = 0;
+
+                                        look = center;
+                                        eye = [0, elev - dist, 0];
+                                        up = [ 0, 0, 1 ];
+
+                                        break;
+
+                                    case input.KEY_NUM_6:
+
+                                        // Bottom view
+
+                                        dist = 100;
+                                        elev = 0;
+
+                                        look = [0, elev, 0 ];
+                                        eye = [0, elev + dist, 0];
+                                        up = [ 0, 0, -1 ];
+
+                                        break;
+                                }
+
+                                if (look) {
+
+                                    self._cameraFly.flyTo({
+                                        look: look,
+                                        eye: eye,
+                                        up: up
+                                    });
+                                }
+                            });
+
+                    } else {
+
+                        this.viewer.off(this._onKeyDown);
+                    }
+
+                    /**
+                     * Fired whenever this KeyboardAxisCamera's {{#crossLink "KeyboardAxisCamera/active:property"}}{{/crossLink}} property changes.
+                     * @event active
+                     * @param value The property's new value
+                     */
+                    this.fire('active', this._active = value);
+                },
+
+                get: function () {
+                    return this._active;
+                }
+            },
+
+            camera: {
+
+                set: function (value) {
+                    var camera = value;
+                    if (camera) {
+                        if (BIMSURFER._isString(camera)) {
+                            camera = this.viewer.components[camera];
+                            if (!camera) {
+                                this.error("camera", "Camera not found in Viewer: " + value);
+                                return;
+                            }
+                        }
+                        if (camera.className != "BIMSURFER.Camera") {
+                            this.error("camera", "Value is not a BIMSURFER.Camera");
+                            return;
+                        }
+                    }
+                    this._camera = camera;
+                },
+
+                get: function () {
+                    return this._camera;
+                }
+            }
+        },
+
+        _destroy: function () {
+            this.active = false;
+
+            this._cameraFly.destroy();
+        }
+    });
+
+})();
+;/**
+ A **MousePickObject** lets you add or remove {{#crossLink "Object"}}Objects{{/crossLink}} to and from an {{#crossLink "ObjectSet"}}ObjectSet{{/crossLink}} by clicking them with the mouse.
+
+ ## Overview
+
+ <ul>
+ <li>A MousePickObject adds {{#crossLink "Object"}}Objects{{/crossLink}} to the {{#crossLink "ObjectSet"}}{{/crossLink}} as you
+ click them with the mouse, removing them again when you click them a second time.</li>
+ <li>Typically a MousePickObject will share an {{#crossLink "ObjectSet"}}{{/crossLink}} with one or
+ more {{#crossLink "MousePickObject"}}MousePickObjects{{/crossLink}}, in order to select which {{#crossLink "Object"}}Objects{{/crossLink}} are influenced by the {{#crossLink "MousePickObject"}}MousePickObjects{{/crossLink}}.</li>
+ <li>A MousePickObject will provide its own {{#crossLink "ObjectSet"}}{{/crossLink}} by default.</li>
+ <li>Hold down SHIFT while clicking to multi-select.</li>
+ </ul>
+
+ ## Example
+
+ #### Clicking Objects to add them to a highlighted ObjectSet
+
+ In this example, we view four {{#crossLink "Objects"}}Objects{{/crossLink}} with a {{#crossLink "Camera"}}{{/crossLink}}, which we manipulate with a {{#crossLink "CameraControl"}}{{/crossLink}}.
+ <br>We also use a {{#crossLink "MousePickObject"}}{{/crossLink}} to add and remove
+ the {{#crossLink "Objects"}}Objects{{/crossLink}} to an {{#crossLink "ObjectSet"}}{{/crossLink}}, to which we're applying
+ a {{#crossLink "HighlightMousePickObject"}}{{/crossLink}}.
+ <br><br>
+ Click on the {{#crossLink "Objects"}}Objects{{/crossLink}} to select and highlight them - hold down SHIFT to multi-select.
+
+ <iframe style="width: 600px; height: 400px" src="../../examples/control_MousePickObject_HighlightMousePickObject.html"></iframe>
+
+ ````Javascript
+ // Create a Viewer
+ var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
+
+ // Create a Camera
+ var camera = new BIMSURFER.Camera(viewer, {
+    eye: [10, 10, -10]
+ });
+
+ // Create a CameraControl
+ var cameraControl = new BIMSURFER.CameraControl(viewer, {
+    camera: camera
+ });
+
+ // Create a Geometry
+ var geometry = new BIMSURFER.TeapotGeometry(viewer);
+
+ // Create some Objects
+ // Share the Geometry among them
+
+ var object1 = new BIMSURFER.Object(viewer, {
+    id: "object1",
+    type: "IfcRoof",
+    geometries: [ geometry ],
+    matrix: BIMSURFER.math.translationMat4v([-3, 0, -3])
+ });
+
+ var object2 = new BIMSURFER.Object(viewer, {
+    id: "object2",
+    type: "IfcDistributionFlowElement",
+    geometries: [ geometry ],
+    matrix: BIMSURFER.math.translationMat4v([3, 0, -3])
+ });
+
+ var object3 = new BIMSURFER.Object(viewer, {
+    id: "object3",
+    type: "IfcDistributionFlowElement",
+    geometries: [ geometry ],
+    matrix: BIMSURFER.math.translationMat4v([-3, 0, 3])
+ });
+
+ var object4 = new BIMSURFER.Object(viewer, {
+    id: "object4",
+    type: "IfcRoof",
+    geometries: [ geometry ],
+    matrix: BIMSURFER.math.translationMat4v([3, 0, 3])
+ });
+
+ // Create an ObjectSet
+ var objectSet = new BIMSURFER.ObjectSet(viewer);
+
+ // Apply a highlight MousePickObject to the ObjectSet
+ var highlightMousePickObject = new BIMSURFER.HighlightMousePickObject(viewer, {
+    objectSet: objectSet
+ });
+
+ // Create a MousePickObject
+ var mousePickObject = new BIMSURFER.MousePickObject(viewer, {
+
+    // We want the 3D World-space coordinates of
+    // each location we pick
+    rayPick: true
+ });
+
+ // Handle when Object is picked
+ mousePickObject.on("pick", function(e) {
+        alert("Picked: " + JSON.stringify(e));
+ });
+
+ // Handle when nothing is picked
+ mousePickObject.on("nopick", function(e) {
+        alert("Mothing picked");
+ });
+ ````
+
+ @class MousePickObject
+ @module BIMSURFER
+ @submodule input
+ @constructor
+ @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
+ @param [cfg] {*} Configs
+ @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this MousePickObject.
+ @param [rayPick=false] {Boolean} Indicates whether this MousePickObject will find the 3D ray intersection whenever it picks a
+ {{#crossLink "Object"}}Objects{{/crossLink}}.
+ @param [active=true] {Boolean} Indicates whether or not this MousePickObject is active.
+ @see {Object}
+ @see {ObjectSet}
+ @extends Component
+ */
+(function () {
+
+    "use strict";
+
+    BIMSURFER.MousePickObject = BIMSURFER.Component.extend({
+
+        /**
+         JavaScript class name for this Component.
+
+         @property className
+         @type String
+         @final
+         */
+        className: "BIMSURFER.MousePickObject",
+
+        _init: function (cfg) {
+
+            this.rayPick = cfg.rayPick;
+
+            this.active = cfg.active !== false;
+        },
+
+        _props: {
+
+            /**
+             * Flag which indicates whether this MousePickObject is active or not.
+             *
+             * Fires a {{#crossLink "MousePickObject/active:event"}}{{/crossLink}} event on change.
+             *
+             * @property active
+             * @type Boolean
+             */
+            active: {
+
+                set: function (value) {
+
+                    if (this._active === value) {
+                        return;
+                    }
+
+                    if (value) {
+
+                        var self = this;
+
+                        var input = this.viewer.input;
+
+                        this._onMouseUp = input.on("dblclick",
+                            function (coords) {
+
+                                var hit = self.viewer.pick(coords[0], coords[1], {
+                                    rayPick: self._rayPick
+                                });
+
+                                if (hit) {
+                                    self.fire("pick", hit);
+
+                                } else {
+                                    self.fire("nopick", {
+                                        canvasPos: e
+                                    });
+                                }
+                            });
+
+                    } else {
+
+                        input.off(this._onMouseDown);
+                        input.off(this._onMouseUp);
+                    }
+
+                    /**
+                     * Fired whenever this MousePickObject's {{#crossLink "MousePickObject/active:property"}}{{/crossLink}} property changes.
+                     * @event active
+                     * @param value The property's new value
+                     */
+                    this.fire('active', this._active = value);
+                },
+
+                get: function () {
+                    return this._active;
+                }
+            },
+
+            /**
+             * Indicates whether this MousePickObject will find the 3D ray intersection whenever it picks an
+             * {{#crossLink "Object"}}Object{{/crossLink}}.
+             *
+             * When true, this MousePickObject returns the 3D World-space intersection in each
+             * {{#crossLink "MousePickObject/picked:event"}}{{/crossLink}} event.
+             *
+             * Fires a {{#crossLink "MousePickObject/rayPick:event"}}{{/crossLink}} event on change.
+             *
+             * @property rayPick
+             * @type Boolean
+             */
+            rayPick: {
+
+                set: function (value) {
+
+                    value = !!value;
+
+                    if (this._rayPick === value) {
+                        return;
+                    }
+
+                    this._dirty = false;
+
+                    /**
+                     * Fired whenever this MousePickObject's {{#crossLink "MousePickObject/rayPick:property"}}{{/crossLink}} property changes.
+                     * @event rayPick
+                     * @param value The property's new value
+                     */
+                    this.fire('rayPick', this._rayPick = value);
+                },
+
+                get: function () {
+                    return this._rayPick;
+                }
+            }
+        },
+
+        _destroy: function () {
+            this.active = false;
+        }
+    });
+})();;/**
+ A **ClickSelectObjects** lets you add or remove {{#crossLink "Object"}}Objects{{/crossLink}} to and from an {{#crossLink "ObjectSet"}}ObjectSet{{/crossLink}} by clicking them with the mouse.
+
+ ## Overview
+
+ <ul>
+ <li>A ClickSelectObjects adds {{#crossLink "Object"}}Objects{{/crossLink}} to the {{#crossLink "ObjectSet"}}{{/crossLink}} as you
+ click them with the mouse, removing them again when you click them a second time.</li>
+ <li>Typically a ClickSelectObjects will share an {{#crossLink "ObjectSet"}}{{/crossLink}} with one or
+ more {{#crossLink "Effect"}}Effects{{/crossLink}}, in order to select which {{#crossLink "Object"}}Objects{{/crossLink}} are influenced by the {{#crossLink "Effect"}}Effects{{/crossLink}}.</li>
+ <li>A ClickSelectObjects will provide its own {{#crossLink "ObjectSet"}}{{/crossLink}} by default.</li>
+ <li>Hold down SHIFT while clicking to multi-select.</li>
+ </ul>
+
+ ## Example
+
+ #### Clicking Objects to add them to a highlighted ObjectSet
+
+ In this example, we view four {{#crossLink "Objects"}}Objects{{/crossLink}} with a {{#crossLink "Camera"}}{{/crossLink}}, which we manipulate with a {{#crossLink "CameraControl"}}{{/crossLink}}.
+ <br>We also use a {{#crossLink "ClickSelectObjects"}}{{/crossLink}} to add and remove
+ the {{#crossLink "Objects"}}Objects{{/crossLink}} to an {{#crossLink "ObjectSet"}}{{/crossLink}}, to which we're applying
+ a {{#crossLink "HighlightEffect"}}{{/crossLink}}.
+ <br><br>
+ Click on the {{#crossLink "Objects"}}Objects{{/crossLink}} to select and highlight them - hold down SHIFT to multi-select.
+
+ <iframe style="width: 600px; height: 400px" src="../../examples/control_ClickSelectObjects_HighlightEffect.html"></iframe>
+
+ ````Javascript
+ // Create a Viewer
+ var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
+
+ // Create a Camera
+ var camera = new BIMSURFER.Camera(viewer, {
+    eye: [10, 10, -10]
+ });
+
+ // Create a CameraControl
+ var cameraControl = new BIMSURFER.CameraControl(viewer, {
+    camera: camera
+ });
+
+ // Create a Geometry
+ var geometry = new BIMSURFER.TeapotGeometry(viewer);
+
+ // Create some Objects
+ // Share the Geometry among them
+
+ var object1 = new BIMSURFER.Object(viewer, {
+    id: "object1",
+    type: "IfcRoof",
+    geometries: [ geometry ],
+    matrix: BIMSURFER.math.translationMat4v([-3, 0, -3])
+ });
+
+ var object2 = new BIMSURFER.Object(viewer, {
+    id: "object2",
+    type: "IfcDistributionFlowElement",
+    geometries: [ geometry ],
+    matrix: BIMSURFER.math.translationMat4v([3, 0, -3])
+ });
+
+ var object3 = new BIMSURFER.Object(viewer, {
+    id: "object3",
+    type: "IfcDistributionFlowElement",
+    geometries: [ geometry ],
+    matrix: BIMSURFER.math.translationMat4v([-3, 0, 3])
+ });
+
+ var object4 = new BIMSURFER.Object(viewer, {
+    id: "object4",
+    type: "IfcRoof",
+    geometries: [ geometry ],
+    matrix: BIMSURFER.math.translationMat4v([3, 0, 3])
+ });
+
+ // Create an ObjectSet
+ var objectSet = new BIMSURFER.ObjectSet(viewer);
+
+ // Apply a highlight effect to the ObjectSet
+ var highlightEffect = new BIMSURFER.HighlightEffect(viewer, {
+    objectSet: objectSet
+ });
+
+ // Create a ClickSelectObjects to select or unselect the Objects with the mouse
+ var clickSelectObjects = new BIMSURFER.ClickSelectObjects(viewer, {
+    objectSet: objectSet
+ });
+ ````
+
+ @class ClickSelectObjects
+ @module BIMSURFER
+ @submodule input
+ @constructor
+ @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
+ @param [cfg] {*} Configs
+ @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Camera.
+ @param [selection] {Selection} The Selection to update.
+ @see {Object}
+ @see {ObjectSet}
+ @extends Component
+ */
+(function () {
+
+    "use strict";
+
+    BIMSURFER.ClickSelectObjects = BIMSURFER.Component.extend({
+
+        /**
+         JavaScript class name for this Component.
+
+         @property className
+         @type String
+         @final
+         */
+        className: "BIMSURFER.ClickSelectObjects",
+
+        _init: function (cfg) {
+
+            this.objectSet = cfg.objectSet || new BIMSURFER.ObjectSet(this.viewer);
+
+            this._multi = !!cfg.multi;
+
+            this.active = cfg.active !== false;
+        },
+
+        _props: {
+
+            /**
+             * Flag which indicates whether this ClickSelectObjects is active or not.
+             *
+             * Fires a {{#crossLink "ClickSelectObjects/active:event"}}{{/crossLink}} event on change.
+             *
+             * @property active
+             * @type Boolean
+             */
+            active: {
+
+                set: function (value) {
+
+                    if (this._active === value) {
+                        return;
+                    }
+
+                    if (value) {
+
+                        var self = this;
+
+                        var input = this.viewer.input;
+
+                        var lastX;
+                        var lastY;
+
+                        this._onMouseDown = input.on("mousedown",
+                            function (e) {
+
+                                lastX = e[0];
+                                lastY = e[1];
+                            });
+
+                        this._onMouseUp = input.on("mouseup",
+                            function (e) {
+
+                                if (((e[0] > lastX) ? (e[0] - lastX < 5) : (lastX - e[0] < 5)) &&
+                                    ((e[1] > lastY) ? (e[1] - lastY < 5) : (lastY - e[1] < 5))) {
+
+                                    var multiSelect = self._multi || input.keyDown[input.KEY_SHIFT];
+
+                                    var hit = self.viewer.pick(lastX, lastY, {});
+
+                                    if (hit) {
+
+                                        var object = hit.object;
+
+                                        if (!self.objectSet.objects[object.id]) {
+
+                                            // Select
+
+                                            if (!multiSelect) {
+                                                self.objectSet.clear();
+                                            }
+
+                                            self.objectSet.addObjects([object]);
+
+                                        } else {
+
+                                            // Deselect
+
+                                            self.objectSet.removeObjects([object]);
+                                        }
+                                    } else {
+
+                                        if (!multiSelect) {
+                                            self.objectSet.clear();
+                                        }
+                                    }
+                                }
+                            });
+
+                    } else {
+
+                        input.off(this._onMouseDown);
+                        input.off(this._onMouseUp);
+                    }
+
+                    /**
+                     * Fired whenever this ClickSelectObjects's {{#crossLink "ClickSelectObjects/active:property"}}{{/crossLink}} property changes.
+                     * @event active
+                     * @param value The property's new value
+                     */
+                    this.fire('active', this._active = value);
+                },
+
+                get: function () {
+                    return this._active;
+                }
+            }
+        },
+
+        _destroy: function () {
+            this.active = false;
+        }
+    });
+})();;/**
+ * Core viewer components.
+ *
+ * @module XEO
+ * @submodule canvas
+ */;/**
+ A **Canvas** manages a {{#crossLink "Viewer"}}Viewer{{/crossLink}}'s HTML canvas and its WebGL context.
+
+ ## Overview
+
+ <ul>
+
+ <li>Each {{#crossLink "Viewer"}}Viewer{{/crossLink}} provides a Canvas as a read-only property on itself.</li>
+
+ <li>When a {{#crossLink "Viewer"}}Viewer{{/crossLink}} is configured with the ID of
+ an existing <a href="http://www.w3.org/TR/html5/scripting-1.html#the-canvas-element">HTMLCanvasElement</a>, then
+ the Canvas will bind to that, otherwise the Canvas will automatically create its own.</li>
+
+ <li>A Canvas will fire a {{#crossLink "Canvas/resized:event"}}{{/crossLink}} event whenever
+ the <a href="http://www.w3.org/TR/html5/scripting-1.html#the-canvas-element">HTMLCanvasElement</a> resizes.</li>
+
+ <li>A Canvas is responsible for obtaining a WebGL context from
+ the <a href="http://www.w3.org/TR/html5/scripting-1.html#the-canvas-element">HTMLCanvasElement</a>.</li>
+
+ <li>A Canvas also fires a {{#crossLink "Canvas/webglContextLost:event"}}{{/crossLink}} event when the WebGL context is
+ lost, and a {{#crossLink "Canvas/webglContextRestored:event"}}{{/crossLink}} when it is restored again.</li>
+
+ <li>The various components within the parent {{#crossLink "Viewer"}}Viewer{{/crossLink}} will transparently recover on
+ the {{#crossLink "Canvas/webglContextRestored:event"}}{{/crossLink}} event.</li>
+
+ </ul>
+
+ <img src="http://www.gliffy.com/go/publish/image/7103211/L.png"></img>
+
+ ## Example
+
+ In the example below, we're creating a {{#crossLink "Viewer"}}Viewer{{/crossLink}} without specifying an HTML canvas element
+ for it. This causes the {{#crossLink "Viewer"}}Viewer{{/crossLink}}'s Canvas component to create its own default element
+ within the page. Then we subscribe to various events fired by that Canvas component.
+
+ ```` javascript
+ var viewer = new BIMSURFER.Viewer();
+
+ // Get the Canvas off the Viewer
+ // Since we did not configure the Viewer with the ID of a DOM canvas element,
+ // the Canvas will create its own canvas element in the DOM
+ var canvas = viewer.canvas;
+
+ // Get the WebGL context off the Canvas
+ var gl = canvas.gl;
+
+ // Subscribe to Canvas resize events
+ canvas.on("resize", function(e) {
+        var width = e.width;
+        var height = e.height;
+        var aspect = e.aspect;
+        //...
+     });
+
+ // Subscribe to WebGL context loss events on the Canvas
+ canvas.on("webglContextLost", function() {
+        //...
+     });
+
+ // Subscribe to WebGL context restored events on the Canvas
+ canvas.on("webglContextRestored", function(gl) {
+        var newContext = gl;
+        //...
+     });
+ ````
+
+ @class Canvas
+ @module BIMSURFER
+ @submodule canvas
+ @static
+ @param {Viewer} viewer Parent viewer
+ @extends Component
+ */
+(function () {
+
+    "use strict";
+
+    BIMSURFER.Canvas = BIMSURFER.Component.extend({
+
+        className: "BIMSURFER.Canvas",
+
+        _init: function () {
+
+            /**
+             * The HTML canvas. When this BIMSURFER.Canvas was configured with the ID of an existing canvas within the DOM,
+             * this property will be that element, otherwise it will be a full-page canvas that this Canvas has
+             * created by default.
+             * @property canvas
+             * @type {HTMLCanvasElement}
+             * @final
+             */
+            this.canvas = this.viewer._canvas;
+
+            // If the canvas uses css styles to specify the sizes make sure the basic
+            // width and height attributes match or the WebGL context will use 300 x 150
+
+            this.canvas.width = this.canvas.clientWidth;
+            this.canvas.height = this.canvas.clientHeight;
+
+            // Bind context loss and recovery handlers
+
+            var self = this;
+
+            this.canvas.addEventListener("webglcontextlost",
+                function () {
+
+                    /**
+                     * Fired wheneber the WebGL context has been lost
+                     * @event webglContextLost
+                     */
+                    self.fire("webglContextLost");
+                },
+                false);
+
+            this.canvas.addEventListener("webglcontextrestored",
+                function () {
+                    self._initWebGL();
+                    if (self.gl) {
+
+                        /**
+                         * Fired whenever the WebGL context has been restored again after having previously being lost
+                         * @event webglContextRestored
+                         * @param value The WebGL context object
+                         */
+                        self.fire("webglContextRestored", self.gl);
+                    }
+                },
+                false);
+
+            // Publish canvas size changes on each viewer tick
+
+            var lastWidth = this.canvas.width;
+            var lastHeight = this.canvas.height;
+
+            this._tick = this.viewer.on("tick",
+                function () {
+
+                    var canvas = self.canvas;
+
+                    if (canvas.width !== lastWidth || canvas.height !== lastHeight) {
+
+                        lastWidth = canvas.width;
+                        lastHeight = canvas.height;
+
+                        /**
+                         * Fired whenever the canvas has resized
+                         * @event resized
+                         * @param width {Number} The new canvas width
+                         * @param height {Number} The new canvas height
+                         * @param aspect {Number} The new canvas aspect ratio
+                         */
+                        self.fire("resized", {
+                            width: canvas.width,
+                            height: canvas.height,
+                            aspect: canvas.height / canvas.width
+                        });
+                    }
+                });
+        },
+
+        /**
+         * Attempts to pick a {{#crossLink "GameObject"}}GameObject{{/crossLink}} at the given Canvas-space coordinates within the
+         * parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}.
+         *
+         * Ignores {{#crossLink "GameObject"}}GameObjects{{/crossLink}} that are attached
+         * to either a {{#crossLink "Stage"}}Stage{{/crossLink}} with {{#crossLink "Stage/pickable:property"}}pickable{{/crossLink}}
+         * set *false* or a {{#crossLink "Modes"}}Modes{{/crossLink}} with {{#crossLink "Modes/picking:property"}}picking{{/crossLink}} set *false*.
+         *
+         * On success, will fire a {{#crossLink "Canvas/picked:event"}}{{/crossLink}} event on this Canvas, along with
+         * a separate {{#crossLink "GameObject/picked:event"}}{{/crossLink}} event on the target {{#crossLink "GameObject"}}GameObject{{/crossLink}}.
+         *
+         * @method pick
+         * @param {Number} canvasX X-axis Canvas coordinate.
+         * @param {Number} canvasY Y-axis Canvas coordinate.
+         * @param {*} [options] Pick options.
+         * @param {Boolean} [options.rayPick=false] Whether to perform a 3D ray-intersect pick.
+         */
+        pick: function (canvasX, canvasY, options) {
+
+            /**
+             * Fired whenever the {{#crossLink "Canvas/pick:method"}}{{/crossLink}} method succeeds in picking
+             * a {{#crossLink "GameObject"}}GameObject{{/crossLink}} in the parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}.
+             * @event picked
+             * @param {String} objectId The ID of the picked {{#crossLink "GameObject"}}GameObject{{/crossLink}} within the parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}.
+             * @param {Number} canvasX The X-axis Canvas coordinate that was picked.
+             * @param {Number} canvasY The Y-axis Canvas coordinate that was picked.
+             */
+
+        },
+
+        _destroy: function () {
+            this.viewer.off(this._tick);
+        }
+    });
 
 })();;/**
+ * Viewer objects and utilities.
+ *
+ * @module XEO
+ * @submodule objects
+ */;/**
  An **Object** is a visible 3D element within a {{#crossLink "Viewer"}}{{/crossLink}}.
 
  ## Overview
@@ -4642,6 +8014,7 @@ var viewer = new BIMSURFER.Viewer(...);
 
  @class Object
  @module BIMSURFER
+ @submodule objects
  @constructor
  @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
  @param [cfg] {*} Configs
@@ -5328,6 +8701,7 @@ var viewer = new BIMSURFER.Viewer(...);
 
  @class BoxObject
  @module BIMSURFER
+ @submodule objects
  @constructor
  @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
  @param [cfg] {*} Configs
@@ -5412,6 +8786,7 @@ var viewer = new BIMSURFER.Viewer(...);
 
  @class TeapotObject
  @module BIMSURFER
+ @submodule objects
  @constructor
  @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
  @param [cfg] {*} Configs
@@ -5494,6 +8869,7 @@ var randomObjects = new BIMSURFER.RandomObjects(viewer, {
 
  @class RandomObjects
  @module BIMSURFER
+ @submodule objects
  @constructor
  @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}.
  @param [cfg] {*} RandomObjects configuration
@@ -5694,6 +9070,7 @@ var randomObjects = new BIMSURFER.RandomObjects(viewer, {
 
  @class ObjectSet
  @module BIMSURFER
+ @submodule objects
  @constructor
  @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
  @param [cfg] {*} Configs
@@ -6214,6 +9591,11 @@ var randomObjects = new BIMSURFER.RandomObjects(viewer, {
     });
 
 })();;/**
+ * Camera components.
+ *
+ * @module XEO
+ * @submodule cameras
+ */;/**
  A **Camera** defines a viewpoint within a {{#crossLink "Viewer"}}Viewer{{/crossLink}}.
 
  ## Overview
@@ -6299,6 +9681,10 @@ var randomObjects = new BIMSURFER.RandomObjects(viewer, {
  @param [cfg.eye=[0,0,-10]] {Array of Number} Eye position.
  @param [cfg.look=[0,0,0]] {Array of Number} The position of the point-of-interest we're looking at.
  @param [cfg.up=[0,1,0]] {Array of Number} The "up" vector.
+ @param [cfg.fovy=60.0] {Number} Field-of-view angle, in degrees, on Y-axis.
+ @param [cfg.aspect=1.0] {Number} Aspect ratio.
+ @param [cfg.near=0.1] {Number} Position of the near plane on the View-space Z-axis.
+ @param [cfg.far=10000] {Number} Position of the far plane on the View-space Z-axis.
  @extends Component
  */
 (function () {
@@ -6701,11 +10087,25 @@ var randomObjects = new BIMSURFER.RandomObjects(viewer, {
                 }
             },
 
+            /**
+             * Field-of-view angle on Y-axis.
+             * Fires an {{#crossLink "Camera/fovy:event"}}{{/crossLink}} event on change.
+             * @property up
+             * @default 60
+             * @type Number
+             */
             fovy: {
 
                 set: function (value) {
                     this._fovy = value || 60;
                     this._cameraNodeDirty = true;
+
+                    /**
+                     * Fired whenever this Camera's {{#crossLink "Camera/fovy:property"}}{{/crossLink}} property changes.
+                     * @event fovy
+                     * @param value The property's new value
+                     */
+                    this.fire('fovy', this._fovy);
                 },
 
                 get: function () {
@@ -6713,11 +10113,25 @@ var randomObjects = new BIMSURFER.RandomObjects(viewer, {
                 }
             },
 
+            /**
+             * Distance to near clip plane in normalized device coordinates [0..1].
+             * Fires an {{#crossLink "Camera/near:event"}}{{/crossLink}} event on change.
+             * @property near
+             * @default 0.1
+             * @type Number
+             */
             near: {
 
                 set: function (value) {
                     this._near = value || 0.1;
                     this._cameraNodeDirty = true;
+
+                    /**
+                     * Fired whenever this Camera's {{#crossLink "Camera/near:property"}}{{/crossLink}} property changes.
+                     * @event near
+                     * @param value The property's new value
+                     */
+                    this.fire('near', this._near);
                 },
 
                 get: function () {
@@ -6725,6 +10139,13 @@ var randomObjects = new BIMSURFER.RandomObjects(viewer, {
                 }
             },
 
+            /**
+             * Distance to far clip plane in normalized device coordinates [0..1].
+             * Fires an {{#crossLink "Camera/far:event"}}{{/crossLink}} event on change.
+             * @property far
+             * @default 10000
+             * @type Number
+             */
             far: {
 
                 set: function (value) {
@@ -6733,9 +10154,16 @@ var randomObjects = new BIMSURFER.RandomObjects(viewer, {
                 },
 
                 get: function () {
+
+                    /**
+                     * Fired whenever this Camera's {{#crossLink "Camera/far:property"}}{{/crossLink}} property changes.
+                     * @event far
+                     * @param value The property's new value
+                     */
                     return this._far;
                 }
             },
+
 
             screenPan: {
 
@@ -6757,6 +10185,11 @@ var randomObjects = new BIMSURFER.RandomObjects(viewer, {
     });
 
 })();;/**
+ * Light source objects.
+ *
+ * @module XEO
+ * @submodule lighting
+ */;/**
 
  **Light** is the base class for all light source classes in BIMViewer.
 
@@ -6768,6 +10201,7 @@ var randomObjects = new BIMSURFER.RandomObjects(viewer, {
  </ul>
  @class Light
  @module BIMSURFER
+ @submodule lighting
  @constructor
  @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}.
  @param [cfg] {*} Light configuration
@@ -7068,6 +10502,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
  @class AmbientLight
  @module BIMSURFER
+ @submodule lighting
  @constructor
  @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}, creates this AmbientLight within the
  default {{#crossLink "Viewer"}}Viewer{{/crossLink}} when omitted
@@ -7175,6 +10610,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
  @class PointLight
  @module BIMSURFER
+ @submodule lighting
  @constructor
  @extends Light
  @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}.
@@ -7403,6 +10839,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
  @class DirLight
  @module BIMSURFER
+ @submodule lighting
  @constructor
  @extends Light
  @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}.
@@ -7507,6 +10944,11 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
 })();
 ;/**
+ * Geometry components.
+ *
+ * @module XEO
+ * @submodule geometry
+ */;/**
  TODO
 
  ## Overview
@@ -13694,6 +17136,11 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
     }
 
 })();;/**
+ * Rendering effects components.
+ *
+ * @module XEO
+ * @submodule effects
+ */;/**
  An **Effect** is a the base class for visual effects that are applied to {{#crossLink "ObjectSet"}}ObjectSets{{/crossLink}}.
 
  ## Overview
@@ -13877,7 +17324,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
     });
 
 })();;/**
- A **LabelEffect** is an {{#crossLink "Effect"}}{{/crossLink}} that highlights the {{#crossLink "Object"}}Objects{{/crossLink}} within an {{#crossLink "ObjectSet"}}{{/crossLink}}.
+ A **LabelEffect** is an {{#crossLink "Effect"}}{{/crossLink}} that labels on the {{#crossLink "Object"}}Objects{{/crossLink}} within an {{#crossLink "ObjectSet"}}{{/crossLink}}.
 
  ## Overview
 
@@ -14575,2283 +18022,11 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
     });
 
 })();;/**
- A **FrameEffect** is an {{#crossLink "Effect"}}{{/crossLink}} that highlights the {{#crossLink "Object"}}Objects{{/crossLink}} within an {{#crossLink "ObjectSet"}}{{/crossLink}}.
-
- ## Overview
-
- TODO
-
- ## Example
-
- #### Highlighting an ObjectSet
-
- In this example we create four {{#crossLink "Object"}}Objects{{/crossLink}}, then add two of them to an {{#crossLink "ObjectSet"}}{{/crossLink}}.
- <br> Then we apply a {{#crossLink "FrameEffect"}}{{/crossLink}} to the {{#crossLink "ObjectSet"}}{{/crossLink}}, causing
- it's {{#crossLink "Object"}}Objects{{/crossLink}} to become highlighted while the other two {{#crossLink "Object"}}Objects{{/crossLink}} remain un-highlighted.
-
- <iframe style="width: 600px; height: 400px" src="../../examples/effect_HighlightEffect.html"></iframe>
-
- ````javascript
-
- // Create a Viewer
- var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
-
- // Create a Camera
- var camera = new BIMSURFER.Camera(viewer, {
-        eye: [30, 20, -30]
-    });
-
- // Spin the camera
- viewer.on("tick", function () {
-        camera.rotateEyeY(0.2);
-    });
-
- // Create a CameraControl so we can move the Camera
- var cameraControl = new BIMSURFER.CameraControl(viewer, {
-        camera: camera
-    });
-
- // Create an AmbientLight
- var ambientLight = new BIMSURFER.AmbientLight(viewer, {
-        color: [0.7, 0.7, 0.7]
-    });
-
- // Create a DirLight
- var dirLight1 = new BIMSURFER.DirLight(viewer, {
-        color: [0.6, 0.9, 0.9],
-        dir: [1.0, 0.0, 0.0],
-        space: "view"
-    });
-
- // Create a DirLight
- var dirLight2 = new BIMSURFER.DirLight(viewer, {
-        color: [0.6, 0.9, 0.9],
-        dir: [-0.5, 0.0, -1.0],
-        space: "view"
-    });
-
- // Create a BoxGeometry
- var geometry = new BIMSURFER.BoxGeometry(viewer, {
-        id: "myGeometry"
-    });
-
- // Create some Objects
- // Share the BoxGeometry among them
-
- var object1 = new BIMSURFER.Object(viewer, {
-        type: "IfcRoof",
-        geometries: [ geometry ],
-        matrix: BIMSURFER.math.translationMat4v([-8, 0, -8])
-    });
-
- var object2 = new BIMSURFER.Object(viewer, {
-        type: "IfcDistributionFlowElement",
-        geometries: [ geometry ],
-        matrix: BIMSURFER.math.translationMat4v([8, 0, -8])
-    });
-
- var object3 = new BIMSURFER.Object(viewer, {
-        type: "IfcRailing",
-        geometries: [ geometry ],
-        matrix: BIMSURFER.math.translationMat4v([-8, 0, 8])
-    });
-
- var object4 = new BIMSURFER.Object(viewer, {
-        type: "IfcRoof",
-        geometries: [ geometry ],
-        matrix: BIMSURFER.math.translationMat4v([8, 0, 8])
-    });
-
- // Create an ObjectSet that initially contains one of our Objects
-
- var objectSet = new BIMSURFER.ObjectSet(viewer, {
-        objects: [object1 ]
-    });
-
- // Apply a Highlight effect to the ObjectSet, which causes the
- // Object in the ObjectSet to become highlighted.
-
- var highlight = new BIMSURFER.FrameEffect(viewer, {
-        objectSet: objectSet
-    });
-
- // Add a second Object to the ObjectSet, causing the Highlight to now render
- // that Object as highlighted also
-
- objectSet.addObjects([object3]);
-
- ````
-
- @class FrameEffect
- @module BIMSURFER
- @submodule effect
- @constructor
- @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
- @param [cfg] {*} Configs
- @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
- @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this FrameEffect.
- @param [cfg.objectSet] {ObjectSet} The {{#crossLink "ObjectSet"}}{{/crossLink}} to apply this FrameEffect to.
- @extends Effect
- */
-(function () {
-
-    "use strict";
-
-    BIMSURFER.FrameEffect = BIMSURFER.Effect.extend({
-
-        /**
-         JavaScript class name for this Component.
-
-         @property className
-         @type String
-         @final
-         */
-        className: "BIMSURFER.FrameEffect",
-
-        _init: function (cfg) {
-
-            this._super(cfg);
-
-            this._fly = new BIMSURFER.CameraFlyAnimation(viewer, {
-                camera: cfg.camera
-            });
-        },
-
-        _apply: function () {
-
-            this._fly.flyTo({
-                boundary: this.objectSet.boundary,
-                arc: 0.0,
-                velocity: 40
-            });
-        },
-
-        _destroy: function() {
-            this._fly.destroy();
-        }
-    });
-})();;/**
- A **CameraControl** allows you to pan, rotate and zoom a {{#crossLink "Camera"}}{{/crossLink}} using the mouse and keyboard,
- as well as switch it between preset left, right, anterior, posterior, superior and inferior views.
-
- ## Overview
-
- <ul>
- <li>You can have multiple CameraControls within the same {{#crossLink "Viewer"}}{{/crossLink}}.</li>
- <li>Multiple CameraControls can drive the same {{#crossLink "Camera"}}{{/crossLink}}, or can each drive their own separate {{#crossLink "Camera"}}Cameras{{/crossLink}}.</li>
- <li>At any instant, the CameraControl we're driving is the one whose {{#crossLink "Camera/active:property"}}active{{/crossLink}} property is true.</li>
- <li>You can switch a CameraControl to a different {{#crossLink "Camera"}}{{/crossLink}} at any time.</li>
- </ul>
-
- ## Example
-
- #### Controlling a Camera
-
- In this example we're viewing a {{#crossLink "TeapotObject"}}{{/crossLink}} with a {{#crossLink "Camera"}}{{/crossLink}} that's controlled by a CameraControl.
-
- <iframe style="width: 600px; height: 400px" src="../../examples/control_CameraControl.html"></iframe>
-
- ````Javascript
- var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
-
- var camera = new BIMSURFER.Camera(viewer, {
-        eye: [5, 5, -5]
-    });
-
- var cameraControl = new BIMSURFER.CameraControl(viewer, {
-        camera: camera
-    });
-
- // Create a RandomObjects
- var randomObjects = new BIMSURFER.RandomObjects(viewer, {
-        numObjects: 55
-    });
- ````
-
- @class CameraControl
- @module BIMSURFER
- @submodule control
- @constructor
- @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
- @param [cfg] {*} Configs
- @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
- @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Camera.
- @param [camera] {Camera} The Camera to control.
- @extends Component
- */
-(function () {
-
-    "use strict";
-
-    BIMSURFER.CameraControl = BIMSURFER.Component.extend({
-
-        /**
-         JavaScript class name for this Component.
-
-         @property className
-         @type String
-         @final
-         */
-        className: "BIMSURFER.CameraControl",
-
-        /**
-          Indicates that only one instance of a CameraControl may be active within
-          its {{#crossLink "Viewer"}}{{/crossLink}} at a time. When a CameraControl is activated, that has
-          a true value for this flag, then any other active CameraControl will be deactivated first.
-
-         @property exclusive
-         @type Boolean
-         @final
-         */
-        exclusive: true,
-        
-        _init: function (cfg) {
-
-            var self = this;
-
-            var viewer = this.viewer;            
-
-            this._keyboardAxis = new BIMSURFER.KeyboardAxisCamera(viewer, {
-                camera: cfg.camera
-            });
-
-            this._keyboardOrbit = new BIMSURFER.KeyboardOrbitCamera(viewer, {
-                camera: cfg.camera
-            });
-            
-            this._mouseOrbit = new BIMSURFER.MouseOrbitCamera(viewer, {
-                camera: cfg.camera
-            });
-
-            this._keyboardPan = new BIMSURFER.KeyboardPanCamera(viewer, {
-                sensitivity: 1,
-                camera: cfg.camera
-            });
-
-            this._mousePan = new BIMSURFER.MousePanCamera(viewer, {
-                sensitivity: 1,
-                camera: cfg.camera
-            });
-
-            this._keyboardZoom = new BIMSURFER.KeyboardZoomCamera(viewer, {
-                sensitivity: 1,
-                camera: cfg.camera
-            });
-
-            this._mouseZoom = new BIMSURFER.MouseZoomCamera(viewer, {
-                sensitivity: 1,
-                camera: cfg.camera
-            });
-
-            this._mousePickObject = new BIMSURFER.MousePickObject(viewer, {
-                rayPick: true,
-                camera: cfg.camera
-            });
-
-            this._cameraFly = new BIMSURFER.CameraFlyAnimation(viewer, {
-                camera: cfg.camera
-            });
-
-            this._mousePickObject.on("pick",
-                function (e) {
-
-                    var diff = BIMSURFER.math.subVec3(self._cameraFly.camera.eye, self._cameraFly.camera.look, []);
-
-                    self._cameraFly.flyTo({
-                        look: e.worldPos,
-                        eye: [e.worldPos[0] + diff[0], e.worldPos[1] + diff[1], e.worldPos[2] + diff[2]]
-                    });
-                });
-
-            // Handle when nothing is picked
-            this._mousePickObject.on("nopick", function (e) {
-                // alert("Mothing picked");
-            });
-
-            this.camera = cfg.camera;
-            
-            this.firstPerson = cfg.firstPerson;
-
-            this.active = cfg.active !== false;
-        },
-
-        _props: {
-
-            firstPerson: {
-
-                set: function (value) {
-
-                    this._firstPerson = value;
-
-                    this._keyboardOrbit.firstPerson = value;
-                    this._mouseOrbit.firstPerson = value;
-                },
-
-                get: function () {
-                    return this._firstPerson;
-                }
-            },
-
-            /**
-             * The {{#crossLink "Camera"}}{{/crossLink}} being controlled.
-             *
-             * Must be within the same {{#crossLink "Viewer"}}{{/crossLink}} as this Object. Defaults to the parent
-             * {{#crossLink "Viewer"}}Viewer's{{/crossLink}} default {{#crossLink "Viewer/camera:property"}}camera{{/crossLink}} when set to
-             * a null or undefined value.
-             *
-             * @property camera
-             * @type Camera
-             */
-            camera: {
-
-                set: function (value) {
-
-                    var camera = value;
-
-                    if (camera) {
-
-                        if (BIMSURFER._isString(camera)) {
-                            camera = this.viewer.components[camera];
-                            if (!camera) {
-                                this.error("camera", "Camera not found in Viewer: " + value);
-                                return;
-                            }
-                        }
-
-                        if (camera.className != "BIMSURFER.Camera") {
-                            this.error("camera", "Value is not a BIMSURFER.Camera");
-                            return;
-                        }
-
-                    } else {
-
-                        // Default to Viewer's default Camera
-                        camera = this.viewer.camera;
-                    }
-
-                    //   this._cameraFly.camera = camera;
-
-                    this._camera = camera;
-
-                    this._keyboardAxis.camera = camera;
-
-                    this._keyboardOrbit.camera = camera;
-                    this._mouseOrbit.camera = camera;
-
-                    this._keyboardPan.camera = camera;
-                    this._mousePan.camera = camera;
-
-                    this._keyboardZoom.camera = camera;
-                    this._mouseZoom.camera = camera;
-                },
-
-                get: function () {
-                    return this._camera;
-                }
-            },
-
-            /**
-             * Flag which indicates whether this CameraControl is active or not.
-             *
-             * Fires an {{#crossLink "CameraControl/active:event"}}{{/crossLink}} event on change.
-             *
-             * @property active
-             * @type Boolean
-             */
-            active: {
-
-                set: function (value) {
-
-                    if (this._active === value) {
-                        return;
-                    }
-
-                    this._keyboardOrbit.active = value;
-                    this._mouseOrbit.active = value;
-                    this._keyboardPan.active = value;
-                    this._mousePan.active = value;
-                    this._mousePickObject.active = value;
-                    this._cameraFly.active = value;
-
-                    /**
-                     * Fired whenever this CameraControl's {{#crossLink "CameraControl/active:property"}}{{/crossLink}} property changes.
-                     * @event active
-                     * @param value The property's new value
-                     */
-                    this.fire('active', this._active = value);
-                },
-
-                get: function () {
-                    return this._active;
-                }
-            }
-        },
-
-        _destroy: function () {
-
-            this._keyboardAxis.destroy();
-            this._keyboardOrbit.destroy();
-            this._mouseOrbit.destroy();
-            this._keyboardPan.destroy();
-            this._mousePan.destroy();
-            this._keyboardZoom.destroy();
-            this._mouseZoom.destroy();
-            this._mousePickObject.destroy();
-            this._cameraFly.destroy();
-
-            this.active = false;
-        }
-    });
-
-})();
-;/**
- A **MouseOrbitCamera** lets you orbit a {{#crossLink "Camera"}}{{/crossLink}} about its point-of-interest using the mouse.
-
- ## Overview
-
- <ul>
- <li>Orbiting involves rotating the {{#crossLink "Camera"}}Camera's{{/crossLink}} {{#crossLink "Camera/eye:property"}}{{/crossLink}}
- position about its current {{#crossLink "Camera/look:property"}}{{/crossLink}} position.</li>
- <li>The orbit is freely rotating, without gimbal-lock.</li>
- <li>If desired, you can have multiple MouseOrbitCameras within the same {{#crossLink "Viewer"}}{{/crossLink}}.</li>
- <li>Multiple MouseOrbitCameras can drive the same {{#crossLink "Camera"}}{{/crossLink}}, or can each drive their own separate {{#crossLink "Camera"}}Cameras{{/crossLink}}.</li>
- <li>At any instant, the MouseOrbitCameras we're driving is the one whose {{#crossLink "MouseOrbitCamera/active:property"}}active{{/crossLink}} property is true.</li>
- <li>You can switch a MouseOrbitCameras to a different {{#crossLink "Camera"}}{{/crossLink}} at any time.</li>
- </ul>
-
- TODO
-
- ## Example
-
- <iframe style="width: 600px; height: 400px" src="../../examples/control_MouseOrbitCamera.html"></iframe>
-
- @class MouseOrbitCamera
- @module BIMSURFER
- @submodule control
- @constructor
- @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
- @param [cfg] {*} Configs
- @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
- @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this MouseOrbitCamera.
- @param [camera] {Camera} The {{#crossLink "Camera"}}{{/crossLink}} to control.
- @extends Component
- */
-(function () {
-
-    "use strict";
-
-    BIMSURFER.MouseOrbitCamera = BIMSURFER.Component.extend({
-
-        /**
-         JavaScript class name for this Component.
-
-         @property className
-         @type String
-         @final
-         */
-        className: "BIMSURFER.MouseOrbitCamera",
-
-        _init: function (cfg) {
-
-            this.camera = cfg.camera;
-
-            this._onTick = null;
-
-            this._onMouseDown = null;
-            this._onMouseMove = null;
-            this._onMouseUp = null;
-
-            this.active = cfg.active !== false;
-        },
-
-        _props: {
-
-            /**
-             * Flag which indicates whether this MouseOrbitCamera is active or not.
-             *
-             * Fires an {{#crossLink "MouseOrbitCamera/active:event"}}{{/crossLink}} event on change.
-             *
-             * @property active
-             * @type Boolean
-             */
-            active: {
-
-                set: function (value) {
-
-                    if (this._active === value) {
-                        return;
-                    }
-
-                    var input = this.viewer.input;
-
-                    if (value) {
-
-                        var sensitivity = 0.20;
-                        var lastX;
-                        var lastY;
-                        var xDelta = 0;
-                        var yDelta = 0;
-                        var down = false;
-
-                        var self = this;
-
-                        this._onTick = this.viewer.on("tick",
-                            function (params) {
-
-                                if (!self._camera) {
-                                    return;
-                                }
-
-                                if (xDelta != 0) {
-                                    self._camera.rotateEyeY(-xDelta);
-                                    xDelta = 0;
-                                }
-
-                                if (yDelta != 0) {
-                                    self._camera.rotateEyeX(yDelta);
-                                    yDelta = 0;
-                                }
-                            });
-
-                        this._onMouseDown = input.on("mousedown",
-                            function (e) {
-
-                                if (input.mouseDownLeft
-                                    && !input.mouseDownRight
-                                    && !input.keyDown[input.KEY_SHIFT]
-                                    && !input.mouseDownMiddle) {
-
-                                    down = true;
-                                    lastX = e[0];
-                                    lastY = e[1];
-
-                                } else {
-                                    down = false;
-                                }
-
-                            });
-
-                        this._onMouseUp = input.on("mouseup",
-                            function (e) {
-                                down = false;
-                            });
-
-                        this._onMouseMove = input.on("mousemove",
-                            function (e) {
-                                if (down) {
-                                    xDelta += (e[0] - lastX) * sensitivity;
-                                    yDelta += (e[1] - lastY) * sensitivity;
-                                    lastX = e[0];
-                                    lastY = e[1];
-                                }
-                            });
-
-                    } else {
-
-                        input.off(this._onTick);
-
-                        input.off(this._onMouseDown);
-                        input.off(this._onMouseUp);
-                        input.off(this._onMouseMove);
-                    }
-
-                    /**
-                     * Fired whenever this MouseOrbitCamera's {{#crossLink "MouseOrbitCamera/active:property"}}{{/crossLink}} property changes.
-                     * @event active
-                     * @param value The property's new value
-                     */
-                    this.fire('active', this._active = value);
-                },
-
-                get: function () {
-                    return this._active;
-                }
-            },
-
-            camera: {
-
-                set: function (value) {
-                    var camera = value;
-                    if (camera) {
-                        if (BIMSURFER._isString(camera)) {
-                            camera = this.viewer.components[camera];
-                            if (!camera) {
-                                this.error("camera", "Camera not found in Viewer: " + value);
-                                return;
-                            }
-                        }
-                        if (camera.className != "BIMSURFER.Camera") {
-                            this.error("camera", "Value is not a BIMSURFER.Camera");
-                            return;
-                        }
-                    }
-                    this._camera = camera;
-                    this._cameraDirty = true;
-                },
-
-                get: function () {
-                    return this._camera;
-                }
-            }
-        },
-
-        _destroy: function () {
-            this.active = false;
-        }
-    });
-
-})();
-;/**
- A **KeyboardOrbitCamera** lets you orbit a {{#crossLink "Camera"}}{{/crossLink}} about its point-of-interest using the keyboard's arrow keys.
-
- ## Overview
-
- <ul>
- <li>Orbiting involves rotating the {{#crossLink "Camera"}}Camera's{{/crossLink}} {{#crossLink "Camera/eye:property"}}{{/crossLink}}
- position about its current {{#crossLink "Camera/look:property"}}{{/crossLink}} position.</li>
- <li>The orbit is freely rotating, without gimbal-lock.</li>
- <li>If desired, you can have multiple KeyboardOrbitCameras within the same {{#crossLink "Viewer"}}{{/crossLink}}.</li>
- <li>Multiple KeyboardOrbitCameras can drive the same {{#crossLink "Camera"}}{{/crossLink}}, or can each drive their own separate {{#crossLink "Camera"}}Cameras{{/crossLink}}.</li>
- <li>At any instant, the KeyboardOrbitCameras we're driving is the one whose {{#crossLink "KeyboardOrbitCamera/active:property"}}active{{/crossLink}} property is true.</li>
- <li>You can switch a KeyboardOrbitCameras to a different {{#crossLink "Camera"}}{{/crossLink}} at any time.</li>
- </ul>
-
- ## Example
-
- <iframe style="width: 600px; height: 400px" src="../../examples/control_KeyboardOrbitCamera.html"></iframe>
-
- @class KeyboardOrbitCamera
- @module BIMSURFER
- @submodule control
- @constructor
- @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
- @param [cfg] {*} Configs
- @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
- @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this KeyboardAxisCamera.
- @param [camera] {Camera} The {{#crossLink "Camera"}}{{/crossLink}} to control.
- @extends Component
- */
-(function () {
-
-    "use strict";
-
-    BIMSURFER.KeyboardOrbitCamera = BIMSURFER.Component.extend({
-
-        /**
-         JavaScript class name for this Component.
-
-         @property className
-         @type String
-         @final
-         */
-        className: "BIMSURFER.KeyboardOrbitCamera",
-
-        _init: function (cfg) {
-
-            this.camera = cfg.camera;
-
-            this._onTick = null;
-
-            this.active = cfg.active !== false;
-        },
-
-        _props: {
-
-            /**
-             * Flag which indicates whether this KeyboardOrbitCamera is active or not.
-             *
-             * Fires an {{#crossLink "KeyboardOrbitCamera/active:event"}}{{/crossLink}} event on change.
-             *
-             * @property active
-             * @type Boolean
-             */
-            active: {
-
-                set: function (value) {
-
-                    if (this._active === value) {
-                        return;
-                    }
-
-                    var input = this.viewer.input;
-
-                    if (value) {
-
-                        var self = this;
-
-                        this._onTick = this.viewer.on("tick",
-                            function (params) {
-
-                                if (!self._camera) {
-                                    return;
-                                }
-
-                                var elapsed = params.elapsed;
-
-                                var yawRate = 50;
-                                var pitchRate = 50;
-
-                                if (!input.ctrlDown && !input.altDown) {
-
-                                    var left = input.keyDown[input.KEY_LEFT_ARROW];
-                                    var right = input.keyDown[input.KEY_RIGHT_ARROW];
-                                    var up = input.keyDown[input.KEY_UP_ARROW];
-                                    var down = input.keyDown[input.KEY_DOWN_ARROW];
-
-                                    if (left || right || up || down) {
-
-                                        var yaw = 0;
-                                        var pitch = 0;
-
-                                        if (right) {
-                                            yaw = -elapsed * yawRate;
-
-                                        } else if (left) {
-                                            yaw = elapsed * yawRate;
-                                        }
-
-                                        if (down) {
-                                            pitch = elapsed * pitchRate;
-
-                                        } else if (up) {
-                                            pitch = -elapsed * pitchRate;
-                                        }
-
-                                        if (Math.abs(yaw) > Math.abs(pitch)) {
-                                            pitch = 0;
-                                        } else {
-                                            yaw = 0;
-                                        }
-
-                                        if (yaw != 0) {
-                                            self._camera.rotateEyeY(yaw);
-                                        }
-
-                                        if (pitch != 0) {
-                                            self._camera.rotateEyeX(pitch);
-                                        }
-                                    }
-                                }
-                            });
-
-                    } else {
-
-                        this.viewer.off(this._onTick);
-                    }
-
-                    /**
-                     * Fired whenever this KeyboardOrbitCamera's {{#crossLink "KeyboardOrbitCamera/active:property"}}{{/crossLink}} property changes.
-                     * @event active
-                     * @param value The property's new value
-                     */
-                    this.fire('active', this._active = value);
-                },
-
-                get: function () {
-                    return this._active;
-                }
-            },
-
-            camera: {
-
-                set: function (value) {
-                    var camera = value;
-                    if (camera) {
-                        if (BIMSURFER._isString(camera)) {
-                            camera = this.viewer.components[camera];
-                            if (!camera) {
-                                this.error("camera", "Camera not found in Viewer: " + value);
-                                return;
-                            }
-                        }
-                        if (camera.className != "BIMSURFER.Camera") {
-                            this.error("camera", "Value is not a BIMSURFER.Camera");
-                            return;
-                        }
-                    }
-                    this._camera = camera;
-                },
-
-                get: function () {
-                    return this._camera;
-                }
-            }
-        },
-
-        _destroy: function () {
-            this.active = false;
-        }
-    });
-
-})();
-;/**
- A **MouseZoomCamera** lets you zoom a {{#crossLink "Camera"}}{{/crossLink}} using the mouse wheel.
-
- ## Overview
-
- <ul>
- <li>Zooming involves moving the {{#crossLink "Camera"}}Camera's{{/crossLink}} {{#crossLink "Camera/eye:property"}}{{/crossLink}} closer and farther to its {{#crossLink "Camera/look:property"}}{{/crossLink}} position.</li>
- <li>If desired, you can have multiple MouseZoomCameras within the same {{#crossLink "Viewer"}}{{/crossLink}}.</li>
- <li>Multiple MouseZoomCameras can drive the same {{#crossLink "Camera"}}{{/crossLink}}, or can each drive their own separate {{#crossLink "Camera"}}{{/crossLink}}.</li>
- <li>At any instant, the MouseZoomCameras we're driving is the one whose {{#crossLink "MouseZoomCamera/active:property"}}active{{/crossLink}} property is true.</li>
- <li>You can switch a MouseZoomCameras to a different {{#crossLink "Camera"}}{{/crossLink}} at any time.</li>
- </ul>
-
- TODO
-
- ## Example
-
- <iframe style="width: 600px; height: 400px" src="../../examples/control_MouseZoomCamera.html"></iframe>
-
- @class MouseZoomCamera
- @module BIMSURFER
- @submodule control
- @constructor
- @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
- @param [cfg] {*} Configs
- @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
- @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this MouseZoomCamera.
- @param [camera] {Camera} The {{#crossLink "Camera"}}{{/crossLink}} to control.
- @extends Component
- */
-(function () {
-
-    "use strict";
-
-    BIMSURFER.MouseZoomCamera = BIMSURFER.Component.extend({
-
-        /**
-         JavaScript class name for this Component.
-
-         @property className
-         @type String
-         @final
-         */
-        className: "BIMSURFER.MouseZoomCamera",
-
-        _init: function (cfg) {
-
-            var sensitivity = cfg.sensitivity;
-
-            this.sensitivity = sensitivity ? sensitivity * 1.0 : 1.0;
-
-            this.camera = cfg.camera;
-
-            this._onTick = null;
-            this._onMouseDown = null;
-            this._onMouseMove = null;
-            this._onMouseUp = null;
-
-            this.active = cfg.active !== false;
-        },
-
-        _props: {
-
-            /**
-             * Flag which indicates whether this MouseZoomCamera is active or not.
-             *
-             * Fires an {{#crossLink "MouseZoomCamera/active:event"}}{{/crossLink}} event on change.
-             *
-             * @property active
-             * @type Boolean
-             */
-            active: {
-
-                set: function (value) {
-
-                    if (this._active === value) {
-                        return;
-                    }
-
-                    var input = this.viewer.input;
-
-                    if (value) {
-
-                        var delta = 0;
-                        var target = 0;
-                        var newTarget = false;
-                        var targeting = false;
-                        var progress = 0;
-
-                        var eyeVec = BIMSURFER.math.vec3();
-                        var lookVec = BIMSURFER.math.vec3();
-                        var tempVec3 = BIMSURFER.math.vec3();
-
-                        var self = this;
-
-                        this._onMouseWheel = this.viewer.input.on("mousewheel",
-                            function (_delta) {
-
-//                                var d = params.d * 0.01;
-//
-//                                delta = -d;
-
-                                delta = _delta;
-
-                                if (delta === 0) {
-                                    targeting = false;
-                                    newTarget = false;
-                                } else {
-                                    newTarget = true;
-                                }
-                            });
-
-                        this._onTick = this.viewer.on("tick",
-                            function () {
-
-                                if (!self._camera) {
-                                    return;
-                                }
-
-                                var camera = self._camera;
-
-                                var eye = camera.eye;
-                                var look = camera.look;
-
-                                eyeVec[0] = eye[0];
-                                eyeVec[1] = eye[1];
-                                eyeVec[2] = eye[2];
-
-                                lookVec[0] = look[0];
-                                lookVec[1] = look[1];
-                                lookVec[2] = look[2];
-
-                                BIMSURFER.math.subVec3(eyeVec, lookVec, tempVec3);
-
-                                var lenLook = Math.abs(BIMSURFER.math.lenVec3(tempVec3));
-                                var lenLimits = 1000;
-                                var f = self.sensitivity * (2.0 + (lenLook / lenLimits));
-
-                                if (newTarget) {
-                                    target = delta * f;
-                                    progress = 0;
-                                    newTarget = false;
-                                    targeting = true;
-                                }
-
-                                if (targeting) {
-                                    if (delta > 0) {
-                                        progress += 0.2 * f;
-                                        if (progress > target) {
-                                            targeting = false;
-                                        }
-                                    } else if (delta < 0) {
-                                        progress -= 0.2 * f;
-                                        if (progress < target) {
-                                            targeting = false;
-                                        }
-                                    }
-                                    if (targeting) {
-                                        camera.zoom(progress);
-                                    }
-                                }
-                            });
-
-                    } else {
-
-                        input.off(this._onTick);
-                        input.off(this._onMouseWheel);
-                    }
-
-                    /**
-                     * Fired whenever this MouseZoomCamera's {{#crossLink "MouseZoomCamera/active:property"}}{{/crossLink}} property changes.
-                     * @event active
-                     * @param value The property's new value
-                     */
-                    this.fire('active', this._active = value);
-                },
-
-                get: function () {
-                    return this._active;
-                }
-            },
-
-            camera: {
-
-                set: function (value) {
-                    var camera = value;
-                    if (camera) {
-                        if (BIMSURFER._isString(camera)) {
-                            camera = this.viewer.components[camera];
-                            if (!camera) {
-                                this.error("camera", "Camera not found in Viewer: " + value);
-                                return;
-                            }
-                        }
-                        if (camera.className != "BIMSURFER.Camera") {
-                            this.error("camera", "Value is not a BIMSURFER.Camera");
-                            return;
-                        }
-                    }
-                    this._camera = camera;
-                    this._cameraDirty = true;
-                },
-
-                get: function () {
-                    return this._camera;
-                }
-            }
-        },
-
-        _destroy: function () {
-            this.active = false;
-        }
-    });
-
-})();
-;/**
- A **KeyboardZoomCamera** lets you zoom a {{#crossLink "Camera"}}{{/crossLink}} using the + and - keys.
-
- ## Overview
-
- <ul>
- <li>Zooming involves moving the {{#crossLink "Camera"}}Camera's{{/crossLink}} {{#crossLink "Camera/eye:property"}}{{/crossLink}} closer and farther to its {{#crossLink "Camera/look:property"}}{{/crossLink}} position.</li>
- <li>If desired, you can have multiple KeyboardZoomCameras within the same {{#crossLink "Viewer"}}{{/crossLink}}.</li>
- <li>Multiple KeyboardZoomCameras can drive the same {{#crossLink "Camera"}}{{/crossLink}}, or can each drive their own separate {{#crossLink "Camera"}}{{/crossLink}}.</li>
- <li>At any instant, the KeyboardZoomCameras we're driving is the one whose {{#crossLink "KeyboardZoomCamera/active:property"}}active{{/crossLink}} property is true.</li>
- <li>You can switch a KeyboardZoomCameras to a different {{#crossLink "Camera"}}{{/crossLink}} at any time.</li>
- </ul>
-
- TODO
-
- ## Example
-
- <iframe style="width: 600px; height: 400px" src="../../examples/control_KeyboardZoomCamera.html"></iframe>
-
- @class KeyboardZoomCamera
- @module BIMSURFER
- @submodule control
- @constructor
- @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
- @param [cfg] {*} Configs
- @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
- @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this KeyboardZoomCamera.
- @param [camera] {Camera} The {{#crossLink "Camera"}}{{/crossLink}} to control.
- @extends Component
- */
-(function () {
-
-    "use strict";
-
-    BIMSURFER.KeyboardZoomCamera = BIMSURFER.Component.extend({
-
-        /**
-         JavaScript class name for this Component.
-
-         @property className
-         @type String
-         @final
-         */
-        className: "BIMSURFER.KeyboardZoomCamera",
-
-        _init: function (cfg) {
-
-            var sensitivity = cfg.sensitivity;
-
-            this.sensitivity = sensitivity ? sensitivity * 15.0 : 15.0;
-
-            this.camera = cfg.camera;
-
-            this._onTick = null;
-
-            this.active = cfg.active !== false;
-        },
-
-        _props: {
-
-            /**
-             * Flag which indicates whether this KeyboardZoomCamera is active or not.
-             *
-             * Fires an {{#crossLink "KeyboardZoomCamera/active:event"}}{{/crossLink}} event on change.
-             *
-             * @property active
-             * @type Boolean
-             */
-            active: {
-
-                set: function (value) {
-
-                    if (this._active === value) {
-                        return;
-                    }
-
-                    var input = this.viewer.input;
-
-                    if (value) {
-
-                        var self = this;
-
-                        this._onTick = this.viewer.on("tick",
-                            function (params) {
-
-                                if (!self._camera) {
-                                    return;
-                                }
-
-                                var elapsed = params.elapsed;
-
-                                if (!input.ctrlDown && !input.altDown) {
-
-                                    var wkey = input.keyDown[input.KEY_ADD];
-                                    var skey = input.keyDown[input.KEY_SUBTRACT];
-
-                                    if (wkey || skey) {
-
-                                        var z = 0;
-
-                                        var sensitivity = self.sensitivity;
-
-                                        if (skey) {
-                                            z = elapsed * sensitivity;
-
-                                        } else if (wkey) {
-                                            z = -elapsed * sensitivity;
-                                        }
-
-                                        self._camera.zoom(z);
-                                    }
-                                }
-                            });
-
-                    } else {
-
-                        this.viewer.off(this._onTick);
-                    }
-
-                    /**
-                     * Fired whenever this KeyboardZoomCamera's {{#crossLink "KeyboardZoomCamera/active:property"}}{{/crossLink}} property changes.
-                     * @event active
-                     * @param value The property's new value
-                     */
-                    this.fire('active', this._active = value);
-                },
-
-                get: function () {
-                    return this._active;
-                }
-            },
-
-            camera: {
-
-                set: function (value) {
-                    var camera = value;
-                    if (camera) {
-                        if (BIMSURFER._isString(camera)) {
-                            camera = this.viewer.components[camera];
-                            if (!camera) {
-                                this.error("camera", "Camera not found in Viewer: " + value);
-                                return;
-                            }
-                        }
-                        if (camera.className != "BIMSURFER.Camera") {
-                            this.error("camera", "Value is not a BIMSURFER.Camera");
-                            return;
-                        }
-                    }
-                    this._camera = camera;
-                },
-
-                get: function () {
-                    return this._camera;
-                }
-            }
-        },
-
-        _destroy: function () {
-            this.active = false;
-        }
-    });
-
-})();
-;/**
- A **MousePanCamera** lets you pan a {{#crossLink "Camera"}}{{/crossLink}} using the mouse.
-
- ## Overview
-
- <ul>
- <li>Panning is done by dragging the mouse with the left and right buttons down.</li>
- <li>Panning up and down involves moving the {{#crossLink "Camera"}}Camera's{{/crossLink}} {{#crossLink "Camera/eye:property"}}{{/crossLink}} and {{#crossLink "Camera/look:property"}}{{/crossLink}} positions along the direction of its {{#crossLink "Camera/up:property"}}{{/crossLink}} vector.</li>
- <li>Panning left and right involves moving the {{#crossLink "Camera"}}Camera's{{/crossLink}} {{#crossLink "Camera/eye:property"}}{{/crossLink}} and {{#crossLink "Camera/look:property"}}{{/crossLink}} positions along the the vector that is perpendicular to its {{#crossLink "Camera/up:property"}}{{/crossLink}} and {{#crossLink "Camera/eye:property"}}{{/crossLink}}-{{#crossLink "Camera/look:property"}}{{/crossLink}} vector.</li>
- <li>If desired, you can have multiple MousePanCameras within the same {{#crossLink "Viewer"}}{{/crossLink}}.</li>
- <li>Multiple MousePanCameras can drive the same {{#crossLink "Camera"}}{{/crossLink}}, or can each drive their own separate {{#crossLink "Camera"}}{{/crossLink}}.</li>
- <li>At any instant, the MousePanCameras we're driving is the one whose {{#crossLink "MousePanCamera/active:property"}}active{{/crossLink}} property is true.</li>
- <li>You can switch a MousePanCameras to a different {{#crossLink "Camera"}}{{/crossLink}} at any time.</li>
- </ul>
-
-
- TODO
-
- ## Example
-
- <iframe style="width: 600px; height: 400px" src="../../examples/control_MousePanCamera.html"></iframe>
-
- @class MousePanCamera
- @module BIMSURFER
- @submodule control
- @constructor
- @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
- @param [cfg] {*} Configs
- @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
- @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this MousePanCamera.
- @param [camera] {Camera} The {{#crossLink "Camera"}}{{/crossLink}} to control.
- @extends Component
- */
-(function () {
-
-    "use strict";
-
-    BIMSURFER.MousePanCamera = BIMSURFER.Component.extend({
-
-        /**
-         JavaScript class name for this Component.
-
-         @property className
-         @type String
-         @final
-         */
-        className: "BIMSURFER.MousePanCamera",
-
-        _init: function (cfg) {
-
-            var sensitivity = cfg.sensitivity;
-
-            this.sensitivity = sensitivity ? sensitivity * 0.03 : 0.03;
-
-            this.camera = cfg.camera;
-
-            this._onTick = null;
-
-            this._onMouseDown = null;
-            this._onMouseMove = null;
-            this._onMouseUp = null;
-
-            this.active = cfg.active !== false;
-        },
-
-        _props: {
-
-
-            /**
-             * Flag which indicates whether this MousePanCamera is active or not.
-             *
-             * Fires an {{#crossLink "MousePanCamera/active:event"}}{{/crossLink}} event on change.
-             *
-             * @property active
-             * @type Boolean
-             */
-            active: {
-
-                set: function (value) {
-
-                    if (this._active === value) {
-                        return;
-                    }
-
-                    var input = this.viewer.input;
-
-                    if (value) {
-
-                        var lastX;
-                        var lastY;
-                        var xDelta = 0;
-                        var yDelta = 0;
-                        var down = false;
-
-                        var self = this;
-
-                        this._onTick = this.viewer.on("tick",
-                            function () {
-
-                                if (!self._camera) {
-                                    return;
-                                }
-
-                                if (xDelta != 0 || yDelta != 0) {
-
-                                    self._camera.pan([xDelta, yDelta, 0]);
-
-                                    xDelta = 0;
-                                    yDelta = 0;
-                                }
-                            });
-
-                        this._onMouseDown = input.on("mousedown",
-                            function (e) {
-
-                                if ((input.mouseDownLeft && input.mouseDownRight) ||
-                                    (input.mouseDownLeft && input.keyDown[input.KEY_SHIFT]) ||
-                                    input.mouseDownMiddle) {
-
-                                    lastX = e[0];
-                                    lastY = e[1];
-
-                                    down = true;
-
-                                } else {
-                                    down = false;
-                                }
-                            });
-
-                        this._onMouseUp = input.on("mouseup",
-                            function (e) {
-                                down = false;
-                            });
-
-                        this._onMouseMove = input.on("mousemove",
-                            function (e) {
-                                if (down) {
-                                    xDelta += (e[0] - lastX) * self.sensitivity;
-                                    yDelta += (e[1] - lastY) * self.sensitivity;
-                                    lastX = e[0];
-                                    lastY = e[1];
-                                }
-                            });
-
-                    } else {
-
-                        input.off(this._onTick);
-
-                        input.off(this._onMouseDown);
-                        input.off(this._onMouseUp);
-                        input.off(this._onMouseMove);
-                    }
-
-                    /**
-                     * Fired whenever this MousePanCamera's {{#crossLink "MousePanCamera/active:property"}}{{/crossLink}} property changes.
-                     * @event active
-                     * @param value The property's new value
-                     */
-                    this.fire('active', this._active = value);
-                },
-
-                get: function () {
-                    return this._active;
-                }
-            },
-
-            camera: {
-
-                set: function (value) {
-                    var camera = value;
-                    if (camera) {
-                        if (BIMSURFER._isString(camera)) {
-                            camera = this.viewer.components[camera];
-                            if (!camera) {
-                                this.error("camera", "Camera not found in Viewer: " + value);
-                                return;
-                            }
-                        }
-                        if (camera.className != "BIMSURFER.Camera") {
-                            this.error("camera", "Value is not a BIMSURFER.Camera");
-                            return;
-                        }
-                    }
-                    this._camera = camera;
-                },
-
-                get: function () {
-                    return this._camera;
-                }
-            }
-        },
-
-        _destroy: function () {
-            this.active = false;
-        }
-    });
-
-})();
-;/**
- A **KeyboardPanCamera** lets you pan a {{#crossLink "Camera"}}{{/crossLink}} using the W, S, A and D keys.
-
- ## Overview
-
- <ul>
- <li>Panning up and down involves moving the {{#crossLink "Camera"}}Camera's{{/crossLink}} {{#crossLink "Camera/eye:property"}}{{/crossLink}} and {{#crossLink "Camera/look:property"}}{{/crossLink}} positions along the direction of its {{#crossLink "Camera/up:property"}}{{/crossLink}} vector.</li>
- <li>Panning backwards and forwards involves moving the {{#crossLink "Camera"}}Camera's{{/crossLink}} {{#crossLink "Camera/eye:property"}}{{/crossLink}} and {{#crossLink "Camera/look:property"}}{{/crossLink}} positions along the direction of its {{#crossLink "Camera/eye:property"}}{{/crossLink}} - {{#crossLink "Camera/look:property"}}{{/crossLink}} vector.</li>
- <li>Panning left and right involves moving the {{#crossLink "Camera"}}Camera's{{/crossLink}} {{#crossLink "Camera/eye:property"}}{{/crossLink}} and {{#crossLink "Camera/look:property"}}{{/crossLink}} positions along the the vector that is perpendicular to its {{#crossLink "Camera/up:property"}}{{/crossLink}} and {{#crossLink "Camera/eye:property"}}{{/crossLink}}-{{#crossLink "Camera/look:property"}}{{/crossLink}} vector.</li>
- <li>If desired, you can have multiple KeyboardPanCameras within the same {{#crossLink "Viewer"}}{{/crossLink}}.</li>
- <li>Multiple KeyboardPanCameras can drive the same {{#crossLink "Camera"}}{{/crossLink}}, or can each drive their own separate {{#crossLink "Camera"}}{{/crossLink}}.</li>
- <li>At any instant, the KeyboardPanCameras we're driving is the one whose {{#crossLink "KeyboardPanCamera/active:property"}}active{{/crossLink}} property is true.</li>
- <li>You can switch a KeyboardPanCameras to a different {{#crossLink "Camera"}}{{/crossLink}} at any time.</li>
- </ul>
-
- ## Example
-
- <iframe style="width: 600px; height: 400px" src="../../examples/control_KeyboardPanCamera.html"></iframe>
-
- @class KeyboardPanCamera
- @module BIMSURFER
- @submodule control
- @constructor
- @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
- @param [cfg] {*} Configs
- @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
- @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this KeyboardOrbitCamera.
- @param [camera] {Camera} The {{#crossLink "Camera"}}{{/crossLink}} to control.
- @extends Component
- */
-(function () {
-
-    "use strict";
-
-    BIMSURFER.KeyboardPanCamera = BIMSURFER.Component.extend({
-
-        /**
-         JavaScript class name for this Component.
-
-         @property className
-         @type String
-         @final
-         */
-        className: "BIMSURFER.KeyboardPanCamera",
-
-        _init: function (cfg) {
-
-            var sensitivity = cfg.sensitivity;
-
-            this.sensitivity = sensitivity ? sensitivity * 10.0 : 10.0;
-
-            this.camera = cfg.camera;
-
-            this._onTick = null;
-
-            this.active = cfg.active !== false;
-        },
-
-        _props: {
-
-            /**
-             * Flag which indicates whether this KeyboardPanCamera is active or not.
-             *
-             * Fires an {{#crossLink "KeyboardPanCamera/active:event"}}{{/crossLink}} event on change.
-             *
-             * @property active
-             * @type Boolean
-             */
-            active: {
-
-                set: function (value) {
-
-                    if (this._active === value) {
-                        return;
-                    }
-
-                    var input = this.viewer.input;
-
-                    if (value) {
-
-                        var self = this;
-
-                        this._onTick = this.viewer.on("tick",
-                            function (params) {
-
-                                if (!self._camera) {
-                                    return;
-                                }
-
-                                var elapsed = params.elapsed;
-
-                                if (!input.ctrlDown && !input.altDown) {
-
-                                    var wkey = input.keyDown[input.KEY_W];
-                                    var skey = input.keyDown[input.KEY_S];
-                                    var akey = input.keyDown[input.KEY_A];
-                                    var dkey = input.keyDown[input.KEY_D];
-                                    var zkey = input.keyDown[input.KEY_Z];
-                                    var xkey = input.keyDown[input.KEY_X];
-
-                                    if (wkey || skey || akey || dkey || xkey || zkey) {
-
-                                        var x = 0;
-                                        var y = 0;
-                                        var z = 0;
-
-                                        var sensitivity = self.sensitivity;
-
-                                        if (skey) {
-                                            y = elapsed * sensitivity;
-
-                                        } else if (wkey) {
-                                            y = -elapsed * sensitivity;
-                                        }
-
-                                        if (dkey) {
-                                            x = elapsed * sensitivity;
-
-                                        } else if (akey) {
-                                            x = -elapsed * sensitivity;
-                                        }
-
-                                        if (xkey) {
-                                            z = elapsed * sensitivity;
-
-                                        } else if (zkey) {
-                                            z = -elapsed * sensitivity;
-                                        }
-
-                                        self._camera.pan([x, y, z]);
-                                    }
-                                }
-                            });
-
-                    } else {
-
-                        this.viewer.off(this._onTick);
-                    }
-
-                    /**
-                     * Fired whenever this KeyboardPanCamera's {{#crossLink "KeyboardPanCamera/active:property"}}{{/crossLink}} property changes.
-                     * @event active
-                     * @param value The property's new value
-                     */
-                    this.fire('active', this._active = value);
-                },
-
-                get: function () {
-                    return this._active;
-                }
-            },
-
-            camera: {
-
-                set: function (value) {
-                    var camera = value;
-                    if (camera) {
-                        if (BIMSURFER._isString(camera)) {
-                            camera = this.viewer.components[camera];
-                            if (!camera) {
-                                this.error("camera", "Camera not found in Viewer: " + value);
-                                return;
-                            }
-                        }
-                        if (camera.className != "BIMSURFER.Camera") {
-                            this.error("camera", "Value is not a BIMSURFER.Camera");
-                            return;
-                        }
-                    }
-                    this._camera = camera;
-                },
-
-                get: function () {
-                    return this._camera;
-                }
-            }
-        },
-
-        _destroy: function () {
-            this.active = false;
-        }
-    });
-
-})();
-;/**
- A **KeyboardAxisCamera** lets you switch a {{#crossLink "Camera"}}{{/crossLink}} between preset left, right, anterior, posterior, superior and inferior views using the keyboard.
-
- ## Overview
-
- <ul>
- <li>If desired, you can have multiple KeyboardAxisCameras within the same {{#crossLink "Viewer"}}{{/crossLink}}.</li>
- <li>Multiple KeyboardAxisCameras can drive the same {{#crossLink "Camera"}}{{/crossLink}}, or can each drive their own separate {{#crossLink "Camera"}}Cameras{{/crossLink}}.</li>
- <li>At any instant, the KeyboardAxisCamera we're driving is the one whose {{#crossLink "Camera/active:property"}}active{{/crossLink}} property is true.</li>
- <li>You can switch a KeyboardAxisCamera to a different {{#crossLink "Camera"}}{{/crossLink}} at any time.</li>
- </ul>
-
- ## Example
-
- <iframe style="width: 600px; height: 400px" src="../../examples/control_KeyboardAxisCamera.html"></iframe>
-
- @class KeyboardAxisCamera
- @module BIMSURFER
- @submodule control
- @constructor
- @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
- @param [cfg] {*} Configs
- @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
- @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this KeyboardAxisCamera.
- @param [camera] {Camera} The {{#crossLink "Camera"}}{{/crossLink}} to control.
- @extends Component
- */
-(function () {
-
-    "use strict";
-
-    BIMSURFER.KeyboardAxisCamera = BIMSURFER.Component.extend({
-
-        /**
-         JavaScript class name for this Component.
-
-         @property className
-         @type String
-         @final
-         */
-        className: "BIMSURFER.KeyboardAxisCamera",
-
-        _init: function (cfg) {
-
-            this.camera = cfg.camera;
-
-            this._onKeyDown = null;
-
-            this._cameraFly = new BIMSURFER.CameraFlyAnimation(viewer, {
-                camera: this.camera
-            });
-
-            this.active = cfg.active !== false;
-        },
-
-        _props: {
-
-            /**
-             * Flag which indicates whether this KeyboardAxisCamera is active or not.
-             *
-             * Fires an {{#crossLink "KeyboardAxisCamera/active:event"}}{{/crossLink}} event on change.
-             *
-             * @property active
-             * @type Boolean
-             */
-            active: {
-
-                set: function (value) {
-
-                    value = !!value;
-
-                    if (this._active === value) {
-                        return;
-                    }
-
-                    this._cameraFly.active = value;
-
-                    var self = this;
-
-                    var input = this.viewer.input;
-
-                    if (value) {
-
-                        this._onKeyDown = input.on("keydown",
-                            function (keyCode) {
-
-                                if (!self._camera) {
-                                    return;
-                                }
-
-                                var center = self.viewer.center;
-
-                                var dist;
-                                var elev;
-
-                                var eye;
-                                var look;
-                                var up;
-
-                                switch (keyCode) {
-
-                                    case input.KEY_NUM_1:
-
-                                        // Right view
-
-                                        dist = 100;
-                                        elev = 0;
-
-                                        look = center;
-                                        eye = [-dist, elev, 0];
-                                        up = [ 0, 1, 0 ];
-
-                                        break;
-
-                                    case input.KEY_NUM_2:
-
-                                        // Left view
-
-                                        dist = 100;
-                                        elev = 0;
-
-                                        look = center;
-                                        eye = [dist, elev, 0];
-                                        up = [ 0, 1, 0 ];
-
-                                        break;
-
-                                    case input.KEY_NUM_3:
-
-                                        // Front view
-
-                                        dist = 100;
-                                        elev = 0;
-
-                                        look = center;
-                                        eye = [0, elev, -dist];
-                                        up = [ 0, 1, 0 ];
-
-                                        break;
-
-                                    case input.KEY_NUM_4:
-
-                                        // Back view
-
-                                        dist = 100;
-                                        elev = 0;
-
-                                        look = center;
-                                        eye = [0, elev, dist];
-                                        up = [ 0, 1, 0 ];
-
-                                        break;
-
-                                    case input.KEY_NUM_5:
-
-                                        // Top view
-
-                                        dist = 100;
-                                        elev = 0;
-
-                                        look = center;
-                                        eye = [0, elev - dist, 0];
-                                        up = [ 0, 0, 1 ];
-
-                                        break;
-
-                                    case input.KEY_NUM_6:
-
-                                        // Bottom view
-
-                                        dist = 100;
-                                        elev = 0;
-
-                                        look = [0, elev, 0 ];
-                                        eye = [0, elev + dist, 0];
-                                        up = [ 0, 0, -1 ];
-
-                                        break;
-                                }
-
-                                if (look) {
-
-                                    self._cameraFly.flyTo({
-                                        look: look,
-                                        eye: eye,
-                                        up: up
-                                    });
-                                }
-                            });
-
-                    } else {
-
-                        this.viewer.off(this._onKeyDown);
-                    }
-
-                    /**
-                     * Fired whenever this KeyboardAxisCamera's {{#crossLink "KeyboardAxisCamera/active:property"}}{{/crossLink}} property changes.
-                     * @event active
-                     * @param value The property's new value
-                     */
-                    this.fire('active', this._active = value);
-                },
-
-                get: function () {
-                    return this._active;
-                }
-            },
-
-            camera: {
-
-                set: function (value) {
-                    var camera = value;
-                    if (camera) {
-                        if (BIMSURFER._isString(camera)) {
-                            camera = this.viewer.components[camera];
-                            if (!camera) {
-                                this.error("camera", "Camera not found in Viewer: " + value);
-                                return;
-                            }
-                        }
-                        if (camera.className != "BIMSURFER.Camera") {
-                            this.error("camera", "Value is not a BIMSURFER.Camera");
-                            return;
-                        }
-                    }
-                    this._camera = camera;
-                },
-
-                get: function () {
-                    return this._camera;
-                }
-            }
-        },
-
-        _destroy: function () {
-            this.active = false;
-
-            this._cameraFly.destroy();
-        }
-    });
-
-})();
-;/**
- A **MousePickObject** lets you add or remove {{#crossLink "Object"}}Objects{{/crossLink}} to and from an {{#crossLink "ObjectSet"}}ObjectSet{{/crossLink}} by clicking them with the mouse.
-
- ## Overview
-
- <ul>
- <li>A MousePickObject adds {{#crossLink "Object"}}Objects{{/crossLink}} to the {{#crossLink "ObjectSet"}}{{/crossLink}} as you
- click them with the mouse, removing them again when you click them a second time.</li>
- <li>Typically a MousePickObject will share an {{#crossLink "ObjectSet"}}{{/crossLink}} with one or
- more {{#crossLink "MousePickObject"}}MousePickObjects{{/crossLink}}, in order to select which {{#crossLink "Object"}}Objects{{/crossLink}} are influenced by the {{#crossLink "MousePickObject"}}MousePickObjects{{/crossLink}}.</li>
- <li>A MousePickObject will provide its own {{#crossLink "ObjectSet"}}{{/crossLink}} by default.</li>
- <li>Hold down SHIFT while clicking to multi-select.</li>
- </ul>
-
- ## Example
-
- #### Clicking Objects to add them to a highlighted ObjectSet
-
- In this example, we view four {{#crossLink "Objects"}}Objects{{/crossLink}} with a {{#crossLink "Camera"}}{{/crossLink}}, which we manipulate with a {{#crossLink "CameraControl"}}{{/crossLink}}.
- <br>We also use a {{#crossLink "MousePickObject"}}{{/crossLink}} to add and remove
- the {{#crossLink "Objects"}}Objects{{/crossLink}} to an {{#crossLink "ObjectSet"}}{{/crossLink}}, to which we're applying
- a {{#crossLink "HighlightMousePickObject"}}{{/crossLink}}.
- <br><br>
- Click on the {{#crossLink "Objects"}}Objects{{/crossLink}} to select and highlight them - hold down SHIFT to multi-select.
-
- <iframe style="width: 600px; height: 400px" src="../../examples/control_MousePickObject_HighlightMousePickObject.html"></iframe>
-
- ````Javascript
- // Create a Viewer
- var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
-
- // Create a Camera
- var camera = new BIMSURFER.Camera(viewer, {
-    eye: [10, 10, -10]
- });
-
- // Create a CameraControl
- var cameraControl = new BIMSURFER.CameraControl(viewer, {
-    camera: camera
- });
-
- // Create a Geometry
- var geometry = new BIMSURFER.TeapotGeometry(viewer);
-
- // Create some Objects
- // Share the Geometry among them
-
- var object1 = new BIMSURFER.Object(viewer, {
-    id: "object1",
-    type: "IfcRoof",
-    geometries: [ geometry ],
-    matrix: BIMSURFER.math.translationMat4v([-3, 0, -3])
- });
-
- var object2 = new BIMSURFER.Object(viewer, {
-    id: "object2",
-    type: "IfcDistributionFlowElement",
-    geometries: [ geometry ],
-    matrix: BIMSURFER.math.translationMat4v([3, 0, -3])
- });
-
- var object3 = new BIMSURFER.Object(viewer, {
-    id: "object3",
-    type: "IfcDistributionFlowElement",
-    geometries: [ geometry ],
-    matrix: BIMSURFER.math.translationMat4v([-3, 0, 3])
- });
-
- var object4 = new BIMSURFER.Object(viewer, {
-    id: "object4",
-    type: "IfcRoof",
-    geometries: [ geometry ],
-    matrix: BIMSURFER.math.translationMat4v([3, 0, 3])
- });
-
- // Create an ObjectSet
- var objectSet = new BIMSURFER.ObjectSet(viewer);
-
- // Apply a highlight MousePickObject to the ObjectSet
- var highlightMousePickObject = new BIMSURFER.HighlightMousePickObject(viewer, {
-    objectSet: objectSet
- });
-
- // Create a MousePickObject
- var mousePickObject = new BIMSURFER.MousePickObject(viewer, {
-
-    // We want the 3D World-space coordinates of
-    // each location we pick
-    rayPick: true
- });
-
- // Handle when Object is picked
- mousePickObject.on("pick", function(e) {
-        alert("Picked: " + JSON.stringify(e));
- });
-
- // Handle when nothing is picked
- mousePickObject.on("nopick", function(e) {
-        alert("Mothing picked");
- });
- ````
-
- @class MousePickObject
- @module BIMSURFER
- @submodule control
- @constructor
- @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
- @param [cfg] {*} Configs
- @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
- @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Camera.
- @param [rayPick=false] {Boolean} Indicates whether this MousePickObject will find the 3D ray intersection whenever it picks a
- {{#crossLink "Object"}}Objects{{/crossLink}}.
- @param [active=true] {Boolean} Indicates whether or not this MousePickObject is active.
- @see {Object}
- @see {ObjectSet}
- @extends Component
- */
-(function () {
-
-    "use strict";
-
-    BIMSURFER.MousePickObject = BIMSURFER.Component.extend({
-
-        /**
-         JavaScript class name for this Component.
-
-         @property className
-         @type String
-         @final
-         */
-        className: "BIMSURFER.MousePickObject",
-
-        _init: function (cfg) {
-
-            this.rayPick = cfg.rayPick;
-
-            this.active = cfg.active !== false;
-        },
-
-        _props: {
-
-            /**
-             * Flag which indicates whether this MousePickObject is active or not.
-             *
-             * Fires a {{#crossLink "MousePickObject/active:event"}}{{/crossLink}} event on change.
-             *
-             * @property active
-             * @type Boolean
-             */
-            active: {
-
-                set: function (value) {
-
-                    if (this._active === value) {
-                        return;
-                    }
-
-                    if (value) {
-
-                        var self = this;
-
-                        var input = this.viewer.input;
-
-                        this._onMouseUp = input.on("dblclick",
-                            function (coords) {
-
-                                var hit = self.viewer.pick(coords[0], coords[1], {
-                                    rayPick: self._rayPick
-                                });
-
-                                if (hit) {
-                                    self.fire("pick", hit);
-
-                                } else {
-                                    self.fire("nopick", {
-                                        canvasPos: e
-                                    });
-                                }
-                            });
-
-                    } else {
-
-                        input.off(this._onMouseDown);
-                        input.off(this._onMouseUp);
-                    }
-
-                    /**
-                     * Fired whenever this MousePickObject's {{#crossLink "MousePickObject/active:property"}}{{/crossLink}} property changes.
-                     * @event active
-                     * @param value The property's new value
-                     */
-                    this.fire('active', this._active = value);
-                },
-
-                get: function () {
-                    return this._active;
-                }
-            },
-
-            /**
-             * Indicates whether this MousePickObject will find the 3D ray intersection whenever it picks a
-             * {{#crossLink "Object"}}Objects{{/crossLink}}.
-             *
-             * When true, this MousePickObject returns the 3D World-space intersection in each
-             * {{#crossLink "MousePickObject/picked:event"}}{{/crossLink}} event.
-             *
-             * Fires a {{#crossLink "MousePickObject/rayPick:event"}}{{/crossLink}} event on change.
-             *
-             * @property rayPick
-             * @type Boolean
-             */
-            rayPick: {
-
-                set: function (value) {
-
-                    value = !!value;
-
-                    if (this._rayPick === value) {
-                        return;
-                    }
-
-                    this._dirty = false;
-
-                    /**
-                     * Fired whenever this MousePickObject's {{#crossLink "MousePickObject/rayPick:property"}}{{/crossLink}} property changes.
-                     * @event rayPick
-                     * @param value The property's new value
-                     */
-                    this.fire('rayPick', this._rayPick = value);
-                },
-
-                get: function () {
-                    return this._rayPick;
-                }
-            }
-        },
-
-        _destroy: function () {
-            this.active = false;
-        }
-    });
-})();;/**
- A **ClickSelectObjects** lets you add or remove {{#crossLink "Object"}}Objects{{/crossLink}} to and from an {{#crossLink "ObjectSet"}}ObjectSet{{/crossLink}} by clicking them with the mouse.
-
- ## Overview
-
- <ul>
- <li>A ClickSelectObjects adds {{#crossLink "Object"}}Objects{{/crossLink}} to the {{#crossLink "ObjectSet"}}{{/crossLink}} as you
- click them with the mouse, removing them again when you click them a second time.</li>
- <li>Typically a ClickSelectObjects will share an {{#crossLink "ObjectSet"}}{{/crossLink}} with one or
- more {{#crossLink "Effect"}}Effects{{/crossLink}}, in order to select which {{#crossLink "Object"}}Objects{{/crossLink}} are influenced by the {{#crossLink "Effect"}}Effects{{/crossLink}}.</li>
- <li>A ClickSelectObjects will provide its own {{#crossLink "ObjectSet"}}{{/crossLink}} by default.</li>
- <li>Hold down SHIFT while clicking to multi-select.</li>
- </ul>
-
- ## Example
-
- #### Clicking Objects to add them to a highlighted ObjectSet
-
- In this example, we view four {{#crossLink "Objects"}}Objects{{/crossLink}} with a {{#crossLink "Camera"}}{{/crossLink}}, which we manipulate with a {{#crossLink "CameraControl"}}{{/crossLink}}.
- <br>We also use a {{#crossLink "ClickSelectObjects"}}{{/crossLink}} to add and remove
- the {{#crossLink "Objects"}}Objects{{/crossLink}} to an {{#crossLink "ObjectSet"}}{{/crossLink}}, to which we're applying
- a {{#crossLink "HighlightEffect"}}{{/crossLink}}.
- <br><br>
- Click on the {{#crossLink "Objects"}}Objects{{/crossLink}} to select and highlight them - hold down SHIFT to multi-select.
-
- <iframe style="width: 600px; height: 400px" src="../../examples/control_ClickSelectObjects_HighlightEffect.html"></iframe>
-
- ````Javascript
- // Create a Viewer
- var viewer = new BIMSURFER.Viewer({ element: "myDiv" });
-
- // Create a Camera
- var camera = new BIMSURFER.Camera(viewer, {
-    eye: [10, 10, -10]
- });
-
- // Create a CameraControl
- var cameraControl = new BIMSURFER.CameraControl(viewer, {
-    camera: camera
- });
-
- // Create a Geometry
- var geometry = new BIMSURFER.TeapotGeometry(viewer);
-
- // Create some Objects
- // Share the Geometry among them
-
- var object1 = new BIMSURFER.Object(viewer, {
-    id: "object1",
-    type: "IfcRoof",
-    geometries: [ geometry ],
-    matrix: BIMSURFER.math.translationMat4v([-3, 0, -3])
- });
-
- var object2 = new BIMSURFER.Object(viewer, {
-    id: "object2",
-    type: "IfcDistributionFlowElement",
-    geometries: [ geometry ],
-    matrix: BIMSURFER.math.translationMat4v([3, 0, -3])
- });
-
- var object3 = new BIMSURFER.Object(viewer, {
-    id: "object3",
-    type: "IfcDistributionFlowElement",
-    geometries: [ geometry ],
-    matrix: BIMSURFER.math.translationMat4v([-3, 0, 3])
- });
-
- var object4 = new BIMSURFER.Object(viewer, {
-    id: "object4",
-    type: "IfcRoof",
-    geometries: [ geometry ],
-    matrix: BIMSURFER.math.translationMat4v([3, 0, 3])
- });
-
- // Create an ObjectSet
- var objectSet = new BIMSURFER.ObjectSet(viewer);
-
- // Apply a highlight effect to the ObjectSet
- var highlightEffect = new BIMSURFER.HighlightEffect(viewer, {
-    objectSet: objectSet
- });
-
- // Create a ClickSelectObjects to select or unselect the Objects with the mouse
- var clickSelectObjects = new BIMSURFER.ClickSelectObjects(viewer, {
-    objectSet: objectSet
- });
- ````
-
- @class ClickSelectObjects
- @module BIMSURFER
- @submodule control
- @constructor
- @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
- @param [cfg] {*} Configs
- @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
- @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Camera.
- @param [selection] {Selection} The Selection to update.
- @see {Object}
- @see {ObjectSet}
- @extends Component
- */
-(function () {
-
-    "use strict";
-
-    BIMSURFER.ClickSelectObjects = BIMSURFER.Component.extend({
-
-        /**
-         JavaScript class name for this Component.
-
-         @property className
-         @type String
-         @final
-         */
-        className: "BIMSURFER.ClickSelectObjects",
-
-        _init: function (cfg) {
-
-            this.objectSet = cfg.objectSet || new BIMSURFER.ObjectSet(this.viewer);
-
-            this._multi = !!cfg.multi;
-
-            this.active = cfg.active !== false;
-        },
-
-        _props: {
-
-            /**
-             * Flag which indicates whether this ClickSelectObjects is active or not.
-             *
-             * Fires a {{#crossLink "ClickSelectObjects/active:event"}}{{/crossLink}} event on change.
-             *
-             * @property active
-             * @type Boolean
-             */
-            active: {
-
-                set: function (value) {
-
-                    if (this._active === value) {
-                        return;
-                    }
-
-                    if (value) {
-
-                        var self = this;
-
-                        var input = this.viewer.input;
-
-                        var lastX;
-                        var lastY;
-
-                        this._onMouseDown = input.on("mousedown",
-                            function (e) {
-
-                                lastX = e[0];
-                                lastY = e[1];
-                            });
-
-                        this._onMouseUp = input.on("mouseup",
-                            function (e) {
-
-                                if (((e[0] > lastX) ? (e[0] - lastX < 5) : (lastX - e[0] < 5)) &&
-                                    ((e[1] > lastY) ? (e[1] - lastY < 5) : (lastY - e[1] < 5))) {
-
-                                    var multiSelect = self._multi || input.keyDown[input.KEY_SHIFT];
-
-                                    var hit = self.viewer.pick(lastX, lastY, {});
-
-                                    if (hit) {
-
-                                        var object = hit.object;
-
-                                        if (!self.objectSet.objects[object.id]) {
-
-                                            // Select
-
-                                            if (!multiSelect) {
-                                                self.objectSet.clear();
-                                            }
-
-                                            self.objectSet.addObjects([object]);
-
-                                        } else {
-
-                                            // Deselect
-
-                                            self.objectSet.removeObjects([object]);
-                                        }
-                                    } else {
-
-                                        if (!multiSelect) {
-                                            self.objectSet.clear();
-                                        }
-                                    }
-                                }
-                            });
-
-                    } else {
-
-                        input.off(this._onMouseDown);
-                        input.off(this._onMouseUp);
-                    }
-
-                    /**
-                     * Fired whenever this ClickSelectObjects's {{#crossLink "ClickSelectObjects/active:property"}}{{/crossLink}} property changes.
-                     * @event active
-                     * @param value The property's new value
-                     */
-                    this.fire('active', this._active = value);
-                },
-
-                get: function () {
-                    return this._active;
-                }
-            }
-        },
-
-        _destroy: function () {
-            this.active = false;
-        }
-    });
-})();;/**
+ * Components for displaying labels on objects.
+ *
+ * @module XEO
+ * @submodule labelling
+ */;/**
  A **Position** is a spatial location within a {{#crossLink "Viewer"}}{{/crossLink}}.
 
  ## Overview
@@ -16896,6 +18071,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
  @class Position
  @module BIMSURFER
+ @module labelling
  @constructor
  @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
  @param [cfg] {*} Configs
@@ -17139,10 +18315,10 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
                         var y = projPos[1];
                         var w = projPos[3];
 
-                        var canvas = this.viewer.canvas;
+                        var canvas = this.viewer.canvas.canvas;
 
-                        this._canvasPos[0] = Math.round((1 + x / w) * canvas.width() / 2);
-                        this._canvasPos[1] = Math.round((1 - y / w) * canvas.height() / 2);
+                        this._canvasPos[0] = Math.round((1 + x / w) * canvas.width / 2);
+                        this._canvasPos[1] = Math.round((1 - y / w) * canvas.height / 2);
 
                         this._canvasPosDirty = false;
                     }
@@ -17283,6 +18459,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
  @class Label
  @module BIMSURFER
+ @submodule labelling
  @constructor
  @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}{{/crossLink}}.
  @param [cfg] {*} Configs
@@ -17460,6 +18637,11 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
         }
     });
 })();;/**
+ * Animation components.
+ *
+ * @module XEO
+ * @submodule animation
+ */;/**
 
  **Fly** flys a {{#crossLink "Camera"}}{{/crossLink}}
 
@@ -17474,13 +18656,12 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
  ````
  @class CameraFlyAnimation
  @module BIMSURFER
- @submodule animate
+ @submodule animation
  @constructor
  @param [viewer] {Viewer} Parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}.
  @param [cfg] {*} Fly configuration
-
  @param [cfg.id] {String} Optional ID, unique among all components in the parent {{#crossLink "Viewer"}}Viewer{{/crossLink}}, generated automatically when omitted.
- @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Fly.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this CameraFlyAnimation.
  @param [cfg.camera] {Camera} Camera to control
  @extends Component
  */
@@ -17812,7 +18993,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
     BIMSURFER.Cursor = function (viewer) {
         this._element = viewer.element;
-        this._element = $("body");
+        this._element = document.body;
         this._stack = [];
         this._stackLen = 0;
     };
@@ -17847,6 +19028,1000 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
         --this._stackLen;
 
         this._element.css("cursor", this._stack[this._stackLen - 1]);
+    };
+
+})();
+;/**
+ A **Viewer** is a WebGL-based 3D viewer for the visualisation and evaluation of BIM models.
+
+ ## Overview
+
+ <ul>
+ <li></li>
+ </ul>
+
+ ## Example
+
+ In the example below we'll create a Viewer with a {{#crossLink "Camera"}}{{/crossLink}},
+ a {{#crossLink "CameraControl"}}{{/crossLink}} and a {{#crossLink "TeapotGeometry"}}{{/crossLink}},
+ which is used by an {{#crossLink "Object"}}{{/crossLink}}.
+ <br>Finally, we make the {{#crossLink "Camera"}}{{/crossLink}} orbit on each "tick" event emitted by the Viewer.
+
+ <iframe style="width: 600px; height: 400px" src="../../examples/viewer_Viewer.html"></iframe>
+
+ ````javascript
+ // Create a Viewer
+ var viewer = new BIMSURFER.Viewer({
+
+    // ID of the DIV element
+    element: "myDiv"
+ });
+
+ // Create a Camera
+ var camera = new BIMSURFER.Camera(viewer, {
+        eye: [5, 5, -5]
+    });
+
+ // Create a CameraControl to control our Camera with mouse and keyboard
+ var cameraControl = new BIMSURFER.CameraControl(viewer, {
+        camera: camera
+    });
+
+ // Create a Geometry
+ var geometry = new BIMSURFER.TeapotGeometry(viewer, {
+        id: "myGeometry"
+    });
+
+ // Create an Object that uses the Geometry
+ var object1 = new BIMSURFER.Object(viewer, {
+        id: "myObject1",
+        type: "IfcCovering",
+        geometries: [ geometry ]
+    });
+
+ // Spin the camera
+ viewer.on("tick", function () {
+        camera.rotateEyeY(0.2);
+    });
+ ````
+
+ @class Viewer
+ @module BIMSURFER
+ @constructor
+ @param [cfg] {*} Configs
+ @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
+ @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Object.
+ @param cfg.element {String|HTMLElement} ID or instance of a DIV element in the page.
+ @param cfg.bimServerApi {*} The BIMServer API.
+ */
+(function () {
+
+    "use strict";
+
+    BIMSURFER.Viewer = function (cfg) {
+
+        var self = this;
+
+        this.className = "BIMSURFER.Viewer";
+
+        // Event management
+
+        // Pub/sub
+        this._handleMap = new BIMSURFER.utils.Map(); // Subscription handle pool
+        this._locSubs = {}; // A [handle -> callback] map for each location name
+        this._handleLocs = {}; // Maps handles to loc names
+        this.props = {}; // Maps locations to publications
+
+
+        // Check arguments
+
+        cfg = cfg || {};
+
+        var element = cfg.element;
+
+        if (!element) {
+            throw "Param expected: element";
+        }
+
+        if (typeof element == 'string') {
+            element = document.getElementById(element);
+        }
+
+        /**
+         * The HTML element ocupied by the Viewer
+         *
+         * @property element
+         * @final
+         * @type {HTMLElement}
+         */
+        this.element = element;
+
+        /**
+         * The BIMServer API
+         *
+         * @property bimServerApi
+         * @final
+         * @type {Object}
+         */
+        this.bimServerApi = cfg.bimServerApi;
+
+
+        this.SYSTEM = this;
+
+        var canvasId = "canvas-" + BIMSURFER.math.createUUID();
+        var body = document.getElementsByTagName("body")[0];
+        var div = document.createElement('div');
+
+        var style = div.style;
+        style.height = "100%";
+        style.width = "100%";
+        style.padding = "0";
+        style.margin = "0";
+        style.background = "black";
+        style.float = "left";
+        //style.left = "0";
+        //style.top = "0";
+        // style.position = "absolute";
+        // style["z-index"] = "10000";
+
+        div.innerHTML += '<canvas id="' + canvasId + '" style="width: 100%; height: 100%; float: left; margin: 0; padding: 0;"></canvas>';
+
+        element.appendChild(div);
+
+        /**
+         * The HTML Canvas that this Viewer renders to. This is inserted into the element we configured this Viewer with.
+         * @property canvas
+         * @final
+         * @type {HTMLCanvasElement}
+         * @final
+         */
+        this._canvas = document.getElementById(canvasId);
+
+        /**
+         * The SceneJS scene graph that renders 3D content for this Viewer.
+         * @property scene
+         * @final
+         * @type {SceneJS.Scene}
+         * @final
+         */
+        this.scene = SceneJS.createScene({
+
+            canvasId: canvasId,
+
+            // Transparent canvas
+            // Less work for the GPU rendering all those background fragments.
+            // Let CSS do that work.
+            transparent: true,
+
+            nodes: [
+
+                // Node library, where we keep sharable
+                // asset nodes, such as geometries
+                {
+                    type: "library",
+                    id: "library"
+                },
+
+                // Viewing transform
+                {
+                    type: "lookAt",
+                    id: "theLookat",
+
+                    nodes: [
+
+                        // Projection transform
+                        {
+                            type: "camera",
+                            id: "theCamera",
+
+                            nodes: [
+
+                                // Light sources
+                                {
+                                    id: "lightsRoot",
+                                    lights: [],
+
+                                    nodes: [
+
+                                        // Origin translation
+                                        {
+                                            type: "translate",
+                                            id: "theOrigin",
+
+                                            nodes: [
+
+                                                // Content is appended below this node
+                                                {
+                                                    id: "contentRoot"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        });
+
+        /**
+         * ID of this Viewer
+         *
+         * @property id
+         * @final
+         * @type {String}
+         */
+        this.id = this.scene.getId();
+
+        // Init events
+
+        var canvas = this.scene.getCanvas();
+
+        this.scene.on('tick',
+            function (params) {
+                self.fire('tick', {
+                    time: params.time * 0.001,
+                    elapsed: (params.time - params.prevTime) * 0.001
+                });
+            });
+
+        this._lookatNode = this.scene.getNode('theLookat');
+
+        this._lookatNode.on("matrix",
+            function (matrix) {
+                self.fire('viewMatrix', matrix);
+            });
+
+        this._cameraNode = this.scene.getNode('theCamera');
+
+        this._cameraNode.on("matrix",
+            function (matrix) {
+                self.fire('projMatrix', matrix);
+            });
+
+        this._originNode = this.scene.getNode('theOrigin');
+
+        // Pool where we'll keep all component IDs
+        this._componentIDMap = new BIMSURFER.utils.Map();
+
+        /**
+         * The {{#crossLink "Component"}}Components{{/crossLink}} within this Viewer, mapped to their IDs.
+         * @property components
+         * @final
+         * @type {{String:Component}}
+         */
+        this.components = {};
+
+        /**
+         * Map of components that have an 'exclusive' property. This is used to ensure that
+         * only one of these component types is active within this Viewer at a time.
+         */
+        this._onComponentActive = {};
+
+        /**
+         * The {{#crossLink "Component"}}Components{{/crossLink}} within this Viewer, mapped to their class names.
+         * @property classes
+         * @final
+         * @type {{String:{String:Component}}}
+         */
+        this.classes = {};
+
+
+        /**
+         * The {{#crossLink "Component"}}Components{{/crossLink}} within this Viewer, mapped to their IFC type names.
+         * @property types
+         * @final
+         * @type {{String:{String:Component}}}
+         */
+        this.types = {};
+
+
+        // Add components
+
+        var components = cfg.components;
+
+        if (components) {
+
+            var component;
+            var className;
+            var constructor;
+
+            for (var i = 0, len = components.length; i < len; i++) {
+
+                component = components[i];
+                className = component.className;
+
+                if (className) {
+                    constructor = window[className];
+
+                    if (constructor) {
+
+                        // Adds component to this Viewer via #_addComponent
+                        new constructor(this, component);
+                    }
+                }
+            }
+        }
+
+        if (BIMSURFER.utils.isset(cfg, cfg.autoStart)) {
+            if (!BIMSURFER.Util.isset(cfg.autoStart.serverUrl, cfg.autoStart.serverUsername, cfg.autoStart.serverPassword, cfg.autoStart.projectOid)) {
+                console.error('Some autostart parameters are missing');
+                return;
+            }
+            var _this = this;
+            var BIMServer = new BIMSURFER.Server(this, cfg.autoStart.serverUrl, cfg.autoStart.serverUsername, cfg.autoStart.serverPassword, false, true, true, function () {
+                if (BIMServer.loginStatus != 'loggedin') {
+                    _this.element.innerHTML = 'Something went wrong while connecting';
+                    console.error('Something went wrong while connecting');
+                    return;
+                }
+                var project = BIMServer.getProjectByOid(cfg.autoStart.projectOid);
+                project.loadScene((BIMSURFER.Util.isset(cfg.autoStart.revisionOid) ? cfg.autoStart.revisionOid : null), true);
+            });
+        }
+
+        /**
+         * Geometry loaders
+         * @property geometryLoaders
+         * @type {Array of }
+         * @final
+         */
+        this.geometryLoaders = [];
+
+        // Start the loading loop
+        // This just runs forever, polling any loaders that exist on this viewer
+
+        this.scene.on("tick",
+            function () {
+                self.geometryLoaders.forEach(
+                    function (geometryLoader) {
+                        geometryLoader.process();
+                    });
+            });
+
+
+        // Add components here
+
+        /**
+         * Canvas manager for this Viewer.
+         * @property canvas
+         * @final
+         * @type {BIMSURFER.Canvas}
+         */
+        this.canvas = new BIMSURFER.Canvas(this);
+
+        /**
+         * Input handling for this Viewer.
+         * @property input
+         * @final
+         * @type {BIMSURFER.Input}
+         */
+        this.input = new BIMSURFER.Input(this);
+
+        /**
+         * Cursor icon control for this Viewer.
+         * @property cursor
+         * @final
+         * @type {BIMSURFER.Cursor}
+         */
+        this.cursor = new BIMSURFER.Cursor(this);
+
+        /**
+         * The default {{#crossLink "Camera"}}{{/crossLink}} for this Viewer.
+         *
+         * This {{#crossLink "Camera"}}{{/crossLink}} is active by default, and becomes inactive
+         * as soon as you activate some other {{#crossLink "Camera"}}{{/crossLink}} in this Viewer.
+         *
+         * Any components that you create for this Viewer, that require a {{#crossLink "Camera"}}{{/crossLink}},
+         * will fall back on this one by default.
+         *
+         * @property camera
+         * @final
+         * @type {BIMSURFER.Camera}
+         */
+        this.camera = new BIMSURFER.Camera(this);
+
+        /**
+         * The number of {{#crossLink "Objects"}}{{/crossLink}} within this ObjectSet.
+         *
+         * @property numObjects
+         * @type Number
+         */
+        this.numObjects = 0;
+
+        this._boundary = {xmin: 0.0, ymin: 0.0, zmin: 0.0, xmax: 0.0, ymax: 0.0, zmax: 0.0};
+        this._center = [0, 0, 0];
+
+        this._boundaryDirty = true;
+
+        this.origin = cfg.origin;
+    };
+
+    /**
+     * Adds a {{#crossLink "Component"}}{{/crossLink}} to this viewer.
+     *
+     * This is called within the constructors of {{#crossLink "Component"}}{{/crossLink}} subclasses.
+     *
+     * The {{#crossLink "Component"}}{{/crossLink}} is assigned a
+     * unique {{#crossLink "Component/id:property"}}{{/crossLink}} if it does not yet have one.
+     *
+     * @private
+     * @param {BIMSURFER.Component} component The Component to add.
+     */
+    BIMSURFER.Viewer.prototype._addComponent = function (component) {
+
+        var id = component.id;
+        var className = component.className;
+
+        // Check for ID clash
+
+        if (id) {
+            if (this.components[id]) {
+                this.error("A component with this ID already exists in this Viewer: " + id);
+                return;
+            }
+        } else {
+            id = component.id = this._componentIDMap.addItem({});
+        }
+
+        // Add component to ID map
+
+        this.components[id] = component;
+
+        // Add component to className map
+
+        var classComponents = this.classes[className];
+        if (!classComponents) {
+            classComponents = this.classes[className] = {};
+        }
+        classComponents[id] = component;
+
+
+        // Add component to type map
+
+        if (component.type) {
+            var type = component.type;
+            var typeComponents = this.types[type];
+            if (!typeComponents) {
+                typeComponents = this.types[type] = {};
+            }
+            typeComponents[id] = component;
+        }
+
+        var self = this;
+
+        // When the component has an 'exclusive' property set true, then only one instance of that component
+        // type may be active within the Viewer at a time. When a component is activated, that has a true value
+        // for this flag, then any other active component of the same type will be deactivated first.
+
+        if (component.exclusive === true) {
+
+            if (component.active) {
+                self.deactivateOthers(component);
+            }
+
+            this._onComponentActive[component.id] = component.on("active",
+                function (active) {
+
+                    if (active) {
+                        self._deactivateOthers(component);
+                    }
+                });
+        }
+
+        this._boundaryDirty = true;
+
+        /**
+         * Fired whenever a Component has been created within this Viewer.
+         * @event componentCreated
+         * @param {Component} value The component that was created
+         */
+        this.fire("componentCreated", component, true);
+    };
+
+    // Deactivates all other components within this Viewer, that have same className as that given.
+    BIMSURFER.Viewer.prototype._deactivateOthers = function (component) {
+        this.withClasses([component.className],
+            function (otherComponent) {
+                if (otherComponent.id !== component.id) {
+                    otherComponent.active = false;
+                }
+            });
+    };
+
+    /**
+     * Removes a {{#crossLink "Component"}}{{/crossLink}} from this Viewer.
+     *
+     * This is called within the destructors of {{#crossLink "Component"}}{{/crossLink}} subclasses.
+     *
+     * @private
+     * @param {BIMSURFER.Component} component The component to remove
+     */
+    BIMSURFER.Viewer.prototype._removeComponent = function (component) {
+
+        var id = component.id;
+        var className = component.className;
+
+        if (!this.components[id]) {
+            console.warn("BIMSURFER.Viewer._removeComponent - Component with this ID is not within Viewer: " + id);
+            return;
+        }
+
+        delete this.components[id];
+        delete this.classes[className][id];
+
+        if (component.type) {
+            delete this.types[component.type][id];
+        }
+
+        this._boundaryDirty = true;
+
+        this._componentIDMap.removeItem(id);
+
+        if (component.exclusive === true) {
+            component.off(this._onComponentActive[component.id]);
+            delete this._onComponentActive[component.id];
+        }
+
+        /**
+         * Fired whenever a component within this Viewer has been destroyed.
+         * @event componentDestroyed
+         * @param {Component} value The component that was destroyed
+         */
+        this.fire("componentDestroyed", component, true);
+    };
+
+    /**
+     * World-space origin.
+     *
+     * @property origin
+     * @final
+     * @type {*}
+     */
+    Object.defineProperty(BIMSURFER.Viewer.prototype, "origin", {
+
+        get: function () {
+            return this._origin;
+        },
+
+        set: function (origin) {
+            this._origin = origin || [0, 0, 0];
+            this._originNode.setXYZ(this._origin);
+            this._boundaryDirty = true;
+        },
+
+        enumerable: true
+    });
+
+    /**
+     * This Viewer's view transformation matrix.
+     *
+     * @property viewMatrix
+     * @final
+     * @default [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
+     * @type {Array of Number}
+     */
+    Object.defineProperty(BIMSURFER.Viewer.prototype, "viewMatrix", {
+
+        get: function () {
+            return this._lookatNode.getMatrix();
+        },
+
+        enumerable: true
+    });
+
+
+    /**
+     * This Viewer's projection transformation matrix.
+     *
+     * @property projMatrix
+     * @final
+     * @default [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
+     * @type {Array of Number}
+     */
+    Object.defineProperty(BIMSURFER.Viewer.prototype, "projMatrix", {
+
+        get: function () {
+            return this._cameraNode.getMatrix();
+        },
+
+        enumerable: true
+    });
+
+    /**
+     * Boundary of all bounded components in this Viewer.
+     *
+     * @property boundary
+     * @final
+     * @type {*}
+     */
+    Object.defineProperty(BIMSURFER.Viewer.prototype, "boundary", {
+
+        get: function () {
+
+            if (this._boundaryDirty) {
+                this._rebuildBoundary();
+            }
+
+            return this._boundary;
+        },
+
+        enumerable: true
+    });
+
+    /**
+     * Center of all bounded components in this Viewer.
+     *
+     * @property center
+     * @final
+     * @type {*}
+     */
+    Object.defineProperty(BIMSURFER.Viewer.prototype, "center", {
+
+        get: function () {
+
+            if (this._boundaryDirty) {
+                this._rebuildBoundary();
+            }
+
+            return this._center;
+        },
+
+        enumerable: true
+    });
+
+
+    BIMSURFER.Viewer.prototype._rebuildBoundary = function () {
+
+        if (!this._boundaryDirty) {
+            return;
+        }
+
+        // For an empty selection, boundary is zero volume and centered at the origin
+
+        if (this.numObjects === 0) {
+            this._boundary.xmin = -1.0;
+            this._boundary.ymin = -1.0;
+            this._boundary.zmin = -1.0;
+            this._boundary.xmax = 1.0;
+            this._boundary.ymax = 1.0;
+            this._boundary.zmax = 1.0;
+
+        } else {
+
+            // Set boundary inside-out, ready to expand by each selected object
+
+            this._boundary.xmin = 1000000.0;
+            this._boundary.ymin = 1000000.0;
+            this._boundary.zmin = 1000000.0;
+            this._boundary.xmax = -1000000.0;
+            this._boundary.ymax = -1000000.0;
+            this._boundary.zmax = -1000000.0;
+
+            var component;
+            var boundary;
+
+            for (var componentId in this.components) {
+                if (this.components.hasOwnProperty(componentId)) {
+
+                    component = this.components[componentId];
+
+                    boundary = component.boundary;
+
+                    if (boundary) {
+
+                        if (boundary.xmin < this._boundary.xmin) {
+                            this._boundary.xmin = boundary.xmin;
+                        }
+
+                        if (boundary.ymin < this._boundary.ymin) {
+                            this._boundary.ymin = boundary.ymin;
+                        }
+
+                        if (boundary.zmin < this._boundary.zmin) {
+                            this._boundary.zmin = boundary.zmin;
+                        }
+
+                        if (boundary.xmax > this._boundary.xmax) {
+                            this._boundary.xmax = boundary.xmax;
+                        }
+
+                        if (boundary.ymax > this._boundary.ymax) {
+                            this._boundary.ymax = boundary.ymax;
+                        }
+
+                        if (boundary.zmax > this._boundary.zmax) {
+                            this._boundary.zmax = boundary.zmax;
+                        }
+                    }
+                }
+            }
+        }
+
+        this._center[0] = (this._boundary.xmax + this._boundary.xmin) * 0.5;
+        this._center[1] = (this._boundary.ymax + this._boundary.ymin) * 0.5;
+        this._center[2] = (this._boundary.zmax + this._boundary.zmin) * 0.5;
+
+        this._boundaryDirty = false;
+    };
+
+    /**
+     *
+     */
+    BIMSURFER.Viewer.prototype.pick = function (x, y, options) {
+
+        var hit = this.scene.pick(x, y, options);
+
+        if (hit) {
+
+            var objectId = hit.name;
+            var object = this.components[objectId];
+
+            if (object) {
+                return {
+                    object: object,
+                    canvasPos: hit.canvasPos,
+                    worldPos: hit.worldPos
+                }
+            }
+        }
+    };
+
+    /**
+     * Resizes the viewport and updates the aspect ratio
+     *
+     * @param {Number} width The new width in px
+     * @param {Number} height The new height in px
+     */
+    BIMSURFER.Viewer.prototype.resize = function (width, height) {
+
+        return;
+
+        if (!this.canvas) {
+            // TODO: log
+            return;
+        }
+
+        jQuery(this.canvas).width(width).height(height);
+
+        if (BIMSURFER.Util.isset(this.canvas[0])) {
+            this.canvas[0].width = width;
+            this.canvas[0].height = height;
+        }
+
+        var cameraNode = this.scene.getNode("theCamera");
+        var optics = cameraNode.getOptics();
+        optics.aspect = this.canvas.width() / this.canvas.height();
+        cameraNode.setOptics(optics);
+    };
+
+    /**
+     * Iterates with a callback over Components of the given classes
+     *
+     * @param {String} classNames List of class names
+     * @param {Function} callback Callback called for each Component of the given classes
+     */
+    BIMSURFER.Viewer.prototype.withClasses = function (classNames, callback) {
+        var className;
+        for (var i = 0, len = classNames.length; i < len; i++) {
+            className = classNames[i];
+            var components = this.classes[className];
+            if (components) {
+                for (var id in components) {
+                    if (components.hasOwnProperty(id)) {
+                        callback(components[id]);
+                    }
+                }
+            }
+        }
+    };
+
+    /**
+     * Iterates with a callback over Components of the given IFC types
+     *
+     * @param {String} typeNames List of type names
+     * @param {Function} callback Callback called for each Component of the given types
+     */
+    BIMSURFER.Viewer.prototype.withTypes = function (typeNames, callback) {
+        var typeName;
+        for (var i = 0, len = typeNames.length; i < len; i++) {
+            typeName = typeNames[i];
+            var components = this.types[typeName];
+            if (components) {
+                for (var id in components) {
+                    if (components.hasOwnProperty(id)) {
+                        callback(components[id]);
+                    }
+                }
+            }
+        }
+    };
+
+    /**
+     * Shows an IFC type of a revision.
+     *
+     * @param {Array of String} typeNames Names of types to hide
+     * @param {BIMSURFER.ProjectRevision instance} revision The revision
+     */
+    BIMSURFER.Viewer.prototype.showTypes = function (typeNames, revision) {
+        this.withTypes(typeNames,
+            function (component) {
+                component.active = true;
+
+            });
+    };
+
+    /**
+     * Hides an IFC type of a revision.
+     *
+     * @param {Array of String} typeNames Names of types to hide
+     * @param {BIMSURFER.ProjectRevision instance} revision The revision
+     */
+    BIMSURFER.Viewer.prototype.hideTypes = function (typeNames, revision) {
+        this.withTypes(typeNames,
+            function (component) {
+                component.active = false;
+            });
+    };
+
+    /**
+     * Hides all the types of a revision
+     *
+     * @param {BIMSURFER.ProjectRevision} revision The revision to hide
+     */
+    BIMSURFER.Viewer.prototype.hideRevision = function (revision) {
+//        var visibleTypes = revision.visibleTypes.slice(0);
+//        for (var i = 0; i < visibleTypes.length; i++) {
+//            this.hideType(visibleTypes[i], revision);
+//        }
+    };
+
+    /**
+     * Shows a revision
+     *
+     * @param {BIMSURFER.ProjectRevision} revision The revision to show
+     * @param {Array} [types] The types to show (default = BIMSURFER.constants.defaultTypes)
+     */
+    BIMSURFER.Viewer.prototype.showRevision = function (revision, types) {
+
+        if (!types) {
+
+            types = [];
+
+            var defaultTypes = BIMSURFER.constants.defaultTypes;
+
+            if (!defaultTypes) {
+                this.warn("Property expected in BIMSURFER.constants: defaultTypes");
+
+            } else {
+                for (var i = 0; i < revision.ifcTypes.length; i++) {
+                    if (defaultTypes.indexOf(revision.ifcTypes[i]) != -1) {
+                        types.push(revision.ifcTypes[i]);
+                    }
+                }
+            }
+        }
+
+        this.showType(types, revision);
+    };
+
+    /**
+     * Fires an event on this Viewer.
+     *
+     * Notifies existing subscribers to the event, retains the event to give to
+     * any subsequent notifications on that location as they are made.
+     *
+     * @method fire
+     * @param {String} event The event type name
+     * @param {Object} value The event
+     * @param {Boolean} [forget=false] When true, does not retain for subsequent subscribers
+     */
+    BIMSURFER.Viewer.prototype.fire = function (event, value, forget) {
+        if (forget !== true) {
+            this.props[event] = value; // Save notification
+        }
+        var subsForLoc = this._locSubs[event];
+        var sub;
+        if (subsForLoc) { // Notify subscriptions
+            for (var handle in subsForLoc) {
+                if (subsForLoc.hasOwnProperty(handle)) {
+                    sub = subsForLoc[handle];
+                    sub.callback.call(sub.scope, value);
+                }
+            }
+        }
+    };
+
+    /**
+     * Subscribes to an event on this Viewer.
+     *
+     * The callback is be called with this Viewer as scope.
+     *
+     * @method on
+     * @param {String} event Publication event
+     * @param {Function} callback Called when fresh data is available at the event
+     * @param {Object} [scope=this] Scope for the callback
+     * @return {String} Handle to the subscription, which may be used to unsubscribe with {@link #off}.
+     */
+    BIMSURFER.Viewer.prototype.on = function (event, callback, scope) {
+        var subsForLoc = this._locSubs[event];
+        if (!subsForLoc) {
+            subsForLoc = {};
+            this._locSubs[event] = subsForLoc;
+        }
+        var handle = this._handleMap.addItem(); // Create unique handle
+        subsForLoc[handle] = {
+            scope: scope || this,
+            callback: callback
+        };
+        this._handleLocs[handle] = event;
+        var value = this.props[event];
+        if (value) { // A publication exists, notify callback immediately
+            callback.call(scope || this, value);
+        }
+        return handle;
+    };
+
+    /**
+     * Cancels an event subscription that was previously made with {{#crossLink "Viewer/on:method"}}{{/crossLink}} or
+     * {{#crossLink "Viewer/once:method"}}{{/crossLink}}.
+     *
+     * @method off
+     * @param {String} handle Publication handle
+     */
+    BIMSURFER.Viewer.prototype.off = function (handle) {
+        var event = this._handleLocs[handle];
+        if (event) {
+            delete this._handleLocs[handle];
+            var locSubs = this._locSubs[event];
+            if (locSubs) {
+                delete locSubs[handle];
+            }
+            this._handleMap.removeItem(handle); // Release handle
+        }
+    };
+
+    /**
+     * Subscribes to the next occurrence of the given event on this Viewer, then un-subscribes as soon as the event is handled.
+     *
+     * @method once
+     * @param {String} event Data event to listen to
+     * @param {Function(data)} callback Called when fresh data is available at the event
+     * @param {Object} [scope=this] Scope for the callback
+     */
+    BIMSURFER.Viewer.prototype.once = function (event, callback, scope) {
+        var self = this;
+        var handle = this.on(event,
+            function (value) {
+                self.off(handle);
+                callback(value);
+            },
+            scope);
+    };
+
+    /**
+     * Logs a console debugging message for this View.
+     *
+     * The console message will have this format: *````[LOG] BIMSERVER.Viewer: <message>````*
+     *
+     * @method log
+     * @param {String} message The message to log
+     */
+    BIMSURFER.Viewer.prototype.log = function (message) {
+        window.console.log("[LOG] BIMSERVER.Viewer: " + message);
+    };
+
+    /**
+     * Logs an error for this View to the JavaScript console.
+     *
+     * The console message will have this format: *````[ERROR] BIMSERVER.Viewer: <message>````*
+     *
+     * @method error
+     * @param {String} message The message to log
+     */
+    BIMSURFER.Viewer.prototype.error = function (message) {
+        window.console.error("[ERROR] BIMSERVER.Viewer: " + message);
     };
 
 })();

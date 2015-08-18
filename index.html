@@ -4,9 +4,7 @@
     <meta charset="utf-8"/>
     <title>bimvie.ws dojo example</title>
     <script>
-
         // Typically these modules would correspond to the file system, preferably git submodules, but they can also be referenced from CDNs.
-
         var dojoConfig = {
             packages: [
                 {name: "dojo", location: "https://ajax.googleapis.com/ajax/libs/dojo/1.10.4/dojo/"},
@@ -14,29 +12,22 @@
                 {name: 'dgrid', location: 'https://cdn.rawgit.com/SitePen/dgrid/v0.4.0'},
                 {name: 'dstore', location: 'https://cdn.rawgit.com/SitePen/dstore/v1.0.0'},
                 {name: 'put-selector', location: 'https://cdn.rawgit.com/kriszyp/put-selector/master'},
-                {name: 'xstyle', location: 'https://cdn.rawgit.com/kriszyp/xstyle/master'}
+                {name: 'xstyle', location: 'https://cdn.rawgit.com/kriszyp/xstyle/master'},
             ]
         };
     </script>
 
-    <script src="lib/dojo/dojo.js"></script>
     <script src="lib/scenejs.js"></script>
     <script src="build/bimviews.js"></script>
 
-    <!-- Remove these when you've got a dojo dialog box -->
-    <script type="text/javascript" src="lib/jquery-1.10.2/jquery-1.10.2.min.js"></script>
-    <script type="text/javascript" src="lib/jquery-1.10.2/jquery.cookie.js"></script>
-    <link rel="stylesheet" href="lib/jquery-ui-1.10.3.custom/css/custom-theme/jquery-ui-1.10.3.custom.css">
-    <script type="text/javascript" src="lib/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.js"></script>
-    <script src="lib/dialog.js"></script>
-    <!------------------>
-
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/dojo/1.10.4/dojo/dojo.js"></script>
     <style>
-
-        @import "lib/dojo/dojo.css";
-        @import "lib/dojo/dijit.css";
-        @import "lib/dojo/claro.css";
-        @import "lib/dojo/skins/claro.css";
+        @import "https://ajax.googleapis.com/ajax/libs/dojo/1.10.4/dojo/resources/dojo.css";
+        @import "https://ajax.googleapis.com/ajax/libs/dojo/1.10.4/dijit/themes/dijit.css";
+        @import "https://ajax.googleapis.com/ajax/libs/dojo/1.10.4/dijit/themes/claro/claro.css";
+        @import "https://cdn.rawgit.com/SitePen/dgrid/v0.4.0/css/skins/claro.css";
 
         /* Some boiler-plate css is necessary to have a reasonably functional and clean interface */
 
@@ -86,164 +77,236 @@
         .claro .dgrid-cell {
             border-color: #eee;
             border-width: 0 0 1px 0;
+            white-space: nowrap;
         }
     </style>
     <script>
-        require([
-                    "dojo/_base/declare",
-                    "dojo/parser",
-                    "dgrid/OnDemandGrid",
-                    "dgrid/Tree",
-                    "dstore/Memory",
-                    "dstore/Tree",
-                    "dojo/domReady!",
-                    "dijit/layout/BorderContainer",
-                    "dijit/layout/ContentPane"
-                ],
-                function (declare, parser, Grid, Tree, Memory, TreeStore) {
+        require(["dojo/Deferred"], function (Deferred) {
+            var bimServerUrl = 'http://thebimfederationserver.thebimfederation.com'
+            var modules = ['bimserverapi', 'String', 'utils'].map(function (s) {
+                return bimServerUrl + "/js/" + s + ".js";
+            });
 
-                    // The parser turns the type-annotated divs in the body into full-fledged interactive objects.
-
-                    parser.parse();
-
-                    // declare() is dojo's way of declaring a new class, superclasses go into the first array argument.
-                    // Multiple inheritance is very common in dojo.
-
-                    var Viewer = declare([BIMSURFER.Viewer], {
-                        constructor: function (domNode) {
-
-                            // Obviously your <canvas> goes here.
-                            this.domNode = document.getElementById(domNode);
-                        },
-                        selectElement: function (id) {
-
-                            // Just some stupid thing to simulate some interactivity between the components.
-                            this.domNode.style.background = [
-                                "LightCyan",
-                                "LightGoldenRodYellow",
-                                "LightGray",
-                                "LightGreen",
-                                "LightPink",
-                                "LightSalmon",
-                                "LightSeaGreen",
-                                "LightSkyBlue",
-                                "LightSlateGray",
-                                "LightSteelBlue",
-                                "LightYellow"][id]
-                        }
-                    });
-
-                    // Create 3D viewer with a test pattern and a user-controlled camera
-
-                    var viewer = new Viewer({element: 'viewerContainer'});
-
-                    var camera = new BIMSURFER.Camera(viewer, {
-                        eye: [80, 40, -80]
-                    });
-
-                    var cameraControl = new BIMSURFER.CameraControl(viewer, {
-                        camera: camera
-                    });
-
-                    var testPattern = new BIMSURFER.RandomObjects(viewer, {
-                        numObjects: 20
-                    });
-
-                    // Initialise tree view store
-
-                    var store = new declare([Memory, TreeStore])();
-
-                    // Throw up a login dialog
-
-                    loginDialog(connectToServer);
-
-
-                    // Logs into server
-
-                    function connectToServer(serverURL, email, password) {
-
-                        api = new BIMSURFER.api.API(serverURL, null);
-
-                        api.init(function (_api, serverInfo) {
-
-                            var errorMessage = serverInfo.errorMessage;
-                            var oid = serverInfo.oid;
-                            var rid = serverInfo.rid;
-                            var serverState = serverInfo.serverState; // Hopefully "RUNNING"
-                            var version = serverInfo.version;
-
-                            api.login(email, password, false,
-                                    function () {
-
-                                        getProjects();
-                                    });
+            var api = null;
+            window.get_bimserver_api = function () {
+                var d = new Deferred();
+                if (api) {
+                    d.resolve(api);
+                } else {
+                    require(modules, function () {
+                        api = new BimServerApi(bimServerUrl, null);
+                        api.init(function () {
+                            api.login(prompt("user"), prompt("pass"), false, function () {
+                                d.resolve(api);
+                            });
                         });
-                    }
+                    });
+                }
+                return d;
+            }
 
-                    // Gets projects from server and lists them in the tree view
+            window.get_tree_data = function () {
+                var d = new Deferred();
+                get_bimserver_api().then(function (api) {
+                    var poid = 5701633;
+                    var roid = 12779523;
 
-                    function getProjects() {
+                    /*  The javascript API does not always work as expected
+                     api.getModel(poid, roid, schema, false, function(model) {
+                     api.getAllSubTypes(api.schemas[schema], "IfcRelationship", function(rel){
+                     console.log(rel);
+                     });
+                     ['IfcRelDecomposes', 'IfcRelAggregates', 'IfcRelContainedInSpatialStructure', 'IfcRelFillsElement', 'IfcRelVoidsElement'].forEach(
+                     function(relationship) {
+                     model.getAllOfType(relationship, false, function(obj) {
+                     for (var k in obj) {
+                     if (k.indexOf('Relat') !== -1) {
+                     (function() {
+                     obj[k](function() {
+                     console.log(k, arguments);
+                     });
+                     })();
+                     }
+                     }
+                     });
+                     }
+                     );
+                     }); */
 
-                        api.call("Bimsie1ServiceInterface", "getAllProjects", {
-                                    onlyActive: true,
-                                    onlyTopLevel: false
-                                },
-                                function (projects) {
-
-                                    projects.forEach(
-                                            function (project) {
-
-                                               // if (project.lastRevisionId != -1) {
-
-                                                    store.add({
-                                                        node: project.name,
-                                                        id: project.id,
-                                                        parent: null,
-                                                        hasChildren: true
-                                                    });
-
-
-//                    store.add({node: 'site', id: 2, parent: 1, hasChildren: true});
-//
-//                    store.add({node: 'building', id: 3, parent: 2, hasChildren: true});
-//
-//                    store.add({node: 'storey1', id: 4, parent: 3, hasChildren: true});
-//                    store.add({node: 'storey2', id: 5, parent: 3, hasChildren: true});
-//
-//                    store.add({node: 'window', id: 6, parent: 4, hasChildren: false});
-//                    store.add({node: 'wall', id: 7, parent: 4, hasChildren: false});
-//                    store.add({node: 'stairs', id: 8, parent: 5, hasChildren: false});
-//                    store.add({node: 'door', id: 9, parent: 5, hasChildren: false});
-//                    store.add({node: 'slab', id: 10, parent: 5, hasChildren: false});
-                                               // }
-                                            });
-
-                                    var tree = new declare([Grid, Tree])({
-                                        className: "dgrid-autoheight",
-                                        collection: store.getRootCollection(),
-                                        columns: [
-                                            {field: 'node', label: 'IFC decomposition', renderExpando: true}
-                                        ],
-                                        shouldExpand: function () {
-                                            return true;
-                                        }
-                                    }, 'tree');
-
-                                    tree.on(".dgrid-row:click", function (evt) {
-                                        var row;
-                                        if (row = tree.row(evt)) {
-                                            // Would be better to use the dojo/Evented mechanism to link events together
-                                            viewer.selectElement(row.data.id);
-                                        }
-                                    });
-
-                                    tree.startup();
+                    // Get a reference to the JSON serializer
+                    api.jsonSerializerFetcher.fetch(function (jsonSerializerOid) {
+                        // Initiate download
+                        api.call("Bimsie1ServiceInterface", "download", {
+                            roid: roid,
+                            serializerOid: jsonSerializerOid,
+                            showOwn: false,
+                            sync: true
+                        }, function (laid) {
+                            // Construct download url
+                            var url = api.generateRevisionDownloadUrl({
+                                laid: laid,
+                                topicId: laid,
+                                serializerOid: jsonSerializerOid
+                            });
+                            // A list of entities that define parent-child relationships
+                            var entities = {
+                                'IfcRelDecomposes': 1,
+                                'IfcRelAggregates': 1,
+                                'IfcRelContainedInSpatialStructure': 1,
+                                'IfcRelFillsElement': 1,
+                                'IfcRelVoidsElement': 1
+                            }
+                            // Perform the download
+                            $.getJSON(url, function (data) {
+                                // Create a mapping from id->instance
+                                var instance_by_id = {};
+                                data.objects.forEach(function (o) {
+                                    // The root node in a dojo store should have its parent
+                                    // set to null, not just something that evaluates to false
+                                    o.parent = null;
+                                    instance_by_id[o._i] = o;
                                 });
+
+                                // Filter all instances based on relationship entities
+                                var relationships = data.objects.filter(function (o) {
+                                    return entities[o._t];
+                                });
+
+                                // Construct a tuple of {parent, child} ids
+                                var parents = relationships.map(function (o) {
+                                    var ks = Object.keys(o);
+                                    var related = ks.filter(function (k) {
+                                        return k.indexOf('Related') !== -1;
+                                    });
+                                    var relating = ks.filter(function (k) {
+                                        return k.indexOf('Relating') !== -1;
+                                    });
+                                    return [o[relating[0]], o[related[0]]];
+                                });
+
+                                var is_array = function (o) {
+                                    return Object.prototype.toString.call(o) === '[object Array]';
+                                }
+
+                                var data = [];
+                                var visited = {};
+                                parents.forEach(function (a) {
+                                    // Relationships in IFC can be one to one/many
+                                    var ps = is_array(a[0]) ? a[0] : [a[0]];
+                                    var cs = is_array(a[1]) ? a[1] : [a[1]];
+                                    for (var i = 0; i < ps.length; ++i) {
+                                        for (var j = 0; j < cs.length; ++j) {
+                                            // Lookup the instance ids in the mapping
+                                            var p = instance_by_id[ps[i]];
+                                            var c = instance_by_id[cs[j]];
+
+                                            // parent, id, hasChildren are significant attributes in a dojo store
+                                            c.parent = p.id = p._i;
+                                            c.id = c._i;
+                                            p.hasChildren = true;
+
+                                            // Make sure to only add instances once
+                                            if (!visited[c.id]) {
+                                                data.push(c);
+                                            }
+                                            if (!visited[p.id]) {
+                                                data.push(p);
+                                            }
+                                            visited[p.id] = visited[c.id] = true;
+                                        }
+                                    }
+                                });
+                                var make_element = function (o) {
+                                    return {name: o.Name, id: o.id, guid: o.GlobalId, parent: o.parent};
+                                };
+                                d.resolve(data.map(make_element));
+                            });
+                        });
+                    });
+                });
+                return d;
+            };
+        });
+    </script>
+    <script>
+        require([
+            "dojo/_base/declare",
+            "dojo/parser",
+            "dgrid/OnDemandGrid",
+            "dgrid/Tree",
+            "dstore/Memory",
+            "dstore/Tree",
+
+            "dojo/domReady!", "dijit/layout/BorderContainer", "dijit/layout/ContentPane"
+        ], function (declare, parser, Grid, Tree, Memory, TreeStore) {
+            // The parser turns the type-annotated divs in the body into full-fledged interactive objects.
+            parser.parse();
+
+//            // declare() is dojo's way of declaring a new class, superclasses go into the first array argument. Multiple inheritance is very common in dojo.
+//            var Viewer = declare([], {
+//                constructor: function (domNode) {
+//                    // Obviously your <canvas> goes here.
+//                    this.domNode = document.getElementById(domNode);
+//                },
+//                selectElement: function (id) {
+//                    // Just some stupid thing to simulate some interactivity between the components.
+//                    this.domNode.style.background = ["LightCyan", "LightGoldenRodYellow", "LightGray", "LightGreen", "LightPink", "LightSalmon", "LightSeaGreen", "LightSkyBlue", "LightSlateGray", "LightSteelBlue", "LightYellow"][id]
+//                }
+//            });
+
+            // Create 3D viewer with a test pattern and a user-controlled camera
+
+            var viewer = new BIMSURFER.Viewer({element: 'viewerContainer'});
+
+            var camera = new BIMSURFER.Camera(viewer, {
+                eye: [80, 40, -80]
+            });
+
+            var cameraControl = new BIMSURFER.CameraControl(viewer, {
+                camera: camera
+            });
+
+            var testPattern = new BIMSURFER.RandomObjects(viewer, {
+                numObjects: 20
+            });
+
+            // Your API proposal does not have to change at all I think, this is more of an UI example.
+            // var download = new Download();
+
+            get_tree_data().then(function (nodes) {
+                // Dojo uses MVC concepts and separates the data model (store) from the view (tree). Obviously this tree needs to fetch data from the BIMserver. Lazily loaded stores are also an option.
+                var store = new declare([Memory, TreeStore])();
+                nodes.forEach(function (node) {
+                    store.add(node);
+                });
+
+                // Preferably all these different modules would be separated over different files and required as dependencies, but in order to have a self-contained example they are all inlined.
+                var tree = new declare([Grid, Tree])({
+                    className: "dgrid-autoheight",
+                    collection: store.getRootCollection(),
+                    columns: [
+                        {field: 'guid', label: 'GlobalId', renderExpando: true},
+                        {field: 'name', label: 'Name'}
+                    ],
+                    shouldExpand: function () {
+                        return true;
+                    }
+                }, 'tree');
+
+                tree.on(".dgrid-row:click", function (evt) {
+                    var row;
+                    if (row = tree.row(evt)) {
+                        // Would be better to use the dojo/Evented mechanism to link events together
+                        viewer.selectElement(row.data.id);
                     }
                 });
+
+                tree.startup();
+
+            });
+        });
     </script>
 </head>
-
 <body class='claro'>
 
 <div data-dojo-type='dijit/layout/LayoutContainer' id='main'>
@@ -264,8 +327,8 @@
 
         <div data-dojo-type='dijit/layout/ContentPane'
              data-dojo-props="region: 'center', splitter: true"
-             style="height:100%; width:100%; padding:0; margin:0;"
              id='viewerContainer'>
+            <div id='viewer'></div>
         </div>
 
     </div>
