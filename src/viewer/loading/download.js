@@ -23,6 +23,7 @@
  // Initiate a Download
  var download = new BIMSURFER.Download(viewer, {
     downloadType: "types",
+    models: [foo, bar],
     roid: "xyz",
     types: ["", "", ""],
     schema: ""
@@ -78,6 +79,7 @@
 
  var downloadTypes = new BIMSURFER.Download(viewer, {
     downloadType: "types",
+    models: [foo, bar],
     types: [
         "IfcDoor",
         "IfcBuildingElementProxy",
@@ -97,6 +99,7 @@
 
  var downloadRevisions = new BIMSURFER.Download(viewer, {
     downloadType: "revision",
+    models: [foo, bar],
     roid: "XYZ"
  });
 
@@ -110,6 +113,7 @@
 
  var downloadByIDs = new BIMSURFER.Download(viewer, {
     downloadType: "oids",
+    models: [foo, bar],
     roids: ["XYZ", "XYZ2"],
     oids: ["XYZ", "XYZ2"]
  });
@@ -127,7 +131,7 @@
  @param [cfg] {*} Configs
  @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
  @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Label.
- @param [cfg.models] {*}
+ @param [cfg.models] {*} Array of models to load objects from.
  @param [cfg.downloadType] {*} Type download - "types", "revision" or "oids"
  @param [cfg.roids] {*} A list of revision IDs
  @param [cfg.roid] {*} A single revision ID
