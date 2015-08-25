@@ -82,7 +82,7 @@
     </style>
     <script>
         require(["dojo/Deferred"], function (Deferred) {
-            var bimServerUrl = 'http://thebimfederationserver.thebimfederation.com'
+            var bimServerUrl = 'http://thisisanexperimentalserver.com'
             var modules = ['bimserverapi', 'String', 'utils'].map(function (s) {
                 return bimServerUrl + "/js/" + s + ".js";
             });
@@ -108,31 +108,28 @@
             window.get_tree_data = function () {
                 var d = new Deferred();
                 get_bimserver_api().then(function (api) {
-                    var poid = 5701633;
-                    var roid = 12779523;
+                    var poid = 1441793;
+                    var roid = 65539;
+                    var schema = "ifc2x3tc1";
+                    
+                    // Get the model (will be empty initially)
+                    api.getModel(poid, roid, schema, false, function(model){
+                    	// We will store the oids in this array
+                    	var oids = [];
+                    	// Get all objects of type IfcProduct, including subtypes
+                    	model.getAllOfType("IfcProduct", true, function(object){
+                    		// Add the oid of the object to the array
+                    		oids.push(object.oid);
+                    	}).done(function(){
+                    		// Triggers after all objects have loaded
+                    		
+                    		// Pass the oids + [roid] to the download function, in my code the BIMSURFER.Download is not known, not sure how to include
+                    		console.log(oids);
+                    	});
+                    });
 
-                    /*  The javascript API does not always work as expected
-                     api.getModel(poid, roid, schema, false, function(model) {
-                     api.getAllSubTypes(api.schemas[schema], "IfcRelationship", function(rel){
-                     console.log(rel);
-                     });
-                     ['IfcRelDecomposes', 'IfcRelAggregates', 'IfcRelContainedInSpatialStructure', 'IfcRelFillsElement', 'IfcRelVoidsElement'].forEach(
-                     function(relationship) {
-                     model.getAllOfType(relationship, false, function(obj) {
-                     for (var k in obj) {
-                     if (k.indexOf('Relat') !== -1) {
-                     (function() {
-                     obj[k](function() {
-                     console.log(k, arguments);
-                     });
-                     })();
-                     }
-                     }
-                     });
-                     }
-                     );
-                     }); */
-
+                    // Ruben: This code will load redundant data, is is not going to work for bigger models, just too much data, that's why the tree in BIMvie.ws is lazy loading the data
+                    
                     // Get a reference to the JSON serializer
                     api.jsonSerializerFetcher.fetch(function (jsonSerializerOid) {
                         // Initiate download
