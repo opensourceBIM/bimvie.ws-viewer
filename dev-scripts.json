@@ -3,6 +3,8 @@
 
         "src/BIMSURFER.js",
 
+        "src/api/string.js",
+
         "src/api/api.js",
         "src/api/eventRegistry.js",
         "src/api/model.js",

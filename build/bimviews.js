@@ -4,7 +4,7 @@
  * A WebGL-based IFC Viewer for BIMSurfer
  * http://bimwiews.org/
  *
- * Built on 2015-08-18
+ * Built on 2015-08-26
  *
  * todo
  * Copyright 2015, todo
@@ -116,7 +116,65 @@ var BIMSURFER = {
 
 
 
-;BIMSURFER.api = {};
+;if (typeof String.prototype.startsWith != 'function') {
+    String.prototype.startsWith = function(str) {
+        return this.indexOf(str) == 0;
+    };
+}
+
+if (typeof String.prototype.firstUpper != 'function') {
+    String.prototype.firstUpper = function() {
+        return this.substring(0, 1).toUpperCase() + this.substring(1);
+    };
+}
+
+if (typeof String.prototype.endsWith != 'function') {
+    String.prototype.endsWith = function(str) {
+        return this.length > str.length && this.lastIndexOf(str) == this.length - str.length;
+    };
+}
+
+if (typeof String.prototype.trim !== 'function') {
+    String.prototype.trim = function() {
+        return this.replace(/^\s+|\s+$/g, '');
+    };
+}
+
+if (typeof String.prototype.lpad != 'function') {
+    String.prototype.lpad = function(padString, length) {
+        var str = this;
+        while (str.length < length) {
+            str = padString + str;
+        }
+        return str;
+    };
+}
+
+if (typeof String.prototype.rpad != 'function') {
+    String.prototype.rpad = function(padString, length) {
+        var str = this;
+        while (str.length < length) {
+            str = str + padString;
+        }
+        return str;
+    };
+}
+
+if (typeof String.prototype.contains != 'function') {
+    String.prototype.contains = function(needle) {
+        return this.indexOf(needle) != -1;
+    };
+}
+
+String.prototype.replaceAll = function(search, replace)
+{
+    //if replace is null, return original string otherwise it will
+    //replace search string with 'undefined'.
+    if(!replace)
+        return this;
+
+    return this.replace(new RegExp('[' + search + ']', 'g'), replace);
+};;BIMSURFER.api = {};
 
 BIMSURFER.api.API = function (baseUrl, notifier) {
 
@@ -10960,18 +11018,21 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
  ## Example 1: General usage
 
  ````Javascript
+
  // Create a Viewer
+
  var viewer = new BIMSURFER.Viewer({
     element: "myDiv"
  });
 
- // Initiate a Download
+ // Initiate a download of a bunch of objects
+
  var download = new BIMSURFER.Download(viewer, {
-    downloadType: "types",
-    roid: "xyz",
-    types: ["", "", ""],
-    schema: "",
-    autoDestroy: true // default
+    downloadType: "oids",
+    models: [myModel],
+    roid: ["xyz","xyz2"],
+    oids: ["xyz","xyz2"],
+    schema: "xyz"
  });
 
  // Subscribe to progress updates
@@ -10995,10 +11056,6 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
     // Number of Objects loaded 
     var numObjectsLoaded = e.numObjectsLoaded;
 
-    // Since this Download component was configured with autoDestroy: true,
-    // which is the default, then this Download component will now
-    // destroy itself.
-
     //...
 
  });
@@ -11008,10 +11065,6 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
  
     // Error message
     var message = e;
-
-    // Even though this Download component was configured with autoDestroy: true,
-    // which is the default, the Download component will not destroy itself
-    // since an error occurred.
 
     //...
  });
@@ -11024,6 +11077,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
  var downloadTypes = new BIMSURFER.Download(viewer, {
     downloadType: "types",
+    models: [foo, bar],
     types: [
         "IfcDoor",
         "IfcBuildingElementProxy",
@@ -11043,6 +11097,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
  var downloadRevisions = new BIMSURFER.Download(viewer, {
     downloadType: "revision",
+    models: [foo, bar],
     roid: "XYZ"
  });
 
@@ -11056,6 +11111,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
  var downloadByIDs = new BIMSURFER.Download(viewer, {
     downloadType: "oids",
+    models: [foo, bar],
     roids: ["XYZ", "XYZ2"],
     oids: ["XYZ", "XYZ2"]
  });
@@ -11073,7 +11129,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
  @param [cfg] {*} Configs
  @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
  @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Label.
- @param [cfg.models] {*}
+ @param [cfg.models] {*} Array of models to load objects from.
  @param [cfg.downloadType] {*} Type download - "types", "revision" or "oids"
  @param [cfg.roids] {*} A list of revision IDs
  @param [cfg.roid] {*} A single revision ID
@@ -11103,7 +11159,6 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
             this._schema = cfg.schema;
             this._types = cfg.types;
             this._oids = cfg.oids;
-            this._autoDestroy = cfg.autoDestroy;
 
             // API handle
 
@@ -11118,6 +11173,12 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
             // Queus of incoming data packets
 
             this._dataPackets = [];
+
+            // Components created for this Download
+            // Destroyed when this Download is destroyed
+
+            this._geometries = [];
+            this._objects = [];
 
 
             var self = this;
@@ -11212,19 +11273,19 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
                     while (data != null) {
 
-                        var inputStream = new BIMSURFER.DataInputStreamReader(null, data);
-                        var channel = inputStream.readInt();
-                        var numMessages = inputStream.readInt();
+                        var stream = new BIMSURFER.DataInputStreamReader(null, data);
+                        var channel = stream.readInt();
+                        var numMessages = stream.readInt();
 
                         for (var i = 0; i < numMessages; i++) {
 
-                            var messageType = inputStream.readByte();
+                            var messageType = stream.readByte();
 
                             if (messageType === 0) {
-                                self._readStart(inputStream);
+                                self._readStart(stream);
 
                             } else {
-                                self._readObject(inputStream, messageType);
+                                self._readObject(stream, messageType);
                             }
                         }
 
@@ -11286,16 +11347,16 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
             });
         },
 
-        _readStart: function (data) {
+        _readStart: function (stream) {
 
-            var start = data.readUTF8();
+            var start = stream.readUTF8();
 
             if (start != "BGS") {
                 this.error("Stream does not start with BGS (" + start + ")");
                 return false;
             }
 
-            var version = data.readByte();
+            var version = stream.readByte();
 
             if (version != 4 && version != 5 && version != 6) {
                 this.error("Unimplemented version");
@@ -11305,9 +11366,9 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
                 this._version = version;
             }
 
-            data.align4();
+            stream.align4();
 
-            var modelBounds = data.readFloatArray(6);
+            var modelBounds = stream.readFloatArray(6);
 
             modelBounds = {
                 min: {x: modelBounds[0], y: modelBounds[1], z: modelBounds[2]},
@@ -11350,7 +11411,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
                 camera.fovy = 37.8493;
             }
 
-            this._numObjects = data.readInt();
+            this._numObjects = stream.readInt();
 
             this._notifyProgress();
         },
@@ -11404,25 +11465,21 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
                     },
                     function () {
                     });
-
-                if (this._autoDestroy) {
-                    this.destroy();
-                }
             }
         },
 
         /**
-         * Reads an object from binary data packet.
+         * Reads an object from binary stream.
          *
-         * @param data The binary data packet.
+         * @param stream The binary stream.
          * @param geometryType Type of geometry to read.
          * @private
          */
-        _readObject: function (data, geometryType) {
+        _readObject: function (stream, geometryType) {
 
-            var type = data.readUTF8();
-            var roid = data.readLong();
-            var objectId = data.readLong();
+            var type = stream.readUTF8();
+            var roid = stream.readLong();
+            var objectId = stream.readLong();
 
             var geometryId;
             var geometryIds = [];
@@ -11438,22 +11495,22 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
             var numColors;
             var colors;
 
-            data.align4();
+            stream.align4();
 
-            var matrix = data.readFloatArray(16);
+            var matrix = stream.readFloatArray(16);
 
             if (geometryType == 1) {
 
-                objectBounds = data.readFloatArray(6);
-                geometryId = data.readLong();
-                numIndices = data.readInt();
-                indices = data.readIntArray(numIndices);
-                numPositions = data.readInt();
-                positions = data.readFloatArray(numPositions);
-                numNormals = data.readInt();
-                normals = data.readFloatArray(numNormals);
-                numColors = data.readInt();
-                colors = data.readFloatArray(numColors);
+                objectBounds = stream.readFloatArray(6);
+                geometryId = stream.readLong();
+                numIndices = stream.readInt();
+                indices = stream.readIntArray(numIndices);
+                numPositions = stream.readInt();
+                positions = stream.readFloatArray(numPositions);
+                numNormals = stream.readInt();
+                normals = stream.readFloatArray(numNormals);
+                numColors = stream.readInt();
+                colors = stream.readFloatArray(numColors);
 
                 this._createGeometry(geometryId, positions, normals, colors, indices);
 
@@ -11461,27 +11518,27 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
             } else if (geometryType == 2) {
 
-                geometryId = data.readLong();
+                geometryId = stream.readLong();
 
                 this._createObject(roid, objectId, objectId, [geometryId], type, matrix);
 
             } else if (geometryType == 3) {
 
-                numParts = data.readInt();
+                numParts = stream.readInt();
 
                 for (var i = 0; i < numParts; i++) {
 
                     // Object contains multiple geometries
 
-                    geometryId = data.readLong();
-                    numIndices = data.readInt();
-                    indices = data.readIntArray(numIndices);
-                    numPositions = data.readInt();
-                    positions = data.readFloatArray(numPositions);
-                    numNormals = data.readInt();
-                    normals = data.readFloatArray(numNormals);
-                    numColors = data.readInt();
-                    colors = data.readFloatArray(numColors);
+                    geometryId = stream.readLong();
+                    numIndices = stream.readInt();
+                    indices = stream.readIntArray(numIndices);
+                    numPositions = stream.readInt();
+                    positions = stream.readFloatArray(numPositions);
+                    numNormals = stream.readInt();
+                    normals = stream.readFloatArray(numNormals);
+                    numColors = stream.readInt();
+                    colors = stream.readFloatArray(numColors);
 
                     this._createGeometry(geometryId, positions, normals, colors, indices);
 
@@ -11494,11 +11551,11 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
                 // Object contains multiple instances of geometries
 
-                numGeometries = data.readInt();
+                numGeometries = stream.readInt();
                 geometryIds = [];
 
                 for (var i = 0; i < numGeometries; i++) {
-                    geometryIds.push(data.readLong());
+                    geometryIds.push(stream.readLong());
                 }
 
                 this._createObject(roid, objectId, objectId, geometryIds, type, matrix);
@@ -11512,7 +11569,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
         _createGeometry: function (geometryId, positions, normals, colors, indices) {
 
-            new BIMSURFER.Geometry(this.viewer, {
+            var g = new BIMSURFER.Geometry(this.viewer, {
                 id: geometryId,
                 positions: positions,
                 normals: normals,
@@ -11520,6 +11577,8 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
                 indices: indices,
                 primitive: "triangles"
             });
+
+            this._geometries.push(g);
         },
 
         _createObject: function (roid, oid, objectId, geometryIds, type, matrix) {
@@ -11534,7 +11593,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
             this._models[roid].get(oid,
                 function (object) {
 
-                    new BIMSURFER.Object(self.viewer, {
+                    var o = new BIMSURFER.Object(self.viewer, {
                         id: objectId,
                         type: type,
                         geometries: geometryIds,
@@ -11542,15 +11601,29 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
                         active: object.trans.mode === 0
                     });
 
-                    this._numObjectsLoaded++;
+                    self._objects.push(o);
 
-                    this._notifyProgress();
+                    self._numObjectsLoaded++;
+
+                    self._notifyProgress();
                 });
         },
 
         _destroy: function () {
+
             if (this._tick) {
                 this.viewer.off(this._tick);
+            }
+
+            var i;
+            var len;
+
+            for (i = 0, len = this._objects.length; i < len; i++) {
+                this._objects[i].destroy();
+            }
+
+            for (i = 0, len = this._geometries.length; i < len; i++) {
+                this._geometries[i].destroy();
             }
         }
     });
