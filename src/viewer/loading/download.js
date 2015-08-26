@@ -15,18 +15,21 @@
  ## Example 1: General usage
 
  ````Javascript
+
  // Create a Viewer
+
  var viewer = new BIMSURFER.Viewer({
     element: "myDiv"
  });
 
- // Initiate a Download
+ // Initiate a download of a bunch of objects
+
  var download = new BIMSURFER.Download(viewer, {
-    downloadType: "types",
-    models: [foo, bar],
-    roid: "xyz",
-    types: ["", "", ""],
-    schema: ""
+    downloadType: "oids",
+    models: [myModel],
+    roid: ["xyz","xyz2"],
+    oids: ["xyz","xyz2"],
+    schema: "xyz"
  });
 
  // Subscribe to progress updates
@@ -50,10 +53,6 @@
     // Number of Objects loaded 
     var numObjectsLoaded = e.numObjectsLoaded;
 
-    // Since this Download component was configured with autoDestroy: true,
-    // which is the default, then this Download component will now
-    // destroy itself.
-
     //...
 
  });
@@ -63,10 +62,6 @@
  
     // Error message
     var message = e;
-
-    // Even though this Download component was configured with autoDestroy: true,
-    // which is the default, the Download component will not destroy itself
-    // since an error occurred.
 
     //...
  });

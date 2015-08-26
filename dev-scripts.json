@@ -57,6 +57,8 @@
         "src/viewer/lighting/pointLight.js",
         "src/viewer/lighting/dirLight.js",
 
+        "src/viewer/loading/download.js",
+
         "src/viewer/geometry/_module.js",
         "src/viewer/geometry/geometry.js",
         "src/viewer/geometry/boxGeometry.js",
