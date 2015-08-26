@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+
+    <style>
+        body {
+            margin: 0;
+            -moz-user-select: -moz-none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            background-color: white;
+        }
+    </style>
+
+    <link href="css/styles.css" rel="stylesheet"/>
+
+    <script type="text/javascript" src="lib/jquery-1.10.2/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="lib/jquery-1.10.2/jquery.cookie.js"></script>
+    <link rel="stylesheet" href="lib/jquery-ui-1.10.3.custom/css/custom-theme/jquery-ui-1.10.3.custom.css">
+    <script type="text/javascript" src="lib/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.js"></script>
+
+    <script src="../lib/scenejs.js"></script>
+    <script src="../build/bimviews.js"></script>
+
+
+</head>
+<body>
+
+<div id="info" class="infoLight">
+    <a href="../docs/classes/CameraControl.html" target="_other">BIMSURFER.Download</a>
+    <br><br>
+    Downloading IFC objects from a BIMServer into a Viewer.
+    <br>
+    <ol>
+        <li>Create a Viewer</li>
+        <li>Connect to a BIMServer</li>
+        <li>Load a model</li>
+        <li>Download some objects from the model into the Viewer</li>
+    </ol>
+</div>
+
+<div id="myDiv" style="position: absolute; top: 0; left: 0; height: 100%; width: 100%;">
+</div>
+
+<script>
+
+    //-----------------------------------------------------------------------------------------------------------
+    // Create a 3D Viewer with a test object to verify it's working
+    // We'll destroy the test object when we load something from the server
+    //-----------------------------------------------------------------------------------------------------------
+
+    var viewer = new BIMSURFER.Viewer({element: "myDiv"});
+
+    // Create a Camera
+    // Create a Camera
+    var camera = new BIMSURFER.Camera(viewer, {
+        eye: [-15, 15, -15]
+    });
+
+    // Create a CameraControl
+    var control = new BIMSURFER.CameraControl(viewer, { camera: camera });
+
+    // Create a box Geometry
+    var geometry = new BIMSURFER.BoxGeometry(viewer, {
+        id: "myGeometry"
+    });
+
+    // Create a test object, which we'll destroy once we start loading a model
+    var testObject = new BIMSURFER.Object(viewer, {
+        geometries: [ geometry ]
+    });
+
+
+    //-----------------------------------------------------------------------------------------------------------
+    // Connect to a BIMServer
+    //-----------------------------------------------------------------------------------------------------------
+
+    connectToServer('http://thisisanexperimentalserver.com', prompt("user"), prompt("password"));
+
+    var api;
+
+    function connectToServer(serverURL, user, password) {
+
+        api = new BIMSURFER.api.API(serverURL, null);
+
+        api.init(function (_api, serverInfo) {
+
+            var errorMessage = serverInfo.errorMessage;
+            var oid = serverInfo.oid;
+            var rid = serverInfo.rid;
+            var serverState = serverInfo.serverState; // Hopefully "RUNNING"
+            var version = serverInfo.version;
+
+            api.login(user, password, false,
+                    function () {
+
+                        console.log("Destroying viewer test object");
+
+                        testObject.destroy();
+
+                        console.log("Loading model");
+
+                        loadModel();
+                    });
+        });
+    }
+
+    //-----------------------------------------------------------------------------------------------------------
+    // Load a model and download objects from it
+    //-----------------------------------------------------------------------------------------------------------
+
+    function loadModel() {
+
+        var poid = 1441793;
+        var roid = 65539;
+        var schema = "ifc2x3tc1";
+
+        // Get the model (will be empty initially)
+        api.getModel(poid, roid, schema, false,
+                function (model) {
+
+                    // We will store the oids in this array
+                    var oids = [];
+
+                    // Get all objects of type IfcProduct, including subtypes
+                    model.getAllOfType("IfcProduct", true,
+                            function (object) {
+
+                                // Add the oid of the object to the array
+                                oids.push(object.oid);
+                            }).done(function () {
+
+                                // Triggers after all objects have loaded
+
+                                console.log(oids);
+
+                                // Start downloading the objects
+
+                                var download = new BIMSURFER.Download(viewer, {
+                                    downloadType: "oids",
+                                    models: [model],
+                                    roids: [roid],
+                                    oids: oids,
+                                    schema: schema
+                                });
+
+                                // Handle download progress
+                                download.on("progress",
+                                        function (e) {
+
+                                            var numObjects = e.numObjects; // Total number of Objects being loaded
+                                            var numObjectsLoaded = e.numObjectsLoaded; // Number of Objects loaded so far
+                                            var progress = e.progress; // Percentage of Objects loaded so far
+
+                                            console.log("Download progress: " + progress)
+                                        });
+
+                                // Handle download completion
+                                download.on("completed",
+                                        function (e) {
+
+                                            // Number of Objects loaded
+                                            var numObjectsLoaded = e.numObjectsLoaded;
+
+                                            console.log("Download complete - numObjectsLoaded = " + numObjectsLoaded)
+
+                                        });
+
+                                // Handle download error
+                                download.on("error",
+                                        function (e) {
+
+                                            var message = e; // Error message
+
+                                            console.log("Download error: " + message)
+                                        });
+                            });
+                });
+    }
+
+</script>
+
+</body>
+</html>
