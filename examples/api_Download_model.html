@@ -60,7 +60,7 @@
     });
 
     // Create a CameraControl
-    var control = new BIMSURFER.CameraControl(viewer, { camera: camera });
+    var control = new BIMSURFER.CameraControl(viewer, {camera: camera});
 
     // Create a box Geometry
     var geometry = new BIMSURFER.BoxGeometry(viewer, {
@@ -69,7 +69,7 @@
 
     // Create a test object, which we'll destroy once we start loading a model
     var testObject = new BIMSURFER.Object(viewer, {
-        geometries: [ geometry ]
+        geometries: [geometry]
     });
 
 
@@ -81,9 +81,37 @@
 
     var api;
 
+    function Notifier() {
+        var othis = this;
+
+        this.setSelector = function (selector) {
+        };
+
+        this.clear = function () {
+        };
+
+        this.resetStatus = function () {
+        };
+
+        this.resetStatusQuick = function () {
+        };
+
+        this.setSuccess = function (status, timeToShow) {
+            console.log("success", status);
+        };
+
+        this.setInfo = function (info, timeToShow) {
+            console.log("info", info);
+        };
+
+        this.setError = function (error) {
+            console.log("error", error);
+        };
+    }
+
     function connectToServer(serverURL, user, password) {
 
-        api = new BIMSURFER.api.API(serverURL, null);
+        api = new BIMSURFER.api.API(serverURL, new Notifier());
 
         api.init(function (_api, serverInfo) {
 
@@ -130,53 +158,81 @@
 
                                 // Add the oid of the object to the array
                                 oids.push(object.oid);
+
                             }).done(function () {
 
                                 // Triggers after all objects have loaded
 
-                                console.log(oids);
+                                console.log("Objects loaded: " + oids);
 
-                                // Start downloading the objects
+                                // Get serializer plugin
 
-                                var download = new BIMSURFER.Download(viewer, {
-                                    downloadType: "oids",
-                                    models: [model],
-                                    roids: [roid],
-                                    oids: oids,
-                                    schema: schema
-                                });
+                                api.getMessagingSerializerByPluginClassName(
+                                        "org.bimserver.serializers.binarygeometry.BinaryGeometryMessagingSerializerPlugin",
+                                        function (serializer) {
 
-                                // Handle download progress
-                                download.on("progress",
-                                        function (e) {
+                                            console.log("Loaded serializer plugin.");
 
-                                            var numObjects = e.numObjects; // Total number of Objects being loaded
-                                            var numObjectsLoaded = e.numObjectsLoaded; // Number of Objects loaded so far
-                                            var progress = e.progress; // Percentage of Objects loaded so far
+                                            // Call API to download objects
 
-                                            console.log("Download progress: " + progress)
-                                        });
+                                            api.call("Bimsie1ServiceInterface", "downloadByOids", {
+                                                        roids: [roid],
+                                                        oids: oids,
+                                                        serializerOid: serializer.oid,
+                                                        sync: false,
+                                                        deep: false
+                                                    },
+                                                    function (topicId) {
 
-                                // Handle download completion
-                                download.on("completed",
-                                        function (e) {
+                                                        console.log("Called 'downloadByOids' on Bimsie1ServiceInterface.");
 
-                                            // Number of Objects loaded
-                                            var numObjectsLoaded = e.numObjectsLoaded;
+                                                        // API call issued
 
-                                            console.log("Download complete - numObjectsLoaded = " + numObjectsLoaded)
+                                                        var _topicId = topicId;
 
-                                        });
+                                                        var progressHandler = function (topicId, state) {
+                                                            if (topicId === _topicId) {
+                                                                if (state.title == "Done preparing") {
+                                                                    startDownload();
+                                                                }
+                                                                if (state.state == "completed") {
+                                                                    console.log("Binary download complete.");
+                                                                    api.unregisterProgressHandler(topicId, progressHandler);
+                                                                }
+                                                            }
+                                                        };
 
-                                // Handle download error
-                                download.on("error",
-                                        function (e) {
+                                                        var startDownload = function () {
 
-                                            var message = e; // Error message
+                                                            console.log("Starting binary download..");
 
-                                            console.log("Download error: " + message)
+                                                            api.setBinaryDataListener(this._topicId,
+                                                                    function (data) {
+                                                                        console.log("A data packet has arrived.");
+                                                                    });
+                                                            api.downloadViaWebsocket({
+                                                                longActionId: _topicId,
+                                                                topicId: _topicId
+                                                            });
+                                                        };
+
+                                                        api.registerProgressHandler(topicId,
+                                                                progressHandler,
+                                                                function () {
+                                                                    console.log("progressHandler registered.");
+                                                                });
+                                                    },
+                                                    function (err) {
+
+                                                        var message = "Download failed: " + err.__type + ": " + err.message;
+
+                                                        console.error(message);
+                                                    });
+
+
                                         });
                             });
+
                 });
     }
 
