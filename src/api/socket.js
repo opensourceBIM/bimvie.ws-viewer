@@ -68,7 +68,9 @@ BIMSURFER.api.Socket = function(baseUrl, bimServerApi) {
 //			console.log(othis.messagesReceived);
         }
         if (message.data instanceof ArrayBuffer) {
-            othis.listener(message.data);
+            if (othis.listener) {
+                othis.listener(message.data);
+            }
         } else {
             var incomingMessage = JSON.parse(message.data);
             bimServerApi.log("incoming", incomingMessage);
@@ -88,11 +90,15 @@ BIMSURFER.api.Socket = function(baseUrl, bimServerApi) {
                 othis.openCallbacks = [];
             } else {
                 if (incomingMessage.request != null) {
-                    othis.listener(incomingMessage.request);
+                    if (othis.listener) {
+                        othis.listener(incomingMessage.request);
+                    }
                 } else if (incomingMessage.requests != null) {
-                    incomingMessage.requests.forEach(function (request) {
-                        othis.listener(request);
-                    });
+                    if (othis.listener) {
+                        incomingMessage.requests.forEach(function (request) {
+                            othis.listener(request);
+                        });
+                    }
                 }
             }
         }
