@@ -4,7 +4,7 @@
  * A WebGL-based IFC Viewer for BIMSurfer
  * http://bimwiews.org/
  *
- * Built on 2015-08-26
+ * Built on 2015-08-31
  *
  * todo
  * Copyright 2015, todo
@@ -734,9 +734,10 @@ BIMSURFER.api.API = function (baseUrl, notifier) {
                 clearTimeout(this.lastBusyTimeOut);
                 this.lastBusyTimeOut = null;
             }
+            self = this;
             if (typeof window !== 'undefined' && window.setTimeout != null) {
                 this.lastBusyTimeOut = window.setTimeout(function () {
-                    this.notifier.setInfo(this.translate(key + "_BUSY"), -1);
+                    self.notifier.setInfo(self.translate(key + "_BUSY"), -1);
                     showedBusy = true;
                 }, 200);
             }
@@ -1965,7 +1966,9 @@ BIMSURFER.api.Model = function (bimServerApi, poid, roid, schema) {
 //			console.log(othis.messagesReceived);
         }
         if (message.data instanceof ArrayBuffer) {
-            othis.listener(message.data);
+            if (othis.listener) {
+                othis.listener(message.data);
+            }
         } else {
             var incomingMessage = JSON.parse(message.data);
             bimServerApi.log("incoming", incomingMessage);
@@ -1985,11 +1988,15 @@ BIMSURFER.api.Model = function (bimServerApi, poid, roid, schema) {
                 othis.openCallbacks = [];
             } else {
                 if (incomingMessage.request != null) {
-                    othis.listener(incomingMessage.request);
+                    if (othis.listener) {
+                        othis.listener(incomingMessage.request);
+                    }
                 } else if (incomingMessage.requests != null) {
-                    incomingMessage.requests.forEach(function (request) {
-                        othis.listener(request);
-                    });
+                    if (othis.listener) {
+                        incomingMessage.requests.forEach(function (request) {
+                            othis.listener(request);
+                        });
+                    }
                 }
             }
         }
@@ -11028,6 +11035,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
  // Initiate a download of a bunch of objects
 
  var download = new BIMSURFER.Download(viewer, {
+    api: api,
     downloadType: "oids",
     models: [myModel],
     roid: ["xyz","xyz2"],
@@ -11076,6 +11084,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
  ```` javascript
 
  var downloadTypes = new BIMSURFER.Download(viewer, {
+    api: api,
     downloadType: "types",
     models: [foo, bar],
     types: [
@@ -11096,6 +11105,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
  ```` javascript
 
  var downloadRevisions = new BIMSURFER.Download(viewer, {
+    api: api,
     downloadType: "revision",
     models: [foo, bar],
     roid: "XYZ"
@@ -11110,6 +11120,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
  ```` javascript
 
  var downloadByIDs = new BIMSURFER.Download(viewer, {
+    api: api,
     downloadType: "oids",
     models: [foo, bar],
     roids: ["XYZ", "XYZ2"],
@@ -11130,6 +11141,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
  @param [cfg.id] {String} Optional ID, unique among all components in the parent viewer, generated automatically when omitted.
  @param [cfg.meta] {String:Object} Optional map of user-defined metadata to attach to this Label.
  @param [cfg.models] {*} Array of models to load objects from.
+ @param [cfg.api] {*} BIMSurfer API
  @param [cfg.downloadType] {*} Type download - "types", "revision" or "oids"
  @param [cfg.roids] {*} A list of revision IDs
  @param [cfg.roid] {*} A single revision ID
@@ -11244,14 +11256,13 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
 
                             self._topicId = topicId;
 
-                            self._api.registerProgressHandler(
-                                self._topicId,
-
+                            self._api.registerProgressHandler(topicId,
                                 function (topicId, state) {
                                     self._progressHandler(topicId, state);
                                 },
 
-                                function (topicId, state) {
+                                function () {
+                                    console.log("registerProgressHandler callback);");
                                     //self._afterRegistration(topicId, state);
                                 });
                         },
@@ -11264,7 +11275,7 @@ var ambientLight = new BIMSURFER.AmbientLight(viewer, {
                         });
                 });
 
-            // Start processing response data packet queue
+            // Start processing responses as they appear in the data packet queue
 
             this._tick = this.viewer.on("tick",
                 function () {
