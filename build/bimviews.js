@@ -174,16 +174,13 @@ String.prototype.replaceAll = function(search, replace)
         return this;
 
     return this.replace(new RegExp('[' + search + ']', 'g'), replace);
-};;BIMSURFER.api = {};
+};;"use strict"
 
-BIMSURFER.api.API = function (baseUrl, notifier) {
-
-    if (typeof jQuery !== 'undefined' && $ !== jQuery)
+function BimServerApi(baseUrl, notifier) {
+    if(typeof jQuery !== 'undefined' && $ !== jQuery)
         var $ = jQuery;
-
-    var self = this;
-
-    this.interfaceMapping = {
+    var othis = this;
+    othis.interfaceMapping = {
         "ServiceInterface": "org.bimserver.ServiceInterface",
         "AuthInterface": "org.bimserver.AuthInterface",
         "SettingsInterface": "org.bimserver.SettingsInterface",
@@ -196,13 +193,13 @@ BIMSURFER.api.API = function (baseUrl, notifier) {
         "Bimsie1ServiceInterface": "org.buildingsmart.bimsie1.Bimsie1ServiceInterface"
     };
 
-    this.jsonSerializerFetcher = new BIMSURFER.api.Synchronizer(function (callback) {
-        self.call("PluginInterface", "getSerializerByPluginClassName", {pluginClassName: "org.bimserver.serializers.JsonSerializerPlugin"}, function (serializer) {
+    othis.jsonSerializerFetcher = new Synchronizer(function(callback){
+        othis.call("PluginInterface", "getSerializerByPluginClassName", {pluginClassName: "org.bimserver.serializers.JsonSerializerPlugin"}, function(serializer){
             callback(serializer.oid);
         });
     });
 
-    this.translations = {
+    othis.translations = {
         GETDATAOBJECTSBYTYPE_BUSY: "Loading objects",
         REQUESTPASSWORDCHANGE_BUSY: "Busy sending password reset e-mail",
         REQUESTPASSWORDCHANGE_DONE: "A password reset e-mail has been sent",
@@ -251,62 +248,56 @@ BIMSURFER.api.API = function (baseUrl, notifier) {
         GETUSERSETTINGS_BUSY: "Getting user settings",
         GETALLQUERYENGINES_BUSY: "Getting query engines",
         REGISTERNEWPROJECTHANDLER_BUSY: "Registering for updates on new projects"
-    };
-
-    this.token = null;
-    this.baseUrl = baseUrl;
-    if (this.baseUrl.substring(this.baseUrl.length - 1) == "/") {
-        this.baseUrl = this.baseUrl.substring(0, this.baseUrl.length - 1);
     }
-    this.address = this.baseUrl + "/json";
-    this.notifier = notifier;
-    if (this.notifier == null) {
-        this.notifier = {
-            setInfo: function (message, timeout) {
-            },
-            setSuccess: function (message, timeout) {
-            },
-            setError: function () {
-            },
-            resetStatus: function () {
-            },
-            resetStatusQuick: function () {
-            },
-            clear: function () {
-            }
+
+    othis.token = null;
+    othis.baseUrl = baseUrl;
+    if (othis.baseUrl.substring(othis.baseUrl.length - 1) == "/") {
+        othis.baseUrl = othis.baseUrl.substring(0, othis.baseUrl.length - 1);
+    }
+    othis.address = othis.baseUrl + "/json";
+    othis.notifier = notifier;
+    if (othis.notifier == null) {
+        othis.notifier = {
+            setInfo: function(message, timeout){},
+            setSuccess: function(message, timeout){},
+            setError: function(){},
+            resetStatus: function(){},
+            resetStatusQuick: function(){},
+            clear: function(){}
         };
     }
-    this.server = new BIMSURFER.api.Socket(baseUrl, this);
-    this.user = null;
-    this.listeners = {};
-    this.autoLoginTried = false;
-    this.serializersByPluginClassName = [];
-    this.debug = false;
-    this.classes = {};
-    this.binaryDataListener = {};
-    this.schemas = {};
+    othis.server = new BimServerWebSocket(baseUrl, othis);
+    othis.user = null;
+    othis.listeners = {};
+    othis.autoLoginTried = false;
+    othis.serializersByPluginClassName = [];
+    othis.debug = false;
+    othis.classes = {};
+    othis.binaryDataListener = {};
+    othis.schemas = {};
 
-    this.init = function (callback) {
-        self.call("AdminInterface", "getServerInfo", {}, function (serverInfo) {
-            self.version = serverInfo.version;
-            var versionString = self.version.major + "." + self.version.minor + "." + self.version.revision;
+    this.init = function(callback) {
+        othis.call("AdminInterface", "getServerInfo", {}, function(serverInfo){
+            othis.version = serverInfo.version;
+            var versionString = othis.version.major + "." + othis.version.minor + "." + othis.version.revision;
 
             // Let's do the callback here, saves us 2 roundtrips to the server, and no body is going to use the schema's that soon... (we hope)
             callback(this, serverInfo);
             $.ajax({
                 dataType: "json",
-                url: self.baseUrl + "/js/ifc2x3tc1.js?_v=" + versionString,
+                url: othis.baseUrl + "/js/ifc2x3tc1.js?_v=" + versionString,
                 cache: true,
-                success: function (result) {
-                    self.schemas["ifc2x3tc1"] = result.classes;
-                    self.addSubtypesToSchema(result.classes);
+                success: function(result){
+                    othis.schemas["ifc2x3tc1"] = result.classes;
+                    othis.addSubtypesToSchema(result.classes);
                     $.ajax({
                         dataType: "json",
-                        url: self.baseUrl + "/js/ifc4.js?_v=" + versionString,
+                        url: othis.baseUrl + "/js/ifc4.js?_v=" + versionString,
                         cache: true,
-                        success: function (result) {
-                            self.schemas["ifc4"] = result.classes;
-                            self.addSubtypesToSchema(result.classes);
+                        success: function(result){
+                            othis.schemas["ifc4"] = result.classes;
+                            othis.addSubtypesToSchema(result.classes);
                         }
                     });
                 }
@@ -314,11 +305,11 @@ BIMSURFER.api.API = function (baseUrl, notifier) {
         });
     };
 
-    this.addSubtypesToSchema = function (classes) {
+    this.addSubtypesToSchema = function(classes) {
         for (var typeName in classes) {
             var type = classes[typeName];
             if (type.superclasses != null) {
-                type.superclasses.forEach(function (superClass) {
+                type.superclasses.forEach(function(superClass){
                     var directSubClasses = classes[superClass].directSubClasses;
                     if (directSubClasses == null) {
                         directSubClasses = [];
@@ -330,77 +321,77 @@ BIMSURFER.api.API = function (baseUrl, notifier) {
         }
     };
 
-    this.getAllSubTypes = function (schema, typeName, callback) {
+    this.getAllSubTypes = function(schema, typeName, callback) {
         var type = schema[typeName];
         if (type.directSubClasses != null) {
-            type.directSubClasses.forEach(function (subTypeName) {
+            type.directSubClasses.forEach(function(subTypeName){
                 callback(subTypeName);
-                self.getAllSubTypes(schema, subTypeName, callback);
+                othis.getAllSubTypes(schema, subTypeName, callback);
             });
         }
     };
 
-    this.log = function (message, message2) {
-        if (this.debug) {
+    this.log = function(message, message2){
+        if (othis.debug) {
             console.log(message, message2);
         }
     };
 
-    this.translate = function (key) {
+    this.translate = function(key) {
         key = key.toUpperCase();
-        if (this.translations[key] != null) {
-            return this.translations[key];
+        if (othis.translations[key] != null) {
+            return othis.translations[key];
         }
-        this.log("translation for " + key + " not found");
+        othis.log("translation for " + key + " not found");
         return key;
     };
 
-    this.login = function (username, password, rememberme, callback, errorCallback, options) {
+    this.login = function(username, password, rememberme, callback, errorCallback, options) {
         var request = {
             username: username,
             password: password
         };
-        this.call("Bimsie1AuthInterface", "login", request, function (data) {
-            self.token = data;
+        othis.call("Bimsie1AuthInterface", "login", request, function(data){
+            othis.token = data;
             if (rememberme) {
-                $.cookie("autologin" + window.document.location.port, self.token, {expires: 31, path: "/"});
-                $.cookie("address" + window.document.location.port, self.baseUrl, {expires: 31, path: "/"});
+                $.cookie("autologin" + window.document.location.port, othis.token, { expires: 31, path: "/"});
+                $.cookie("address" + window.document.location.port, othis.baseUrl, { expires: 31, path: "/"});
             } else {
-                $.cookie("autologin" + window.document.location.port, self.token, {path: "/"});
-                $.cookie("address" + window.document.location.port, self.baseUrl, {path: "/"});
+                $.cookie("autologin" + window.document.location.port, othis.token, { path: "/"});
+                $.cookie("address" + window.document.location.port, othis.baseUrl, { path: "/"});
             }
-            self.notifier.setInfo("Login successful", 2000);
-            self.resolveUser();
-            self.server.connect(callback);
+            othis.notifier.setInfo("Login successful", 2000);
+            othis.resolveUser();
+            othis.server.connect(callback);
         }, errorCallback);
     };
 
-    this.downloadViaWebsocket = function (msg) {
+    this.downloadViaWebsocket = function(msg){
         msg.action = "download";
-        msg.token = this.token;
-        this.server.send(msg);
+        msg.token = othis.token;
+        othis.server.send(msg);
     };
 
-    this.setBinaryDataListener = function (channelId, listener) {
-        this.binaryDataListener[channelId] = listener;
+    this.setBinaryDataListener = function(channelId, listener){
+        othis.binaryDataListener[channelId] = listener;
     };
 
-    this.processNotification = function (message) {
+    this.processNotification = function(message) {
         if (message instanceof ArrayBuffer) {
             var view = new DataView(message, 0, 4);
             var channelId = view.getInt32(0);
-            var listener = this.binaryDataListener[channelId];
+            var listener = othis.binaryDataListener[channelId];
             listener(message);
         } else {
             var intf = message["interface"];
-            if (this.listeners[intf] != null) {
-                if (this.listeners[intf][message.method] != null) {
+            if (othis.listeners[intf] != null) {
+                if (othis.listeners[intf][message.method] != null) {
                     var ar = null;
-                    this.listeners[intf][message.method].forEach(function (listener) {
+                    othis.listeners[intf][message.method].forEach(function(listener) {
                         if (ar == null) {
                             // Only parse the arguments once, or when there are no listeners, not even once
                             ar = [];
-                            var i = 0;
+                            var i=0;
                             for (var key in message.parameters) {
                                 ar[i++] = message.parameters[key];
                             }
@@ -416,75 +407,72 @@ BIMSURFER.api.API = function (baseUrl, notifier) {
         }
     };
 
-    this.resolveUser = function (callback) {
-        this.call("AuthInterface", "getLoggedInUser", {}, function (data) {
-            this.user = data;
+    this.resolveUser = function(callback) {
+        othis.call("AuthInterface", "getLoggedInUser", {}, function(data){
+            othis.user = data;
             if (callback != null) {
-                callback(this.user);
+                callback(othis.user);
             }
         });
     };
 
-    this.logout = function (callback) {
+    this.logout = function(callback) {
         $.removeCookie("autologin" + window.document.location.port, {path: "/"});
-        this.call("Bimsie1AuthInterface", "logout", {}, function () {
-            this.notifier.setInfo("Logout successful");
+        othis.call("Bimsie1AuthInterface", "logout", {}, function(){
+            othis.notifier.setInfo("Logout successful");
             callback();
         });
     };
 
-    this.generateRevisionDownloadUrl = function (settings) {
-        return this.baseUrl + "/download?token=" + this.token + "&longActionId=" + settings.laid + (settings.zip ? "&zip=on" : "") + "&serializerOid=" + settings.serializerOid + "&topicId=" + settings.topicId;
+    this.generateRevisionDownloadUrl = function(settings) {
+        return othis.baseUrl + "/download?token=" + othis.token + "&longActionId=" + settings.laid + (settings.zip ? "&zip=on" : "") + "&serializerOid=" + settings.serializerOid + "&topicId=" + settings.topicId;
     };
 
-    this.generateExtendedDataDownloadUrl = function (edid) {
-        return this.baseUrl + "/download?token=" + this.token + "&action=extendeddata&edid=" + edid;
+    this.generateExtendedDataDownloadUrl = function(edid) {
+        return othis.baseUrl + "/download?token=" + othis.token + "&action=extendeddata&edid=" + edid;
     };
 
-    this.getSerializerByPluginClassName = function (pluginClassName, callback) {
-        if (this.serializersByPluginClassName[name] == null) {
-            this.call("PluginInterface", "getSerializerByPluginClassName", {pluginClassName: pluginClassName}, function (serializer) {
-                self.serializersByPluginClassName[name] = serializer;
+    this.getSerializerByPluginClassName = function(pluginClassName, callback) {
+        if (othis.serializersByPluginClassName[name] == null) {
+            othis.call("PluginInterface", "getSerializerByPluginClassName", {pluginClassName : pluginClassName}, function(serializer) {
+                othis.serializersByPluginClassName[name] = serializer;
                 callback(serializer);
             });
         } else {
-            callback(this.serializersByPluginClassName[name]);
+            callback(othis.serializersByPluginClassName[name]);
         }
     },
 
-        this.getMessagingSerializerByPluginClassName = function (pluginClassName, callback) {
-            if (this.serializersByPluginClassName[name] == null) {
-                this.call("PluginInterface", "getMessagingSerializerByPluginClassName", {pluginClassName: pluginClassName}, function (serializer) {
-                    self.serializersByPluginClassName[name] = serializer;
+        this.getMessagingSerializerByPluginClassName = function(pluginClassName, callback) {
+            if (othis.serializersByPluginClassName[name] == null) {
+                othis.call("PluginInterface", "getMessagingSerializerByPluginClassName", {pluginClassName : pluginClassName}, function(serializer) {
+                    othis.serializersByPluginClassName[name] = serializer;
                     callback(serializer);
                 });
             } else {
-                callback(this.serializersByPluginClassName[name]);
+                callback(othis.serializersByPluginClassName[name]);
             }
         },
 
-        this.register = function (interfaceName, methodName, callback, registerCallback) {
+        this.register = function(interfaceName, methodName, callback, registerCallback) {
             if (callback == null) {
                 throw "Cannot register null callback";
             }
-            if (this.listeners[interfaceName] == null) {
-                this.listeners[interfaceName] = {};
+            if (othis.listeners[interfaceName] == null) {
+                othis.listeners[interfaceName] = {};
             }
-            if (this.listeners[interfaceName][methodName] == null) {
-                this.listeners[interfaceName][methodName] = [];
+            if (othis.listeners[interfaceName][methodName] == null) {
+                othis.listeners[interfaceName][methodName] = [];
             }
-            this.listeners[interfaceName][methodName].push(callback);
+            othis.listeners[interfaceName][methodName].push(callback);
             if (registerCallback != null) {
                 registerCallback();
             }
         };
 
-    this.registerNewRevisionOnSpecificProjectHandler = function (poid, handler, callback) {
-        this.register("Bimsie1NotificationInterface", "newRevision", handler, function () {
-            self.call("Bimsie1NotificationRegistryInterface", "registerNewRevisionOnSpecificProjectHandler", {
-                endPointId: self.server.endPointId,
-                poid: poid
-            }, function () {
+    this.registerNewRevisionOnSpecificProjectHandler = function(poid, handler, callback){
+        othis.register("Bimsie1NotificationInterface", "newRevision", handler, function(){
+            othis.call("Bimsie1NotificationRegistryInterface", "registerNewRevisionOnSpecificProjectHandler", {endPointId: othis.server.endPointId, poid: poid}, function(){
                 if (callback != null) {
                     callback();
                 }
@@ -492,12 +480,9 @@ BIMSURFER.api.API = function (baseUrl, notifier) {
         });
     };
 
-    this.registerNewExtendedDataOnRevisionHandler = function (roid, handler, callback) {
-        this.register("Bimsie1NotificationInterface", "newExtendedData", handler, function () {
-            self.call("Bimsie1NotificationRegistryInterface", "registerNewExtendedDataOnRevisionHandler", {
-                endPointId: self.server.endPointId,
-                roid: roid
-            }, function () {
+    this.registerNewExtendedDataOnRevisionHandler = function(roid, handler, callback){
+        othis.register("Bimsie1NotificationInterface", "newExtendedData", handler, function(){
+            othis.call("Bimsie1NotificationRegistryInterface", "registerNewExtendedDataOnRevisionHandler", {endPointId: othis.server.endPointId, roid: roid}, function(){
                 if (callback != null) {
                     callback();
                 }
@@ -505,9 +490,9 @@ BIMSURFER.api.API = function (baseUrl, notifier) {
         });
     };
 
-    this.registerNewUserHandler = function (handler, callback) {
-        this.register("Bimsie1NotificationInterface", "newUser", handler, function () {
-            self.call("Bimsie1NotificationRegistryInterface", "registerNewUserHandler", {endPointId: self.server.endPointId}, function () {
+    this.registerNewUserHandler = function(handler, callback) {
+        othis.register("Bimsie1NotificationInterface", "newUser", handler, function(){
+            othis.call("Bimsie1NotificationRegistryInterface", "registerNewUserHandler", {endPointId: othis.server.endPointId}, function(){
                 if (callback != null) {
                     callback();
                 }
@@ -515,31 +500,25 @@ BIMSURFER.api.API = function (baseUrl, notifier) {
         });
     };
 
-    this.unregisterNewUserHandler = function (handler, callback) {
-        this.unregister(handler);
-        this.call("Bimsie1NotificationRegistryInterface", "unregisterNewUserHandler", {endPointId: self.server.endPointId}, function () {
+    this.unregisterNewUserHandler = function(handler, callback) {
+        othis.unregister(handler);
+        othis.call("Bimsie1NotificationRegistryInterface", "unregisterNewUserHandler", {endPointId: othis.server.endPointId}, function(){
             if (callback != null) {
                 callback();
             }
         });
     };
 
-    this.unregisterChangeProgressProjectHandler = function (poid, newHandler, closedHandler, callback) {
-        this.unregister(newHandler);
-        this.unregister(closedHandler);
-        this.call("Bimsie1NotificationRegistryInterface", "unregisterChangeProgressOnProject", {
-            poid: poid,
-            endPointId: this.server.endPointId
-        }, callback);
+    this.unregisterChangeProgressProjectHandler = function(poid, newHandler, closedHandler, callback) {
+        othis.unregister(newHandler);
+        othis.unregister(closedHandler);
+        othis.call("Bimsie1NotificationRegistryInterface", "unregisterChangeProgressOnProject", {poid: poid, endPointId: othis.server.endPointId}, callback);
     };
 
-    this.registerChangeProgressProjectHandler = function (poid, newHandler, closedHandler, callback) {
-        this.register("Bimsie1NotificationInterface", "newProgressOnProjectTopic", newHandler, function () {
-            self.register("Bimsie1NotificationInterface", "closedProgressOnProjectTopic", closedHandler, function () {
-                self.call("Bimsie1NotificationRegistryInterface", "registerChangeProgressOnProject", {
-                    poid: poid,
-                    endPointId: self.server.endPointId
-                }, function () {
+    this.registerChangeProgressProjectHandler = function(poid, newHandler, closedHandler, callback) {
+        othis.register("Bimsie1NotificationInterface", "newProgressOnProjectTopic", newHandler, function(){
+            othis.register("Bimsie1NotificationInterface", "closedProgressOnProjectTopic", closedHandler, function(){
+                othis.call("Bimsie1NotificationRegistryInterface", "registerChangeProgressOnProject", {poid: poid, endPointId: othis.server.endPointId}, function(){
                     if (callback != null) {
                         callback();
                     }
@@ -548,18 +527,18 @@ BIMSURFER.api.API = function (baseUrl, notifier) {
         });
     }
 
-    this.unregisterChangeProgressServerHandler = function (newHandler, closedHandler, callback) {
-        this.unregister(newHandler);
-        this.unregister(closedHandler);
-        if (self.server.endPointId != null) {
-            self.call("Bimsie1NotificationRegistryInterface", "unregisterChangeProgressOnServer", {endPointId: self.server.endPointId}, callback);
+    this.unregisterChangeProgressServerHandler = function(newHandler, closedHandler, callback) {
+        othis.unregister(newHandler);
+        othis.unregister(closedHandler);
+        if (othis.server.endPointId != null) {
+            othis.call("Bimsie1NotificationRegistryInterface", "unregisterChangeProgressOnServer", {endPointId: othis.server.endPointId}, callback);
         }
     };
 
-    this.registerChangeProgressServerHandler = function (newHandler, closedHandler, callback) {
-        this.register("Bimsie1NotificationInterface", "newProgressOnServerTopic", newHandler, function () {
-            self.register("Bimsie1NotificationInterface", "closedProgressOnServerTopic", closedHandler, function () {
-                self.call("Bimsie1NotificationRegistryInterface", "registerChangeProgressOnServer", {endPointId: self.server.endPointId}, function () {
+    this.registerChangeProgressServerHandler = function(newHandler, closedHandler, callback) {
+        othis.register("Bimsie1NotificationInterface", "newProgressOnServerTopic", newHandler, function(){
+            othis.register("Bimsie1NotificationInterface", "closedProgressOnServerTopic", closedHandler, function(){
+                othis.call("Bimsie1NotificationRegistryInterface", "registerChangeProgressOnServer", {endPointId: othis.server.endPointId}, function(){
                     if (callback != null) {
                         callback();
                     }
@@ -568,23 +547,16 @@ BIMSURFER.api.API = function (baseUrl, notifier) {
         });
     }
 
-    this.unregisterChangeProgressRevisionHandler = function (roid, newHandler, closedHandler, callback) {
-        this.unregister(newHandler);
-        this.unregister(closedHandler);
-        this.call("Bimsie1NotificationRegistryInterface", "unregisterChangeProgressOnProject", {
-            roid: roid,
-            endPointId: this.server.endPointId
-        }, callback);
+    this.unregisterChangeProgressRevisionHandler = function(roid, newHandler, closedHandler, callback) {
+        othis.unregister(newHandler);
+        othis.unregister(closedHandler);
+        othis.call("Bimsie1NotificationRegistryInterface", "unregisterChangeProgressOnProject", {roid: roid, endPointId: othis.server.endPointId}, callback);
     };
 
-    this.registerChangeProgressRevisionHandler = function (poid, roid, newHandler, closedHandler, callback) {
-        this.register("Bimsie1NotificationInterface", "newProgressOnRevisionTopic", newHandler, function () {
-            self.register("Bimsie1NotificationInterface", "closedProgressOnRevisionTopic", closedHandler, function () {
-                self.call("Bimsie1NotificationRegistryInterface", "registerChangeProgressOnRevision", {
-                    poid: poid,
-                    roid: roid,
-                    endPointId: self.server.endPointId
-                }, function () {
+    this.registerChangeProgressRevisionHandler = function(poid, roid, newHandler, closedHandler, callback) {
+        othis.register("Bimsie1NotificationInterface", "newProgressOnRevisionTopic", newHandler, function(){
+            othis.register("Bimsie1NotificationInterface", "closedProgressOnRevisionTopic", closedHandler, function(){
+                othis.call("Bimsie1NotificationRegistryInterface", "registerChangeProgressOnRevision", {poid: poid, roid: roid, endPointId: othis.server.endPointId}, function(){
                     if (callback != null) {
                         callback();
                     }
@@ -593,9 +565,9 @@ BIMSURFER.api.API = function (baseUrl, notifier) {
         });
     }
 
-    this.registerNewProjectHandler = function (handler, callback) {
-        this.register("Bimsie1NotificationInterface", "newProject", handler, function () {
-            self.call("Bimsie1NotificationRegistryInterface", "registerNewProjectHandler", {endPointId: self.server.endPointId}, function () {
+    this.registerNewProjectHandler = function(handler, callback) {
+        othis.register("Bimsie1NotificationInterface", "newProject", handler, function(){
+            othis.call("Bimsie1NotificationRegistryInterface", "registerNewProjectHandler", {endPointId: othis.server.endPointId}, function(){
                 if (callback != null) {
                     callback();
                 }
@@ -603,10 +575,10 @@ BIMSURFER.api.API = function (baseUrl, notifier) {
         });
     }
 
-    this.unregisterNewProjectHandler = function (handler, callback) {
-        this.unregister(handler);
-        if (this.server.endPointId != null) {
-            this.call("Bimsie1NotificationRegistryInterface", "unregisterNewProjectHandler", {endPointId: this.server.endPointId}, function () {
+    this.unregisterNewProjectHandler = function(handler, callback){
+        othis.unregister(handler);
+        if (othis.server.endPointId != null) {
+            othis.call("Bimsie1NotificationRegistryInterface", "unregisterNewProjectHandler", {endPointId: othis.server.endPointId}, function(){
                 if (callback != null) {
                     callback();
                 }
@@ -614,36 +586,27 @@ BIMSURFER.api.API = function (baseUrl, notifier) {
         }
     };
 
-    this.unregisterNewRevisionOnSpecificProjectHandler = function (poid, handler, callback) {
-        this.unregister(handler);
-        this.call("Bimsie1NotificationRegistryInterface", "unregisterNewRevisionOnSpecificProjectHandler", {
-            endPointId: this.server.endPointId,
-            poid: poid
-        }, function () {
+    this.unregisterNewRevisionOnSpecificProjectHandler = function(poid, handler, callback){
+        othis.unregister(handler);
+        othis.call("Bimsie1NotificationRegistryInterface", "unregisterNewRevisionOnSpecificProjectHandler", {endPointId: othis.server.endPointId, poid: poid}, function(){
             if (callback != null) {
                 callback();
             }
         });
     };
 
-    this.unregisterNewExtendedDataOnRevisionHandler = function (roid, handler, callback) {
-        this.unregister(handler);
-        this.call("Bimsie1NotificationRegistryInterface", "unregisterNewExtendedDataOnRevisionHandler", {
-            endPointId: this.server.endPointId,
-            roid: roid
-        }, function () {
+    this.unregisterNewExtendedDataOnRevisionHandler = function(roid, handler, callback){
+        othis.unregister(handler);
+        othis.call("Bimsie1NotificationRegistryInterface", "unregisterNewExtendedDataOnRevisionHandler", {endPointId: othis.server.endPointId, roid: roid}, function(){
             if (callback != null) {
                 callback();
             }
         });
     };
 
-    this.registerProgressHandler = function (topicId, handler, callback) {
-        this.register("Bimsie1NotificationInterface", "progress", handler, function () {
-            self.call("Bimsie1NotificationRegistryInterface", "registerProgressHandler", {
-                topicId: topicId,
-                endPointId: self.server.endPointId
-            }, function () {
+    this.registerProgressHandler = function(topicId, handler, callback){
+        othis.register("Bimsie1NotificationInterface", "progress", handler, function(){
+            othis.call("Bimsie1NotificationRegistryInterface", "registerProgressHandler", {topicId: topicId, endPointId: othis.server.endPointId}, function(){
                 if (callback != null) {
                     callback();
                 }
@@ -651,21 +614,18 @@ BIMSURFER.api.API = function (baseUrl, notifier) {
         });
     };
 
-    this.unregisterProgressHandler = function (topicId, handler, callback) {
-        this.unregister(handler);
-        this.call("Bimsie1NotificationRegistryInterface", "unregisterProgressHandler", {
-            topicId: topicId,
-            endPointId: this.server.endPointId
-        }, function () {
+    this.unregisterProgressHandler = function(topicId, handler, callback){
+        othis.unregister(handler);
+        othis.call("Bimsie1NotificationRegistryInterface", "unregisterProgressHandler", {topicId: topicId, endPointId: othis.server.endPointId}, function(){
         }).done(callback);
     };
 
-    this.unregister = function (listener) {
-        for (var i in this.listeners) {
-            for (var j in this.listeners[i]) {
-                var list = this.listeners[i][j];
-                for (var k = 0; k < list.length; k++) {
-                    if (list[k] === listener) {
+    this.unregister = function(listener) {
+        for (var i in othis.listeners) {
+            for (var j in othis.listeners[i]) {
+                var list = othis.listeners[i][j];
+                for (var k=0; k < list.length; k++) {
+                    if (list[k] === listener){
                         list.splice(k, 1);
                         return;
                     }
@@ -674,17 +634,17 @@ BIMSURFER.api.API = function (baseUrl, notifier) {
         }
     };
 
-    this.callWs = function (interfaceName, method, data) {
+    this.callWs = function(interfaceName, method, data) {
         var requestObject = {
-            request: this.createRequest(interfaceName, method, data)
+            request: othis.createRequest(interfaceName, method, data)
         };
-        if (this.token != null) {
-            requestObject.token = this.token;
+        if (othis.token != null) {
+            requestObject.token = othis.token;
         }
-        this.server.send(requestObject);
+        othis.server.send(requestObject);
     };
 
-    this.createRequest = function (interfaceName, method, data) {
+    this.createRequest = function(interfaceName, method, data) {
         var object = {};
         object["interface"] = interfaceName;
         object.method = method;
@@ -693,19 +653,19 @@ BIMSURFER.api.API = function (baseUrl, notifier) {
         return object;
     };
 
-    this.multiCall = function (requests, callback, errorCallback, showBusy, showDone, showError) {
-        var promise = new BIMSURFER.api.Promise();
+    this.multiCall = function(requests, callback, errorCallback, showBusy, showDone, showError) {
+        var promise = new Promise();
         var request = null;
         if (requests.length == 1) {
             request = requests[0];
-            if (this.interfaceMapping[request[0]] == null) {
-                this.log("Interface " + request[0] + " not found");
+            if (othis.interfaceMapping[request[0]] == null) {
+                othis.log("Interface " + request[0] + " not found");
             }
-            request = {request: this.createRequest(this.interfaceMapping[request[0]], request[1], request[2])};
+            request = {request: othis.createRequest(othis.interfaceMapping[request[0]], request[1], request[2])};
         } else if (requests.length > 1) {
             var requestObjects = [];
-            requests.forEach(function (request) {
-                requestObjects.push(self.createRequest(self.interfaceMapping[request[0]], request[1], request[2]));
+            requests.forEach(function(request){
+                requestObjects.push(othis.createRequest(othis.interfaceMapping[request[0]], request[1], request[2]));
             });
             request = {
                 requests: requestObjects
@@ -715,14 +675,14 @@ BIMSURFER.api.API = function (baseUrl, notifier) {
             callback();
         }
 
-//		this.notifier.clear();
+//		othis.notifier.clear();
 
-        if (this.token != null) {
-            request.token = this.token;
+        if (othis.token != null) {
+            request.token = othis.token;
         }
 
         var key = requests[0][1];
-        requests.forEach(function (item, index) {
+        requests.forEach(function(item, index){
             if (index > 0) {
                 key += "_" + item;
             }
@@ -730,68 +690,68 @@ BIMSURFER.api.API = function (baseUrl, notifier) {
 
         var showedBusy = false;
         if (showBusy) {
-            if (this.lastBusyTimeOut != null) {
-                clearTimeout(this.lastBusyTimeOut);
-                this.lastBusyTimeOut = null;
+            if (othis.lastBusyTimeOut != null) {
+                clearTimeout(othis.lastBusyTimeOut);
+                othis.lastBusyTimeOut = null;
             }
             if (typeof window !== 'undefined' && window.setTimeout != null) {
-                this.lastBusyTimeOut = window.setTimeout(function () {
-                    this.notifier.setInfo(this.translate(key + "_BUSY"), -1);
+                othis.lastBusyTimeOut = window.setTimeout(function(){
+                    othis.notifier.setInfo(othis.translate(key + "_BUSY"), -1);
                     showedBusy = true;
                 }, 200);
             }
         }
 
-//		this.notifier.resetStatusQuick();
+//		othis.notifier.resetStatusQuick();
 
-        this.log("request", request);
+        othis.log("request", request);
 
-        $.ajax(this.address, {
+        $.ajax(othis.address, {
             type: "POST",
             contentType: 'application/json; charset=UTF-8',
             data: JSON.stringify(request),
             dataType: "json",
-            success: function (data) {
-                self.log("response", data);
+            success: function(data) {
+                othis.log("response", data);
                 var errorsToReport = [];
                 if (requests.length == 1) {
                     if (showBusy) {
-                        if (self.lastBusyTimeOut != null) {
-                            clearTimeout(self.lastBusyTimeOut);
+                        if (othis.lastBusyTimeOut != null) {
+                            clearTimeout(othis.lastBusyTimeOut);
                         }
                     }
                     if (data.response.exception != null) {
-                        if (data.response.exception.message == "Invalid token" && !self.autoLoginTried && $.cookie("username" + window.document.location.port) != null && $.cookie("autologin" + window.document.location.port) != null) {
-                            self.autologin($.cookie("username" + window.document.location.port), $.cookie("autologin" + window.document.location.port), function () {
-                                self.log("Trying to connect with autologin");
-                                self.multiCall(requests, callback, errorCallback);
+                        if (data.response.exception.message == "Invalid token" && !othis.autoLoginTried && $.cookie("username" + window.document.location.port) != null && $.cookie("autologin" + window.document.location.port) != null) {
+                            othis.autologin($.cookie("username" + window.document.location.port), $.cookie("autologin" + window.document.location.port), function(){
+                                othis.log("Trying to connect with autologin");
+                                othis.multiCall(requests, callback, errorCallback);
                             });
                         } else {
                             if (showError) {
-                                if (self.lastTimeOut != null) {
-                                    clearTimeout(self.lastTimeOut);
+                                if (othis.lastTimeOut != null) {
+                                    clearTimeout(othis.lastTimeOut);
                                 }
-                                self.notifier.setError(data.response.exception.message);
+                                othis.notifier.setError(data.response.exception.message);
                             } else {
                                 if (showedBusy) {
-                                    self.notifier.resetStatus();
+                                    othis.notifier.resetStatus();
                                 }
                             }
                         }
                     } else {
                         if (showDone) {
-                            self.notifier.setSuccess(self.translate(key + "_DONE"), 5000);
+                            othis.notifier.setSuccess(othis.translate(key + "_DONE"), 5000);
                         } else {
                             if (showedBusy) {
-                                self.notifier.resetStatus();
+                                othis.notifier.resetStatus();
                             }
                         }
                     }
                 } else if (requests.length > 1) {
-                    data.responses.forEach(function (response) {
+                    data.responses.forEach(function(response){
                         if (response.exception != null) {
                             if (errorCallback == null) {
-                                self.notifier.setError(response.exception.message);
+                                othis.notifier.setError(response.exception.message);
                             } else {
                                 errorsToReport.push(response.exception);
                             }
@@ -809,17 +769,17 @@ BIMSURFER.api.API = function (baseUrl, notifier) {
                 }
                 promise.fire();
             },
-            error: function (jqXHR, textStatus, errorThrown) {
+            error: function(jqXHR, textStatus, errorThrown){
                 if (textStatus == "abort") {
                     // ignore
                 } else {
-                    self.log(errorThrown);
-                    self.log(textStatus);
-                    self.log(jqXHR);
-                    if (self.lastTimeOut != null) {
-                        clearTimeout(self.lastTimeOut);
+                    othis.log(errorThrown);
+                    othis.log(textStatus);
+                    othis.log(jqXHR);
+                    if (othis.lastTimeOut != null) {
+                        clearTimeout(othis.lastTimeOut);
                     }
-                    self.notifier.setError("ERROR_REMOTE_METHOD_CALL");
+                    othis.notifier.setError("ERROR_REMOTE_METHOD_CALL");
                 }
                 if (callback != null) {
                     var result = new Object();
@@ -833,49 +793,49 @@ BIMSURFER.api.API = function (baseUrl, notifier) {
         return promise;
     };
 
-    this.getModel = function (poid, roid, schema, deep, callback) {
-        var model = new BIMSURFER.api.Model(this, poid, roid, schema);
+    this.getModel = function(poid, roid, schema, deep, callback) {
+        var model = new Model(othis, poid, roid, schema);
         model.load(deep, callback);
         return model;
     };
 
-    this.createModel = function (poid, callback) {
-        var model = new BIMSURFER.api.Model(this, poid);
+    this.createModel = function(poid, callback) {
+        var model = new Model(othis, poid);
         model.init(callback);
         return model;
     };
 
-    this.callWithNoIndication = function (interfaceName, methodName, data, callback) {
-        return this.call(interfaceName, methodName, data, callback, null, false, false, false);
+    this.callWithNoIndication = function(interfaceName, methodName, data, callback) {
+        return othis.call(interfaceName, methodName, data, callback, null, false, false, false);
     };
 
-    this.callWithFullIndication = function (interfaceName, methodName, data, callback) {
-        return this.call(interfaceName, methodName, data, callback, null, true, true, true);
+    this.callWithFullIndication = function(interfaceName, methodName, data, callback) {
+        return othis.call(interfaceName, methodName, data, callback, null, true, true, true);
     };
 
-    this.callWithUserErrorIndication = function (action, data, callback) {
-        return this.call(interfaceName, methodName, data, callback, null, false, false, true);
+    this.callWithUserErrorIndication = function(action, data, callback) {
+        return othis.call(interfaceName, methodName, data, callback, null, false, false, true);
     };
 
-    this.callWithUserErrorAndDoneIndication = function (action, data, callback) {
-        return this.call(interfaceName, methodName, data, callback, null, false, true, true);
+    this.callWithUserErrorAndDoneIndication = function(action, data, callback) {
+        return othis.call(interfaceName, methodName, data, callback, null, false, true, true);
     };
 
-    this.isA = function (schema, typeSubject, typeName) {
+    this.isA = function(schema, typeSubject, typeName){
         var isa = false;
         if (typeSubject == typeName) {
             return true;
         }
-        var subject = this.schemas[schema][typeSubject];
+        var subject = othis.schemas[schema][typeSubject];
         if (subject == null) {
             console.log(typeSubject, "not found");
         }
-        subject.superclasses.some(function (superclass) {
+        subject.superclasses.some(function(superclass){
             if (superclass == typeName) {
                 isa = true;
                 return true;
             }
-            if (self.isA(schema, superclass, typeName)) {
+            if (othis.isA(schema, superclass, typeName)) {
                 isa = true;
                 return true;
             }
@@ -884,26 +844,26 @@ BIMSURFER.api.API = function (baseUrl, notifier) {
         return isa;
     };
 
-    this.setToken = function (token, callback, errorCallback) {
-        this.token = token;
-        this.call("AuthInterface", "getLoggedInUser", {}, function (data) {
-            self.user = data;
-            self.server.connect(callback);
-        }, function () {
+    this.setToken = function(token, callback, errorCallback) {
+        othis.token = token;
+        othis.call("AuthInterface", "getLoggedInUser", {}, function(data){
+            othis.user = data;
+            othis.server.connect(callback);
+        }, function(){
             errorCallback();
         });
     };
 
-    this.call = function (interfaceName, methodName, data, callback, errorCallback, showBusy, showDone, showError) {
+    this.call = function(interfaceName, methodName, data, callback, errorCallback, showBusy, showDone, showError) {
         var showBusy = typeof showBusy !== 'undefined' ? showBusy : true;
         var showDone = typeof showDone !== 'undefined' ? showDone : false;
         var showError = typeof showError !== 'undefined' ? showError : true;
 
-        return this.multiCall([[
+        return othis.multiCall([[
             interfaceName,
             methodName,
             data
-        ]], function (data) {
+        ]], function(data){
             if (data.exception == null) {
                 if (callback != null) {
                     callback(data.result);
@@ -916,201 +876,177 @@ BIMSURFER.api.API = function (baseUrl, notifier) {
         }, errorCallback, showBusy, showDone, showError);
     };
 
-    this.server.listener = this.processNotification;
-};
+    othis.server.listener = othis.processNotification;
+}
 
+function Synchronizer(fetcher) {
+    var othis = this;
+    othis.result = null;
+    othis.state = "none";
+    othis.waiters = [];
 
-
-;BIMSURFER.api.EventRegistry = function() {
-
-    var o = this;
-
-    o.registry = [];
-
-    this.register = function (fn) {
-        var skip = false;
-        o.registry.forEach(function (existing) {
-            if (existing == fn) {
-                skip = true;
-            }
+    this.notify = function(result){
+        othis.result = result;
+        othis.state = "done";
+        othis.waiters.forEach(function(waiter){
+            waiter(result);
         });
-        if (!skip) {
-            o.registry.push(fn);
+        othis.waiters = [];
+    };
+
+    this.fetch = function(callback){
+        if (othis.state == "none") {
+            othis.waiters.push(callback)
+            othis.state = "fetching";
+            fetcher(othis.notify);
+        } else if (othis.state == "done") {
+            callback(othis.result);
+        } else if (othis.state == "fetching") {
+            othis.waiters.push(callback)
         }
     };
+}
 
-    this.unregister = function (fn) {
-        var len = o.registry.length;
-        while (len--) {
-            if (o.registry[len] == fn) {
-                o.registry.splice(len, 1);
-            }
-        }
-    };
-
-    this.size = function () {
-        return o.registry.length;
-    };
-
-    this.trigger = function (callback) {
-        o.registry.forEach(callback);
-    };
-
-    this.clear = function () {
-        o.registry = [];
-    };
-};
-
-;
-BIMSURFER.api.Model = function (bimServerApi, poid, roid, schema) {
-
-    if (typeof jQuery !== 'undefined' && $ !== jQuery)
+function Model(bimServerApi, poid, roid, schema) {
+    if(typeof jQuery !== 'undefined' && $ !== jQuery)
         var $ = jQuery;
+    var othis = this;
+    othis.schema = schema;
+    othis.bimServerApi = bimServerApi;
+    othis.poid = poid;
+    othis.roid = roid;
+    othis.waiters = [];
 
-    var self = this;
+    othis.objects = {};
+    othis.objectsByGuid = {};
+    othis.objectsByName = {};
 
-    self.schema = schema;
-    self.bimServerApi = bimServerApi;
-    self.poid = poid;
-    self.roid = roid;
-    self.waiters = [];
-
-    self.objects = {};
-    self.objectsByGuid = {};
-    self.objectsByName = {};
-
-    self.oidsFetching = {};
-    self.guidsFetching = {};
-    self.namesFetching = {};
+    othis.oidsFetching = {};
+    othis.guidsFetching = {};
+    othis.namesFetching = {};
 
     // Those are only fully loaded types (all of them), should not be stored here if loaded partially
-    self.loadedTypes = [];
-    self.loadedDeep = false;
-    self.changedObjectOids = {};
-    self.doneCallbacks = [];
-    self.runningCalls = 0;
-    self.loading = false;
-    self.logging = true;
+    othis.loadedTypes = [];
+    othis.loadedDeep = false;
+    othis.changedObjectOids = {};
+    othis.doneCallbacks = [];
+    othis.runningCalls = 0;
+    othis.loading = false;
+    othis.logging = true;
 
-    self.changes = 0;
-    self.changeListeners = [];
+    othis.changes = 0;
+    othis.changeListeners = [];
 
-    self.transactionSynchronizer = new BIMSURFER.api.Synchronizer(function (callback) {
-        bimServerApi.call("Bimsie1LowLevelInterface", "startTransaction", {poid: self.poid}, function (tid) {
+    othis.transactionSynchronizer = new Synchronizer(function(callback){
+        bimServerApi.call("Bimsie1LowLevelInterface", "startTransaction", {poid: othis.poid}, function(tid){
             callback(tid);
         });
     });
 
-    this.init = function (callback) {
-        self.incrementRunningCalls("init");
-        self.transactionSynchronizer.fetch(function () {
-            callback(self);
-            self.decrementRunningCalls("init");
+    this.init = function(callback){
+        othis.incrementRunningCalls("init");
+        othis.transactionSynchronizer.fetch(function(){
+            callback(othis);
+            othis.decrementRunningCalls("init");
         });
     };
 
-    this.load = function (deep, modelLoadCallback) {
+    this.load = function(deep, modelLoadCallback) {
         if (deep) {
-            self.loading = true;
-            self.incrementRunningCalls("load");
-            self.bimServerApi.jsonSerializerFetcher.fetch(function (jsonSerializerOid) {
+            othis.loading = true;
+            othis.incrementRunningCalls("load");
+            othis.bimServerApi.jsonSerializerFetcher.fetch(function(jsonSerializerOid){
                 bimServerApi.call("Bimsie1ServiceInterface", "download", {
-                    roid: self.roid,
+                    roid: othis.roid,
                     serializerOid: jsonSerializerOid,
                     showOwn: true,
                     sync: true
-                }, function (laid) {
+                }, function(laid){
                     var url = bimServerApi.generateRevisionDownloadUrl({
                         laid: laid,
                         topicId: laid,
                         serializerOid: jsonSerializerOid
                     });
-                    $.getJSON(url, function (data, textStatus, jqXHR) {
-                        data.objects.forEach(function (object) {
-                            self.objects[object._i] = self.createWrapper(object, object._t);
+                    $.getJSON(url, function(data, textStatus, jqXHR){
+                        data.objects.forEach(function(object){
+                            othis.objects[object._i] = othis.createWrapper(object, object._t);
                         });
-                        self.loading = false;
-                        self.loadedDeep = true;
-                        self.waiters.forEach(function (waiter) {
+                        othis.loading = false;
+                        othis.loadedDeep = true;
+                        othis.waiters.forEach(function(waiter){
                             waiter();
                         });
-                        self.waiters = [];
-                        bimServerApi.call("ServiceInterface", "cleanupLongAction", {actionId: laid}, function () {
+                        othis.waiters = [];
+                        bimServerApi.call("ServiceInterface", "cleanupLongAction", {actionId: laid}, function(){
                             if (modelLoadCallback != null) {
-                                modelLoadCallback(self);
+                                modelLoadCallback(othis);
                             }
-                            self.decrementRunningCalls("load");
+                            othis.decrementRunningCalls("load");
                         });
                     });
                 });
             });
         } else {
-            self.loaded = true;
+            othis.loaded = true;
             if (modelLoadCallback != null) {
-                modelLoadCallback(self);
+                modelLoadCallback(othis);
             }
         }
     };
 
-    this.create = function (className, object, callback) {
-        self.incrementRunningCalls("create (" + className + ")");
-        self.transactionSynchronizer.fetch(function (tid) {
+    this.create = function(className, object, callback) {
+        othis.incrementRunningCalls("create (" + className + ")");
+        othis.transactionSynchronizer.fetch(function(tid){
             object._t = className;
-            var wrapper = self.createWrapper({}, className);
-            bimServerApi.call("Bimsie1LowLevelInterface", "createObject", {
-                tid: tid,
-                className: className
-            }, function (oid) {
+            var wrapper = othis.createWrapper({}, className);
+            bimServerApi.call("Bimsie1LowLevelInterface", "createObject", {tid: tid, className: className}, function(oid){
                 wrapper._i = oid;
-                self.objects[object._i] = wrapper;
+                othis.objects[object._i] = wrapper;
                 object._s = 1;
                 if (callback != null) {
                     callback(object);
                 }
-                self.decrementRunningCalls("create (" + className + ")");
+                othis.decrementRunningCalls("create (" + className + ")");
             });
         });
         return object;
     };
 
-    this.incrementRunningCalls = function (method) {
-        self.runningCalls++;
-        self.bimServerApi.log("inc", method, self.runningCalls);
+    this.incrementRunningCalls = function(method){
+        othis.runningCalls++;
+        othis.bimServerApi.log("inc", method, othis.runningCalls);
     };
 
-    this.decrementRunningCalls = function (method) {
-        self.runningCalls--;
-        self.bimServerApi.log("dec", method, self.runningCalls);
-        if (self.runningCalls == 0) {
-            self.doneCallbacks.forEach(function (cb) {
-                cb(self);
+    this.decrementRunningCalls = function(method){
+        othis.runningCalls--;
+        othis.bimServerApi.log("dec", method, othis.runningCalls);
+        if (othis.runningCalls == 0) {
+            othis.doneCallbacks.forEach(function(cb){
+                cb(othis);
             });
         }
     };
 
-    this.done = function (doneCallback) {
-        if (self.runningCalls == 0) {
-            self.bimServerApi.log("immediately done");
-            doneCallback(self);
+    this.done = function(doneCallback){
+        if (othis.runningCalls == 0) {
+            othis.bimServerApi.log("immediately done");
+            doneCallback(othis);
         } else {
-            self.doneCallbacks.push(doneCallback);
+            othis.doneCallbacks.push(doneCallback);
         }
     };
 
-    this.waitForLoaded = function (callback) {
-        if (self.loaded) {
+    this.waitForLoaded = function(callback) {
+        if (othis.loaded) {
             callback();
         } else {
-            self.waiters.push(callback);
+            othis.waiters.push(callback);
         }
     };
 
-    this.commit = function (comment, callback) {
-        self.transactionSynchronizer.fetch(function (tid) {
-            bimServerApi.call("Bimsie1LowLevelInterface", "commitTransaction", {
-                tid: tid,
-                comment: comment
-            }, function (roid) {
+    this.commit = function(comment, callback){
+        othis.transactionSynchronizer.fetch(function(tid){
+            bimServerApi.call("Bimsie1LowLevelInterface", "commitTransaction", {tid: tid, comment: comment}, function(roid){
                 if (callback != null) {
                     callback(roid);
                 }
@@ -1118,9 +1054,9 @@ BIMSURFER.api.Model = function (bimServerApi, poid, roid, schema) {
         });
     };
 
-    this.abort = function (callback) {
-        self.transactionSynchronizer.fetch(function (tid) {
-            bimServerApi.call("Bimsie1LowLevelInterface", "abortTransaction", {tid: tid}, function (roid) {
+    this.abort = function(callback){
+        othis.transactionSynchronizer.fetch(function(tid){
+            bimServerApi.call("Bimsie1LowLevelInterface", "abortTransaction", {tid: tid}, function(roid){
                 if (callback != null) {
                     callback();
                 }
@@ -1128,32 +1064,32 @@ BIMSURFER.api.Model = function (bimServerApi, poid, roid, schema) {
         });
     };
 
-    this.addChangeListener = function (changeListener) {
-        self.changeListeners.push(changeListener);
+    this.addChangeListener = function(changeListener){
+        othis.changeListeners.push(changeListener);
     };
 
-    this.incrementChanges = function () {
-        self.changes++;
-        self.changeListeners.forEach(function (changeListener) {
-            changeListener(self.changes);
+    this.incrementChanges = function(){
+        othis.changes++;
+        othis.changeListeners.forEach(function(changeListener){
+            changeListener(othis.changes);
         });
     };
 
-    this.extendClass = function (wrapperClass, typeName) {
-        var realType = self.bimServerApi.schemas[self.schema][typeName];
-        realType.superclasses.forEach(function (typeName) {
-            self.extendClass(wrapperClass, typeName);
+    this.extendClass = function(wrapperClass, typeName){
+        var realType = othis.bimServerApi.schemas[othis.schema][typeName];
+        realType.superclasses.forEach(function(typeName){
+            othis.extendClass(wrapperClass, typeName);
         });
-        for (var fieldName in realType.fields) {
+        for (var fieldName in realType.fields){
             var field = realType.fields[fieldName];
-            (function (field, fieldName) {
+            (function(field, fieldName){
                 if (field.reference) {
-                    wrapperClass["set" + fieldName.firstUpper() + "Wrapped"] = function (typeName, value) {
+                    wrapperClass["set" + fieldName.firstUpper() + "Wrapped"] = function(typeName, value) {
                         var object = this.object;
                         object[fieldName] = {_t: typeName, value: value};
-                        self.incrementRunningCalls("set" + fieldName.firstUpper() + "Wrapped");
-                        self.transactionSynchronizer.fetch(function (tid) {
-                            var type = self.bimServerApi.schema[typeName];
+                        othis.incrementRunningCalls("set" + fieldName.firstUpper() + "Wrapped");
+                        othis.transactionSynchronizer.fetch(function(tid){
+                            var type = othis.bimServerApi.schema[typeName];
                             var wrappedValueType = type.fields.wrappedValue;
                             if (wrappedValueType.type == "string") {
                                 bimServerApi.call("Bimsie1LowLevelInterface", "setWrappedStringAttribute", {
@@ -1162,35 +1098,35 @@ BIMSURFER.api.Model = function (bimServerApi, poid, roid, schema) {
                                     attributeName: fieldName,
                                     type: typeName,
                                     value: value
-                                }, function () {
+                                }, function(){
                                     if (object.changedFields == null) {
                                         object.changedFields = {};
                                     }
                                     object.changedFields[fieldName] = true;
-                                    self.changedObjectOids[object.oid] = true;
-                                    self.incrementChanges();
-                                    self.decrementRunningCalls("set" + fieldName.firstUpper() + "Wrapped");
+                                    othis.changedObjectOids[object.oid] = true;
+                                    othis.incrementChanges();
+                                    othis.decrementRunningCalls("set" + fieldName.firstUpper() + "Wrapped");
                                 });
                             }
                         });
                     };
-                    wrapperClass["set" + fieldName.firstUpper()] = function (value) {
+                    wrapperClass["set" + fieldName.firstUpper()] = function(value) {
                         var object = this.object;
-                        self.transactionSynchronizer.fetch(function (tid) {
+                        othis.transactionSynchronizer.fetch(function(tid){
                             object[fieldName] = value;
-                            self.incrementRunningCalls("set" + fieldName.firstUpper());
+                            othis.incrementRunningCalls("set" + fieldName.firstUpper());
                             if (value == null) {
                                 bimServerApi.call("Bimsie1LowLevelInterface", "unsetReference", {
                                     tid: tid,
                                     oid: object._i,
                                     referenceName: fieldName,
-                                }, function () {
-                                    self.decrementRunningCalls("set" + fieldName.firstUpper());
+                                }, function(){
+                                    othis.decrementRunningCalls("set" + fieldName.firstUpper());
                                     if (object.changedFields == null) {
                                         object.changedFields = {};
                                     }
                                     object.changedFields[fieldName] = true;
-                                    self.changedObjectOids[object.oid] = true;
+                                    othis.changedObjectOids[object.oid] = true;
                                 });
                             } else {
                                 bimServerApi.call("Bimsie1LowLevelInterface", "setReference", {
@@ -1198,76 +1134,76 @@ BIMSURFER.api.Model = function (bimServerApi, poid, roid, schema) {
                                     oid: object._i,
                                     referenceName: fieldName,
                                     referenceOid: value._i
-                                }, function () {
-                                    self.decrementRunningCalls("set" + fieldName.firstUpper());
+                                }, function(){
+                                    othis.decrementRunningCalls("set" + fieldName.firstUpper());
                                     if (object.changedFields == null) {
                                         object.changedFields = {};
                                     }
                                     object.changedFields[fieldName] = true;
-                                    self.changedObjectOids[object.oid] = true;
+                                    othis.changedObjectOids[object.oid] = true;
                                 });
                             }
                         });
                     };
-                    wrapperClass["add" + fieldName.firstUpper()] = function (value, callback) {
+                    wrapperClass["add" + fieldName.firstUpper()] = function(value, callback) {
                         var object = this.object;
-                        self.transactionSynchronizer.fetch(function (tid) {
+                        othis.transactionSynchronizer.fetch(function(tid){
                             if (object[fieldName] == null) {
                                 object[fieldName] = [];
                             }
                             object[fieldName].push(value);
-                            self.incrementRunningCalls("add" + fieldName.firstUpper());
+                            othis.incrementRunningCalls("add" + fieldName.firstUpper());
                             bimServerApi.call("Bimsie1LowLevelInterface", "addReference", {
                                 tid: tid,
                                 oid: object._i,
                                 referenceName: fieldName,
                                 referenceOid: value._i
-                            }, function () {
-                                self.decrementRunningCalls("add" + fieldName.firstUpper());
+                            }, function(){
+                                othis.decrementRunningCalls("add" + fieldName.firstUpper());
                                 if (object.changedFields == null) {
                                     object.changedFields = {};
                                 }
                                 object.changedFields[fieldName] = true;
-                                self.changedObjectOids[object.oid] = true;
+                                othis.changedObjectOids[object.oid] = true;
                                 if (callback != null) {
                                     callback();
                                 }
                             });
                         });
                     };
-                    wrapperClass["remove" + fieldName.firstUpper()] = function (value, callback) {
+                    wrapperClass["remove" + fieldName.firstUpper()] = function(value, callback) {
                         var object = this.object;
-                        self.transactionSynchronizer.fetch(function (tid) {
+                        othis.transactionSynchronizer.fetch(function(tid){
                             var list = object[fieldName];
                             var index = list.indexOf(value);
                             list.splice(index, 1);
 
-                            self.incrementRunningCalls("remove" + fieldName.firstUpper());
+                            othis.incrementRunningCalls("remove" + fieldName.firstUpper());
                             bimServerApi.call("Bimsie1LowLevelInterface", "removeReference", {
                                 tid: tid,
                                 oid: object._i,
                                 referenceName: fieldName,
                                 index: index
-                            }, function () {
-                                self.decrementRunningCalls("remove" + fieldName.firstUpper());
+                            }, function(){
+                                othis.decrementRunningCalls("remove" + fieldName.firstUpper());
                                 if (object.changedFields == null) {
                                     object.changedFields = {};
                                 }
                                 object.changedFields[fieldName] = true;
-                                self.changedObjectOids[object.oid] = true;
+                                othis.changedObjectOids[object.oid] = true;
                                 if (callback != null) {
                                     callback();
                                 }
                             });
                         });
                     };
-                    wrapperClass["get" + fieldName.firstUpper()] = function (callback) {
+                    wrapperClass["get" + fieldName.firstUpper()] = function(callback) {
                         var object = this.object;
                         var model = this.model;
-                        var promise = new BIMSURFER.api.Promise();
+                        var promise = new Promise();
                         if (object[fieldName] != null) {
                             if (field.many) {
-                                object[fieldName].forEach(function (item) {
+                                object[fieldName].forEach(function(item){
                                     callback(item);
                                 });
                             } else {
@@ -1288,10 +1224,10 @@ BIMSURFER.api.Model = function (bimServerApi, poid, roid, schema) {
                                 object[fieldName] = [];
                             }
                             if (value != null) {
-                                model.get(value, function (v) {
+                                model.get(value, function(v){
                                     object[fieldName].push(v);
                                     callback(v);
-                                }).done(function () {
+                                }).done(function(){
                                     promise.fire();
                                 });
                             } else {
@@ -1299,15 +1235,15 @@ BIMSURFER.api.Model = function (bimServerApi, poid, roid, schema) {
                             }
                         } else {
                             if (value != null) {
-                                var ref = self.objects[value];
+                                var ref = othis.objects[value];
                                 if (value == -1) {
                                     callback(null);
                                     promise.fire();
                                 } else if (ref == null || ref.object._s == 0) {
-                                    model.get(value, function (v) {
+                                    model.get(value, function(v){
                                         object[fieldName] = v;
                                         callback(v);
-                                    }).done(function () {
+                                    }).done(function(){
                                         promise.fire();
                                     });
                                 } else {
@@ -1323,13 +1259,13 @@ BIMSURFER.api.Model = function (bimServerApi, poid, roid, schema) {
                         return promise;
                     };
                 } else {
-                    wrapperClass["get" + fieldName.firstUpper()] = function (callback) {
+                    wrapperClass["get" + fieldName.firstUpper()] = function(callback) {
                         var object = this.object;
                         if (field.many) {
                             if (object[fieldName] == null) {
                                 object[fieldName] = [];
                             }
-                            object[fieldName].push = function (val) {
+                            object[fieldName].push = function(val){
                             };
                         }
                         if (callback != null) {
@@ -1337,19 +1273,19 @@ BIMSURFER.api.Model = function (bimServerApi, poid, roid, schema) {
                         }
                         return object[fieldName];
                     };
-                    wrapperClass["set" + fieldName.firstUpper()] = function (value) {
+                    wrapperClass["set" + fieldName.firstUpper()] = function(value) {
                         var object = this.object;
                         object[fieldName] = value;
-                        self.incrementRunningCalls("set" + fieldName.firstUpper());
-                        self.transactionSynchronizer.fetch(function (tid) {
+                        othis.incrementRunningCalls("set" + fieldName.firstUpper());
+                        othis.transactionSynchronizer.fetch(function(tid){
                             if (field.many) {
                                 bimServerApi.call("Bimsie1LowLevelInterface", "setDoubleAttributes", {
                                     tid: tid,
                                     oid: object._i,
                                     attributeName: fieldName,
                                     values: value
-                                }, function () {
-                                    self.decrementRunningCalls("set" + fieldName.firstUpper());
+                                }, function(){
+                                    othis.decrementRunningCalls("set" + fieldName.firstUpper());
                                 });
                             } else {
                                 if (value == null) {
@@ -1357,8 +1293,8 @@ BIMSURFER.api.Model = function (bimServerApi, poid, roid, schema) {
                                         tid: tid,
                                         oid: object._i,
                                         attributeName: fieldName
-                                    }, function () {
-                                        self.decrementRunningCalls("set" + fieldName.firstUpper());
+                                    }, function(){
+                                        othis.decrementRunningCalls("set" + fieldName.firstUpper());
                                     });
                                 } else if (field.type == "string") {
                                     bimServerApi.call("Bimsie1LowLevelInterface", "setStringAttribute", {
@@ -1366,8 +1302,8 @@ BIMSURFER.api.Model = function (bimServerApi, poid, roid, schema) {
                                         oid: object._i,
                                         attributeName: fieldName,
                                         value: value
-                                    }, function () {
-                                        self.decrementRunningCalls("set" + fieldName.firstUpper());
+                                    }, function(){
+                                        othis.decrementRunningCalls("set" + fieldName.firstUpper());
                                     });
                                 } else if (field.type == "double") {
                                     bimServerApi.call("Bimsie1LowLevelInterface", "setDoubleAttribute", {
@@ -1375,8 +1311,8 @@ BIMSURFER.api.Model = function (bimServerApi, poid, roid, schema) {
                                         oid: object._i,
                                         attributeName: fieldName,
                                         value: value
-                                    }, function () {
-                                        self.decrementRunningCalls("set" + fieldName.firstUpper());
+                                    }, function(){
+                                        othis.decrementRunningCalls("set" + fieldName.firstUpper());
                                     });
                                 } else if (field.type == "boolean") {
                                     bimServerApi.call("Bimsie1LowLevelInterface", "setBooleanAttribute", {
@@ -1384,8 +1320,8 @@ BIMSURFER.api.Model = function (bimServerApi, poid, roid, schema) {
                                         oid: object._i,
                                         attributeName: fieldName,
                                         value: value
-                                    }, function () {
-                                        self.decrementRunningCalls("set" + fieldName.firstUpper());
+                                    }, function(){
+                                        othis.decrementRunningCalls("set" + fieldName.firstUpper());
                                     });
                                 } else if (field.type == "int") {
                                     bimServerApi.call("Bimsie1LowLevelInterface", "setIntegerAttribute", {
@@ -1393,8 +1329,8 @@ BIMSURFER.api.Model = function (bimServerApi, poid, roid, schema) {
                                         oid: object._i,
                                         attributeName: fieldName,
                                         value: value
-                                    }, function () {
-                                        self.decrementRunningCalls("set" + fieldName.firstUpper());
+                                    }, function(){
+                                        othis.decrementRunningCalls("set" + fieldName.firstUpper());
                                     });
                                 } else if (field.type == "enum") {
                                     bimServerApi.call("Bimsie1LowLevelInterface", "setEnumAttribute", {
@@ -1402,12 +1338,12 @@ BIMSURFER.api.Model = function (bimServerApi, poid, roid, schema) {
                                         oid: object._i,
                                         attributeName: fieldName,
                                         value: value
-                                    }, function () {
-                                        self.decrementRunningCalls("set" + fieldName.firstUpper());
+                                    }, function(){
+                                        othis.decrementRunningCalls("set" + fieldName.firstUpper());
                                     });
                                 } else {
-                                    self.bimServerApi.log("Unimplemented type " + typeof value);
-                                    self.decrementRunningCalls("set" + fieldName.firstUpper());
+                                    othis.bimServerApi.log("Unimplemented type " + typeof value);
+                                    othis.decrementRunningCalls("set" + fieldName.firstUpper());
                                 }
                                 object[fieldName] = value;
                             }
@@ -1415,7 +1351,7 @@ BIMSURFER.api.Model = function (bimServerApi, poid, roid, schema) {
                                 object.changedFields = {};
                             }
                             object.changedFields[fieldName] = true;
-                            self.changedObjectOids[object.oid] = true;
+                            othis.changedObjectOids[object.oid] = true;
                         });
                     };
                 }
@@ -1423,11 +1359,11 @@ BIMSURFER.api.Model = function (bimServerApi, poid, roid, schema) {
         }
     };
 
-    this.dumpByType = function () {
+    this.dumpByType = function(){
         var mapLoaded = {};
         var mapNotLoaded = {};
-        for (var oid in self.objects) {
-            var object = self.objects[oid];
+        for (var oid in othis.objects) {
+            var object = othis.objects[oid];
             var type = object.getType();
             var counter = mapLoaded[type];
             if (object.object._s == 1) {
@@ -1456,86 +1392,83 @@ BIMSURFER.api.Model = function (bimServerApi, poid, roid, schema) {
         }
     };
 
-    this.getClass = function (typeName) {
-        if (self.bimServerApi.classes[typeName] == null) {
-            var realType = self.bimServerApi.schemas[self.schema][typeName];
+    this.getClass = function(typeName){
+        if (othis.bimServerApi.classes[typeName] == null) {
+            var realType = othis.bimServerApi.schemas[othis.schema][typeName];
             if (realType == null) {
                 if (typeName == "GeometryInfo") {
                     return null;
                 }
-                throw "Type " + typeName + " not found in schema " + self.schema;
+                throw "Type " + typeName + " not found in schema " + othis.schema;
             }
 
             var wrapperClass = {};
 
-            wrapperClass.isA = function (typeName) {
-                return self.bimServerApi.isA(self.schema, this.object._t, typeName);
+            wrapperClass.isA = function(typeName){
+                return othis.bimServerApi.isA(othis.schema, this.object._t, typeName);
             };
-            wrapperClass.getType = function () {
+            wrapperClass.getType = function(){
                 return this.object._t;
             };
-            wrapperClass.remove = function (removeCallback) {
-                self.incrementRunningCalls("removeObject");
-                self.transactionSynchronizer.fetch(function (tid) {
-                    bimServerApi.call("Bimsie1LowLevelInterface", "removeObject", {
-                        tid: tid,
-                        oid: this.object._i
-                    }, function () {
+            wrapperClass.remove = function(removeCallback){
+                othis.incrementRunningCalls("removeObject");
+                othis.transactionSynchronizer.fetch(function(tid){
+                    bimServerApi.call("Bimsie1LowLevelInterface", "removeObject", {tid: tid, oid: this.object._i}, function(){
                         if (removeCallback != null) {
                             removeCallback();
                         }
-                        delete self.objects[this.object._i];
-                        self.decrementRunningCalls("removeObject");
+                        delete othis.objects[this.object._i];
+                        othis.decrementRunningCalls("removeObject");
                     });
                 });
             };
 
-            self.extendClass(wrapperClass, typeName);
+            othis.extendClass(wrapperClass, typeName);
 
-            self.bimServerApi.classes[typeName] = wrapperClass;
+            othis.bimServerApi.classes[typeName] = wrapperClass;
         }
-        return self.bimServerApi.classes[typeName];
+        return othis.bimServerApi.classes[typeName];
     };
 
-    this.createWrapper = function (object, typeName) {
-        if (self.objects[object._i] != null) {
+    this.createWrapper = function(object, typeName) {
+        if (othis.objects[object._i] != null) {
             console.log("Warning!", object);
         }
         object.oid = object._i;
-        var cl = self.getClass(typeName);
+        var cl = othis.getClass(typeName);
         var wrapper = Object.create(cl);
         // transient variables
         wrapper.trans = {
             mode: 2
         };
         wrapper.oid = object.oid;
-        wrapper.model = self;
+        wrapper.model = othis;
         wrapper.object = object;
         return wrapper;
     };
 
-    this.size = function (callback) {
-        bimServerApi.call("Bimsie1ServiceInterface", "getRevision", {roid: roid}, function (revision) {
+    this.size = function(callback){
+        bimServerApi.call("Bimsie1ServiceInterface", "getRevision", {roid: roid}, function(revision){
             callback(revision.size);
         });
     };
 
-    this.count = function (type, includeAllSubTypes, callback) {
+    this.count = function(type, includeAllSubTypes, callback) {
         // TODO use includeAllSubTypes
-        self.incrementRunningCalls("count (" + type + ")");
-        bimServerApi.call("Bimsie1LowLevelInterface", "count", {roid: roid, className: type}, function (size) {
+        othis.incrementRunningCalls("count (" + type + ")");
+        bimServerApi.call("Bimsie1LowLevelInterface", "count", {roid: roid, className: type}, function(size){
             callback(size);
-            self.decrementRunningCalls("count (" + type + ")");
+            othis.decrementRunningCalls("count (" + type + ")");
         });
     };
 
-    this.getByX = function (methodName, keyname, fetchingMap, targetMap, interfaceMethodName, interfaceFieldName, getValueMethod, list, callback) {
-        var promise = new BIMSURFER.api.Promise();
-        self.incrementRunningCalls(methodName + "(" + list + ")");
+    this.getByX = function(methodName, keyname, fetchingMap, targetMap, interfaceMethodName, interfaceFieldName, getValueMethod, list, callback) {
+        var promise = new Promise();
+        othis.incrementRunningCalls(methodName + "(" + list + ")");
         if (typeof list == "string" || typeof list == "number") {
             list = [list];
         }
-        self.waitForLoaded(function () {
+        othis.waitForLoaded(function(){
             var len = list.length;
             // Iterating in reverse order because we remove items from this array
             while (len--) {
@@ -1557,42 +1490,42 @@ BIMSURFER.api.Model = function (bimServerApi, poid, roid, schema) {
             }
             // Any left?
             if (list.length > 0) {
-                list.forEach(function (item) {
+                list.forEach(function(item){
                     fetchingMap[item] = [];
                 });
-                self.bimServerApi.jsonSerializerFetcher.fetch(function (jsonSerializerOid) {
+                othis.bimServerApi.jsonSerializerFetcher.fetch(function(jsonSerializerOid){
                     var request = {
-                        roids: [self.roid],
+                        roids: [othis.roid],
                         serializerOid: jsonSerializerOid,
                         deep: false,
                         sync: true
                     };
                     request[interfaceFieldName] = list;
-                    bimServerApi.call("Bimsie1ServiceInterface", interfaceMethodName, request, function (laid) {
+                    bimServerApi.call("Bimsie1ServiceInterface", interfaceMethodName, request, function(laid){
                         var url = bimServerApi.generateRevisionDownloadUrl({
                             laid: laid,
                             topicId: laid,
                             serializerOid: jsonSerializerOid
                         });
-                        $.getJSON(url, function (data, textStatus, jqXHR) {
+                        $.getJSON(url, function(data, textStatus, jqXHR){
                             if (data.objects.length > 0) {
                                 var done = 0;
-                                data.objects.forEach(function (object) {
+                                data.objects.forEach(function(object){
                                     var wrapper = null;
-                                    if (self.objects[object._i] != null) {
-                                        wrapper = self.objects[object._i];
+                                    if (othis.objects[object._i] != null) {
+                                        wrapper = othis.objects[object._i];
                                         if (wrapper.object._s != 1) {
                                             wrapper.object = object;
                                         }
                                     } else {
-                                        wrapper = self.createWrapper(object, object._t);
+                                        wrapper = othis.createWrapper(object, object._t);
                                     }
                                     var item = getValueMethod(object);
                                     // Checking the value again, because sometimes serializers send more objects...
                                     if ($.inArray(item, list) != -1) {
                                         targetMap[item] = wrapper;
                                         if (fetchingMap[item] != null) {
-                                            fetchingMap[item].forEach(function (cb) {
+                                            fetchingMap[item].forEach(function(cb){
                                                 cb(wrapper);
                                             });
                                             delete fetchingMap[item];
@@ -1601,14 +1534,14 @@ BIMSURFER.api.Model = function (bimServerApi, poid, roid, schema) {
                                     }
                                     done++;
                                     if (done == data.objects.length) {
-                                        bimServerApi.call("ServiceInterface", "cleanupLongAction", {actionId: laid}, function () {
-                                            self.decrementRunningCalls(methodName + "(" + list + ")");
+                                        bimServerApi.call("ServiceInterface", "cleanupLongAction", {actionId: laid}, function(){
+                                            othis.decrementRunningCalls(methodName + "(" + list + ")");
                                             promise.fire();
                                         });
                                     }
                                 });
                             } else {
-                                self.bimServerApi.log("Object with " + keyname + " " + list + " not found");
+                                othis.bimServerApi.log("Object with " + keyname + " " + list + " not found");
                                 callback(null);
                                 promise.fire();
                             }
@@ -1616,88 +1549,82 @@ BIMSURFER.api.Model = function (bimServerApi, poid, roid, schema) {
                     });
                 });
             } else {
-                self.decrementRunningCalls(methodName + "(" + list + ")");
+                othis.decrementRunningCalls(methodName + "(" + list + ")");
                 promise.fire();
             }
         });
         return promise;
     };
 
-    this.getByGuids = function (guids, callback) {
-        return self.getByX("getByGuid", "guid", self.guidsFetching, self.objectsByGuid, "downloadByGuids", "guids", function (object) {
-            return object.GlobalId
-        }, guids, callback);
+    this.getByGuids = function(guids, callback) {
+        return othis.getByX("getByGuid", "guid", othis.guidsFetching, othis.objectsByGuid, "downloadByGuids", "guids", function(object){return object.GlobalId}, guids, callback);
     };
 
-    this.get = function (oids, callback) {
-        return self.getByX("get", "OID", self.oidsFetching, self.objects, "downloadByOids", "oids", function (object) {
-            return object._i
-        }, oids, callback);
+    this.get = function(oids, callback) {
+        return othis.getByX("get", "OID", othis.oidsFetching, othis.objects, "downloadByOids", "oids", function(object){return object._i}, oids, callback);
     };
 
-    this.getByName = function (names, callback) {
-        return self.getByX("getByName", "name", self.namesFetching, self.objectsByName, "downloadByNames", "names", function (object) {
-            return object.getName == null ? null : object.getName()
-        }, names, callback);
+    this.getByName = function(names, callback) {
+        return othis.getByX("getByName", "name", othis.namesFetching, othis.objectsByName, "downloadByNames", "names", function(object){return object.getName == null ? null : object.getName()}, names, callback);
     };
 
-    this.query = function (query, callback) {
-        var promise = new BIMSURFER.api.Promise();
+    this.query = function(query, callback){
+        var promise = new Promise();
         var fullTypesLoading = {};
-        query.queries.forEach(function (subQuery) {
+        query.queries.forEach(function(subQuery){
             if (subQuery.type != null) {
                 fullTypesLoading[subQuery.type] = true;
-                self.loadedTypes[subQuery.type] = {};
+                othis.loadedTypes[subQuery.type] = {};
                 if (subQuery.includeAllSubTypes) {
-                    var schema = self.bimServerApi.schemas[self.schema];
-                    self.bimServerApi.getAllSubTypes(schema, subQuery.type, function (subTypeName) {
+                    var schema = othis.bimServerApi.schemas[othis.schema];
+                    othis.bimServerApi.getAllSubTypes(schema, subQuery.type, function(subTypeName){
                         fullTypesLoading[subTypeName] = true;
-                        self.loadedTypes[subTypeName] = {};
+                        othis.loadedTypes[subTypeName] = {};
                     });
                 }
             }
         });
-        self.waitForLoaded(function () {
-            self.bimServerApi.jsonSerializerFetcher.fetch(function (jsonSerializerOid) {
+        othis.waitForLoaded(function(){
+            othis.bimServerApi.jsonSerializerFetcher.fetch(function(jsonSerializerOid){
                 bimServerApi.callWithFullIndication("Bimsie1ServiceInterface", "downloadByJsonQuery", {
-                    roids: [self.roid],
+                    roids: [othis.roid],
                     jsonQuery: JSON.stringify(query),
                     serializerOid: jsonSerializerOid,
                     sync: true
-                }, function (laid) {
+                }, function(laid){
                     var url = bimServerApi.generateRevisionDownloadUrl({
                         laid: laid,
                         topicId: laid,
                         serializerOid: jsonSerializerOid
                     });
-                    self.bimServerApi.notifier.setInfo("Getting model data...", -1);
-                    $.getJSON(url, function (data, textStatus, jqXHR) {
+                    othis.bimServerApi.notifier.setInfo("Getting model data...", -1);
+                    $.getJSON(url, function(data, textStatus, jqXHR){
 //						console.log("query", data.objects.length);
-                        data.objects.forEach(function (object) {
-                            var wrapper = self.objects[object._i];
+                        data.objects.forEach(function(object){
+                            var wrapper = othis.objects[object._i];
                             if (wrapper == null) {
-                                wrapper = self.createWrapper(object, object._t);
-                                self.objects[object._i] = wrapper;
+                                wrapper = othis.createWrapper(object, object._t);
+                                othis.objects[object._i] = wrapper;
                                 if (fullTypesLoading[object._t] != null) {
-                                    self.loadedTypes[object._t][wrapper.oid] = wrapper;
+                                    othis.loadedTypes[object._t][wrapper.oid] = wrapper;
                                 }
                             } else {
                                 if (object._s == 1) {
                                     wrapper.object = object;
                                 }
                             }
-//							if (self.loadedTypes[wrapper.getType()] == null) {
-//								self.loadedTypes[wrapper.getType()] = {};
+//							if (othis.loadedTypes[wrapper.getType()] == null) {
+//								othis.loadedTypes[wrapper.getType()] = {};
 //							}
-//							self.loadedTypes[wrapper.getType()][object._i] = wrapper;
+//							othis.loadedTypes[wrapper.getType()][object._i] = wrapper;
                             if (object._s == 1) {
                                 callback(wrapper);
                             }
                         });
-//						self.dumpByType();
-                        bimServerApi.call("ServiceInterface", "cleanupLongAction", {actionId: laid}, function () {
+//						othis.dumpByType();
+                        bimServerApi.call("ServiceInterface", "cleanupLongAction", {actionId: laid}, function(){
                             promise.fire();
-                            self.bimServerApi.notifier.setSuccess("Model data successfully downloaded...");
+                            othis.bimServerApi.notifier.setSuccess("Model data successfully downloaded...");
                         });
                     });
                 });
@@ -1706,23 +1633,23 @@ BIMSURFER.api.Model = function (bimServerApi, poid, roid, schema) {
         return promise;
     };
 
-    this.getAllOfType = function (type, includeAllSubTypes, callback) {
-        var promise = new BIMSURFER.api.Promise();
-        self.incrementRunningCalls("getAllOfType");
-        self.waitForLoaded(function () {
-            if (self.loadedDeep) {
-                for (var oid in self.objects) {
-                    var object = self.objects[oid];
+    this.getAllOfType = function(type, includeAllSubTypes, callback) {
+        var promise = new Promise();
+        othis.incrementRunningCalls("getAllOfType");
+        othis.waitForLoaded(function(){
+            if (othis.loadedDeep) {
+                for (var oid in othis.objects) {
+                    var object = othis.objects[oid];
                     if (object._t == type) {
                         callback(object);
                     }
                 }
-                self.decrementRunningCalls("getAllOfType");
+                othis.decrementRunningCalls("getAllOfType");
                 promise.fire();
             } else {
                 var types = [];
                 if (includeAllSubTypes) {
-                    self.bimServerApi.getAllSubTypes(self.bimServerApi.schemas[self.schema], type, function (type) {
+                    othis.bimServerApi.getAllSubTypes(othis.bimServerApi.schemas[othis.schema], type, function(type){
                         types.push(type);
                     });
                 } else {
@@ -1731,10 +1658,10 @@ BIMSURFER.api.Model = function (bimServerApi, poid, roid, schema) {
 
                 var typesToLoad = [];
 
-                types.forEach(function (type) {
-                    if (self.loadedTypes[type] != null) {
-                        for (var oid in self.loadedTypes[type]) {
-                            callback(self.loadedTypes[type][oid]);
+                types.forEach(function(type){
+                    if (othis.loadedTypes[type] != null) {
+                        for (var oid in othis.loadedTypes[type]) {
+                            callback(othis.loadedTypes[type][oid]);
                         }
                     } else {
                         typesToLoad.push(type);
@@ -1742,9 +1669,9 @@ BIMSURFER.api.Model = function (bimServerApi, poid, roid, schema) {
                 });
 
                 if (typesToLoad.length > 0) {
-                    self.bimServerApi.jsonSerializerFetcher.fetch(function (jsonSerializerOid) {
+                    othis.bimServerApi.jsonSerializerFetcher.fetch(function(jsonSerializerOid){
                         bimServerApi.call("Bimsie1ServiceInterface", "downloadByTypes", {
-                            roids: [self.roid],
+                            roids: [othis.roid],
                             classNames: typesToLoad,
                             schema: "ifc2x3tc1",
                             includeAllSubtypes: false,
@@ -1752,62 +1679,168 @@ BIMSURFER.api.Model = function (bimServerApi, poid, roid, schema) {
                             useObjectIDM: false,
                             deep: false,
                             sync: true
-                        }, function (laid) {
+                        }, function(laid){
                             var url = bimServerApi.generateRevisionDownloadUrl({
                                 laid: laid,
                                 topicId: laid,
                                 serializerOid: jsonSerializerOid
                             });
-                            $.getJSON(url, function (data, textStatus, jqXHR) {
-                                if (self.loadedTypes[type] == null) {
-                                    self.loadedTypes[type] = {};
+                            $.getJSON(url, function(data, textStatus, jqXHR){
+                                if (othis.loadedTypes[type] == null) {
+                                    othis.loadedTypes[type] = {};
                                 }
-                                data.objects.forEach(function (object) {
-                                    if (self.objects[object._i] != null) {
+                                data.objects.forEach(function(object){
+                                    if (othis.objects[object._i] != null) {
                                         // Hmm we are doing a query on type, but some objects have already loaded, let's use those instead
-                                        var wrapper = self.objects[object._i];
+                                        var wrapper = othis.objects[object._i];
                                         if (wrapper.object._s == 1) {
                                             if (wrapper.isA(type)) {
-                                                self.loadedTypes[type][object._i] = wrapper;
+                                                othis.loadedTypes[type][object._i] = wrapper;
                                                 callback(wrapper);
                                             }
                                         } else {
                                             // Replace the value with something that's LOADED
                                             wrapper.object = object;
                                             if (wrapper.isA(type)) {
-                                                self.loadedTypes[type][object._i] = wrapper;
+                                                othis.loadedTypes[type][object._i] = wrapper;
                                                 callback(wrapper);
                                             }
                                         }
                                     } else {
-                                        var wrapper = self.createWrapper(object, object._t);
-                                        self.objects[object._i] = wrapper;
+                                        var wrapper = othis.createWrapper(object, object._t);
+                                        othis.objects[object._i] = wrapper;
                                         if (wrapper.isA(type) && object._s == 1) {
-                                            self.loadedTypes[type][object._i] = wrapper;
+                                            othis.loadedTypes[type][object._i] = wrapper;
                                             callback(wrapper);
                                         }
                                     }
                                 });
-                                bimServerApi.call("ServiceInterface", "cleanupLongAction", {actionId: laid}, function () {
-                                    self.decrementRunningCalls("getAllOfType");
+                                bimServerApi.call("ServiceInterface", "cleanupLongAction", {actionId: laid}, function(){
+                                    othis.decrementRunningCalls("getAllOfType");
                                     promise.fire();
                                 });
                             });
                         });
                     });
                 } else {
-                    self.decrementRunningCalls("getAllOfType");
+                    othis.decrementRunningCalls("getAllOfType");
                     promise.fire();
                 }
             }
         });
         return promise;
     };
-};
+}
 
+function BimServerWebSocket(baseUrl, bimServerApi) {
+    var othis = this;
+    this.connected = false;
+    this.openCallbacks = [];
+    this.endPointId = null;
+    this.listener = null;
+    this.tosend = [];
+    this.tosendAfterConnect = [];
+    this.messagesReceived = 0;
 
-;BIMSURFER.api.Promise = function(counter) {
+    this.connect = function(callback) {
+        othis.openCallbacks.push(callback);
+        var location = bimServerApi.baseUrl.toString().replace('http://', 'ws://').replace('https://', 'wss://') + "/stream";
+        if ("WebSocket" in window) {
+            try {
+                this._ws = new WebSocket(location);
+                this._ws.binaryType = "arraybuffer";
+                this._ws.onopen = this._onopen;
+                this._ws.onmessage = this._onmessage;
+                this._ws.onclose = this._onclose;
+                this._ws.onerror = this._onerror;
+            } catch (err) {
+                bimServerApi.notifier.setError("WebSocket error" + (err.message != null ? (": " + err.message) : ""));
+            }
+        } else {
+            bimServerApi.notifier.setError("This browser does not support websockets <a href=\"https://github.com/opensourceBIM/bimvie.ws/wiki/Requirements\"></a>");
+        }
+    };
 
+    this._onerror = function(err) {
+        console.log(err);
+        bimServerApi.notifier.setError("WebSocket error" + (err.message != null ? (": " + err.message) : ""));
+    };
+
+    this._onopen = function() {
+        while (othis.tosendAfterConnect.length > 0 && othis._ws.readyState == 1) {
+            var messageArray = othis.tosendAfterConnect.splice(0, 1);
+            othis._sendWithoutEndPoint(messageArray[0]);
+        }
+    };
+
+    this._sendWithoutEndPoint = function(message) {
+        if (othis._ws && othis._ws.readyState == 1) {
+            othis._ws.send(message);
+        } else {
+            othis.tosendAfterConnect.push(message);
+        }
+    };
+
+    this._send = function(message) {
+        if (othis._ws && othis._ws.readyState == 1 && othis.endPointId != null) {
+            othis._ws.send(message);
+        } else {
+            console.log("Waiting", message);
+            othis.tosend.push(message);
+        }
+    };
+
+    this.send = function(object) {
+        var str = JSON.stringify(object);
+        bimServerApi.log("Sending", str);
+        othis._send(str);
+    };
+
+    this._onmessage = function(message) {
+        othis.messagesReceived++;
+        if (othis.messagesReceived % 10 == 0) {
+//			console.log(othis.messagesReceived);
+        }
+        if (message.data instanceof ArrayBuffer) {
+            othis.listener(message.data);
+        } else {
+            var incomingMessage = JSON.parse(message.data);
+            bimServerApi.log("incoming", incomingMessage);
+            if (incomingMessage.welcome != null) {
+                othis._sendWithoutEndPoint(JSON.stringify({"token": bimServerApi.token}));
+            } else if (incomingMessage.endpointid != null) {
+                othis.endPointId = incomingMessage.endpointid;
+                othis.connected = true;
+                othis.openCallbacks.forEach(function(callback){
+                    callback();
+                });
+                while (othis.tosend.length > 0 && othis._ws.readyState == 1) {
+                    var messageArray = othis.tosend.splice(0, 1);
+                    console.log(messageArray[0]);
+                    othis._send(messageArray[0]);
+                }
+                othis.openCallbacks = [];
+            } else {
+                if (incomingMessage.request != null) {
+                    othis.listener(incomingMessage.request);
+                } else if (incomingMessage.requests != null) {
+                    incomingMessage.requests.forEach(function(request){
+                        othis.listener(request);
+                    });
+                }
+            }
+        }
+    };
+
+    this._onclose = function(m) {
+        othis._ws = null;
+        othis.connected = false;
+        othis.openCallbacks = [];
+        othis.endpointid = null;
+    };
+}
+
+function Promise(counter) {
     var o = this;
 
     o.isDone = false;
@@ -1895,168 +1928,64 @@ BIMSURFER.api.Model = function (bimServerApi, poid, roid, schema) {
         }
     };
 }
-;BIMSURFER.api.Socket = function(baseUrl, bimServerApi) {
-    var othis = this;
-    this.connected = false;
-    this.openCallbacks = [];
-    this.endPointId = null;
-    this.listener = null;
-    this.tosend = [];
-    this.tosendAfterConnect = [];
-    this.messagesReceived = 0;
 
-    this.connect = function (callback) {
-        othis.openCallbacks.push(callback);
-        var location = bimServerApi.baseUrl.toString().replace('http://', 'ws://').replace('https://', 'wss://') + "/stream";
-        if ("WebSocket" in window) {
-            try {
-                this._ws = new WebSocket(location);
-                this._ws.binaryType = "arraybuffer";
-                this._ws.onopen = this._onopen;
-                this._ws.onmessage = this._onmessage;
-                this._ws.onclose = this._onclose;
-                this._ws.onerror = this._onerror;
-            } catch (err) {
-                bimServerApi.notifier.setError("WebSocket error" + (err.message != null ? (": " + err.message) : ""));
-            }
-        } else {
-            bimServerApi.notifier.setError("This browser does not support websockets <a href=\"https://github.com/opensourceBIM/bimvie.ws/wiki/Requirements\"></a>");
-        }
-    };
-
-    this._onerror = function (err) {
-        console.log(err);
-        bimServerApi.notifier.setError("WebSocket error" + (err.message != null ? (": " + err.message) : ""));
-    };
-
-    this._onopen = function () {
-        while (othis.tosendAfterConnect.length > 0 && othis._ws.readyState == 1) {
-            var messageArray = othis.tosendAfterConnect.splice(0, 1);
-            othis._sendWithoutEndPoint(messageArray[0]);
-        }
-    };
-
-    this._sendWithoutEndPoint = function (message) {
-        if (othis._ws && othis._ws.readyState == 1) {
-            othis._ws.send(message);
-        } else {
-            othis.tosendAfterConnect.push(message);
-        }
-    };
-
-    this._send = function (message) {
-        if (othis._ws && othis._ws.readyState == 1 && othis.endPointId != null) {
-            othis._ws.send(message);
-        } else {
-            console.log("Waiting", message);
-            othis.tosend.push(message);
-        }
-    };
-
-    this.send = function (object) {
-        var str = JSON.stringify(object);
-        bimServerApi.log("Sending", str);
-        othis._send(str);
-    };
-
-    this._onmessage = function (message) {
-        othis.messagesReceived++;
-        if (othis.messagesReceived % 10 == 0) {
-//			console.log(othis.messagesReceived);
-        }
-        if (message.data instanceof ArrayBuffer) {
-            if (othis.listener) {
-                othis.listener(message.data);
-            }
-        } else {
-            var incomingMessage = JSON.parse(message.data);
-            bimServerApi.log("incoming", incomingMessage);
-            if (incomingMessage.welcome != null) {
-                othis._sendWithoutEndPoint(JSON.stringify({"token": bimServerApi.token}));
-            } else if (incomingMessage.endpointid != null) {
-                othis.endPointId = incomingMessage.endpointid;
-                othis.connected = true;
-                othis.openCallbacks.forEach(function (callback) {
-                    callback();
-                });
-                while (othis.tosend.length > 0 && othis._ws.readyState == 1) {
-                    var messageArray = othis.tosend.splice(0, 1);
-                    console.log(messageArray[0]);
-                    othis._send(messageArray[0]);
-                }
-                othis.openCallbacks = [];
-            } else {
-                if (incomingMessage.request != null) {
-                    if (othis.listener) {
-                        othis.listener(incomingMessage.request);
-                    }
-                } else if (incomingMessage.requests != null) {
-                    if (othis.listener) {
-                        incomingMessage.requests.forEach(function (request) {
-                            othis.listener(request);
-                        });
-                    }
-                }
-            }
-        }
-    };
-
-    this._onclose = function (m) {
-        othis._ws = null;
-        othis.connected = false;
-        othis.openCallbacks = [];
-        othis.endpointid = null;
-    };
-}
-;BIMSURFER.api.Synchronizer = function (fetcher) {
-
-    var othis = this;
-
-    othis.result = null;
-    othis.state = "none";
-    othis.waiters = [];
-
-    this.notify = function (result) {
-        othis.result = result;
-        othis.state = "done";
-        othis.waiters.forEach(function (waiter) {
-            waiter(result);
-        });
-        othis.waiters = [];
-    };
-
-    this.fetch = function (callback) {
-        if (othis.state == "none") {
-            othis.waiters.push(callback);
-            othis.state = "fetching";
-            fetcher(othis.notify);
-        } else if (othis.state == "done") {
-            callback(othis.result);
-        } else if (othis.state == "fetching") {
-            othis.waiters.push(callback)
-        }
-    };
-};BIMSURFER.api.Variable = function(initialValue) {
-
+function Variable(initialValue) {
     var o = this;
     o.value = initialValue;
     o.eventRegistry = new EventRegistry();
 
-    this.set = function (value) {
+    this.set = function(value){
         o.value = value;
-        o.eventRegistry.trigger(function (cb) {
+        o.eventRegistry.trigger(function(cb){
             cb(value);
         });
     };
 
-    this.get = function () {
+    this.get = function(){
         return o.value;
     };
 
     this.register = o.eventRegistry.register;
     this.unregister = o.eventRegistry.unregister;
-};
-;/*
+}
+
+function EventRegistry() {
+    var o = this;
+    o.registry = [];
+
+    this.register = function(fn) {
+        var skip = false;
+        o.registry.forEach(function(existing){
+            if (existing == fn) {
+                skip = true;
+            }
+        });
+        if (!skip) {
+            o.registry.push(fn);
+        }
+    };
+
+    this.unregister = function(fn) {
+        var len = o.registry.length;
+        while (len--) {
+            if (o.registry[len] == fn) {
+                o.registry.splice(len, 1);
+            }
+        }
+    };
+
+    this.size = function(){
+        return o.registry.length;
+    };
+
+    this.trigger = function(callback){
+        o.registry.forEach(callback);
+    };
+
+    this.clear = function(){
+        o.registry = [];
+    };
+};/*
   Based on Simple JavaScript Inheritance
   By John Resig http://ejohn.org/
   MIT Licensed.

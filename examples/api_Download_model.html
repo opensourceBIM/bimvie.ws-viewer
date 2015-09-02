@@ -77,7 +77,7 @@
     // Connect to a BIMServer
     //-----------------------------------------------------------------------------------------------------------
 
-    connectToServer('http://thisisanexperimentalserver.com', prompt("user"), prompt("password"));
+   connectToServer('http://thisisanexperimentalserver.com', prompt("user"), prompt("password"));
 
     var api;
 
@@ -111,7 +111,7 @@
 
     function connectToServer(serverURL, user, password) {
 
-        api = new BIMSURFER.api.API(serverURL, new Notifier());
+        api = new BimServerApi(serverURL, new Notifier());
 
         api.init(function (_api, serverInfo) {
 

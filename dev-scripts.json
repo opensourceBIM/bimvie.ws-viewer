@@ -5,13 +5,7 @@
 
         "src/api/string.js",
 
-        "src/api/api.js",
-        "src/api/eventRegistry.js",
-        "src/api/model.js",
-        "src/api/promise.js",
-        "src/api/socket.js",
-        "src/api/synchronizer.js",
-        "src/api/variable.js",
+        "src/api/bimserverapi.js",
 
         "src/viewer/utils/_module.js",
         "src/viewer/utils/inheritance.js",
