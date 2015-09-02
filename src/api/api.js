@@ -558,10 +558,9 @@ BIMSURFER.api.API = function (baseUrl, notifier) {
                 clearTimeout(this.lastBusyTimeOut);
                 this.lastBusyTimeOut = null;
             }
-            self = this;
             if (typeof window !== 'undefined' && window.setTimeout != null) {
                 this.lastBusyTimeOut = window.setTimeout(function () {
-                    self.notifier.setInfo(self.translate(key + "_BUSY"), -1);
+                    this.notifier.setInfo(this.translate(key + "_BUSY"), -1);
                     showedBusy = true;
                 }, 200);
             }

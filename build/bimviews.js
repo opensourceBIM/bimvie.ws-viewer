@@ -4,7 +4,7 @@
  * A WebGL-based IFC Viewer for BIMSurfer
  * http://bimwiews.org/
  *
- * Built on 2015-08-31
+ * Built on 2015-09-02
  *
  * todo
  * Copyright 2015, todo
@@ -734,10 +734,9 @@ BIMSURFER.api.API = function (baseUrl, notifier) {
                 clearTimeout(this.lastBusyTimeOut);
                 this.lastBusyTimeOut = null;
             }
-            self = this;
             if (typeof window !== 'undefined' && window.setTimeout != null) {
                 this.lastBusyTimeOut = window.setTimeout(function () {
-                    self.notifier.setInfo(self.translate(key + "_BUSY"), -1);
+                    this.notifier.setInfo(this.translate(key + "_BUSY"), -1);
                     showedBusy = true;
                 }, 200);
             }
