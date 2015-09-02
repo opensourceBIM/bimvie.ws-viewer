@@ -191,6 +191,7 @@
                                                         var _topicId = topicId;
 
                                                         var progressHandler = function (topicId, state) {
+                                                        	console.log(topicId, state, _topicId);
                                                             if (topicId === _topicId) {
                                                                 if (state.title == "Done preparing") {
                                                                     startDownload();
@@ -220,6 +221,12 @@
                                                                 progressHandler,
                                                                 function () {
                                                                     console.log("progressHandler registered.");
+                                                                    // There was something missing here, especially with small models, the progress handler gets registered too late, and won't get called, so we do it manually, just in case
+                                                            		api.call("Bimsie1NotificationRegistryInterface", "getProgress", {
+                                                            			topicId: topicId
+                                                            		}, function(state){
+                                                            			progressHandler(topicId, state);
+                                                            		});
                                                                 });
                                                     },
                                                     function (err) {
