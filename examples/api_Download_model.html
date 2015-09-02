@@ -207,6 +207,8 @@
 
                                                             console.log("Starting binary download..");
 
+                                                            console.log("topic id, probably wrong this", this._topicId);
+                                                            
                                                             api.setBinaryDataListener(this._topicId,
                                                                     function (data) {
                                                                         console.log("A data packet has arrived.");
