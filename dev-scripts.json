@@ -3,14 +3,12 @@
 
         "src/BIMSURFER.js",
 
-        "src/api/string.js",
-
-        "src/api/bimserverapi.js",
-
         "src/viewer/utils/_module.js",
         "src/viewer/utils/inheritance.js",
         "src/viewer/utils/utils.js",
         "src/viewer/utils/map.js",
+        "src/viewer/utils/stringView.js",
+        "src/viewer/utils/dataInputStreamReader.js",
 
         "src/viewer/math/_module.js",
         "src/viewer/math/math.js",

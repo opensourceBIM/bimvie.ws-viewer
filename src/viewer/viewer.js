@@ -328,26 +328,6 @@
             });
         }
 
-        /**
-         * Geometry loaders
-         * @property geometryLoaders
-         * @type {Array of }
-         * @final
-         */
-        this.geometryLoaders = [];
-
-        // Start the loading loop
-        // This just runs forever, polling any loaders that exist on this viewer
-
-        this.scene.on("tick",
-            function () {
-                self.geometryLoaders.forEach(
-                    function (geometryLoader) {
-                        geometryLoader.process();
-                    });
-            });
-
-
         // Add components here
 
         /**
