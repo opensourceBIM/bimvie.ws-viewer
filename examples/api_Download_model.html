@@ -21,6 +21,9 @@
     <link rel="stylesheet" href="lib/jquery-ui-1.10.3.custom/css/custom-theme/jquery-ui-1.10.3.custom.css">
     <script type="text/javascript" src="lib/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.js"></script>
 
+    <script src="../lib/api/string.js"></script>
+    <script src="../lib/bimserverapibootstrap.js"></script>
+
     <script src="../lib/scenejs.js"></script>
     <script src="../build/bimviews.js"></script>
 
@@ -53,91 +56,58 @@
 
     var viewer = new BIMSURFER.Viewer({element: "myDiv"});
 
-    // Create a Camera
-    // Create a Camera
     var camera = new BIMSURFER.Camera(viewer, {
         eye: [-15, 15, -15]
     });
 
-    // Create a CameraControl
-    var control = new BIMSURFER.CameraControl(viewer, {camera: camera});
+    var cameraControl = new BIMSURFER.CameraControl(viewer, {camera: camera});
 
-    // Create a box Geometry
-    var geometry = new BIMSURFER.BoxGeometry(viewer, {
-        id: "myGeometry"
-    });
-
-    // Create a test object, which we'll destroy once we start loading a model
     var testObject = new BIMSURFER.Object(viewer, {
-        geometries: [geometry]
+        geometries: [new BIMSURFER.BoxGeometry(viewer, {
+            id: "myGeometry"
+        })]
     });
 
+    var api;
+
+    var dataPackets = [];
+    var numObjects = 0;
+
+    geometries = [];
 
     //-----------------------------------------------------------------------------------------------------------
     // Connect to a BIMServer
     //-----------------------------------------------------------------------------------------------------------
 
-   connectToServer('http://thisisanexperimentalserver.com', prompt("user"), prompt("password"));
-
-    var api;
-
-    function Notifier() {
-        var othis = this;
-
-        this.setSelector = function (selector) {
-        };
-
-        this.clear = function () {
-        };
-
-        this.resetStatus = function () {
-        };
-
-        this.resetStatusQuick = function () {
-        };
-
-        this.setSuccess = function (status, timeToShow) {
-            console.log("success", status);
-        };
-
-        this.setInfo = function (info, timeToShow) {
-            console.log("info", info);
-        };
-
-        this.setError = function (error) {
-            console.log("error", error);
-        };
-    }
+    connectToServer('http://thisisanexperimentalserver.com', prompt("user"), prompt("password"));
 
     function connectToServer(serverURL, user, password) {
 
-        api = new BimServerApi(serverURL, new Notifier());
+        loadBimServerApi(serverURL, null,
+                function (_api) {
 
-        api.init(function (_api, serverInfo) {
+                    api = _api;
 
-            var errorMessage = serverInfo.errorMessage;
-            var oid = serverInfo.oid;
-            var rid = serverInfo.rid;
-            var serverState = serverInfo.serverState; // Hopefully "RUNNING"
-            var version = serverInfo.version;
+                    api.init(function (_api, serverInfo) {
 
-            api.login(user, password, false,
-                    function () {
+                        var errorMessage = serverInfo.errorMessage;
+                        var oid = serverInfo.oid;
+                        var rid = serverInfo.rid;
+                        var serverState = serverInfo.serverState; // Hopefully "RUNNING"
+                        var version = serverInfo.version;
 
-                        console.log("Destroying viewer test object");
+                        api.login(user, password, false,
+                                function () {
 
-                        testObject.destroy();
+                                    console.log("Destroying viewer test object");
+                                    testObject.destroy();
 
-                        console.log("Loading model");
-
-                        loadModel();
+                                    console.log("Loading model");
+                                    loadModel();
+                                });
                     });
-        });
+                });
     }
-
-    //-----------------------------------------------------------------------------------------------------------
-    // Load a model and download objects from it
-    //-----------------------------------------------------------------------------------------------------------
 
     function loadModel() {
 
@@ -163,7 +133,7 @@
 
                                 // Triggers after all objects have loaded
 
-                                console.log("Objects loaded: " + oids);
+                                //    console.log("Objects loaded: " + oids);
 
                                 // Get serializer plugin
 
@@ -184,34 +154,29 @@
                                                     },
                                                     function (topicId) {
 
-                                                        console.log("Called 'downloadByOids' on Bimsie1ServiceInterface.");
-
                                                         // API call issued
 
                                                         var _topicId = topicId;
 
                                                         var progressHandler = function (topicId, state) {
-                                                        	console.log(topicId, state, _topicId);
+                                                            //console.log(topicId, state, _topicId);
                                                             if (topicId === _topicId) {
                                                                 if (state.title == "Done preparing") {
                                                                     startDownload();
                                                                 }
                                                                 if (state.state == "completed") {
-                                                                    console.log("Binary download complete.");
+                                                                    // console.log("Binary download complete.");
                                                                     api.unregisterProgressHandler(topicId, progressHandler);
                                                                 }
                                                             }
                                                         };
 
                                                         var startDownload = function () {
-
-                                                            console.log("Starting binary download..");
-
-                                                            console.log("topic id, probably wrong this", this._topicId);
-                                                            
-                                                            api.setBinaryDataListener(this._topicId,
+                                                            //console.log("Starting binary download..");
+                                                            api.setBinaryDataListener(_topicId,
                                                                     function (data) {
-                                                                        console.log("A data packet has arrived.");
+                                                                        // console.log("A data packet has arrived.");
+                                                                        dataPackets.push(data);
                                                                     });
                                                             api.downloadViaWebsocket({
                                                                 longActionId: _topicId,
@@ -222,27 +187,258 @@
                                                         api.registerProgressHandler(topicId,
                                                                 progressHandler,
                                                                 function () {
-                                                                    console.log("progressHandler registered.");
+                                                                    //console.log("progressHandler registered.");
                                                                     // There was something missing here, especially with small models, the progress handler gets registered too late, and won't get called, so we do it manually, just in case
-                                                            		api.call("Bimsie1NotificationRegistryInterface", "getProgress", {
-                                                            			topicId: topicId
-                                                            		}, function(state){
-                                                            			progressHandler(topicId, state);
-                                                            		});
+                                                                    api.call("Bimsie1NotificationRegistryInterface", "getProgress", {
+                                                                        topicId: topicId
+                                                                    }, function (state) {
+                                                                        progressHandler(topicId, state);
+                                                                    });
                                                                 });
                                                     },
                                                     function (err) {
-
                                                         var message = "Download failed: " + err.__type + ": " + err.message;
-
                                                         console.error(message);
                                                     });
-
-
                                         });
                             });
-
                 });
+
+        // Start processing responses as they appear in the data packet queue
+
+        var tick = viewer.on("tick",
+                function () {
+
+                    var data = dataPackets.shift();
+
+                    while (data != null) {
+
+                        var stream = new BIMSURFER.utils.DataInputStreamReader(data);
+                        var channel = stream.readInt();
+                        var numMessages = stream.readInt();
+
+                        for (var i = 0; i < numMessages; i++) {
+
+                            var messageType = stream.readByte();
+
+                            if (messageType === 0) {
+                                readStart(stream);
+
+                            } else {
+                                readObject(stream, messageType);
+                            }
+                        }
+
+                        data = dataPackets.shift();
+                    }
+                });
+
+        var firstModel = true;
+
+        function readStart(stream) {
+
+            var start = stream.readUTF8();
+
+            if (start != "BGS") {
+                console.error("Stream does not start with BGS (" + start + ")");
+                return false;
+            }
+
+            var version = stream.readByte();
+
+            if (version != 4 && version != 5 && version != 6) {
+                console.error("Unimplemented version");
+                return false;
+
+            } else {
+                //this._version = version;
+            }
+
+            stream.align4();
+
+            var modelBounds = stream.readFloatArray(6);
+
+            modelBounds = {
+                min: {x: modelBounds[0], y: modelBounds[1], z: modelBounds[2]},
+                max: {x: modelBounds[3], y: modelBounds[4], z: modelBounds[5]}
+            };
+
+            // Bump Viewer origin to center the model
+
+            var center = [
+                (modelBounds.max.x + modelBounds.min.x) / 2,
+                (modelBounds.max.y + modelBounds.min.y) / 2,
+                (modelBounds.max.z + modelBounds.min.z) / 2
+            ];
+
+            camera.look = center;
+
+            if (firstModel) {
+
+                firstModel = false;
+
+                // Set up the Viewer's default Camera
+
+                //  var camera = viewer.camera;
+
+                //      camera.active = true; // Deactivates other Cameras
+
+                camera.up = [0, 0, 1];
+                camera.eye = [center[0] - 50, center[1] - 100, center[2]];
+
+                var diagonal = Math.sqrt(
+                        Math.pow(modelBounds.max.x - modelBounds.min.x, 2) +
+                        Math.pow(modelBounds.max.y - modelBounds.min.y, 2) +
+                        Math.pow(modelBounds.max.z - modelBounds.min.z, 2));
+
+                var far = diagonal * 5; // 5 being a guessed constant that should somehow coincide with the max zoom-out-factor
+
+                camera.far = far;
+                camera.near = far / 1000;
+                camera.fovy = 37.8493;
+            }
+
+            numObjects = stream.readInt();
+
+            //this._notifyProgress();
+        }
+
+        /**
+         * Reads an object from binary stream.
+         *
+         * @param stream The binary stream.
+         * @param geometryType Type of geometry to read.
+         * @private
+         */
+        function readObject(stream, geometryType) {
+
+            var type = stream.readUTF8();
+            var roid = stream.readLong(); // TODO: Needed?
+            var objectId = stream.readLong();
+
+            var geometryId;
+            var geometryIds = [];
+            var numGeometries;
+            var numParts;
+            var objectBounds;
+            var numIndices;
+            var indices;
+            var numPositions;
+            var positions;
+            var numNormals;
+            var normals;
+            var numColors;
+            var colors;
+
+            stream.align4();
+
+            var matrix = stream.readFloatArray(16);
+
+            if (geometryType == 1) {
+
+                objectBounds = stream.readFloatArray(6);
+                geometryId = stream.readLong();
+                numIndices = stream.readInt();
+                indices = stream.readIntArray(numIndices);
+                numPositions = stream.readInt();
+                positions = stream.readFloatArray(numPositions);
+                numNormals = stream.readInt();
+                normals = stream.readFloatArray(numNormals);
+                numColors = stream.readInt();
+                colors = stream.readFloatArray(numColors);
+
+                createGeometry(geometryId, positions, normals, colors, indices);
+
+                createObject(roid, objectId, objectId, [geometryId], type, matrix);
+
+            } else if (geometryType == 2) {
+
+                geometryId = stream.readLong();
+
+                createObject(roid, objectId, objectId, [geometryId], type, matrix);
+
+            } else if (geometryType == 3) {
+
+                numParts = stream.readInt();
+
+                for (var i = 0; i < numParts; i++) {
+
+                    // Object contains multiple geometries
+
+                    geometryId = stream.readLong();
+                    numIndices = stream.readInt();
+                    indices = stream.readIntArray(numIndices);
+                    numPositions = stream.readInt();
+                    positions = stream.readFloatArray(numPositions);
+                    numNormals = stream.readInt();
+                    normals = stream.readFloatArray(numNormals);
+                    numColors = stream.readInt();
+                    colors = stream.readFloatArray(numColors);
+
+                    createGeometry(geometryId, positions, normals, colors, indices);
+
+                    geometryIds.push(geometryId);
+                }
+
+                createObject(roid, objectId, objectId, geometryIds, type, matrix);
+
+            } else if (geometryType == 4) {
+
+                // Object contains multiple instances of geometries
+
+                numGeometries = stream.readInt();
+                geometryIds = [];
+
+                for (var i = 0; i < numGeometries; i++) {
+                    geometryIds.push(stream.readLong());
+                }
+
+                createObject(roid, objectId, objectId, geometryIds, type, matrix);
+
+            } else {
+
+                //this.warn("Unsupported geometry type: " + geometryType);
+                return;
+            }
+        }
+
+        function createGeometry(geometryId, positions, normals, colors, indices) {
+
+            var id = "" + geometryId;
+
+            var g = new BIMSURFER.Geometry(viewer, {
+                id: id,
+                positions: positions,
+                normals: normals,
+                colors: colors,
+                indices: indices,
+                primitive: "triangles"
+            });
+
+            geometries.push(g);
+        }
+
+        function createObject(roid, oid, objectId, geometryIds, type, matrix) {
+
+            if (viewer.components[objectId]) {
+                console.error("Component with this ID already exists in viewer: " + objectId);
+                return;
+            }
+
+            var ids = [];
+            for (var i = 0, len = geometryIds.length; i < len; i++) {
+                ids.push("" + geometryIds[i])
+            }
+
+            geometries.length = 0;
+
+            new BIMSURFER.Object(viewer, {
+                // id: objectId,
+                type: type,
+                geometries: ids,
+                matrix: matrix
+            });
+        }
     }
 
 </script>
