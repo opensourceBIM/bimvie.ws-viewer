@@ -155,11 +155,11 @@
                         return;
                     }
 
+                    var input = this.viewer.input;
+
                     if (value) {
 
                         var self = this;
-
-                        var input = this.viewer.input;
 
                         this._onMouseUp = input.on("dblclick",
                             function (coords) {
