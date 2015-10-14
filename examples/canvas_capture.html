@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+
+
+    <link href="css/styles.css" rel="stylesheet"/>
+
+    <style>
+        body {
+            margin: 10px;
+            padding: 10px;
+            -moz-user-select: -moz-none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            background-color: white;
+        }
+
+    </style>
+
+
+    <script src="../lib/jquery-2.1.3.min.js"></script>
+    <script src="../lib/scenejs.js"></script>
+    <script src="../build/bimviews.js"></script>
+
+
+</head>
+<body>
+
+<h3>Canvas</h3>
+<div id="myDiv" style="height: 400px; width: 400px;">
+</div>
+
+<h3>Image captured every 200ms</h3>
+<img id="myCapturedImage" width="400px" height="400px"/>
+
+<script>
+
+    // Create a Viewer
+    var viewer = new BIMSURFER.Viewer({element: "myDiv"});
+
+    // Create a Camera
+    var camera = new BIMSURFER.Camera(viewer, {
+        eye: [0, 0, -10]
+    });
+
+    // Create an object
+    var box = new BIMSURFER.TeapotObject(viewer);
+
+    // Rotate the box on each render loop
+    viewer.on("tick",
+            function () {
+                camera.rotateEyeY(0.5);
+                camera.rotateEyeX(0.3);
+            });
+
+    // Do a screen capture every two seconds
+
+    var imageElement = document.getElementById("myCapturedImage");
+
+    setInterval(function () {
+
+        var image = viewer.canvas.capture({
+
+            // These capture params can also be set on the node
+            // definition. They will override those when specified here
+
+            format: "jpeg",  // Default - also supports "png" and "bmp"
+            width: 400, // Defaults to current canvas width
+            height: 400 // Defaults to current canvas height
+        });
+
+        imageElement.src = image.src;
+
+    }, 200);
+
+</script>
+
+</body>
+</html>
