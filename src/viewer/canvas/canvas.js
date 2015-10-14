@@ -185,7 +185,50 @@
              * @param {Number} canvasX The X-axis Canvas coordinate that was picked.
              * @param {Number} canvasY The Y-axis Canvas coordinate that was picked.
              */
+        },
 
+        /**
+         * Captures the canvas to an HTML Image.
+         * @method capture
+         * @param {*} params Capture params
+         * @param {Number} params.width Width of capture in pixels.
+         * @param {Number} params.height Height of capture in pixels.
+         * @param {Number} params.height Height of capture in pixels.
+         * @param params
+         * @returns {*}
+         */
+        capture:function (params) {
+
+            this.viewer.scene.renderFrame({ force:true }); // HACK - need to fix need for this in SceneJS
+
+            params = params || {};
+
+            var width = params.width || this.canvas.width;
+            var height = params.height || this.canvas.height;
+
+            var image;
+
+            var format = params.format || "jpeg";
+
+            switch (format) {
+                case "jpeg":
+                    image = Canvas2Image.saveAsJPEG(this.canvas, true, width, height);
+                    break;
+
+                case "png":
+                    image = Canvas2Image.saveAsPNG(this.canvas, true, width, height);
+                    break;
+
+                case "bmp":
+                    image = Canvas2Image.saveAsBMP(this.canvas, true, width, height);
+                    break;
+
+                default:
+                    this.error("Capture format unsupported: " + format);
+                    return null;
+            }
+
+            return image;
         },
 
         _destroy: function () {
