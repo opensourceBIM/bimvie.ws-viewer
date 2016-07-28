@@ -1,3 +1,7 @@
+This project is not maintained anymore, please have a look at V2 of BIMsurfer, which you can find here: https://github.com/opensourceBIM/BIMsurfer/tree/V2
+
+---
+
 # bimvie.ws-viewer
 
 An extensible and modular WebGL-based 3D viewer for BIMSurfer.  
